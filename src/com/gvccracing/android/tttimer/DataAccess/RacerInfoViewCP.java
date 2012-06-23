@@ -36,7 +36,7 @@ public class RacerInfoViewCP {
         public static Hashtable<String, Object> getValues(Context context, Long racerClubInfo_ID) {
 			Hashtable<String, Object> racerValues = new Hashtable<String, Object>();
 			
-			Cursor racerCursor = RacerInfoView.Read(context, null, RacerClubInfo._ID + "=?", new String[]{Long.toString(racerClubInfo_ID)}, null);
+			Cursor racerCursor = RacerInfoView.Read(context, null, RacerClubInfo.getTableName() + "." + RacerClubInfo._ID + "=?", new String[]{Long.toString(racerClubInfo_ID)}, null);
 			if(racerCursor != null && racerCursor.getCount() > 0){
 				racerCursor.moveToFirst();
 				racerValues.put(RacerClubInfo._ID, racerClubInfo_ID);
