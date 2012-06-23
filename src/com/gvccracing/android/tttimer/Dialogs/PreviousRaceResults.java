@@ -59,6 +59,7 @@ public class PreviousRaceResults extends BaseDialog implements LoaderManager.Loa
 		});
 		
 		((Button) v.findViewById(R.id.btnSaveSelection)).setOnClickListener(this);
+		((Button) v.findViewById(R.id.btnCancel)).setOnClickListener(this);
 		
 		return v;
 	}
@@ -82,6 +83,10 @@ public class PreviousRaceResults extends BaseDialog implements LoaderManager.Loa
 				raceHasChanged.putExtra(RaceResults.Race_ID, Long.toString(spinnerRaceToView.getSelectedItemId()));
         		getActivity().sendBroadcast(raceHasChanged);
 			} 
+			else if (v.getId() == R.id.btnCancel)
+			{
+				// Just dismiss the dialog
+			}
 			// Hide the dialog
 	    	dismiss();
 		}

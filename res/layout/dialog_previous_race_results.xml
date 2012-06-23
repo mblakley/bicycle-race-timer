@@ -65,10 +65,20 @@
 	        style="@style/Medium.Padded" />
 	</LinearLayout>
 	
+    <LinearLayout
+    	android:layout_width="fill_parent"
+    	android:layout_height="fill_parent"
+    	android:orientation="horizontal"
+    	style="@style/Padded" >
     <Button
         android:id="@+id/btnSaveSelection"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Select" />
-
+        android:text="@string/Select" />
+    <Button
+        android:id="@+id/btnCancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Cancel" />
+	</LinearLayout>
 </LinearLayout>

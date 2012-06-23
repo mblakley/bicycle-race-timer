@@ -16,7 +16,8 @@ public class ChooseRacerViewMode extends BaseDialog implements View.OnClickListe
 	
 	private Button btnShowRacerInfo;
 	private Button btnEditRacerTime;
-	 
+	private Button btnCancel;
+	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
@@ -30,7 +31,9 @@ public class ChooseRacerViewMode extends BaseDialog implements View.OnClickListe
 
 		btnEditRacerTime = (Button) v.findViewById(R.id.btnCorrectRacerTime);
 		btnEditRacerTime.setOnClickListener(this);
-		
+	
+		btnCancel = (Button) v.findViewById(R.id.btnCancel);
+		btnCancel.setOnClickListener(this);
 		return v;
 	}
 	
@@ -45,6 +48,10 @@ public class ChooseRacerViewMode extends BaseDialog implements View.OnClickListe
 				//EditRaceResultView editRaceResultView = new EditRaceResultView();
 				//FragmentManager fm = getFragmentManager();
 				//editRaceResultView.show(fm, EditRaceResultView.LOG_TAG);
+			}
+			else if (v==btnCancel)
+			{
+			  // don't do anything just dismiss the dialog
 			}
 			// Hide the dialog
 	    	dismiss();

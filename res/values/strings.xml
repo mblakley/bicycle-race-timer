@@ -181,4 +181,6 @@
 	<string name="HeaderRacerName"><u>Racer Name</u></string>
 	<string name="HeaderCat"><u>Cat</u></string>
 	<string name="HeaderPoints"><u>Pts</u></string>
+	<string name="Cancel">Cancel</string>
+	<string name="Select">Select</string>
 </resources>
