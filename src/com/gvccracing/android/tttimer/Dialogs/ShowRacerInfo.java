@@ -15,7 +15,7 @@ import com.gvccracing.android.tttimer.R;
 public class ShowRacerInfo extends BaseDialog implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
 	public static final String LOG_TAG = "ShowRacerInfo";
 	
-	private long racerID = -1;
+	private Long racerID;
 	
 	public ShowRacerInfo(long racerID) {
 		this.racerID = racerID;
