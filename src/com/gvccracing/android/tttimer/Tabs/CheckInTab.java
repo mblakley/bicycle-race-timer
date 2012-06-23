@@ -6,7 +6,6 @@ package com.gvccracing.android.tttimer.Tabs;
 import java.util.Calendar;
 
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.TTTimerTabsActivity;
 import com.gvccracing.android.tttimer.AsyncTasks.CheckInHandler;
 import com.gvccracing.android.tttimer.AsyncTasks.TeamCheckInHandler;
 import com.gvccracing.android.tttimer.CursorAdapters.CheckInCursorAdapter;

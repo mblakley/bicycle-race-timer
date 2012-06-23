@@ -1,8 +1,5 @@
 package com.gvccracing.android.tttimer.Dialogs;
 
-import java.sql.Time;
-import java.text.SimpleDateFormat;
-
 import android.database.Cursor;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.os.Bundle;
