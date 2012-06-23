@@ -222,12 +222,6 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
 		
 		// Setup the view that will display the formatted time
 		txtTimer = ((TextView)findViewById(R.id.txtTimerBottom));
-
-		getContext().registerReceiver(mActionReceiver, actionFilter);
-		AddActionFilter(START_TIMER_ACTION);
-		AddActionFilter(STOP_TIMER_ACTION);
-		AddActionFilter(RESET_TIMER_ACTION);
-		AddActionFilter(STOP_AND_HIDE_TIMER_ACTION);
 		
 		// Setup the toast that will be used for time notifications
     	toast_text = (TextView) findViewById(R.id.lblTimerToast);	
@@ -244,17 +238,23 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
         ((FragmentActivity) getContext()).getSupportLoaderManager().initLoader(RACE_INFO_LOADER_TIMER, null, this);
 	}	
 	
+	public void RegisterReceiver() {
+		AddActionFilter(START_TIMER_ACTION);
+		AddActionFilter(STOP_TIMER_ACTION);
+		AddActionFilter(RESET_TIMER_ACTION);
+		AddActionFilter(STOP_AND_HIDE_TIMER_ACTION);
+
+        // Register for broadcasts when a tab is changed
+		getContext().registerReceiver(mActionReceiver, actionFilter);
+	}
+
 	/**
      * Add an action that the broadcast receiver should be listening for
      * @param action
      */
     protected void AddActionFilter(String action){
-    	// First unregister from any broadcasts before changing the filter
-    	getContext().unregisterReceiver(mActionReceiver);
     	// Add the action to the intent filter
 		actionFilter.addAction(action);
-        // Register for broadcasts when a tab is changed
-		getContext().registerReceiver(mActionReceiver, actionFilter);
     }
     
     public void UnregisterReceiver(){

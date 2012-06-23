@@ -62,7 +62,7 @@ public class TTTimerTabsActivity extends FragmentActivity {
     /**
      * The intent filter is used to listen for events that this class can handle.  Subscribed events are set up in onCreate.
      */
-	private IntentFilter actionFilter = new IntentFilter();
+	public IntentFilter actionFilter = new IntentFilter();
 
     /**
      * The timer object that will be doing the timing calculations and display the results
@@ -78,8 +78,6 @@ public class TTTimerTabsActivity extends FragmentActivity {
      * The tabHost that contains all of the tabs
      */
     private TabHost tabHost;
-    
-    private Intent theIntent;
 	
 	/**
 	 * Does some basic setup, including setting the layout to use, setting up action filters, creating the tabs, setting some member variables,
@@ -115,15 +113,19 @@ public class TTTimerTabsActivity extends FragmentActivity {
 		AddActionFilter(Timer.RACE_IS_FINISHED_ACTION);
 		AddActionFilter(TTTimerTabsActivity.CHANGE_VISIBLE_TAB);
 		AddActionFilter(TTTimerTabsActivity.RACE_ID_CHANGED_ACTION);
+
+        // Register for broadcasts when a tab is changed
+        this.registerReceiver(mActionReceiver, actionFilter);
+		timer.RegisterReceiver();
 	}
 	
 	@Override 
 	protected void onPause() {
 		super.onPause();
+		timer.UnregisterReceiver();
 		if(mActionReceiver != null && actionFilter.countActions() > 0){
     		unregisterReceiver(mActionReceiver);
     	}
-		timer.UnregisterReceiver();
 	}
 	
 	public void UpdateRaceState(){
@@ -336,15 +338,8 @@ public class TTTimerTabsActivity extends FragmentActivity {
      * @param action - The action to receive events for
      */
     protected void AddActionFilter(String action){
-    	if(theIntent != null){
-    		// First unregister from any broadcasts before changing the filter
-    		this.unregisterReceiver(mActionReceiver);
-    		theIntent = null;
-    	}
     	// Add the action to the intent filter
 		actionFilter.addAction(action);
-        // Register for broadcasts when a tab is changed
-        theIntent = this.registerReceiver(mActionReceiver, actionFilter);
     }
 	
 	/**

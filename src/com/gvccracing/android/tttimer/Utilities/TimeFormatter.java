@@ -34,7 +34,9 @@ public class TimeFormatter {
  		}
 
  		if(showTensHours || showHours || showMinutes){
- 			formattedTime += ":";
+ 			if(showIfZero || hrs > 0){
+ 				formattedTime += ":";
+ 			}
 	 		/* Convert the minutes to String and format the String */
 	
 	     	mins = mins % 60;
@@ -51,7 +53,9 @@ public class TimeFormatter {
  		}
      	
  		if(showTensHours || showHours || showMinutes || showSeconds){
- 			formattedTime += ":";
+ 			if(showIfZero || mins > 0){
+ 				formattedTime += ":";
+ 			}
 	 		/* Convert the seconds to String
 	 		 * and format to ensure it has
 	 		 * a leading zero when required
@@ -68,7 +72,9 @@ public class TimeFormatter {
  		}
 
 		if(showThousandths){
- 			formattedTime += ".";
+			if(showIfZero || secs > 0){
+				formattedTime += ".";
+			}
 	     	String milliseconds = String.valueOf((long)timeInMillseconds);
 	     	if(milliseconds.length()==2){
 	     		milliseconds = "0"+milliseconds;
