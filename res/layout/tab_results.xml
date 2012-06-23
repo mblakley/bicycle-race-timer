@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/lblOverallResults"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/OverallResults"
+        style="@style/Medium" />
+
+    <LinearLayout 
+        android:id="@+id/llOverallHeader"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:weightSum="1.0"
+		android:padding="1dp">  
+		<TextView
+			android:id="@+id/lblPlacing"
+			android:layout_weight=".1"
+			android:layout_width="0dip"
+			android:layout_height="wrap_content"
+	            android:text=""
+			style="@style/Small.Padded" />
+	
+	        <TextView
+	            android:id="@+id/lblElapsedTime"
+			android:layout_weight=".25"
+			android:layout_width="0dip"
+			android:layout_height="wrap_content"
+	            android:text="@string/HeaderTime"
+	            android:textStyle="bold"
+				style="@style/Small.Padded"/>
+	
+	        <TextView
+	            android:id="@+id/lblName"
+			android:layout_weight=".4"
+			android:layout_width="0dip"
+			android:layout_height="wrap_content"
+	            android:text="@string/HeaderRacerName"
+	            android:textStyle="bold"
+	            android:singleLine="true"
+				style="@style/Small.Padded" />
+	
+	        <TextView
+	            android:id="@+id/lblCategory"
+			android:layout_weight=".15"
+			android:layout_width="0dip"
+			android:layout_height="wrap_content"
+	            android:text="@string/HeaderCat"
+	            android:textStyle="bold"
+				style="@style/Small.Padded" />
+	
+	        <TextView
+	            android:id="@+id/lblPoints"
+			android:layout_weight=".1"
+			android:layout_width="0dip"
+			android:layout_height="wrap_content"
+	            android:text="@string/HeaderPoints"
+	            android:textStyle="bold"
+				style="@style/Small.Padded" /> 
+	</LinearLayout>
+	
+    <ListView
+        android:id="@+id/svOverallResults"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight=".8" />
+        
+    <TextView
+        android:id="@+id/lblCategoryResults"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/CategoryResults"
+        style="@style/Medium"/>
+    
+    <LinearLayout 
+        android:id="@+id/llCategoryHeader"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:weightSum="1.0"
+		android:padding="1dp">  
+		<TextView
+			android:id="@+id/lblPlacingCat"
+			android:layout_weight=".1"
+			android:layout_width="0dip"
+			android:layout_height="wrap_content"
+	            android:text=""
+			style="@style/Small.Padded" />
+	
+	        <TextView
+	            android:id="@+id/lblElapsedTimeCat"
+			android:layout_weight=".25"
+			android:layout_width="0dip"
+			android:layout_height="wrap_content"
+	            android:text="@string/HeaderTime"
+	            android:textStyle="bold"
+				style="@style/Small.Padded"/>
+	
+	        <TextView
+	            android:id="@+id/lblNameCat"
+			android:layout_weight=".4"
+			android:layout_width="0dip"
+			android:layout_height="wrap_content"
+	            android:text="@string/HeaderRacerName"
+	            android:textStyle="bold"
+	            android:singleLine="true"
+				style="@style/Small.Padded" />
+	
+	        <TextView
+	            android:id="@+id/lblCategoryCat"
+			android:layout_weight=".15"
+			android:layout_width="0dip"
+			android:layout_height="wrap_content"
+	            android:text="@string/HeaderCat"
+	            android:textStyle="bold"
+				style="@style/Small.Padded" />
+	
+	        <TextView
+	            android:id="@+id/lblPointsCat"
+			android:layout_weight=".1"
+			android:layout_width="0dip"
+			android:layout_height="wrap_content"
+	            android:text="@string/HeaderPoints"
+	            android:textStyle="bold"
+				style="@style/Small.Padded" /> 
+	</LinearLayout>
+
+    <ListView
+        android:id="@+id/svCategoryResults"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight=".8" />
+
+</LinearLayout>

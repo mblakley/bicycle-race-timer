@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+	android:weightSum="1.0" >
+
+    <LinearLayout
+        android:id="@+id/llOnDeckRacer"
+        android:layout_width="fill_parent"
+        android:layout_height="0dip"
+    	android:orientation="vertical"
+    	android:layout_weight="0.15"
+    	android:visibility="gone" >
+        
+	    <TextView
+	        android:id="@+id/lblOnDeck"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="@string/OnDeck"
+			style="@style/Medium" />
+	    
+        <LinearLayout 
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+   			android:weightSum="1.0" >
+		
+			<TextView
+			    android:id="@+id/lblStartPosition"
+				android:layout_width="0dip"
+				android:layout_height="wrap_content"
+				android:layout_weight="0.2"
+			    style="@style/Large.Padded" />
+			      
+			<TextView
+			    android:id="@+id/lblName"
+				android:layout_width="0dip"
+				android:layout_height="wrap_content"
+				android:layout_weight="0.8"
+			    android:singleLine="true"
+			    style="@style/Large.Padded"
+			    android:textStyle="bold"  />   
+		</LinearLayout>
+    </LinearLayout>
+    
+    
+    <LinearLayout
+        android:id="@+id/llBottom"
+        android:layout_width="fill_parent"
+        android:layout_height="0dip"
+    	android:orientation="vertical"
+    	android:layout_weight="0.85"
+		android:weightSum="1.0" >
+        <LinearLayout
+	        android:id="@+id/llStartOrderList"
+	        android:layout_width="fill_parent"
+	        android:layout_height="0dip"
+	    	android:orientation="vertical"
+	    	android:layout_weight="0.85" >
+		    <TextView
+		        android:id="@+id/lblStartOrder"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:text="@string/StartOrder"
+		        style="@style/Medium" />		
+			<ListView
+			    android:id="@+id/svStartOrder"
+			    android:layout_width="fill_parent"
+			    android:layout_height="fill_parent" >
+		   	</ListView>
+		</LinearLayout>	
+		<LinearLayout
+		    android:id="@+id/llTimerControls"
+		    android:layout_width="fill_parent"
+		    android:layout_height="0dip"
+    		android:layout_weight="0.15"
+			android:weightSum="1.0" >
+	
+	        <Button
+	            android:id="@+id/stopButton"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_gravity="center"
+	            android:layout_marginLeft="5dp"
+	            android:layout_marginRight="5dp"
+	            android:layout_weight="1"
+	            android:text="@string/stopText"
+	            android:visibility="gone"
+	            style="@style/Medium.Padded" >
+	  
+		    </Button>  
+		    <Button  
+			    android:layout_marginLeft="5dp"   
+			    android:layout_width="fill_parent"  
+			    android:layout_height="wrap_content"  
+			    android:layout_gravity="center"  
+			    android:layout_weight="0.5"  
+			    android:text="@string/startText"  
+			    android:id="@+id/btnStartTimer"
+	            style="@style/Medium.Padded"
+	            android:enabled="false"/>  	
+		    <Button
+		        android:id="@+id/resetButton"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_gravity="center"
+		        android:layout_marginRight="5dp"
+		        android:layout_weight="0.5"
+		        android:text="@string/resetText"
+	            style="@style/Medium.Padded"
+	            android:enabled="false" />
+		</LinearLayout>
+	</LinearLayout>
+
+</LinearLayout>

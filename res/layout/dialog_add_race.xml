@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/AddRaceID"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    style="@style/Padded" >
+
+    <TextView
+        android:id="@+id/lblRaceDate"
+        style="@style/Medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Date" />
+
+    <DatePicker
+        android:id="@+id/dateRaceDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout3"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/lblRaceType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/RaceTypeLabel"
+        	style="@style/Medium" />
+
+        <Spinner
+            android:id="@+id/spinnerRaceType"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+    
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/lblCourse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/RaceLocation"
+        	style="@style/Medium" />
+
+        <Spinner
+            android:id="@+id/spinnerRaceLocation"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/lblStartInterval"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/StartInterval"
+        	style="@style/Medium" />
+
+        <Spinner
+            android:id="@+id/spinnerStartInterval"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+    
+    <LinearLayout
+        android:id="@+id/llLaps"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" >
+
+        <TextView
+            android:id="@+id/lblLaps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/NumberOfLaps"
+            android:layout_gravity="top" 
+        	style="@style/Medium" />
+
+        <EditText android:layout_height="wrap_content" 
+	        android:id="@+id/txtNumLaps" 
+	        android:layout_gravity="fill_vertical" 
+	        android:layout_width="fill_parent" 
+	        style="@style/Medium.Padded" 
+	        android:inputType="number" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnAddNewRace"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/AddRace"
+       	style="@style/Medium" />
+
+</LinearLayout>

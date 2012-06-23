@@ -1,0 +1,7 @@
+<CheckedTextView xmlns:android="http://schemas.android.com/apk/res/android" 
+    android:id="@android:id/text1"
+    style="@style/Medium.Padded"
+    android:singleLine="true"
+    android:layout_width="fill_parent"
+    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:ellipsize="marquee" />
