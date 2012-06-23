@@ -17,6 +17,7 @@ import com.gvccracing.android.tttimer.DataAccess.RaceNotesCP.RaceNotes;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
 import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
+import com.gvccracing.android.tttimer.DataAccess.RacerInfoViewCP.RacerInfoView;
 import com.gvccracing.android.tttimer.DataAccess.RacerPreviousResultsViewCP.RacerPreviousResultsView;
 import com.gvccracing.android.tttimer.DataAccess.TeamCheckInViewCP.TeamCheckInViewExclusive;
 import com.gvccracing.android.tttimer.DataAccess.TeamCheckInViewCP.TeamCheckInViewInclusive;
@@ -425,7 +426,7 @@ public class TTProvider extends ContentProvider {
 			raceLapsResultsCursor.setNotificationUri(getContext().getContentResolver(), uri);	
 			Log.i("TTProvider", "query complete: uri=" + uri.toString() + " selection=" + selection);
 			return raceLapsResultsCursor;
-		}  else if(uri.toString().contains(TeamLapResultsView.CONTENT_URI.toString())){
+		} else if(uri.toString().contains(TeamLapResultsView.CONTENT_URI.toString())){
 			// TeamLapResultsView
 			qBuilder.setTables(TeamLapResultsView.getTableName());
 			String groupBy = null;
@@ -469,6 +470,19 @@ public class TTProvider extends ContentProvider {
 			teamLapsCursor.setNotificationUri(getContext().getContentResolver(), TeamLaps.CONTENT_URI);	
 			Log.i("TTProvider", "query complete: uri=" + uri.toString() + " selection=" + selection);
 			return teamLapsCursor;
+		} else if(uri.toString().contains(RacerInfoView.CONTENT_URI.toString())){
+			// RacerInfoView
+			qBuilder.setTables(RacerInfoView.getTableName());		
+			
+			Cursor racerInfoResultsCursor = qBuilder.query(mDB.getReadableDatabase(),
+													projection, 
+													selection, 
+													selectionArgs, null, null, sortOrder,
+													null);	
+			
+			racerInfoResultsCursor.setNotificationUri(getContext().getContentResolver(), uri);	
+			Log.i("TTProvider", "query complete: uri=" + uri.toString() + " selection=" + selection);
+			return racerInfoResultsCursor;
 		} else{
 			throw new UnsupportedOperationException("You're an idiot...add the uri " + uri.toString() + " to the TTProvider.query if/else statement");
 		}		

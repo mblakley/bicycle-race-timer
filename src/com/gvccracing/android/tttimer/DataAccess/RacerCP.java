@@ -1,5 +1,7 @@
 package com.gvccracing.android.tttimer.DataAccess;
 
+import java.util.Hashtable;
+
 import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewExclusive;
 import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewInclusive;
 
@@ -62,6 +64,29 @@ public class RacerCP {
 		
 		public static Cursor Read(Context context, String[] fieldsToRetrieve, String selection, String[] selectionArgs, String sortOrder) {
 			return context.getContentResolver().query(Racer.CONTENT_URI, fieldsToRetrieve, selection, selectionArgs, sortOrder);
+		}
+		
+		public static Hashtable<String, Object> getValues(Context context, Long racer_ID) {
+			Hashtable<String, Object> racerValues = new Hashtable<String, Object>();
+			
+			Cursor racerCursor = Racer.Read(context, null, Racer._ID + "=?", new String[]{Long.toString(racer_ID)}, null);
+			if(racerCursor != null && racerCursor.getCount() > 0){
+				racerCursor.moveToFirst();
+				racerValues.put(Racer._ID, racer_ID);
+				racerValues.put(Racer.FirstName, racerCursor.getString(racerCursor.getColumnIndex(Racer.FirstName)));
+				racerValues.put(Racer.LastName, racerCursor.getString(racerCursor.getColumnIndex(Racer.LastName)));
+				racerValues.put(Racer.USACNumber, racerCursor.getLong(racerCursor.getColumnIndex(Racer.USACNumber)));
+				racerValues.put(Racer.BirthDate, racerCursor.getLong(racerCursor.getColumnIndex(Racer.BirthDate)));
+				racerValues.put(Racer.PhoneNumber, racerCursor.getLong(racerCursor.getColumnIndex(Racer.PhoneNumber)));
+				racerValues.put(Racer.EmergencyContactName, racerCursor.getString(racerCursor.getColumnIndex(Racer.EmergencyContactName)));
+				racerValues.put(Racer.EmergencyContactPhoneNumber, racerCursor.getLong(racerCursor.getColumnIndex(Racer.EmergencyContactPhoneNumber)));
+			}
+			if( racerCursor != null){
+				racerCursor.close();
+				racerCursor = null;
+			}
+			
+			return racerValues;
 		}
 		
 		public static int Update(Context context, long racer_ID, String firstName, String lastName, Integer usacNumber, Long birthDate, 

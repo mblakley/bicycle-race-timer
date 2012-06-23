@@ -234,11 +234,15 @@ public class FinishTab extends BaseTab implements View.OnClickListener,	LoaderMa
 		        	
 		        	finishOrderList.setOnItemClickListener(new OnItemClickListener() {
 						public void onItemClick(AdapterView<?> arg0, View v, int pos, long raceResult_ID) {
-							Cursor unassignedCursor = unassignedCA.getCursor();
-							unassignedCursor.moveToPosition(unassignedTimes.getCheckedItemPosition());
-							long unassignedID = unassignedCursor.getLong(unassignedCursor.getColumnIndex(UnassignedTimes._ID));
-							AssignLapTimeTask task = new AssignLapTimeTask(FinishTab.this.getActivity());
-							task.execute(new Long[] { unassignedID, raceResult_ID });	
+							try{
+								Cursor unassignedCursor = unassignedCA.getCursor();
+								unassignedCursor.moveToPosition(unassignedTimes.getCheckedItemPosition());
+								long unassignedID = unassignedCursor.getLong(unassignedCursor.getColumnIndex(UnassignedTimes._ID));
+								AssignLapTimeTask task = new AssignLapTimeTask(FinishTab.this.getActivity());
+								task.execute(new Long[] { unassignedID, raceResult_ID });
+							}catch(Exception ex){
+								Log.e(LOG_TAG(), "Error assigning time", ex);
+							}
 						}
 					});
 		        }
