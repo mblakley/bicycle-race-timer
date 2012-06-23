@@ -1,29 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical"  
-    style="@style/Padded">
-
-    <TextView
-        android:id="@+id/txtNoRacesConfigured"
-        style="@style/Medium.Padded"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/lblViewingMode" />
-
-    <Button
-        android:id="@+id/btnAddNewRace"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/btnAddNewRace"
-        style="@style/Medium.Padded" />
-
-    <Button
-        android:id="@+id/btnPreviousRaces"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/btnPreviousRaces"
-        style="@style/Medium.Padded" />
-
-</LinearLayout>
