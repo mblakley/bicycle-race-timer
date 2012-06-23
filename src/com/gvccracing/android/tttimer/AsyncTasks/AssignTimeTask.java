@@ -96,6 +96,10 @@ public class AssignTimeTask extends AsyncTask<Long, Void, AssignResult> {
 					Intent stopAndHideTimer = new Intent();
 					stopAndHideTimer.setAction(Timer.STOP_AND_HIDE_TIMER_ACTION);
 					context.sendBroadcast(stopAndHideTimer);
+					
+					Intent raceIsFinished = new Intent();
+	        		raceIsFinished.setAction(Timer.RACE_IS_FINISHED_ACTION);
+	        		context.sendBroadcast(raceIsFinished);
 				}
 			}
 			

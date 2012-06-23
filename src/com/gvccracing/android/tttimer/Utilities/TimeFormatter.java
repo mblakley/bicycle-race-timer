@@ -19,7 +19,7 @@ public class TimeFormatter {
 	     		hours = "0"+hours;
 	     	}
 	     	if(hrs > 0 || showIfZero){
-	     		formattedTime += hours + ":";
+	     		formattedTime += hours;
 	     	}
  		} else if(showHours){
  			/* Convert the hours to String and format the String */
@@ -29,11 +29,12 @@ public class TimeFormatter {
 	     		hours = "0";
 	     	}
 	     	if(hrs > 0 || showIfZero){
-	     		formattedTime += hours + ":";
+	     		formattedTime += hours;
 	     	}
  		}
 
  		if(showTensHours || showHours || showMinutes){
+ 			formattedTime += ":";
 	 		/* Convert the minutes to String and format the String */
 	
 	     	mins = mins % 60;
@@ -45,11 +46,12 @@ public class TimeFormatter {
 	     		minutes = "0"+minutes;
 	     	}
 	     	if(hrs > 0 || mins > 0 || showIfZero){
-	     		formattedTime += minutes + ":";
+	     		formattedTime += minutes;
 	     	}
  		}
      	
  		if(showTensHours || showHours || showMinutes || showSeconds){
+ 			formattedTime += ":";
 	 		/* Convert the seconds to String
 	 		 * and format to ensure it has
 	 		 * a leading zero when required
@@ -62,10 +64,11 @@ public class TimeFormatter {
 	     	if(secs <10 && secs > 0){
 	     		seconds = "0"+seconds;
 	     	}
-     		formattedTime += seconds + ".";
+     		formattedTime += seconds;
  		}
 
 		if(showThousandths){
+ 			formattedTime += ".";
 	     	String milliseconds = String.valueOf((long)timeInMillseconds);
 	     	if(milliseconds.length()==2){
 	     		milliseconds = "0"+milliseconds;
@@ -77,6 +80,7 @@ public class TimeFormatter {
 
 	     	formattedTime += milliseconds;
 		} else if(showHundredths){
+ 			formattedTime += ".";
 			String milliseconds = String.valueOf((long)timeInMillseconds);
 	     	if(milliseconds.length()==2){
 	     		milliseconds = "0"+milliseconds;
@@ -88,6 +92,7 @@ public class TimeFormatter {
 			
 	     	formattedTime += milliseconds;
 		} else if(showTenths){
+ 			formattedTime += ".";
 			String milliseconds = String.valueOf((long)timeInMillseconds);
 			if(milliseconds.length()==2){
 	     		milliseconds = "0"+milliseconds;
