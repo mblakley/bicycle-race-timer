@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical" >
+
+        <TextView
+            android:id="@+id/lblDate"
+            style="@style/Medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Date" />
+
+        <TextView
+            android:id="@+id/raceDate"
+            style="@style/Medium.Padded"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical" >
+
+        <TextView
+            android:id="@+id/lblCourse"
+            style="@style/Medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Course" />
+
+        <TextView
+            android:id="@+id/raceCourseName"
+            style="@style/Medium.Padded"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout4"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical" >
+
+        <TextView
+            android:id="@+id/lblRaceType"
+            style="@style/Medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/lblRaceType" />
+
+        <TextView
+            android:id="@+id/raceType"
+            style="@style/Medium.Padded"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+    
+    <LinearLayout
+        android:id="@+id/linearLayout5"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/lblStartInterval"
+            style="@style/Medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/lblStartInterval"
+             />
+
+        <TextView
+            android:id="@+id/raceStartInterval"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Medium.Padded"
+            android:text="" />
+        
+        <TextView
+            android:id="@+id/startIntervalUnit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Medium"
+            android:text="sec" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout3"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/lblDistance"
+            style="@style/Medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/lblDistance"
+             />
+
+        <TextView
+            android:id="@+id/raceDistance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Medium.Padded"
+            android:text="" />
+        
+        <TextView
+            android:id="@+id/distanceUnit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Medium"
+            android:text="mi" />
+
+    </LinearLayout>
+    
+    <LinearLayout
+        android:id="@+id/linearLayout6"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical">
+        
+        <TextView
+            android:id="@+id/lblCourseRecord"
+            style="@style/Medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/lblCourseRecord"
+             />
+
+        <TextView
+            android:id="@+id/courseRecord"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Medium.Padded"
+            android:text="" />
+    </LinearLayout>
+    
+    <LinearLayout
+        android:id="@+id/llRaceLaps"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:visibility="gone">
+        
+        <TextView
+            android:id="@+id/lblLaps"
+            style="@style/Medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/lblLaps" />
+
+        <TextView
+            android:id="@+id/raceLaps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Medium.Padded"
+            android:text="" />
+    </LinearLayout>
+    
+    <LinearLayout
+        android:id="@+id/linearLayout7"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="bottom|right"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/btnMarshalLocations"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Medium"
+            android:text="@string/MarshalLocations" />
+
+        <Button
+            android:id="@+id/btnEditRace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Medium"
+            android:text="@string/EditRace"
+            android:visibility="gone" />
+    </LinearLayout>
+    
+    <LinearLayout
+        android:id="@+id/linearLayout8"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="bottom|right"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/btnPreviousResults"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Medium"
+            android:text="@string/btnPreviousRaces" />  
+            
+        <Button
+            android:id="@+id/btnRecalculateResults"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Medium"
+            android:text="Recalculate Results"
+            android:visibility="gone" />
+    </LinearLayout>
+
+</LinearLayout>

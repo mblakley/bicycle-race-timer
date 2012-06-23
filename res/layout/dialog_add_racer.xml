@@ -1,0 +1,85 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/AddRacerID"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    style="@style/Padded" >
+
+    <TextView 
+        android:layout_height="wrap_content" 
+        android:id="@+id/lblFirstName" 
+        android:layout_width="wrap_content" 
+        android:layout_gravity="top" 
+        android:text="@string/txtFirstName"
+        style="@style/Medium"/>
+    
+    <EditText android:layout_height="wrap_content" 
+        android:id="@+id/txtFirstName" 
+        android:layout_gravity="fill_vertical" 
+        android:layout_width="fill_parent" 
+        style="@style/Medium.Padded" 
+        android:inputType="textCapWords"/>
+	
+	<TextView 
+	    android:layout_height="wrap_content" 
+	    android:id="@+id/lblLastName" 
+	    android:layout_width="wrap_content" 
+	    android:layout_gravity="top" 
+	    android:text="@string/txtLastName"
+	    style="@style/Medium" />
+	
+    <EditText android:layout_height="wrap_content" 
+        android:id="@+id/txtLastName" 
+        android:layout_gravity="fill_vertical" 
+        android:layout_width="fill_parent" 
+        style="@style/Medium.Padded" 
+        android:inputType="textCapWords"/>
+    
+    <TextView
+        android:id="@+id/lblCategory"
+        android:layout_width="wrap_content"
+        android:layout_gravity="top" 
+        android:layout_height="wrap_content"
+        android:text="@string/Category"
+        style="@style/Medium" />
+    <Spinner
+        android:id="@+id/spinnerCategory"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="fill_vertical" />
+
+    <TextView 
+        android:layout_height="wrap_content" 
+        android:id="@+id/lblUSACNumber" 
+        android:layout_width="wrap_content" 
+        android:layout_gravity="top" 
+        android:text="@string/lblUSACNumber" 
+        style="@style/Medium" />
+    
+    <EditText 
+        android:layout_height="wrap_content" 
+        android:id="@+id/txtUSACNumber" 
+        android:layout_gravity="fill_vertical" 
+        android:layout_width="fill_parent" 
+        style="@style/Medium.Padded" 
+        android:inputType="number" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:id="@+id/btnAddNewRacer"
+            style="@style/Medium.Padded"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:text="@string/btnAddNewRacer" />
+
+        <Button
+            android:id="@+id/btnCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:text="@string/btnCancel" />
+
+    </LinearLayout>
+</LinearLayout>

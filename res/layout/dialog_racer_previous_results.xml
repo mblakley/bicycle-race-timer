@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    style="@style/Padded" >
+
+    <TextView
+        android:id="@+id/txtRacerName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textStyle="bold"
+        style="@style/Medium" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+    	android:gravity="center_vertical" >
+
+        <TextView
+            android:id="@+id/lblCategory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/lblCategory"
+        	style="@style/Small" />
+
+        <TextView
+            android:id="@+id/txtRaceCategory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+        	style="@style/Medium.Padded" />
+
+    </LinearLayout>
+    
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+    	android:gravity="center_vertical" >
+
+        <TextView
+            android:id="@+id/lblCurrentResult"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/lblCurrentResult"
+        	style="@style/Small" />
+
+        <TextView
+            android:id="@+id/txtCurrentResult"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/defaultTime"
+        	style="@style/Medium.Padded" />
+
+    </LinearLayout>
+    
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+    	android:gravity="center_vertical" >
+
+        <TextView
+            android:id="@+id/lblPersonalBest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/lblPersonalBest"
+        	style="@style/Small" />
+
+        <TextView
+            android:id="@+id/txtPersonalBest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/defaultTime"
+        	style="@style/Medium.Padded" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+    	android:gravity="center_vertical" >
+
+        <TextView
+            android:id="@+id/lblPreviousResults"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/lblPreviousResults"
+        	style="@style/Medium" />
+		<ListView
+		    android:id="@+id/lvResults"
+		    android:layout_width="fill_parent"
+		    android:layout_height="150dp" />
+
+    	<Button
+	        android:id="@+id/btnBack"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="Back" />
+    </LinearLayout>
+
+</LinearLayout>

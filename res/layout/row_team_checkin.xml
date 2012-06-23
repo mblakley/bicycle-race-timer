@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:stretchColumns="0" >
+	<TableRow>
+
+		<LinearLayout
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:width="0dp"
+            android:layout_weight="4"
+		    android:orientation="vertical" >
+		    <TextView
+	            android:id="@+id/lblTeamName"
+	    		android:layout_width="fill_parent"
+	    		android:layout_height="wrap_content"
+	            android:width="0dp"
+	            android:gravity="left"
+	            android:singleLine="true"
+	            style="@style/Medium" />
+
+	        <TextView
+	            android:id="@+id/lblTeamMembers"
+	            android:gravity="left"
+	            android:width="0dp"
+	    		android:layout_width="fill_parent"
+	    		android:layout_height="wrap_content"
+	            style="@style/Small.Padded" />"
+		</LinearLayout>
+
+        <com.gvccracing.android.tttimer.Controls.ButtonTeamCheckIn
+            android:id="@+id/btnTeamCheckIn"
+            android:text="@string/CheckIn"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_width="wrap_content"
+            android:layout_weight="2"
+            style="@style/Medium" />
+	</TableRow>
+</TableLayout>
