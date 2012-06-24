@@ -33,8 +33,7 @@
         <Spinner
             android:id="@+id/spinnerRaceType"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 
@@ -54,8 +53,7 @@
         <Spinner
             android:id="@+id/spinnerRaceLocation"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 
@@ -74,8 +72,7 @@
         <Spinner
             android:id="@+id/spinnerStartInterval"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
     
