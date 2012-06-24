@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -20,12 +21,13 @@ public class AdminAuthView extends BaseDialog implements View.OnClickListener {
 	
 	private Button btnSubmit;
 	private Button btnCancel;
+	private EditText txtPassword;
 	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.dialog_admin_auth, container, false);
 		TextView titleView = (TextView) getDialog().findViewById(android.R.id.title);
-		titleView.setText(R.string.AppSettings);
+		titleView.setText(R.string.AdminAuth);
 		titleView.setTextAppearance(getActivity(), R.style.Large);
 
 		btnSubmit = (Button) v.findViewById(R.id.btnSubmit);
@@ -33,6 +35,16 @@ public class AdminAuthView extends BaseDialog implements View.OnClickListener {
 
 		btnCancel = (Button) v.findViewById(R.id.btnCancel);
 		btnCancel.setOnClickListener(this);
+		
+		txtPassword = (EditText) v.findViewById(R.id.txtPassword);
+		
+		txtPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+		    public void onFocusChange(View v, boolean hasFocus) {
+		        if (hasFocus) {
+		            getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+		        }
+		    }
+		});
 		
 		return v;
 	}
@@ -57,7 +69,6 @@ public class AdminAuthView extends BaseDialog implements View.OnClickListener {
 			if (v == btnCancel){
 				dismiss();
 			}else if(v == btnSubmit){
-				EditText txtPassword = (EditText) getView().findViewById(R.id.editText1);
 				String password = txtPassword.getText().toString();
 				if(password.equals("gvccracing")){
 					AppSettings.Update(getActivity(), AppSettings.AppSetting_AdminMode_Name, Boolean.toString(true), true);
