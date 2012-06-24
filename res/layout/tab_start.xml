@@ -99,7 +99,7 @@
 			    android:text="@string/startText"  
 			    android:id="@+id/btnStartTimer"
 	            style="@style/Medium.Padded"
-	            android:enabled="false"/>  	
+	            android:state_enabled="false"/>  	
 		    <Button
 		        android:id="@+id/resetButton"
 		        android:layout_width="fill_parent"
@@ -109,7 +109,7 @@
 		        android:layout_weight="0.5"
 		        android:text="@string/resetText"
 	            style="@style/Medium.Padded"
-	            android:enabled="false" />
+	            android:state_enabled="false" />
 		</LinearLayout>
 	</LinearLayout>
 

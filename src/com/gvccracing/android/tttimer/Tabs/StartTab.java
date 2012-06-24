@@ -238,8 +238,14 @@ public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 		    ((Button)getView().findViewById(R.id.btnStartTimer)).setVisibility(View.VISIBLE);
 		    ((Button)getView().findViewById(R.id.resetButton)).setVisibility(View.VISIBLE);
 		    ((Button)getView().findViewById(R.id.stopButton)).setVisibility(View.GONE);
-		    ((Button)getView().findViewById(R.id.btnStartTimer)).setEnabled(true);
-		    ((Button)getView().findViewById(R.id.resetButton)).setEnabled(true);
+		    
+		    if(startOrderCA != null && startOrderCA.getCursor() != null && startOrderCA.getCursor().getCount() > 0){
+			    ((Button)getView().findViewById(R.id.btnStartTimer)).setEnabled(true);
+			    ((Button)getView().findViewById(R.id.resetButton)).setEnabled(true);
+		    } else{
+		    	((Button)getView().findViewById(R.id.btnStartTimer)).setEnabled(false);
+			    ((Button)getView().findViewById(R.id.resetButton)).setEnabled(false);
+		    }
 		}
 	}
 	

@@ -87,6 +87,8 @@ public class FinishTab extends BaseTab implements View.OnClickListener,	LoaderMa
 
 		btnRacerFinished = (Button) view.findViewById(R.id.btnRacerFinished);
 		btnRacerFinished.setOnClickListener(this);
+		
+		btnRacerFinished.setEnabled(false);
 
 		view.setKeepScreenOn(true);
 

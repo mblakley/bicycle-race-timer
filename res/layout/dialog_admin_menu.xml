@@ -3,20 +3,22 @@
     android:id="@+id/AdminMenuID"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
-
+    android:orientation="vertical"
+    style="@style/Padded" >
     <Button
         android:id="@+id/btnAddLocation"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:onClick="btnAddLocationAdminClick"
-        android:text="@string/AddLocation" />
-
+        android:text="@string/AddLocation"
+        style="@style/Medium.Padded" />
+
     <Button
         android:id="@+id/btnAddRace"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:onClick="btnAddRace"
-        android:text="@string/AddRace" />
+        android:text="@string/AddRace"
+        style="@style/Medium.Padded" />
 
 </LinearLayout>

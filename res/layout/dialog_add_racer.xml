@@ -35,19 +35,6 @@
         style="@style/Medium.Padded" 
         android:inputType="textCapWords"/>
     
-    <TextView
-        android:id="@+id/lblCategory"
-        android:layout_width="wrap_content"
-        android:layout_gravity="top" 
-        android:layout_height="wrap_content"
-        android:text="@string/Category"
-        style="@style/Medium" />
-    <Spinner
-        android:id="@+id/spinnerCategory"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="fill_vertical" />
-
     <TextView 
         android:layout_height="wrap_content" 
         android:id="@+id/lblUSACNumber" 
@@ -62,7 +49,21 @@
         android:layout_gravity="fill_vertical" 
         android:layout_width="fill_parent" 
         style="@style/Medium.Padded" 
-        android:inputType="number" />
+        android:inputType="number" />
+    <TextView
+        android:id="@+id/lblCategory"
+        android:layout_width="wrap_content"
+        android:layout_gravity="top" 
+        android:layout_height="wrap_content"
+        android:text="@string/Category"
+        style="@style/Medium" />
+    
+    <Spinner
+        android:id="@+id/spinnerCategory"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="fill_vertical"
+        style="@style/Medium" />
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -70,15 +71,16 @@
 
         <Button
             android:id="@+id/btnAddNewRacer"
-            style="@style/Medium.Padded"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
+        	style="@style/Medium.Padded" 
             android:text="@string/btnAddNewRacer" />
 
         <Button
             android:id="@+id/btnCancel"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
+        	style="@style/Medium.Padded" 
             android:text="@string/btnCancel" />
 
     </LinearLayout>

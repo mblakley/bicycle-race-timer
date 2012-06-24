@@ -17,7 +17,7 @@ public abstract class BaseDialog extends DialogFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		setStyle(DialogFragment.STYLE_NORMAL, R.style.CustomDialogTheme);
+		setStyle(R.style.Padded, R.style.CustomDialogTheme);
 	}
 
 	@Override

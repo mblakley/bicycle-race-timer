@@ -183,4 +183,5 @@
 	<string name="HeaderPoints"><u>Pts</u></string>
 	<string name="Cancel">Cancel</string>
 	<string name="Select">Select</string>
+	<string name="AdminAuth">Administrator Authorization</string>
 </resources>

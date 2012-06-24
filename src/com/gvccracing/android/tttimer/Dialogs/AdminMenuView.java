@@ -21,7 +21,7 @@ public class AdminMenuView extends BaseDialog implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.dialog_admin_menu, container, false);
 		TextView titleView = (TextView) getDialog().findViewById(android.R.id.title);
-		titleView.setText(R.string.AppSettings);
+		titleView.setText(R.string.AdminMenu);
 		titleView.setTextAppearance(getActivity(), R.style.Large);
 
 		btnAddLocation = (Button) v.findViewById(R.id.btnAddLocation);

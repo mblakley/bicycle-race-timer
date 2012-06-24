@@ -20,6 +20,7 @@
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:text="Racer Upgraded"
+        	android:layout_gravity="center_horizontal"
             android:layout_weight="0.3" />
 
         <Button
@@ -27,6 +28,7 @@
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:text="Cancel"
+        	android:layout_gravity="center_horizontal"
             android:layout_weight="0.3" />
 
         <Button
@@ -34,6 +36,7 @@
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:text="Incorrect Category"
+        	android:layout_gravity="center_horizontal"
             android:layout_weight="0.3" />
 
     </LinearLayout>
