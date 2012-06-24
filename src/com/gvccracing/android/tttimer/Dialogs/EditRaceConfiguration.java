@@ -40,9 +40,14 @@ public class EditRaceConfiguration extends AddRaceView implements View.OnClickLi
     	
     	btnAddNewRace.setText(R.string.SaveChanges);
     	
-		this.getLoaderManager().initLoader(RACE_INFO_LOADER, null, this);
-    	
 		return v;
+    }
+    
+    @Override
+    public void onResume() {
+    	super.onResume();
+
+		this.getLoaderManager().initLoader(RACE_INFO_LOADER, null, this);
     }
     
     @Override

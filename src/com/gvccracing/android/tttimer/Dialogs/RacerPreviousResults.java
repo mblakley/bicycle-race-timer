@@ -68,9 +68,6 @@ public class RacerPreviousResults extends BaseDialog implements View.OnClickList
 		racerCategory = (TextView) v.findViewById(R.id.txtRaceCategory);
 		currentRaceResult = (TextView) v.findViewById(R.id.txtCurrentResult);
 		racerName = (TextView) v.findViewById(R.id.txtRacerName);
-
-        // Initialize the cursor loader for the race results list
-        getActivity().getSupportLoaderManager().initLoader(ALL_RACE_RESULTS_LOADER, null, this);
 		
 		return v;
 	}

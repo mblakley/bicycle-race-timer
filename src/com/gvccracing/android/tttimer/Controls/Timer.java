@@ -10,6 +10,7 @@ import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.RaceLapsInfoView
 import com.gvccracing.android.tttimer.DataAccess.RaceLapsCP.RaceLaps;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 import com.gvccracing.android.tttimer.DataAccess.UnassignedTimesCP.UnassignedTimes;
+import com.gvccracing.android.tttimer.Utilities.Enums.RaceType;
 import com.gvccracing.android.tttimer.Utilities.TimeFormatter;
 
 import android.content.BroadcastReceiver;
@@ -574,7 +575,7 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
 						raceTypeID = cursor.getLong(cursor.getColumnIndex(Race.RaceType));
 						totalRaceLaps = cursor.getLong(cursor.getColumnIndex(Race.NumLaps));
 						
-						if(raceTypeID == 1){
+						if(raceTypeID == RaceType.TeamTimeTrial.ID()){
 							lblLaps.setVisibility(View.VISIBLE);
 							if( currentLapsLoader == null){
 								currentLapsLoader = ((FragmentActivity) getContext()).getSupportLoaderManager().initLoader(CURRENT_LAPS_LOADER, null, this);

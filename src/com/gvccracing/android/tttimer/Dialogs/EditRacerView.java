@@ -40,9 +40,15 @@ public class EditRacerView extends AddRacerView implements View.OnClickListener,
 
 		btnAddRacer.setText(getResources().getString(R.string.SaveChanges));
 		
-		this.getLoaderManager().initLoader(RACER_INFO_LOADER, null, this);
 		
 		return v;
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		this.getLoaderManager().initLoader(RACER_INFO_LOADER, null, this);		
 	}
 	
 	public void onClick(View v) { 

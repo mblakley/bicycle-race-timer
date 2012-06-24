@@ -56,9 +56,6 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 		
 		raceLocation = (Spinner) v.findViewById(R.id.spinnerRaceLocation);
 		
-		// Initialize the cursor loader for the races list
-		this.getLoaderManager().initLoader(RACE_LOCATIONS_LOADER, null, this);
-		
 		// TODO I tried to put this in the loader, but it won't show a dialog from inside the onLoadFinished, so figure out how to do this the right way		
 		String[] fieldsToRetrieve = new String[]{RaceLocation._ID, RaceLocation.CourseName};
 		String selection = null;
@@ -110,6 +107,13 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
         startInterval.setAdapter(startIntervalAdapter);
 		
 		return v;
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		// Initialize the cursor loader for the races list
+		this.getLoaderManager().initLoader(RACE_LOCATIONS_LOADER, null, this);
 	}
 	
 	protected long GetRaceStartInterval(){
