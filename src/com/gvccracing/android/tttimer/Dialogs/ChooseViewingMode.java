@@ -33,6 +33,12 @@ public class ChooseViewingMode extends BaseDialog implements View.OnClickListene
 	
 		return v;
 	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		dismiss();
+	}
 
 	public void onClick(View v) { 
 		try{

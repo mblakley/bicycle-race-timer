@@ -106,9 +106,6 @@ public class TTTimerTabsActivity extends FragmentActivity {
 		
 		AppSettings.Update(this, AppSettings.AppSetting_AdminMode_Name, Boolean.toString(false), true);
 		
-		UpdateRaceState();
-		
-		//theIntent = this.registerReceiver(mActionReceiver, actionFilter);
 		AddActionFilter(AddRaceView.RACE_ADDED_ACTION);
 		AddActionFilter(Timer.RACE_IS_FINISHED_ACTION);
 		AddActionFilter(TTTimerTabsActivity.CHANGE_VISIBLE_TAB);
@@ -117,6 +114,8 @@ public class TTTimerTabsActivity extends FragmentActivity {
         // Register for broadcasts when a tab is changed
         this.registerReceiver(mActionReceiver, actionFilter);
 		timer.RegisterReceiver();
+		
+		UpdateRaceState();
 	}
 	
 	@Override 

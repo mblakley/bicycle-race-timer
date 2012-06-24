@@ -186,9 +186,9 @@ public class ResultsTab extends BaseTab implements LoaderManager.LoaderCallbacks
 						public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
 								int position, long id) {
 							if(Boolean.parseBoolean(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_AdminMode_Name, "false"))){
-//								EditRaceResultView editRaceResultDialog = new EditRaceResultView(id);
+//								EditLappedRaceResultView editRaceResultDialog = new EditLappedRaceResultView(id);
 //								FragmentManager fm = getActivity().getSupportFragmentManager();
-//								editRaceResultDialog.show(fm, EditRaceResultView.LOG_TAG);
+//								editRaceResultDialog.show(fm, EditLappedRaceResultView.LOG_TAG);
 							}
 							return false;
 						}

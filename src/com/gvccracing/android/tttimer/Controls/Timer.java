@@ -64,7 +64,15 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
 	/**
 	 * This is the key that contains the new start time for the timer
 	 */
-	public static final String START_TIME = "StartTime";
+	public static final String START_TIME = "StartTime";	
+	/**
+	 * This is the key that contains the message to show under the timer
+	 */
+	public static final String MESSAGE = "Message";
+	/**
+	 * This is the key that contains the duration to show the message
+	 */
+	public static final String DURATION = "Duration";
 	/**
      * This action is fired when the timer is stopped
      */
@@ -73,6 +81,10 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
      * This action is fired when the race is finished
      */
 	public static final String RACE_IS_FINISHED_ACTION = "com.gvccracing.android.tttimer.RACE_IS_FINISHED";
+	/**
+     * This action is fired when a message should be shown
+     */
+	public static final String SHOW_MESSAGE_ACTION = "com.gvccracing.android.tttimer.SHOW_MESSAGE_ACTION";
 	/**
 	 * The ID of the on deck loader that we'll use to keep track of who to start next
 	 */
@@ -137,6 +149,11 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
 	 * The label that will show the number of laps for lapped races
 	 */
 	private TextView lblLaps;
+	
+	/**
+	 * The label that will show a message for a given duration
+	 */
+	private TextView lblMessage;
 	
 	/**
 	 * The linear layout that holds the toast text
@@ -212,7 +229,12 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
         		stopTimer();
         		// hide the timer
         		Timer.this.setVisibility(View.GONE);
-        	}
+        	} else if(intent.getAction().equals(SHOW_MESSAGE_ACTION)) {	// If the timer needs to be started
+        		// Set the start time to the time included in the bundle, since there might have been a delay before receiving this intent
+        		String message = intent.getStringExtra(MESSAGE);
+        		Long duration = intent.getLongExtra(DURATION, 2300);
+        		showMessage(message, duration);
+        	} 
         }
     };
 
@@ -227,6 +249,7 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
     	toast_text = (TextView) findViewById(R.id.lblTimerToast);	
     	
     	lblLaps = (TextView) findViewById(R.id.lblLaps);
+    	lblMessage = (TextView) findViewById(R.id.lblMessage);
 
 		llToast = (LinearLayout) findViewById(R.id.llToast); 
 		
@@ -243,6 +266,7 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
 		AddActionFilter(STOP_TIMER_ACTION);
 		AddActionFilter(RESET_TIMER_ACTION);
 		AddActionFilter(STOP_AND_HIDE_TIMER_ACTION);
+		AddActionFilter(SHOW_MESSAGE_ACTION);
 
         // Register for broadcasts when a tab is changed
 		getContext().registerReceiver(mActionReceiver, actionFilter);
@@ -296,6 +320,17 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
 		Uri fullUri = Uri.withAppendedPath(Race.CONTENT_URI, Long.toString(race_ID));
 		getContext().getContentResolver().update(fullUri, content, null, null);
     }
+    
+    private long timerMessageEndTime;
+    private boolean showingMessage = false;
+    
+    public void showMessage(String message, long duration){
+    	timerMessageEndTime = System.currentTimeMillis() + duration;
+    	lblMessage.setText(message);
+    	// Show the message
+    	lblMessage.setVisibility(View.VISIBLE);
+    	showingMessage = true;
+    }
      
     private long toastTime = 0;
     private long toastVisibilityTime = 900;
@@ -316,6 +351,12 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
 		if(showingToast && (updatePerformedTime > toastEndTime)){
 			llToast.setVisibility(View.INVISIBLE);
 			showingToast = false;
+		}
+		
+		if(showingMessage && (updatePerformedTime > timerMessageEndTime)){
+			lblMessage.setText("");
+			lblMessage.setVisibility(View.INVISIBLE);
+			showingMessage = false;
 		}
  		
 		if(startTimeOffsetOnDeck >= 0 && 
