@@ -185,13 +185,13 @@ public class TTTimerTabsActivity extends FragmentActivity {
 			AppSettings.Update(this, AppSettings.AppSetting_StartInterval_Name, Long.toString(startInterval), true);
 			
 		    // Figure out if a race is currently going on.  
-	        if(RaceIsInProgress(theRace)) {
+	        if(IsRaceInProgress(theRace)) {
 	        	// Show the timer
 	        	timer.setVisibility(View.VISIBLE);  
 	        	// Since races are started and tracked only locally, if a race is still going, it was started on this device
 		        // If the race already has a raceStartTime, and not all racers are finished, set the startTime variable to raceStartTime and get the timer running
 	        	UpdateFromRaceInProgress(theRace);
-	        } else if (RaceIsFinished(theRace)) {	        
+	        } else if (IsRaceFinished(theRace)) {	        
 	        	timer.setVisibility(View.GONE); 
 	        	// Find a finished race on the current date
 	        	SetupFinishedRace();
@@ -210,7 +210,7 @@ public class TTTimerTabsActivity extends FragmentActivity {
 				Long startInterval = theRace.getLong(theRace.getColumnIndex(Race.StartInterval));
 				AppSettings.Update(this, AppSettings.AppSetting_StartInterval_Name, Long.toString(startInterval), true);
 				
-				if (RaceIsAvailable(theRace)){ 
+				if (IsRaceAvailable(theRace)){ 
 		        	SetupAvailableRace();
 		        }
 			}
@@ -221,7 +221,7 @@ public class TTTimerTabsActivity extends FragmentActivity {
 		}
 	}
 	
-	private boolean RaceIsInProgress(Cursor theRace){
+	private boolean IsRaceInProgress(Cursor theRace){
 		boolean foundRaceInProgress = false;
 		try{			
 			if(theRace.getCount() > 0 && theRace.isNull(theRace.getColumnIndex(RaceResults.EndTime)) && 
@@ -248,7 +248,7 @@ public class TTTimerTabsActivity extends FragmentActivity {
 		return foundRaceInProgress;
 	}
 	
-	private boolean RaceIsAvailable(Cursor theRace){
+	private boolean IsRaceAvailable(Cursor theRace){
 		boolean foundAvailableRace = false;
 		try{						
 			if(theRace.getCount() > 0 && !theRace.isNull(theRace.getColumnIndex(Race.RaceDate)) && theRace.isNull(theRace.getColumnIndex(Race.RaceStartTime))){	
@@ -260,7 +260,7 @@ public class TTTimerTabsActivity extends FragmentActivity {
 		return foundAvailableRace;
 	}
 	
-	private boolean RaceIsFinished(Cursor theRace){
+	private boolean IsRaceFinished(Cursor theRace){
 		boolean foundFinishedRace = false;
 		try{									
 			if(theRace.getCount() > 0 && !theRace.isNull(theRace.getColumnIndex(Race.RaceDate)) &&  

@@ -1,14 +1,11 @@
 package com.gvccracing.android.tttimer.AsyncTasks;
 
-import java.util.Calendar;
-
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 
 import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
-import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewExclusive;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
-import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
 import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
 
 public class GhostCheckInHandler extends CheckInHandler {
@@ -23,13 +20,7 @@ public class GhostCheckInHandler extends CheckInHandler {
 		Long teamInfo_ID = params[1];
 		long numSpots = params[2];
 
-		String[] projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID, Racer.LastName, Racer.FirstName, RaceResults.StartOrder, RaceResults.StartTimeOffset};
-		String selection = RacerClubInfo.Year + "= ? AND " + RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
-		String[] selectionArgs = new String[]{ Integer.toString(Calendar.getInstance().get(Calendar.YEAR))};
-		String sortOrder = RaceResults.StartOrder;
-		
-     	// StartOrder (count of current check-ins + 1)
-     	int nextOrder = CheckInViewExclusive.ReadCount(context, projection, selection, selectionArgs, sortOrder) + 1;
+     	int nextOrder = GetNextOrder();
 
      	long race_ID = Long.parseLong(AppSettings.ReadValue(context, AppSettings.AppSetting_RaceID_Name, "-1"));
      	long startInterval = Long.parseLong(AppSettings.ReadValue(context, AppSettings.AppSetting_StartInterval_Name, "60"));
@@ -40,6 +31,27 @@ public class GhostCheckInHandler extends CheckInHandler {
      	}
      			
 		return result.toString();
+	}
+	
+	public int GetNextOrder(){
+		String[] projection = new String[]{"MAX(" + RaceResults.getTableName() + "." + RaceResults.StartOrder + ") as MaxStartOrder"};
+		String selection = RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
+		String[] selectionArgs = null;
+		String sortOrder = null;
+		
+     	// StartOrder (count of current check-ins + 1)
+		Cursor maxStartOrder = RaceResults.Read(context, projection, selection, selectionArgs, sortOrder); 
+		int nextOrder = -1;
+		if(maxStartOrder != null && maxStartOrder.getCount() > 0){
+			maxStartOrder.moveToFirst();
+			nextOrder = maxStartOrder.getInt(maxStartOrder.getColumnIndex("MaxStartOrder"));
+		}
+		if(maxStartOrder != null){
+			maxStartOrder.close();
+			maxStartOrder = null;
+		}
+		
+		return nextOrder + 1;		
 	}
 
 	@Override

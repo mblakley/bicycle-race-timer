@@ -118,6 +118,10 @@ public class AssignLapTimeTask extends AsyncTask<Long, Void, AssignResult> {
 				
 						// Update the race result
 						RaceResults.Update(context, content, RaceResults._ID + "= ?", new String[]{Long.toString(raceResult_ID)});
+						
+						// Calculate Category Placing, Overall Placing, Points
+				    	Calculations.CalculateCategoryPlacings(context, race_ID);
+				    	Calculations.CalculateOverallPlacings(context, race_ID); 
 					}
 				}
 
@@ -151,11 +155,7 @@ public class AssignLapTimeTask extends AsyncTask<Long, Void, AssignResult> {
 					Intent raceIsFinished = new Intent();
 	        		raceIsFinished.setAction(Timer.RACE_IS_FINISHED_ACTION);
 	        		context.sendBroadcast(raceIsFinished);
-				}
-				
-				// Calculate Category Placing, Overall Placing, Points
-		    	Calculations.CalculateCategoryPlacings(context, race_ID);
-		    	Calculations.CalculateOverallPlacings(context, race_ID);  
+				} 
 			} else{
 				result.message = "No racers have started yet, so the unassigned time would never be used";
 

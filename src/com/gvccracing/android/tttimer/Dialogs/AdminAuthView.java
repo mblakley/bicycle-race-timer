@@ -38,14 +38,6 @@ public class AdminAuthView extends BaseDialog implements View.OnClickListener {
 		
 		txtPassword = (EditText) v.findViewById(R.id.txtPassword);
 		
-		txtPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-		    public void onFocusChange(View v, boolean hasFocus) {
-		        if (hasFocus) {
-		            getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-		        }
-		    }
-		});
-		
 		return v;
 	}
 	
@@ -56,6 +48,14 @@ public class AdminAuthView extends BaseDialog implements View.OnClickListener {
 			GoToAdminMenu();
 			this.dismiss();
 		}		
+
+		txtPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+		    public void onFocusChange(View v, boolean hasFocus) {
+		        if (hasFocus) {
+		            getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+		        }
+		    }
+		});
 	}
 	
 	private void GoToAdminMenu() {
