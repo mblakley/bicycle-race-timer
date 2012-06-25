@@ -10,7 +10,9 @@ import android.util.Log;
 import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewExclusive;
 import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.RaceResultsTeamOrRacerViewCP.RaceResultsTeamOrRacerView;
 import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
+import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
 
 public class Calculations {
 	public static String LOG_TAG(){
@@ -24,10 +26,12 @@ public class Calculations {
 		try{
 			Log.v(LOG_TAG(), "CalculateOverallPlacings");
 
-			Cursor overallResults = context.getContentResolver().query(RaceResults.CONTENT_URI, new String[] {RaceResults._ID}, 
+			Cursor overallResults = context.getContentResolver().query(RaceResultsTeamOrRacerView.CONTENT_URI, new String[] {RaceResults.getTableName() + "." + RaceResults._ID}, 
 																	RaceResults.Race_ID + "=?" + 
-																	" AND " + RaceResults.EndTime + " IS NOT NULL", 
-																	new String[]{Long.toString(race_ID)}, RaceResults.ElapsedTime);
+																	" AND " + RaceResults.EndTime + " IS NOT NULL" + 
+																	" AND (" + RacerClubInfo.Category + "!=?" +
+																	" OR " + TeamInfo.TeamCategory + "!=?)", 
+																	new String[]{Long.toString(race_ID), "G", "G"}, RaceResults.ElapsedTime);
 			// Get the total number of racers in this category
 			Integer totalRacers = overallResults.getCount();
 			// If there are racers in this category, need to update all racers placings and points

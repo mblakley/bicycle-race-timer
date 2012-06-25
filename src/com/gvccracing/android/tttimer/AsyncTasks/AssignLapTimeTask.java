@@ -15,6 +15,8 @@ import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
 import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
 import com.gvccracing.android.tttimer.DataAccess.RaceLapsCP.RaceLaps;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.RaceResultsTeamOrRacerViewCP.RaceResultsTeamOrRacerView;
+import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
 import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
 import com.gvccracing.android.tttimer.DataAccess.UnassignedTimesCP.UnassignedTimes;
 import com.gvccracing.android.tttimer.Tabs.ResultsTab;
@@ -100,7 +102,7 @@ public class AssignLapTimeTask extends AsyncTask<Long, Void, AssignResult> {
 					Intent messageToShow = new Intent();
 					messageToShow.setAction(Timer.SHOW_MESSAGE_ACTION);
 					messageToShow.putExtra(Timer.MESSAGE, result.message);
-					messageToShow.putExtra(Timer.DURATION, 2300);
+					messageToShow.putExtra(Timer.DURATION, 2300l);
 					context.sendBroadcast(messageToShow);
 					
 					// We added a race lap, so if the total number of race laps for this raceResult equals the total number of laps in the race...
@@ -129,7 +131,7 @@ public class AssignLapTimeTask extends AsyncTask<Long, Void, AssignResult> {
 				context.getContentResolver().delete(UnassignedTimes.CONTENT_URI, UnassignedTimes._ID + "=?", new String[]{Long.toString(unassignedTime_ID)});
 				
 				// Figure out if he's the last finisher, and if so, stop the timer, hide it, and transition to the results screen
-				Cursor numUnfinished = RaceResults.Read(context, new String[]{RaceResults._ID}, RaceResults.Race_ID + "=? AND " + RaceResults.ElapsedTime + " IS NULL", new String[]{Long.toString(race_ID)}, null);
+				Cursor numUnfinished = RaceResultsTeamOrRacerView.Read(context, new String[]{RaceResults.getTableName() + "." + RaceResults._ID}, RaceResults.Race_ID + "=? AND " + RaceResults.ElapsedTime + " IS NULL AND (" + RacerClubInfo.Category + "!=? OR " + TeamInfo.TeamCategory + "!=?)", new String[]{Long.toString(race_ID), "G", "G"}, null);
 				result.numUnfinishedRacers = numUnfinished.getCount();
 				numUnfinished.close();
 				numUnfinished = null;
@@ -154,7 +156,7 @@ public class AssignLapTimeTask extends AsyncTask<Long, Void, AssignResult> {
 				Intent messageToShow = new Intent();
 				messageToShow.setAction(Timer.SHOW_MESSAGE_ACTION);
 				messageToShow.putExtra(Timer.MESSAGE, result.message);
-				messageToShow.putExtra(Timer.DURATION, 2300);
+				messageToShow.putExtra(Timer.DURATION, 2300l);
 				context.sendBroadcast(messageToShow);
 			}
 			

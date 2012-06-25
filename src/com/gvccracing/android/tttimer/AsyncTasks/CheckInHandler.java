@@ -14,7 +14,7 @@ import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
 
 public class CheckInHandler extends AsyncTask<Long, Void, String> {
 	
-	private Context context;
+	protected Context context;
 	
 	public CheckInHandler(Context c){
 		context = c;
@@ -22,7 +22,7 @@ public class CheckInHandler extends AsyncTask<Long, Void, String> {
 	
 	@Override
 	protected String doInBackground(Long... params) {			
-		long racerInfo_ID = params[0];
+		long racerClubInfo_ID = params[0];
 
 		String[] projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID, Racer.LastName, Racer.FirstName, RaceResults.StartOrder, RaceResults.StartTimeOffset};
 		String selection = RacerClubInfo.Year + "= ? AND " + RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
@@ -30,9 +30,18 @@ public class CheckInHandler extends AsyncTask<Long, Void, String> {
 		String sortOrder = RaceResults.StartOrder;
 		
      	// StartOrder (count of current check-ins + 1)
-     	int startOrder = CheckInViewExclusive.ReadCount(context, projection, selection, selectionArgs, sortOrder) + 1;//DBHelper.fetchNumberOfRaceCheckIns(race_ID) + 1;
-     	// StartTimeOffset (startInterval * (StartOrder - 1)) - Will be adjusted based on initial start time
-     	Long startInterval = Long.parseLong(AppSettings.ReadValue(context, AppSettings.AppSetting_StartInterval_Name, "60"));
+     	int startOrder = CheckInViewExclusive.ReadCount(context, projection, selection, selectionArgs, sortOrder) + 1;
+
+     	long race_ID = Long.parseLong(AppSettings.ReadValue(context, AppSettings.AppSetting_RaceID_Name, "-1"));
+     	long startInterval = Long.parseLong(AppSettings.ReadValue(context, AppSettings.AppSetting_StartInterval_Name, "60"));
+     	// Do the check in
+     	Uri result = CheckInRacer(racerClubInfo_ID, null, startOrder, startInterval, race_ID); 
+     			
+		return result.toString();
+	}
+	
+	protected Uri CheckInRacer(Long racerClubInfo_ID, Long teamInfo_ID, int startOrder, long startInterval, long race_ID){
+		// StartTimeOffset (startInterval * (StartOrder - 1)) - Will be adjusted based on initial start time
      	Long startTimeOffset = (startInterval * startOrder) * 1000l;
      	// Start Time (null, since we haven't started yet
      	Long startTime = null;
@@ -48,13 +57,8 @@ public class CheckInHandler extends AsyncTask<Long, Void, String> {
      	Integer points = 0;
      	// PrimePoints (default 0)
      	Integer primePoints = 0;
-     	// TeamInfo_ID (default null)
-     	Long teamInfo_ID = null;
-     	long race_ID = Long.parseLong(AppSettings.ReadValue(context, AppSettings.AppSetting_RaceID_Name, "-1"));
      	
-     	Uri result = RaceResults.Create(context, racerInfo_ID, race_ID, startOrder, startTimeOffset, startTime, endTime, elapsedTime, overallPlacing, categoryPlacing, points, primePoints, teamInfo_ID);
-     	
-		return result.toString();
+     	return RaceResults.Create(context, racerClubInfo_ID, race_ID, startOrder, startTimeOffset, startTime, endTime, elapsedTime, overallPlacing, categoryPlacing, points, primePoints, teamInfo_ID);
 	}
 
 	@Override

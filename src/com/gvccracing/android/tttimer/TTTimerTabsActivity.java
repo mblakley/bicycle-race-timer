@@ -369,7 +369,8 @@ public class TTTimerTabsActivity extends FragmentActivity {
         	} else if(intent.getAction().equals(TTTimerTabsActivity.CHANGE_VISIBLE_TAB)){
         		tabHost.setCurrentTabByTag(intent.getStringExtra(TTTimerTabsActivity.VISIBLE_TAB_TAG));
         	} else if(intent.getAction().equals(Timer.RACE_IS_FINISHED_ACTION)){
-        		SetupFinishedRace();
+				timer.CleanUpExtraUnassignedTimes();
+				SetupFinishedRace();
         	} else if(intent.getAction().equals(TTTimerTabsActivity.RACE_ID_CHANGED_ACTION)){
         		long raceID = Long.parseLong(intent.getStringExtra(RaceResults.Race_ID));
         		UpdatePreviousRaceState(raceID);

@@ -6,8 +6,6 @@ package com.gvccracing.android.tttimer.Tabs;
 import java.util.Calendar;
 
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.AsyncTasks.CheckInHandler;
-import com.gvccracing.android.tttimer.AsyncTasks.TeamCheckInHandler;
 import com.gvccracing.android.tttimer.CursorAdapters.CheckInCursorAdapter;
 import com.gvccracing.android.tttimer.CursorAdapters.StartOrderCursorAdapter;
 import com.gvccracing.android.tttimer.CursorAdapters.TeamCheckInCursorAdapter;
@@ -22,15 +20,14 @@ import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
 import com.gvccracing.android.tttimer.DataAccess.TeamCheckInViewCP.TeamCheckInViewExclusive;
 import com.gvccracing.android.tttimer.DataAccess.TeamCheckInViewCP.TeamCheckInViewInclusive;
 import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
+import com.gvccracing.android.tttimer.Dialogs.AddGhostRacerView;
 import com.gvccracing.android.tttimer.Dialogs.AddRacerView;
 import com.gvccracing.android.tttimer.Dialogs.AddTeamView;
-import com.gvccracing.android.tttimer.Dialogs.ChooseViewingMode;
 import com.gvccracing.android.tttimer.Dialogs.EditRacerView;
 import com.gvccracing.android.tttimer.Dialogs.EditTeamView;
 import com.gvccracing.android.tttimer.Dialogs.StartOrderActions;
 import com.gvccracing.android.tttimer.Utilities.RestartLoaderTextWatcher;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -74,6 +71,7 @@ public class CheckInTab extends BaseTab implements LoaderManager.LoaderCallbacks
 	private CursorAdapter startOrderCA;
 	
 	private Button btnAddRacer = null;
+	private Button btnAddGhostRacer = null;
 	private Button btnAddNewTeam = null;	
 	private EditText racerNameSearchText;
 	
@@ -87,23 +85,6 @@ public class CheckInTab extends BaseTab implements LoaderManager.LoaderCallbacks
 	private ListView startOrderList;
 	private ListView checkInList;
 	
-	 /* (non-Javadoc)
-	 * @see android.app.Activity#onCreate(android.os.Bundle)
-	 */
-	@Override 
-	public void onCreate(Bundle savedInstanceState) {
-		try{
-			super.onCreate(savedInstanceState);	        
-			
-//			AddActionFilter(AddRacerView.RACER_ADDED_ACTION);
-//			AddActionFilter(AddTeamView.TEAM_NAME_ADDED_ACTION);
-//			AddActionFilter(TTTimerTabsActivity.RACE_ID_CHANGED_ACTION);
-						
-		}catch(Exception ex){
-			Log.e(LOG_TAG(), "onCreate failed", ex);
-		}
-	}
-	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -114,6 +95,9 @@ public class CheckInTab extends BaseTab implements LoaderManager.LoaderCallbacks
 		
 		btnAddNewTeam = (Button) view.findViewById(R.id.btnAddNewTeam);
 		btnAddNewTeam.setOnClickListener(this);
+		
+		btnAddGhostRacer = (Button) view.findViewById(R.id.btnAddGhostRacer);
+		btnAddGhostRacer.setOnClickListener(this);
 		
         view.setKeepScreenOn(true);
         
@@ -176,34 +160,6 @@ public class CheckInTab extends BaseTab implements LoaderManager.LoaderCallbacks
 	protected String LOG_TAG() {
 		return CheckInTabSpecName;
 	}
-    
-    private void CheckInRacer(long racerInfo_ID) {
-     	// Start the async task to do the checkin
-		CheckInHandler task = new CheckInHandler(getActivity());
-		task.execute(new Long[] { racerInfo_ID });			
-    }
-    
-    private void CheckInTeam(long teamInfo_ID) {
-     	// Start the async task to do the checkin
-		TeamCheckInHandler task = new TeamCheckInHandler(getActivity());
-		task.execute(new Long[] { teamInfo_ID });			
-    }
-
-	@Override
-	protected void HandleAction(Intent intent) {
-		super.HandleAction(intent);
-		
-		if(intent.getAction().equals(AddRacerView.RACER_ADDED_ACTION)) {
-    		Bundle tabBundle = intent.getExtras();
-    		if(tabBundle.getBoolean(AddRacerView.CHECKIN_RACER_ACTION)){
-    			CheckInRacer(tabBundle.getLong(AddRacerView.RACER_ADDED_ACTION));
-    		}
-		} else if(intent.getAction().equals(AddTeamView.TEAM_NAME_ADDED_ACTION)){
-    		Bundle teamNameBundle = intent.getExtras();
-    		
-    		CheckInTeam(teamNameBundle.getLong(AddTeamView.TEAM_NAME_ADDED_ACTION));  
-    	} 
-	}
 	
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {	
 		Log.i(LOG_TAG(), "onCreateLoader start: id=" + Integer.toString(id));
@@ -228,8 +184,8 @@ public class CheckInTab extends BaseTab implements LoaderManager.LoaderCallbacks
 	    		});	
 				
 				projection = new String[]{RacerClubInfo.getTableName() + "." + RacerClubInfo._ID + " as _id", Racer.LastName, Racer.FirstName};
-				selection = RacerClubInfo.Year + "=? AND " + RacerClubInfo.Upgraded + "=?";
-				selectionArgs = new String[]{ Integer.toString(Calendar.getInstance().get(Calendar.YEAR)), Long.toString(0l)};
+				selection = RacerClubInfo.Year + "=? AND " + RacerClubInfo.Upgraded + "=? AND " + RacerClubInfo.Category + "!=?";
+				selectionArgs = new String[]{ Integer.toString(Calendar.getInstance().get(Calendar.YEAR)), Long.toString(0l), "G"};
 				sortOrder = Racer.LastName;
 				String racerNameText = racerNameSearchText.getText().toString();
 				if(!racerNameText.equals("")){
@@ -252,8 +208,8 @@ public class CheckInTab extends BaseTab implements LoaderManager.LoaderCallbacks
 	    		});
 				
 				projection = new String[]{TeamInfo.getTableName() + "." + TeamInfo._ID + " as _id", TeamInfo.TeamName, "group_concat(" + Racer.FirstName + "||' '||" + Racer.LastName + ", ',\n') as RacerNames"};
-				selection = TeamInfo.getTableName() + "." + TeamInfo.Year + "=? AND " + RacerClubInfo.Upgraded + "=?";
-				selectionArgs = new String[]{ Integer.toString(Calendar.getInstance().get(Calendar.YEAR)), Long.toString(0l) };
+				selection = TeamInfo.getTableName() + "." + TeamInfo.Year + "=? AND " + RacerClubInfo.Upgraded + "=? AND " + TeamInfo.TeamCategory + "!=?";
+				selectionArgs = new String[]{ Integer.toString(Calendar.getInstance().get(Calendar.YEAR)), Long.toString(0l), "G"};
 				sortOrder = TeamInfo.getTableName() + "." + TeamInfo.TeamName;
 				loader = new CursorLoader(getActivity(), Uri.withAppendedPath(TeamCheckInViewInclusive.CONTENT_URI, "group by " + TeamInfo.getTableName() + "." + TeamInfo._ID + "," + TeamInfo.TeamName), projection, selection, selectionArgs, sortOrder);
 				break;
@@ -417,11 +373,15 @@ public class CheckInTab extends BaseTab implements LoaderManager.LoaderCallbacks
 			{
 	            AddRacerView chooseModeDialog = new AddRacerView(true);
 				FragmentManager fm = getActivity().getSupportFragmentManager();
-				chooseModeDialog.show(fm, ChooseViewingMode.LOG_TAG);
+				chooseModeDialog.show(fm, AddRacerView.LOG_TAG);
 			} else if (v == btnAddNewTeam){
 				AddTeamView addTeamDialog = new AddTeamView();
 				FragmentManager fm = getActivity().getSupportFragmentManager();
 				addTeamDialog.show(fm, AddTeamView.LOG_TAG);
+			} else if(v == btnAddGhostRacer){
+				AddGhostRacerView chooseModeDialog = new AddGhostRacerView();
+				FragmentManager fm = getActivity().getSupportFragmentManager();
+				chooseModeDialog.show(fm, AddGhostRacerView.LOG_TAG);
 			}
      	}
      	catch(Exception ex)
