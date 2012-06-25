@@ -136,6 +136,12 @@ public class AssignLapTimeTask extends AsyncTask<Long, Void, AssignResult> {
 				numUnfinished.close();
 				numUnfinished = null;
 				if(result.numUnfinishedRacers <= 0){
+					ContentValues endUpdate = new ContentValues();
+					endUpdate.put(RaceResults.EndTime, endTime);
+					endUpdate.put(RaceResults.ElapsedTime, 0);
+					
+					RaceResults.Update(context, endUpdate, RaceResults.Race_ID + "=? AND " + RaceResults.ElapsedTime + " IS NULL", new String[]{Long.toString(race_ID)});
+					
 					Log.w(LOG_TAG(), "Getting ready to STOP_AND_HIDE_TIMER_ACTION");
 					// Stop and hide the timer
 					Intent stopAndHideTimer = new Intent();
