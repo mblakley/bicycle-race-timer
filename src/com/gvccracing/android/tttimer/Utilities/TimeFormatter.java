@@ -33,7 +33,7 @@ public class TimeFormatter {
 	     	}
  		}
 
- 		if(showTensHours || showHours || showMinutes){
+ 		if(showTensHours || showHours || showMinutes || showSeconds){
  			if(showIfZero || hrs > 0){
  				formattedTime += ":";
  			}
@@ -47,15 +47,15 @@ public class TimeFormatter {
 	     	if(mins <10 && mins > 0){
 	     		minutes = "0"+minutes;
 	     	}
-	     	if(hrs > 0 || mins > 0 || showIfZero){
+	     	if(hrs > 0 || mins > 0 || showSeconds || showIfZero){
 	     		formattedTime += minutes;
 	     	}
  		}
      	
  		if(showTensHours || showHours || showMinutes || showSeconds){
- 			if(showIfZero || mins > 0){
- 				formattedTime += ":";
- 			}
+ 			// Always add minutes if we're showing seconds, so need to add the ":"
+			formattedTime += ":";
+ 			
 	 		/* Convert the seconds to String
 	 		 * and format to ensure it has
 	 		 * a leading zero when required

@@ -13,7 +13,9 @@ import com.gvccracing.android.tttimer.TTTimerTabsActivity;
 import com.gvccracing.android.tttimer.Controls.Timer;
 import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.RaceResultsTeamOrRacerViewCP.RaceResultsTeamOrRacerView;
 import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
+import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
 import com.gvccracing.android.tttimer.DataAccess.RacerInfoViewCP.RacerInfoView;
 import com.gvccracing.android.tttimer.DataAccess.UnassignedTimesCP.UnassignedTimes;
 import com.gvccracing.android.tttimer.Tabs.ResultsTab;
@@ -78,7 +80,7 @@ public class AssignTimeTask extends AsyncTask<Long, Void, AssignResult> {
 			Intent messageToShow = new Intent();
 			messageToShow.setAction(Timer.SHOW_MESSAGE_ACTION);
 			messageToShow.putExtra(Timer.MESSAGE, result.message);
-			messageToShow.putExtra(Timer.DURATION, 2300);
+			messageToShow.putExtra(Timer.DURATION, 2300l);
 			context.sendBroadcast(messageToShow);
 			
 	    	// Delete the unassignedTimes row from the database
@@ -91,11 +93,17 @@ public class AssignTimeTask extends AsyncTask<Long, Void, AssignResult> {
 			Cursor numStarted = RaceResults.Read(context, new String[]{RaceResults._ID}, RaceResults.Race_ID + "=? AND " + RaceResults.StartTime + " IS NOT NULL", new String[]{Long.toString(race_ID)}, null);
 			if(numStarted.getCount() > 0){
 				// Figure out if he's the last finisher, and if so, stop the timer, hide it, and transition to the results screen
-				Cursor numUnfinished = RaceResults.Read(context, new String[]{RaceResults._ID}, RaceResults.Race_ID + "=? AND " + RaceResults.ElapsedTime + " IS NULL", new String[]{Long.toString(race_ID)}, null);
+				Cursor numUnfinished = RaceResultsTeamOrRacerView.Read(context, new String[]{RaceResults.getTableName() + "." + RaceResults._ID}, RaceResults.Race_ID + "=? AND " + RaceResults.ElapsedTime + " IS NULL AND " + RacerClubInfo.Category + "!=?", new String[]{Long.toString(race_ID), "G"}, null);
 				result.numUnfinishedRacers = numUnfinished.getCount();
 				numUnfinished.close();
 				numUnfinished = null;
 				if(result.numUnfinishedRacers <= 0){
+					ContentValues endUpdate = new ContentValues();
+					endUpdate.put(RaceResults.EndTime, endTime);
+					endUpdate.put(RaceResults.ElapsedTime, 0);
+					
+					RaceResults.Update(context, endUpdate, RaceResults.Race_ID + "=? AND " + RaceResults.ElapsedTime + " IS NULL", new String[]{Long.toString(race_ID)});
+					
 					// Stop and hide the timer
 					Intent stopAndHideTimer = new Intent();
 					stopAndHideTimer.setAction(Timer.STOP_AND_HIDE_TIMER_ACTION);

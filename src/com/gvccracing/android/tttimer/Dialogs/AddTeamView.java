@@ -3,6 +3,7 @@ package com.gvccracing.android.tttimer.Dialogs;
 import java.util.ArrayList;
 
 import com.gvccracing.android.tttimer.R;
+import com.gvccracing.android.tttimer.AsyncTasks.TeamCheckInHandler;
 import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewInclusive;
 import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
 import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
@@ -10,7 +11,6 @@ import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
 import com.gvccracing.android.tttimer.DataAccess.TeamMembersCP.TeamMembers;
 import com.gvccracing.android.tttimer.Dialogs.ChooseTeamRacer.ChooseRacerDialogListener;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -22,11 +22,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 
 public class AddTeamView extends BaseDialog implements View.OnClickListener, ChooseRacerDialogListener, LoaderManager.LoaderCallbacks<Cursor> {
 	public static final String LOG_TAG = "AddTeamView";
@@ -51,6 +51,14 @@ public class AddTeamView extends BaseDialog implements View.OnClickListener, Cho
 
 		btnAddNewTeam = (Button) v.findViewById(R.id.btnAddNewTeam);
 		btnAddNewTeam.setOnClickListener(this);
+		
+		((EditText) v.findViewById(R.id.txtTeamName)).setOnFocusChangeListener(new View.OnFocusChangeListener() {
+		    public void onFocusChange(View v, boolean hasFocus) {
+		        if (hasFocus) {
+		            getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+		        }
+		    }
+		});
 		
 		((Button) v.findViewById(R.id.btnEditRacer1)).setOnClickListener(this);
 		((Button) v.findViewById(R.id.btnEditRacer2)).setOnClickListener(this);
@@ -88,23 +96,21 @@ public class AddTeamView extends BaseDialog implements View.OnClickListener, Cho
 		    		// TODO: Add TeamCategory
 		    		Uri resultUri = TeamInfo.Create(getActivity(), teamName, "");
 		    		// Get the teamID from the uri
-	    			long team_ID = Long.parseLong(resultUri.getLastPathSegment());
-	    			
-	    			// Broadcast that team names changed
-	    			Intent teamNamesChanged = new Intent();
-	    			teamNamesChanged.setAction(TEAM_NAME_ADDED_ACTION);
-	    			teamNamesChanged.putExtra(TEAM_NAME_ADDED_ACTION, team_ID);
-	    			getActivity().sendBroadcast(teamNamesChanged);
+	    			long teamInfo_ID = Long.parseLong(resultUri.getLastPathSegment());
 	    			
 	    			// Add all of the team members to the newly created team
 	    			for(int teamMemberCount = 0; teamMemberCount < teamRacerIDs.size(); teamMemberCount++){
 	    				if(teamRacerIDs.get(teamMemberCount) >= 0){
-	    					TeamMembers.Update(getActivity(), team_ID, teamRacerIDs.get(teamMemberCount), teamMemberCount, true);
+	    					TeamMembers.Update(getActivity(), teamInfo_ID, teamRacerIDs.get(teamMemberCount), teamMemberCount, true);
 	    				}else{
 	    					// If the ID is negative, delete this team member
-	    					TeamMembers.Delete(getActivity(), team_ID, teamMemberCount);
+	    					TeamMembers.Delete(getActivity(), teamInfo_ID, teamMemberCount);
 	    				}
-	    			}
+	    			}	    			
+
+	    			// Check in the team
+	    			TeamCheckInHandler task = new TeamCheckInHandler(getActivity());
+	    			task.execute(new Long[] { teamInfo_ID });
 	    			    			
 	     			// Hide the dialog
 	     			dismiss();

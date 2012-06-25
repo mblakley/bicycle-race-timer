@@ -233,7 +233,7 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
         	} else if(intent.getAction().equals(SHOW_MESSAGE_ACTION)) {	// If the timer needs to be started
         		// Set the start time to the time included in the bundle, since there might have been a delay before receiving this intent
         		String message = intent.getStringExtra(MESSAGE);
-        		Long duration = intent.getLongExtra(DURATION, 2300);
+        		Long duration = intent.getLongExtra(DURATION, 2300l);
         		showMessage(message, duration);
         	} 
         }
@@ -396,65 +396,6 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
  		}
  	}
      
-//    private String formatTime(long time){        	
-//     	secs = (long)(time/1000);
-// 		mins = (long)(secs/60);
-// 		hrs = (long)(mins/60);
-// 		secs = secs % 60;
-//     	mins = mins % 60;
-//
-// 		/* Convert the seconds to String
-// 		 * and format to ensure it has
-// 		 * a leading zero when required
-// 		 */
-// 		secs = secs % 60;
-// 		seconds=String.valueOf(secs);
-//     	if(secs == 0){
-//     		seconds = "00";
-//     	}
-//     	if(secs <10 && secs > 0){
-//     		seconds = "0"+seconds;
-//     	}
-//
-// 		/* Convert the minutes to String and format the String */
-//
-//     	mins = mins % 60;
-// 		minutes=String.valueOf(mins);
-//     	if(mins == 0){
-//     		minutes = "00";
-//     	}
-//     	if(mins <10 && mins > 0){
-//     		minutes = "0"+minutes;
-//     	}
-//
-//     	/* Convert the hours to String and format the String */
-//
-//     	hours=String.valueOf(hrs);
-//     	if(hrs == 0){
-//     		hours = "00";
-//     	}
-//     	if(hrs <10 && hrs > 0){
-//     		hours = "0"+hours;
-//     	}
-//
-//     	/* Although we are not using milliseconds on the timer in this example
-//     	 * I included the code in the event that you wanted to include it on your own
-//     	 */
-//     	milliseconds = String.valueOf((long)time);
-//     	if(milliseconds.length()==2){
-//     		milliseconds = "0"+milliseconds;
-//     	}
-//       	if(milliseconds.length()<=1){
-//     		milliseconds = "00";
-//     	}
-// 		milliseconds = milliseconds.substring(milliseconds.length()-3, milliseconds.length()-2);
-//
-// 		/* Setting the timer text to the elapsed time */
-// 		String formattedTime = hours + ":" + minutes + ":" + seconds + "." + milliseconds;
-// 		
-// 		return formattedTime;
-//    }
-     
     private Runnable startTimer = new Runnable() {
 	    public void run() {
 	    	long currentTime = System.currentTimeMillis();
@@ -462,14 +403,9 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
 		   updateTimer(elapsedTime, currentTime);
 		   mTimerHandler.postDelayed(this,REFRESH_RATE);
 		}
-	};
+	};	
 
-	public long getStartInterval() {
-		return 60l;
-	}
-	
-
-	private void CleanUpExtraUnassignedTimes(){
+	public void CleanUpExtraUnassignedTimes(){
 		getContext().getContentResolver().delete(UnassignedTimes.CONTENT_URI, UnassignedTimes.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name), null);
 	}
 
@@ -488,13 +424,13 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
 				sortOrder = RaceResults.StartOrder;
 				loader = new CursorLoader(getContext(), RaceResults.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
-			case UNFINISHED_RACERS_LOADER:
-				projection = new String[]{RaceResults._ID, RaceResults.StartOrder, RaceResults.StartTimeOffset};
-				selection = RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.EndTime + " IS NULL";
-				selectionArgs = null;
-				sortOrder = RaceResults.StartOrder;
-				loader = new CursorLoader(getContext(), RaceResults.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
-				break;
+//			case UNFINISHED_RACERS_LOADER:
+//				projection = new String[]{RaceResults._ID, RaceResults.StartOrder, RaceResults.StartTimeOffset};
+//				selection = RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.EndTime + " IS NULL";
+//				selectionArgs = null;
+//				sortOrder = RaceResults.StartOrder;
+//				loader = new CursorLoader(getContext(), RaceResults.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+//				break;
 			case START_INTERVAL_LOADER:
 				projection = new String[]{AppSettings.AppSettingName, AppSettings.AppSettingValue};
 				selection = AppSettings.AppSettingName + "=?";
@@ -550,22 +486,22 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
 
 				    setNewRacerOnDeck(raceResult_ID, startTimeOffset);
 					break;
-				case UNFINISHED_RACERS_LOADER:	
-	        		Log.w(LOG_TAG, "Checking UNFINISHED_RACERS_LOADER");	
-					int numUnfinishedRacers = cursor.getCount();
-					if(racerStarted && numUnfinishedRacers <= 0){ 
-						// Was this the last racer?  If so, we're done, so do any cleanup necessary
-		        		CleanUpExtraUnassignedTimes();
-		        		stopTimer();
-		        		racerStarted = false;
-		        		
-		        		Log.w(LOG_TAG, "Sending RACE_IS_FINISHED_ACTION");
-		        		
-		        		Intent raceIsFinished = new Intent();
-		        		raceIsFinished.setAction(Timer.RACE_IS_FINISHED_ACTION);
-		        		getContext().sendBroadcast(raceIsFinished);
-		        	}
-					break;
+//				case UNFINISHED_RACERS_LOADER:	
+//	        		Log.w(LOG_TAG, "Checking UNFINISHED_RACERS_LOADER");	
+//					int numUnfinishedRacers = cursor.getCount();
+//					if(racerStarted && numUnfinishedRacers <= 0){ 
+//						// Was this the last racer?  If so, we're done, so do any cleanup necessary
+//		        		CleanUpExtraUnassignedTimes();
+//		        		stopTimer();
+//		        		racerStarted = false;
+//		        		
+//		        		Log.w(LOG_TAG, "Sending RACE_IS_FINISHED_ACTION");
+//		        		
+//		        		Intent raceIsFinished = new Intent();
+//		        		raceIsFinished.setAction(Timer.RACE_IS_FINISHED_ACTION);
+//		        		getContext().sendBroadcast(raceIsFinished);
+//		        	}
+//					break;
 				case START_INTERVAL_LOADER:
 					startTimeInterval = Long.parseLong(AppSettings.ReadValue(getContext(), AppSettings.AppSetting_StartInterval_Name, "60"));
 					break;

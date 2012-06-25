@@ -1,0 +1,42 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/AddGhostRacerID"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    style="@style/Padded" >
+
+    <TextView 
+        android:layout_height="wrap_content" 
+        android:id="@+id/lblNumGhostSpots" 
+        android:layout_width="wrap_content" 
+        android:layout_gravity="top" 
+        android:text="@string/txtNumGhostSpots"
+        style="@style/Medium"/>
+    
+    <com.gvccracing.android.tttimer.Controls.NumberPicker
+        android:id="@+id/numSpots"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+    </com.gvccracing.android.tttimer.Controls.NumberPicker>
+	
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:id="@+id/btnAddGhostRacer"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+        	style="@style/Medium.Padded" 
+            android:text="@string/AddGhostRacer" />
+
+
+        <Button
+            android:id="@+id/btnCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+        	style="@style/Medium.Padded" 
+            android:text="@string/btnCancel" />
+
+    </LinearLayout>
+</LinearLayout>

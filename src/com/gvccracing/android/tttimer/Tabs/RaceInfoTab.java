@@ -88,11 +88,9 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 	    if(getParentActivity().timer.racerStarted){
 	    	((Button) getView().findViewById(R.id.btnRecalculateResults)).setEnabled(false);
 	    	((Button) getView().findViewById(R.id.btnEditRace)).setEnabled(false);
-	    	((Button) getView().findViewById(R.id.btnPreviousResults)).setEnabled(false);
 	    }else{
 	    	((Button) getView().findViewById(R.id.btnRecalculateResults)).setEnabled(true);
 	    	((Button) getView().findViewById(R.id.btnEditRace)).setEnabled(true);
-	    	((Button) getView().findViewById(R.id.btnPreviousResults)).setEnabled(true);
 	    }
 	}
 

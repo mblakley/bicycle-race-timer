@@ -50,7 +50,6 @@ public class RemoveTeamFromStartOrder extends BaseDialog implements View.OnClick
 				
 				// Update all race results that have higher start order than the racer to delete.  Change the start order and start time offset
 				Cursor checkins = RaceResults.Read(getActivity(), new String[]{RaceResults._ID}, RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name), null, RaceResults.StartOrder);
-				getActivity().startManagingCursor(checkins);
 				if(checkins.getCount() > 0){
 					Long startInterval = Long.parseLong(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_StartInterval_Name, "60"));
 					long startOrder = 1;
@@ -64,6 +63,10 @@ public class RemoveTeamFromStartOrder extends BaseDialog implements View.OnClick
 						RaceResults.Update(getActivity(), content, RaceResults._ID + "=?", new String[]{Long.toString(checkins.getLong(checkins.getColumnIndex(RaceResults._ID)))});
 						startOrder++;
 					}while(checkins.moveToNext());
+				}
+				if(checkins != null){
+					checkins.close();
+					checkins = null;
 				}
 				
 				// Hide the dialog
