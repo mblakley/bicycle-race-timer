@@ -47,15 +47,15 @@ public class AdminAuthView extends BaseDialog implements View.OnClickListener {
 		if(Boolean.parseBoolean(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_AdminMode_Name, "false"))){
 			GoToAdminMenu();
 			this.dismiss();
-		}		
-
-		txtPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-		    public void onFocusChange(View v, boolean hasFocus) {
-		        if (hasFocus) {
-		            getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-		        }
-		    }
-		});
+		}else{		
+			txtPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+			    public void onFocusChange(View v, boolean hasFocus) {
+			        if (hasFocus) {
+			            getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+			        }
+			    }
+			});
+		}
 	}
 	
 	private void GoToAdminMenu() {
