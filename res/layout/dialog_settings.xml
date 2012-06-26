@@ -17,7 +17,11 @@
         android:id="@+id/spinnerDistanceUnits"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+<<<<<<< HEAD
+
+=======
     
+>>>>>>> 72e5cc7f0da5f41ee082335efa372ae2db6e8574
     <TextView
         android:id="@+id/lblTemperatureUnits"
         android:layout_width="wrap_content"
@@ -28,14 +32,33 @@
     <Spinner
         android:id="@+id/spinnerTemperatureUnits"
         android:layout_width="wrap_content"
+<<<<<<< HEAD
+        android:layout_height="wrap_content" />
+
+    <LinearLayout android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="horizontal">
+=======
         android:layout_height="wrap_content"
        	style="@style/Medium" />
+>>>>>>> 72e5cc7f0da5f41ee082335efa372ae2db6e8574
 
     <Button
         android:id="@+id/btnSaveSettings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+<<<<<<< HEAD
+        android:text="@string/SaveSettings" />
+    <Button
+        android:id="@+id/btnCancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Cancel" />
+    
+    </LinearLayout>
+=======
         android:text="@string/SaveSettings"
        	style="@style/Medium.Padded" />
+>>>>>>> 72e5cc7f0da5f41ee082335efa372ae2db6e8574
 
 </LinearLayout>

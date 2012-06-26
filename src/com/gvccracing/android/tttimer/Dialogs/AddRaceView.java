@@ -54,6 +54,8 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 		btnAddNewRace = (Button) v.findViewById(R.id.btnAddNewRace);
 		btnAddNewRace.setOnClickListener(this);
 		
+		v.findViewById(R.id.btnCancel).setOnClickListener(this);
+		
 		raceLocation = (Spinner) v.findViewById(R.id.spinnerRaceLocation);
 		
 		// TODO I tried to put this in the loader, but it won't show a dialog from inside the onLoadFinished, so figure out how to do this the right way		
@@ -162,10 +164,11 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
     			raceAdded.putExtra(AppSettings.AppSetting_RaceID_Name, race_ID);
     			raceAdded.putExtra(AppSettings.AppSetting_StartInterval_Name, GetRaceStartInterval());
     			getActivity().sendBroadcast(raceAdded);
-	 			
-	 			// Hide the dialog
-	 			dismiss();
 			}
+			
+				
+			// Hide the dialog
+ 			dismiss();
 		}
 		catch(Exception ex){
 			Log.e(LOG_TAG, "onClick failed",ex);
