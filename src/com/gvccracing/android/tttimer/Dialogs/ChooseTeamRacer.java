@@ -3,7 +3,6 @@ package com.gvccracing.android.tttimer.Dialogs;
 import java.util.Calendar;
 
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.CursorAdapters.TeamRacerCursorAdapter;
 import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewInclusive;
 import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
 import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
@@ -15,6 +14,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.CursorAdapter;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,7 +31,7 @@ public class ChooseTeamRacer extends BaseDialog implements View.OnClickListener,
 
 	private static final int TEAM_MEMBER_LOADER = 0x48;
 
-	private static final int APP_SETTINGS_LOADER = 0x89;
+	//private static final int APP_SETTINGS_LOADER = 0x89;
 	
 	public interface ChooseRacerDialogListener {
         void onFinishEditDialog(int racerNum, Long racerClubInfoID);
@@ -42,7 +43,7 @@ public class ChooseTeamRacer extends BaseDialog implements View.OnClickListener,
 	private Button btnAddRacer;
 	private Spinner spinnerTeamRacer;
 	private EditText racerNameSearchText;
-	private TeamRacerCursorAdapter teamRacerCA;
+	private SimpleCursorAdapter teamRacerCA = null;
 	private ChooseRacerDialogListener caller;
 	
 	private int racerNum;
@@ -67,7 +68,7 @@ public class ChooseTeamRacer extends BaseDialog implements View.OnClickListener,
 		super.onResume();	
 
 		// Create the cursor adapter for the list of racers available for teams
-        teamRacerCA = new TeamRacerCursorAdapter(getActivity(), null);
+        //teamRacerCA = new SimpleCursorAdapter(getActivity(), null);
 
 		btnChoose = (Button) getView().findViewById(R.id.btnDone);
 		btnChoose.setOnClickListener(this);
@@ -81,14 +82,14 @@ public class ChooseTeamRacer extends BaseDialog implements View.OnClickListener,
 		btnAddRacer = (Button) getView().findViewById(R.id.btnAddRacer);
 		btnAddRacer.setOnClickListener(this);
 
+		spinnerTeamRacer = (Spinner) getView().findViewById(R.id.spinnerTeamRacer);
+		spinnerTeamRacer.setAdapter(teamRacerCA);
+		
         RestartLoaderTextWatcher tw = new RestartLoaderTextWatcher(getLoaderManager(), TEAM_MEMBER_LOADER, this);
         racerNameSearchText = (EditText) getView().findViewById (R.id.txtRacerNameFilter);
 		racerNameSearchText.addTextChangedListener(tw);
 		
-		this.getLoaderManager().initLoader(TEAM_MEMBER_LOADER, null, this);
-
-		spinnerTeamRacer = (Spinner) getView().findViewById(R.id.spinnerTeamRacer);
-		spinnerTeamRacer.setAdapter(teamRacerCA);
+		this.getLoaderManager().restartLoader(TEAM_MEMBER_LOADER, null, this);
 	}
 	
 	public void onClick(View v) { 
@@ -124,19 +125,19 @@ public class ChooseTeamRacer extends BaseDialog implements View.OnClickListener,
 		String sortOrder;
 		switch(id){
 			case TEAM_MEMBER_LOADER:
-				projection = new String[]{RacerClubInfo.getTableName() + "." + RacerClubInfo._ID + " as _id", Racer.LastName, Racer.FirstName, RacerClubInfo.Category};
+				projection = new String[]{RacerClubInfo.getTableName() + "." + RacerClubInfo._ID + " as _id", Racer.FirstName + "||' '||" + Racer.LastName + " as RacerName"};
 				selection = RacerClubInfo.Year + "=? AND " + RacerClubInfo.Upgraded + "=?";
 				selectionArgs = new String[]{Integer.toString(Calendar.getInstance().get(Calendar.YEAR)), Long.toString(0l)};
 				sortOrder = Racer.LastName;
 				String racerNameText = racerNameSearchText.getText().toString();
 				if(!racerNameText.equals("")){
 					selection += " AND UPPER(" + Racer.LastName + ") GLOB ?";
-					selectionArgs = new String[]{ Integer.toString(Calendar.getInstance().get(Calendar.YEAR)), racerNameSearchText.getText().toString().toUpperCase() + "*"};
+					selectionArgs = new String[]{ Integer.toString(Calendar.getInstance().get(Calendar.YEAR)), Long.toString(0l), racerNameSearchText.getText().toString().toUpperCase() + "*"};
 				}
 				loader = new CursorLoader(getActivity(), CheckInViewInclusive.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
-			case APP_SETTINGS_LOADER:
-				break;
+			//case APP_SETTINGS_LOADER:
+				//break;
 		}
 		Log.i(LOG_TAG, "onCreateLoader complete: id=" + Integer.toString(id));
 		return loader;
@@ -146,12 +147,22 @@ public class ChooseTeamRacer extends BaseDialog implements View.OnClickListener,
 		try{
 			Log.i(LOG_TAG, "onLoadFinished start: id=" + Integer.toString(loader.getId()));			
 			switch(loader.getId()){
-				case TEAM_MEMBER_LOADER:	
+				case TEAM_MEMBER_LOADER:
+					teamRacerCA = null;
+					if(teamRacerCA == null){
+						String[] columns = new String[] { "RacerName" };
+			            int[] to = new int[] {android.R.id.text1 };
+			            
+						// Create the cursor adapter for the list of races
+			            teamRacerCA = new SimpleCursorAdapter(getActivity(), R.layout.control_simple_spinner, cursor, columns, to, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+			            teamRacerCA.setDropDownViewResource( R.layout.control_simple_spinner_dropdown );
+			        	spinnerTeamRacer.setAdapter(teamRacerCA);
+					}
 					teamRacerCA.swapCursor(cursor);
 					break;
-				case APP_SETTINGS_LOADER:	
-					getActivity().getSupportLoaderManager().restartLoader(TEAM_MEMBER_LOADER, null, this);
-					break;
+				//case APP_SETTINGS_LOADER:	
+					//getActivity().getSupportLoaderManager().restartLoader(TEAM_MEMBER_LOADER, null, this);
+					//break;
 			}
 			Log.i(LOG_TAG, "onLoadFinished complete: id=" + Integer.toString(loader.getId()));
 		}catch(Exception ex){
@@ -166,9 +177,9 @@ public class ChooseTeamRacer extends BaseDialog implements View.OnClickListener,
 				case TEAM_MEMBER_LOADER:
 					teamRacerCA.swapCursor(null);
 					break;
-				case APP_SETTINGS_LOADER:
+				//case APP_SETTINGS_LOADER:
 					// Do nothing...this is only here for consistency
-					break;
+					//break;
 			}
 			Log.i(LOG_TAG, "onLoaderReset complete: id=" + Integer.toString(loader.getId()));
 		}catch(Exception ex){

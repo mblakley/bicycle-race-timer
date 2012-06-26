@@ -51,21 +51,21 @@
 	<item>1 Minute</item>
 	<item>30 Seconds</item>
 	</string-array>
+	<string-array name="category_array">
+	<item>A</item>
+	<item>B4</item>
+	<item>B5</item>
+	<item>W</item>
+	</string-array>
 <!-- 	<string-array name="category_array"> -->
-<!-- 	<item>A</item> -->
-<!-- 	<item>B4</item> -->
-<!-- 	<item>B5</item> -->
+<!-- 	<item>Cat123</item> -->
+<!-- 	<item>Cat4</item> -->
+<!-- 	<item>Cat5</item> -->
+<!-- 	<item>Masters40+</item> -->
+<!-- 	<item>Masters50+</item> -->
+<!-- 	<item>Juniors</item> -->
 <!-- 	<item>Women</item> -->
 <!-- 	</string-array> -->
-	<string-array name="category_array">
-	<item>Cat123</item>
-	<item>Cat4</item>
-	<item>Cat5</item>
-	<item>Masters40+</item>
-	<item>Masters50+</item>
-	<item>Juniors</item>
-	<item>Women</item>
-	</string-array>
 	<string name="CheckIn">Check In</string>
 	<string name="InitialPopulate">Initial Populate</string>
 	<string name="btnSubmit">Submit</string>

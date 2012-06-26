@@ -32,6 +32,7 @@ public class AddTeamView extends BaseDialog implements View.OnClickListener, Cho
 	public static final String LOG_TAG = "AddTeamView";
 	
 	private Button btnAddNewTeam;
+	private EditText txtTeamName;
 	
 	private ArrayList<Long> teamRacerIDs = new ArrayList<Long>();
 	
@@ -52,19 +53,15 @@ public class AddTeamView extends BaseDialog implements View.OnClickListener, Cho
 		btnAddNewTeam = (Button) v.findViewById(R.id.btnAddNewTeam);
 		btnAddNewTeam.setOnClickListener(this);
 		
-		((EditText) v.findViewById(R.id.txtTeamName)).setOnFocusChangeListener(new View.OnFocusChangeListener() {
-		    public void onFocusChange(View v, boolean hasFocus) {
-		        if (hasFocus) {
-		            getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-		        }
-		    }
-		});
+		txtTeamName = (EditText) v.findViewById(R.id.txtTeamName);
 		
 		((Button) v.findViewById(R.id.btnEditRacer1)).setOnClickListener(this);
 		((Button) v.findViewById(R.id.btnEditRacer2)).setOnClickListener(this);
 		((Button) v.findViewById(R.id.btnEditRacer3)).setOnClickListener(this);
 		((Button) v.findViewById(R.id.btnEditRacer4)).setOnClickListener(this);
 		((Button) v.findViewById(R.id.btnEditRacer5)).setOnClickListener(this);
+		
+		((Button) v.findViewById(R.id.btnCancel)).setOnClickListener(this);
 		
 		return v;
 	}
@@ -73,6 +70,8 @@ public class AddTeamView extends BaseDialog implements View.OnClickListener, Cho
 	public void onResume(){
 		super.onResume();
 		
+		txtTeamName.setText("");
+		
 		teamRacerIDs = new ArrayList<Long>();
 		// pre-fill the list
 		teamRacerIDs.add(-1l);
@@ -80,6 +79,15 @@ public class AddTeamView extends BaseDialog implements View.OnClickListener, Cho
 		teamRacerIDs.add(-1l);
 		teamRacerIDs.add(-1l);
 		teamRacerIDs.add(-1l);
+
+		txtTeamName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+		    public void onFocusChange(View v, boolean hasFocus) {
+		    	String teamNameText = txtTeamName.getText().toString(); 
+		        if (hasFocus && teamNameText.equals("")) {
+		            getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+		        }
+		    }
+		});
 		
 		this.getLoaderManager().initLoader(TEAM_MEMBERS_LOADER, null, this);
 	}
@@ -125,6 +133,8 @@ public class AddTeamView extends BaseDialog implements View.OnClickListener, Cho
 				showChooseTeamRacerDialog(3);				
 			} else if(v.getId() == R.id.btnEditRacer5){
 				showChooseTeamRacerDialog(4);			
+			} else if(v.getId() == R.id.btnCancel){
+				this.dismiss();
 			}
 		}
 		catch(Exception ex){

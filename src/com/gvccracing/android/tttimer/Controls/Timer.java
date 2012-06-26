@@ -230,6 +230,8 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
         		stopTimer();
         		// hide the timer
         		Timer.this.setVisibility(View.GONE);
+        		lblMessage.setVisibility(View.INVISIBLE);
+        		lblLaps.setVisibility(View.INVISIBLE);
         	} else if(intent.getAction().equals(SHOW_MESSAGE_ACTION)) {	// If the timer needs to be started
         		// Set the start time to the time included in the bundle, since there might have been a delay before receiving this intent
         		String message = intent.getStringExtra(MESSAGE);
@@ -424,13 +426,6 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
 				sortOrder = RaceResults.StartOrder;
 				loader = new CursorLoader(getContext(), RaceResults.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
-//			case UNFINISHED_RACERS_LOADER:
-//				projection = new String[]{RaceResults._ID, RaceResults.StartOrder, RaceResults.StartTimeOffset};
-//				selection = RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.EndTime + " IS NULL";
-//				selectionArgs = null;
-//				sortOrder = RaceResults.StartOrder;
-//				loader = new CursorLoader(getContext(), RaceResults.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
-//				break;
 			case START_INTERVAL_LOADER:
 				projection = new String[]{AppSettings.AppSettingName, AppSettings.AppSettingValue};
 				selection = AppSettings.AppSettingName + "=?";
@@ -486,22 +481,6 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
 
 				    setNewRacerOnDeck(raceResult_ID, startTimeOffset);
 					break;
-//				case UNFINISHED_RACERS_LOADER:	
-//	        		Log.w(LOG_TAG, "Checking UNFINISHED_RACERS_LOADER");	
-//					int numUnfinishedRacers = cursor.getCount();
-//					if(racerStarted && numUnfinishedRacers <= 0){ 
-//						// Was this the last racer?  If so, we're done, so do any cleanup necessary
-//		        		CleanUpExtraUnassignedTimes();
-//		        		stopTimer();
-//		        		racerStarted = false;
-//		        		
-//		        		Log.w(LOG_TAG, "Sending RACE_IS_FINISHED_ACTION");
-//		        		
-//		        		Intent raceIsFinished = new Intent();
-//		        		raceIsFinished.setAction(Timer.RACE_IS_FINISHED_ACTION);
-//		        		getContext().sendBroadcast(raceIsFinished);
-//		        	}
-//					break;
 				case START_INTERVAL_LOADER:
 					startTimeInterval = Long.parseLong(AppSettings.ReadValue(getContext(), AppSettings.AppSetting_StartInterval_Name, "60"));
 					break;

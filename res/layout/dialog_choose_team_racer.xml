@@ -27,9 +27,9 @@
             android:layout_weight=".65"
             android:singleLine="true"
             android:inputType="textCapWords"
-            style="@style/Medium" />
-        
+            style="@style/Medium" />        
     </LinearLayout>
+    
     <Spinner
         android:id="@+id/spinnerTeamRacer"
         android:layout_width="fill_parent"
@@ -49,19 +49,20 @@
 		    android:id="@+id/btnDone"
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
-		    android:text="@string/btnChoose" />
-
+		    android:text="@string/btnChoose"
+	    	style="@style/Medium" />
 		<Button
 		    android:id="@+id/btnRemove"
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
-		    android:text="@string/btnRemove" />
-
+		    android:text="@string/btnRemove"
+	    	style="@style/Medium" />
 		<Button
 		    android:id="@+id/btnCancel"
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
-		    android:text="@string/btnCancel" />
+		    android:text="@string/btnCancel"
+	    	style="@style/Medium" />
 
 	</LinearLayout>
 

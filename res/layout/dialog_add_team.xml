@@ -3,7 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
-    android:padding="10dp" >
+    style="@style/Padded" >
 
     <TextView android:layout_height="wrap_content" 
         android:id="@+id/lblTeamName" 
@@ -23,117 +23,129 @@
         android:id="@+id/llRacer1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical" >
+        android:gravity="center_vertical"
+        android:weightSum="1.0" >
 	    <TextView
 	        android:id="@+id/lblRacer1"
         	android:layout_weight="0.2"
-	        android:layout_width="wrap_content"
+	        android:layout_width="0dip"
 	        android:layout_height="wrap_content"
 	        android:text="@string/Racer1"
 		    style="@style/Medium" />
 	    <TextView
 	        android:id="@+id/lblRacer1Name"
         	android:layout_weight="0.5"
-	        android:layout_width="wrap_content"
+	        android:layout_width="0dip"
 	        android:layout_height="wrap_content"
 	        android:text=""
 	        android:singleLine="true"
 		    style="@style/Medium.Padded" />
-	    <Button android:id="@+id/btnEditRacer1" android:layout_height="wrap_content" android:text="@string/btnChooseRacer" android:layout_width="wrap_content"
+	    <Button android:id="@+id/btnEditRacer1" android:layout_height="wrap_content" android:text="@string/btnChooseRacer" android:layout_width="0dip"
         android:layout_weight="0.3" />
     </LinearLayout>
     <LinearLayout
         android:id="@+id/llRacer2"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical" >
+        android:gravity="center_vertical"
+        android:weightSum="1.0" >
 	    <TextView
 	        android:id="@+id/lblRacer2"
         	android:layout_weight="0.2"
-	        android:layout_width="wrap_content"
+	        android:layout_width="0dip"
 	        android:layout_height="wrap_content"
 	        android:text="@string/Racer2"
 		    style="@style/Medium" />
 	    <TextView
 	        android:id="@+id/lblRacer2Name"
         	android:layout_weight="0.5"
-	        android:layout_width="wrap_content"
+	        android:layout_width="0dip"
 	        android:layout_height="wrap_content"
 	        android:text=""
 	        android:singleLine="true"
 		    style="@style/Medium.Padded" />
-	    <Button android:id="@+id/btnEditRacer2" android:layout_height="wrap_content" android:text="@string/btnChooseRacer" android:layout_width="wrap_content"
+	    <Button android:id="@+id/btnEditRacer2" android:layout_height="wrap_content" android:text="@string/btnChooseRacer" android:layout_width="0dip"
         android:layout_weight="0.3" />
     </LinearLayout>
     <LinearLayout
         android:id="@+id/llRacer3"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical" >
+        android:gravity="center_vertical"
+        android:weightSum="1.0" >
 	    <TextView
 	        android:id="@+id/lblRacer3"
         	android:layout_weight="0.2"
-	        android:layout_width="wrap_content"
+	        android:layout_width="0dip"
 	        android:layout_height="wrap_content"
 	        android:text="@string/Racer3"
 		    style="@style/Medium" />
 	    <TextView
 	        android:id="@+id/lblRacer3Name"
         	android:layout_weight="0.5"
-	        android:layout_width="wrap_content"
+	        android:layout_width="0dip"
 	        android:layout_height="wrap_content"
 	        android:text=""
 	        android:singleLine="true"
 		    style="@style/Medium.Padded" />
-	    <Button android:id="@+id/btnEditRacer3" android:layout_height="wrap_content" android:text="@string/btnChooseRacer" android:layout_width="wrap_content"
+	    <Button android:id="@+id/btnEditRacer3" android:layout_height="wrap_content" android:text="@string/btnChooseRacer" android:layout_width="0dip"
         android:layout_weight="0.3" />
     </LinearLayout>
     <LinearLayout
         android:id="@+id/llRacer4"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical" >
+        android:gravity="center_vertical"
+        android:weightSum="1.0" >
 	    <TextView
 	        android:id="@+id/lblRacer4"
         	android:layout_weight="0.2"
-	        android:layout_width="wrap_content"
+	        android:layout_width="0dip"
 	        android:layout_height="wrap_content"
 	        android:text="@string/Racer4"
 		    style="@style/Medium" />
 	    <TextView
 	        android:id="@+id/lblRacer4Name"
         	android:layout_weight="0.5"
-	        android:layout_width="wrap_content"
+	        android:layout_width="0dip"
 	        android:layout_height="wrap_content"
 	        android:text=""
 	        android:singleLine="true"
 		    style="@style/Medium.Padded" />
-	    <Button android:id="@+id/btnEditRacer4" android:layout_height="wrap_content" android:text="@string/btnChooseRacer" android:layout_width="wrap_content"
+	    <Button android:id="@+id/btnEditRacer4" android:layout_height="wrap_content" android:text="@string/btnChooseRacer" android:layout_width="0dip"
         android:layout_weight="0.3" />
     </LinearLayout>
     <LinearLayout
         android:id="@+id/llRacer5"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical" >
+        android:gravity="center_vertical"
+        android:weightSum="1.0" >
 	    <TextView
 	        android:id="@+id/lblRacer5"
         	android:layout_weight="0.2"
-	        android:layout_width="wrap_content"
+	        android:layout_width="0dip"
 	        android:layout_height="wrap_content"
 	        android:text="@string/Racer5"
 		    style="@style/Medium" />
 	    <TextView
 	        android:id="@+id/lblRacer5Name"
         	android:layout_weight="0.5"
-	        android:layout_width="wrap_content"
+	        android:layout_width="0dip"
 	        android:layout_height="wrap_content"
 	        android:text=""
 	        android:singleLine="true"
 		    style="@style/Medium.Padded" />
-	    <Button android:id="@+id/btnEditRacer5" android:layout_height="wrap_content" android:text="@string/btnChooseRacer" android:layout_width="wrap_content"
+	    <Button android:id="@+id/btnEditRacer5" android:layout_height="wrap_content" android:text="@string/btnChooseRacer" android:layout_width="0dip"
         android:layout_weight="0.3" />
     </LinearLayout>
     
-    <Button android:id="@+id/btnAddNewTeam" android:layout_height="wrap_content" android:text="@string/btnAddNewTeam" android:layout_width="wrap_content" />
+    <LinearLayout
+        android:id="@+id/llBottomButtons"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical" >
+    	<Button android:id="@+id/btnAddNewTeam" android:layout_height="wrap_content" android:text="@string/btnAddNewTeam" android:layout_width="wrap_content" style="@style/Medium"/>
+    	<Button android:id="@+id/btnCancel" android:layout_height="wrap_content" android:text="@string/btnCancel" android:layout_width="wrap_content" style="@style/Medium"/>
+    </LinearLayout>
 </LinearLayout>
