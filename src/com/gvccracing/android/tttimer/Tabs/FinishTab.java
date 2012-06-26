@@ -35,6 +35,7 @@ import com.gvccracing.android.tttimer.DataAccess.RaceLapsCP.RaceLaps;
 import com.gvccracing.android.tttimer.DataAccess.RaceLapsCP.TeamLaps;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
+import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
 import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
 import com.gvccracing.android.tttimer.DataAccess.UnassignedTimesCP.UnassignedTimes;
 import com.gvccracing.android.tttimer.Dialogs.RemoveUnassignedTime;
@@ -87,6 +88,8 @@ public class FinishTab extends BaseTab implements View.OnClickListener,	LoaderMa
 
 		btnRacerFinished = (Button) view.findViewById(R.id.btnRacerFinished);
 		btnRacerFinished.setOnClickListener(this);
+		
+		btnRacerFinished.setEnabled(false);
 
 		view.setKeepScreenOn(true);
 
@@ -131,6 +134,7 @@ public class FinishTab extends BaseTab implements View.OnClickListener,	LoaderMa
 			// Create an unassigned time record
 			long finishTime = System.currentTimeMillis(); // get the endTime from the timer
 			Long race_ID = Long.parseLong(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_RaceID_Name, "-1"));
+			
 			ContentValues content = new ContentValues();
 			content.put(UnassignedTimes.FinishTime, finishTime);
 			content.put(UnassignedTimes.Race_ID, race_ID);
@@ -150,35 +154,11 @@ public class FinishTab extends BaseTab implements View.OnClickListener,	LoaderMa
 		String[] selectionArgs;
 		String sortOrder;
 		switch (id) {
-			case TEAM_UNASSIGNED_TIMES_LOADER:
-//				// Create the cursor adapter for the list of unassigned times
-//				unassignedCA = new TeamUnassignedTimeCursorAdapter(getActivity(), null, getParentActivity().timer.GetStartTime(), numRaceLaps);
-//				if (unassignedTimes != null) {
-//					unassignedTimes.setAdapter(unassignedCA);
-//
-//					unassignedTimes.setOnItemLongClickListener(new OnItemLongClickListener() {
-//							public boolean onItemLongClick(AdapterView<?> arg0,	View v, int pos, long id) {
-//								RemoveUnassignedTime removeUnassignedTimeDialog = new RemoveUnassignedTime(id);
-//								FragmentManager fm = getActivity().getSupportFragmentManager();
-//								removeUnassignedTimeDialog.show(fm,	RemoveUnassignedTime.LOG_TAG);
-//								return false;
-//							}
-//						});
-//				}
-//				projection = new String[] { UnassignedTimes._ID, UnassignedTimes.FinishTime };
-//				selection = UnassignedTimes.Race_ID	+ "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
-//				selectionArgs = null;
-//				sortOrder = UnassignedTimes.FinishTime;
-//				loader = new CursorLoader(getActivity(), UnassignedTimes.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
-//				break;				
+			case TEAM_UNASSIGNED_TIMES_LOADER:			
 			case UNASSIGNED_TIMES_LOADER_FINISH:
 				// Create the cursor adapter for the list of unassigned times
 				unassignedCA = new UnassignedTimeCursorAdapter(getActivity(), null, getParentActivity().timer.GetStartTime(), numRaceLaps);
 
-//				String[] columns = new String[] { UnassignedTimes.FinishTime };
-//	            int[] to = new int[] {android.R.id.text1 };
-//	            
-//				unassignedCA = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_list_item_single_choice, null, columns, to, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 				if (unassignedTimes != null) {
 		        	
 					unassignedTimes.setAdapter(unassignedCA);
@@ -191,12 +171,6 @@ public class FinishTab extends BaseTab implements View.OnClickListener,	LoaderMa
 								return false;
 							}
 						});
-					
-//					unassignedTimes.setOnItemClickListener(new OnItemClickListener() {
-//						public void onItemClick(AdapterView<?> arg0, View v, int pos, long id) {
-//							
-//						}
-//					});
 				}
 				projection = new String[] { UnassignedTimes._ID, UnassignedTimes.FinishTime };
 				selection = UnassignedTimes.Race_ID	+ "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
@@ -221,8 +195,8 @@ public class FinishTab extends BaseTab implements View.OnClickListener,	LoaderMa
 					});
 		        }
 				projection = new String[] {	RaceResults.getTableName() + "." + RaceResults._ID + " as _id", Racer.LastName, Racer.FirstName, RaceResults.StartOrder };
-				selection = RaceResults.Race_ID	+ "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.StartTime + " IS NOT NULL" + " AND " + RaceResults.EndTime + " IS NULL";
-				selectionArgs = null;
+				selection = RaceResults.Race_ID	+ "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.StartTime + " IS NOT NULL" + " AND " + RaceResults.EndTime + " IS NULL AND " + RacerClubInfo.Category + "!=?";
+				selectionArgs = new String[]{"G"};
 				sortOrder = RaceResults.StartOrder;
 				loader = new CursorLoader(getActivity(), CheckInViewExclusive.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
@@ -247,8 +221,8 @@ public class FinishTab extends BaseTab implements View.OnClickListener,	LoaderMa
 					});
 		        }
 				projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID + " as _id", TeamInfo.TeamName, RaceResults.StartOrder, "count(" + RaceLaps.getTableName() + "." + RaceLaps._ID + ") as NumLaps"};
-				selection = RaceResults.Race_ID	+ "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.getTableName() + "." + RaceResults.StartTime + " IS NOT NULL" + " AND " + RaceResults.EndTime + " IS NULL";
-				selectionArgs = null;
+				selection = RaceResults.Race_ID	+ "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.getTableName() + "." + RaceResults.StartTime + " IS NOT NULL" + " AND " + RaceResults.EndTime + " IS NULL AND " + TeamInfo.TeamCategory + "!=?";
+				selectionArgs = new String[]{"G"};
 				sortOrder = "NumLaps ASC," + RaceResults.StartOrder + " ASC";
 				loader = new CursorLoader(getActivity(), Uri.withAppendedPath(TeamLaps.CONTENT_URI, "group by " + RaceResults.getTableName() + "." + RaceResults._ID + "," + TeamInfo.TeamName + "," + RaceResults.StartOrder + "&having count(" + RaceLaps.getTableName() + "." + RaceLaps._ID + ") < " + Long.toString(numRaceLaps)), projection, selection, selectionArgs, sortOrder);
 				break;

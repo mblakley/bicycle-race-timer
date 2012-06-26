@@ -74,11 +74,13 @@
         android:id="@+id/btnSaveSelection"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        style="@style/Medium.Padded" 
         android:text="@string/Select" />
     <Button
         android:id="@+id/btnCancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        style="@style/Medium.Padded" 
         android:text="@string/Cancel" />
 	</LinearLayout>
 </LinearLayout>

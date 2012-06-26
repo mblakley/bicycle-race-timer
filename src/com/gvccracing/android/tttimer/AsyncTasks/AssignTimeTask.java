@@ -8,14 +8,14 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.view.Gravity;
-import android.widget.Toast;
 
 import com.gvccracing.android.tttimer.TTTimerTabsActivity;
 import com.gvccracing.android.tttimer.Controls.Timer;
 import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.RaceResultsTeamOrRacerViewCP.RaceResultsTeamOrRacerView;
 import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
+import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
 import com.gvccracing.android.tttimer.DataAccess.RacerInfoViewCP.RacerInfoView;
 import com.gvccracing.android.tttimer.DataAccess.UnassignedTimesCP.UnassignedTimes;
 import com.gvccracing.android.tttimer.Tabs.ResultsTab;
@@ -72,13 +72,19 @@ public class AssignTimeTask extends AsyncTask<Long, Void, AssignResult> {
 			// Update the race result
 			RaceResults.Update(context, content, RaceResults._ID + "= ?", new String[]{Long.toString(raceResult_ID)});
 	    	
-	    	// Delete the unassignedTimes row from the database
-			context.getContentResolver().delete(UnassignedTimes.CONTENT_URI, UnassignedTimes._ID + "=?", new String[]{Long.toString(unassignedTime_ID)});
-	    	
+			// Setup notification of assignment
 			Hashtable<String, Object> racerValues = RacerInfoView.getValues(context, raceResultToAssignTo.getLong(raceResultToAssignTo.getColumnIndex(RaceResults.RacerClubInfo_ID)));
 			String racerName = racerValues.get(Racer.FirstName).toString() + " " + racerValues.get(Racer.LastName).toString();
 			
-			result.message = "Assigned time " + TimeFormatter.Format(elapsedTime, true, true, true, true, true, false, false, false) + " to racer " + racerName;
+			result.message = "Assigned time " + TimeFormatter.Format(elapsedTime, true, true, true, true, true, false, false, false) + " -> " + racerName;
+			Intent messageToShow = new Intent();
+			messageToShow.setAction(Timer.SHOW_MESSAGE_ACTION);
+			messageToShow.putExtra(Timer.MESSAGE, result.message);
+			messageToShow.putExtra(Timer.DURATION, 2300l);
+			context.sendBroadcast(messageToShow);
+			
+	    	// Delete the unassignedTimes row from the database
+			context.getContentResolver().delete(UnassignedTimes.CONTENT_URI, UnassignedTimes._ID + "=?", new String[]{Long.toString(unassignedTime_ID)});	    	
 
 	    	raceResultToAssignTo.close();
 	    	raceResultToAssignTo = null;
@@ -87,11 +93,17 @@ public class AssignTimeTask extends AsyncTask<Long, Void, AssignResult> {
 			Cursor numStarted = RaceResults.Read(context, new String[]{RaceResults._ID}, RaceResults.Race_ID + "=? AND " + RaceResults.StartTime + " IS NOT NULL", new String[]{Long.toString(race_ID)}, null);
 			if(numStarted.getCount() > 0){
 				// Figure out if he's the last finisher, and if so, stop the timer, hide it, and transition to the results screen
-				Cursor numUnfinished = RaceResults.Read(context, new String[]{RaceResults._ID}, RaceResults.Race_ID + "=? AND " + RaceResults.ElapsedTime + " IS NULL", new String[]{Long.toString(race_ID)}, null);
+				Cursor numUnfinished = RaceResultsTeamOrRacerView.Read(context, new String[]{RaceResults.getTableName() + "." + RaceResults._ID}, RaceResults.Race_ID + "=? AND " + RaceResults.ElapsedTime + " IS NULL AND " + RacerClubInfo.Category + "!=?", new String[]{Long.toString(race_ID), "G"}, null);
 				result.numUnfinishedRacers = numUnfinished.getCount();
 				numUnfinished.close();
 				numUnfinished = null;
 				if(result.numUnfinishedRacers <= 0){
+					ContentValues endUpdate = new ContentValues();
+					endUpdate.put(RaceResults.EndTime, endTime);
+					endUpdate.put(RaceResults.ElapsedTime, 0);
+					
+					RaceResults.Update(context, endUpdate, RaceResults.Race_ID + "=? AND " + RaceResults.ElapsedTime + " IS NULL", new String[]{Long.toString(race_ID)});
+					
 					// Stop and hide the timer
 					Intent stopAndHideTimer = new Intent();
 					stopAndHideTimer.setAction(Timer.STOP_AND_HIDE_TIMER_ACTION);
@@ -103,6 +115,9 @@ public class AssignTimeTask extends AsyncTask<Long, Void, AssignResult> {
 				}
 			}
 			
+			numStarted.close();
+			numStarted = null;
+			
 	    	// Calculate Category Placing, Overall Placing, Points
 	    	Calculations.CalculateCategoryPlacings(context, race_ID);
 	    	Calculations.CalculateOverallPlacings(context, race_ID);  
@@ -112,9 +127,6 @@ public class AssignTimeTask extends AsyncTask<Long, Void, AssignResult> {
 	
 	@Override
 	protected void onPostExecute(AssignResult result) {
-		Toast messageToast = Toast.makeText(context, result.message, 2300);
-		messageToast.setGravity(Gravity.CENTER_VERTICAL|Gravity.CENTER_HORIZONTAL, 0, 30);
-		messageToast.show();
 		if(result.numUnfinishedRacers <= 0){
 			// Transition to the results tab
 			Intent changeTab = new Intent();

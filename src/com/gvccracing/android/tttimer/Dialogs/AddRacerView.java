@@ -2,6 +2,7 @@ package com.gvccracing.android.tttimer.Dialogs;
 
 import java.util.Calendar;
 import com.gvccracing.android.tttimer.R;
+import com.gvccracing.android.tttimer.AsyncTasks.CheckInHandler;
 import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
 import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
 
@@ -197,7 +198,11 @@ public class AddRacerView extends BaseDialog implements View.OnClickListener {
 		     	resultUri = RacerClubInfo.Create(getActivity(), racer_ID, "0", year, category, 0, 0, 0, age, gvccID, false);
 		     	racerInfo_ID = Long.parseLong(resultUri.getLastPathSegment());
 	 			Log.i(LOG_TAG, "AddNewRacer racerInfo_ID: " + Long.toString(racerInfo_ID));
-	 			SendNotification(racerInfo_ID);
+	 			//SendNotification(racerInfo_ID);
+	 			if(checkin){
+	 				CheckInHandler task = new CheckInHandler(getActivity());
+	 				task.execute(new Long[] { racerInfo_ID });	
+	 			}
 	 			success = true;
  			}
  			/*if(racerClubInfo != null){

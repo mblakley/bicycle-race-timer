@@ -23,6 +23,7 @@
             android:layout_height="wrap_content"
             android:text="@string/btnReorderRacer"
             android:layout_gravity="center_horizontal"
+			style="@style/Medium.Padded"
             android:layout_weight="0.3" />
 
         <Button
@@ -31,6 +32,7 @@
             android:layout_height="wrap_content"
             android:text="@string/RemoveRacer"
             android:layout_gravity="center_horizontal"
+			style="@style/Medium.Padded"
             android:layout_weight="0.3" />
 
         <Button
@@ -39,6 +41,7 @@
             android:layout_height="wrap_content"
             android:text="@string/btnCancel"
             android:layout_gravity="center_horizontal"
+			style="@style/Medium.Padded"
             android:layout_weight="0.3" />
 
     </LinearLayout>

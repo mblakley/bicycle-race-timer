@@ -15,6 +15,7 @@ import com.gvccracing.android.tttimer.DataAccess.RaceLapsCP.TeamLaps;
 import com.gvccracing.android.tttimer.DataAccess.RaceLocationCP.RaceLocation;
 import com.gvccracing.android.tttimer.DataAccess.RaceNotesCP.RaceNotes;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.RaceResultsTeamOrRacerViewCP.RaceResultsTeamOrRacerView;
 import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
 import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
 import com.gvccracing.android.tttimer.DataAccess.RacerInfoViewCP.RacerInfoView;
@@ -483,6 +484,19 @@ public class TTProvider extends ContentProvider {
 			racerInfoResultsCursor.setNotificationUri(getContext().getContentResolver(), uri);	
 			Log.i("TTProvider", "query complete: uri=" + uri.toString() + " selection=" + selection);
 			return racerInfoResultsCursor;
+		} else if(uri.toString().contains(RaceResultsTeamOrRacerView.CONTENT_URI.toString())){
+			// RaceResultsTeamOrRacerView
+			qBuilder.setTables(RaceResultsTeamOrRacerView.getTableName());		
+			
+			Cursor raceResultsCursor = qBuilder.query(mDB.getReadableDatabase(),
+													projection, 
+													selection, 
+													selectionArgs, null, null, sortOrder,
+													null);	
+			
+			raceResultsCursor.setNotificationUri(getContext().getContentResolver(), uri);	
+			Log.i("TTProvider", "query complete: uri=" + uri.toString() + " selection=" + selection);
+			return raceResultsCursor;
 		} else{
 			throw new UnsupportedOperationException("You're an idiot...add the uri " + uri.toString() + " to the TTProvider.query if/else statement");
 		}		

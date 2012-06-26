@@ -12,8 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/RemoveRacerExplanation"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
+		style="@style/Medium" />
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" >
@@ -22,13 +21,14 @@
             android:id="@+id/btnRemoveRacer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/RemoveRacer" />
-
+            android:text="@string/RemoveRacer"
+            style="@style/Medium.Padded" />
         <Button
             android:id="@+id/btnCancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/btnCancel" />
+            android:text="@string/btnCancel"
+            style="@style/Medium.Padded" />
 
     </LinearLayout>
 

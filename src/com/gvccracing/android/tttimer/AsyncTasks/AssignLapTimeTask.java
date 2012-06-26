@@ -8,8 +8,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.view.Gravity;
-import android.widget.Toast;
 
 import com.gvccracing.android.tttimer.TTTimerTabsActivity;
 import com.gvccracing.android.tttimer.Controls.Timer;
@@ -17,6 +15,8 @@ import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
 import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
 import com.gvccracing.android.tttimer.DataAccess.RaceLapsCP.RaceLaps;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.RaceResultsTeamOrRacerViewCP.RaceResultsTeamOrRacerView;
+import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
 import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
 import com.gvccracing.android.tttimer.DataAccess.UnassignedTimesCP.UnassignedTimes;
 import com.gvccracing.android.tttimer.Tabs.ResultsTab;
@@ -74,7 +74,7 @@ public class AssignLapTimeTask extends AsyncTask<Long, Void, AssignResult> {
 				// If the number of laps >= Race.NumLaps, there's a problem because we have assigned too many laps to this team somehow, so don't do anything but return
 				if(numRaceLaps >= totalRaceLaps){
 					return result;
-				} else if(raceLaps.getCount() < totalRaceLaps){
+				} else if(numRaceLaps < totalRaceLaps){
 					Long elapsedTime;
 					// If the number of laps == 0, the lap start time = the raceResults start time
 					if(numRaceLaps == 0){
@@ -82,7 +82,7 @@ public class AssignLapTimeTask extends AsyncTask<Long, Void, AssignResult> {
 						int startTimeCol = raceResultToAssignTo.getColumnIndex(RaceResults.StartTime);	    	
 						Long startTime = raceResultToAssignTo.getLong(startTimeCol);
 						elapsedTime = endTime - startTime;
-						RaceLaps.Create(context, raceResult_ID, raceLaps.getCount() + 1, startTime, endTime, elapsedTime);
+						RaceLaps.Create(context, raceResult_ID, numRaceLaps + 1, startTime, endTime, elapsedTime);
 						numRaceLaps++;
 					} else {
 						// There is a previous lap to pull info from
@@ -90,14 +90,20 @@ public class AssignLapTimeTask extends AsyncTask<Long, Void, AssignResult> {
 						// raceResult_ID, LapNumber, StartTime, FinishTime, ElapsedTime
 						Long startTime = raceLaps.getLong(raceLaps.getColumnIndex(RaceLaps.FinishTime));
 						elapsedTime = endTime - startTime;
-						RaceLaps.Create(context, raceResult_ID, raceLaps.getCount() + 1, startTime, endTime, elapsedTime);
+						RaceLaps.Create(context, raceResult_ID, numRaceLaps + 1, startTime, endTime, elapsedTime);
 						numRaceLaps++;
 					}
 					
 					Hashtable<String, Object> teamValues = TeamInfo.getValues(context, raceResultToAssignTo.getLong(raceResultToAssignTo.getColumnIndex(RaceResults.TeamInfo_ID)));
 					String teamName = teamValues.get(TeamInfo.TeamName).toString();
 					
-					result.message = "Assigned time " + TimeFormatter.Format(elapsedTime, true, true, true, true, true, false, false, false) + " to team " + teamName;
+					result.message = "Assigned time " + TimeFormatter.Format(elapsedTime, true, true, true, true, true, false, false, false) + " -> " + teamName;
+
+					Intent messageToShow = new Intent();
+					messageToShow.setAction(Timer.SHOW_MESSAGE_ACTION);
+					messageToShow.putExtra(Timer.MESSAGE, result.message);
+					messageToShow.putExtra(Timer.DURATION, 2300l);
+					context.sendBroadcast(messageToShow);
 					
 					// We added a race lap, so if the total number of race laps for this raceResult equals the total number of laps in the race...
 					if(numRaceLaps == totalRaceLaps){
@@ -112,8 +118,15 @@ public class AssignLapTimeTask extends AsyncTask<Long, Void, AssignResult> {
 				
 						// Update the race result
 						RaceResults.Update(context, content, RaceResults._ID + "= ?", new String[]{Long.toString(raceResult_ID)});
+						
+						// Calculate Category Placing, Overall Placing, Points
+				    	Calculations.CalculateCategoryPlacings(context, race_ID);
+				    	Calculations.CalculateOverallPlacings(context, race_ID); 
 					}
 				}
+
+				raceLaps.close();
+				raceLaps = null;
 
 				raceResultToAssignTo.close();
 				raceResultToAssignTo = null;
@@ -122,11 +135,17 @@ public class AssignLapTimeTask extends AsyncTask<Long, Void, AssignResult> {
 				context.getContentResolver().delete(UnassignedTimes.CONTENT_URI, UnassignedTimes._ID + "=?", new String[]{Long.toString(unassignedTime_ID)});
 				
 				// Figure out if he's the last finisher, and if so, stop the timer, hide it, and transition to the results screen
-				Cursor numUnfinished = RaceResults.Read(context, new String[]{RaceResults._ID}, RaceResults.Race_ID + "=? AND " + RaceResults.ElapsedTime + " IS NULL", new String[]{Long.toString(race_ID)}, null);
+				Cursor numUnfinished = RaceResultsTeamOrRacerView.Read(context, new String[]{RaceResults.getTableName() + "." + RaceResults._ID}, RaceResults.Race_ID + "=? AND " + RaceResults.ElapsedTime + " IS NULL AND (" + RacerClubInfo.Category + "!=? OR " + TeamInfo.TeamCategory + "!=?)", new String[]{Long.toString(race_ID), "G", "G"}, null);
 				result.numUnfinishedRacers = numUnfinished.getCount();
 				numUnfinished.close();
 				numUnfinished = null;
 				if(result.numUnfinishedRacers <= 0){
+					ContentValues endUpdate = new ContentValues();
+					endUpdate.put(RaceResults.EndTime, endTime);
+					endUpdate.put(RaceResults.ElapsedTime, 0);
+					
+					RaceResults.Update(context, endUpdate, RaceResults.Race_ID + "=? AND " + RaceResults.ElapsedTime + " IS NULL", new String[]{Long.toString(race_ID)});
+					
 					Log.w(LOG_TAG(), "Getting ready to STOP_AND_HIDE_TIMER_ACTION");
 					// Stop and hide the timer
 					Intent stopAndHideTimer = new Intent();
@@ -136,23 +155,25 @@ public class AssignLapTimeTask extends AsyncTask<Long, Void, AssignResult> {
 					Intent raceIsFinished = new Intent();
 	        		raceIsFinished.setAction(Timer.RACE_IS_FINISHED_ACTION);
 	        		context.sendBroadcast(raceIsFinished);
-				}
-				
-				// Calculate Category Placing, Overall Placing, Points
-		    	Calculations.CalculateCategoryPlacings(context, race_ID);
-		    	Calculations.CalculateOverallPlacings(context, race_ID);  
+				} 
 			} else{
 				result.message = "No racers have started yet, so the unassigned time would never be used";
+
+				Intent messageToShow = new Intent();
+				messageToShow.setAction(Timer.SHOW_MESSAGE_ACTION);
+				messageToShow.putExtra(Timer.MESSAGE, result.message);
+				messageToShow.putExtra(Timer.DURATION, 2300l);
+				context.sendBroadcast(messageToShow);
 			}
+			
+			numStarted.close();
+			numStarted = null;
 		}catch(Exception ex){Log.e("AssignTime", "onClick failed:", ex);}
 		return result;
 	}
 	
 	@Override
-	protected void onPostExecute(AssignResult result) {
-		Toast messageToast = Toast.makeText(context, result.message, 2300);
-		messageToast.setGravity(Gravity.CENTER_VERTICAL|Gravity.CENTER_HORIZONTAL, 0, 30);
-		messageToast.show();
+	protected void onPostExecute(AssignResult result) {		
 		if(result.numUnfinishedRacers <= 0){
 			Log.w(LOG_TAG(), "Transition to Results tab");
 			// Transition to the results tab

@@ -29,12 +29,14 @@
             android:id="@+id/btnChangeOrder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+        	style="@style/Medium.Padded" 
             android:text="@string/ReorderRacer" />
 
         <Button
             android:id="@+id/btnCancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+        	style="@style/Medium.Padded" 
             android:text="@string/btnCancel" />
 
     </LinearLayout>

@@ -106,9 +106,6 @@ public class TTTimerTabsActivity extends FragmentActivity {
 		
 		AppSettings.Update(this, AppSettings.AppSetting_AdminMode_Name, Boolean.toString(false), true);
 		
-		UpdateRaceState();
-		
-		//theIntent = this.registerReceiver(mActionReceiver, actionFilter);
 		AddActionFilter(AddRaceView.RACE_ADDED_ACTION);
 		AddActionFilter(Timer.RACE_IS_FINISHED_ACTION);
 		AddActionFilter(TTTimerTabsActivity.CHANGE_VISIBLE_TAB);
@@ -117,6 +114,8 @@ public class TTTimerTabsActivity extends FragmentActivity {
         // Register for broadcasts when a tab is changed
         this.registerReceiver(mActionReceiver, actionFilter);
 		timer.RegisterReceiver();
+		
+		UpdateRaceState();
 	}
 	
 	@Override 
@@ -186,13 +185,13 @@ public class TTTimerTabsActivity extends FragmentActivity {
 			AppSettings.Update(this, AppSettings.AppSetting_StartInterval_Name, Long.toString(startInterval), true);
 			
 		    // Figure out if a race is currently going on.  
-	        if(RaceIsInProgress(theRace)) {
+	        if(IsRaceInProgress(theRace)) {
 	        	// Show the timer
 	        	timer.setVisibility(View.VISIBLE);  
 	        	// Since races are started and tracked only locally, if a race is still going, it was started on this device
 		        // If the race already has a raceStartTime, and not all racers are finished, set the startTime variable to raceStartTime and get the timer running
 	        	UpdateFromRaceInProgress(theRace);
-	        } else if (RaceIsFinished(theRace)) {	        
+	        } else if (IsRaceFinished(theRace)) {	        
 	        	timer.setVisibility(View.GONE); 
 	        	// Find a finished race on the current date
 	        	SetupFinishedRace();
@@ -211,7 +210,7 @@ public class TTTimerTabsActivity extends FragmentActivity {
 				Long startInterval = theRace.getLong(theRace.getColumnIndex(Race.StartInterval));
 				AppSettings.Update(this, AppSettings.AppSetting_StartInterval_Name, Long.toString(startInterval), true);
 				
-				if (RaceIsAvailable(theRace)){ 
+				if (IsRaceAvailable(theRace)){ 
 		        	SetupAvailableRace();
 		        }
 			}
@@ -222,7 +221,7 @@ public class TTTimerTabsActivity extends FragmentActivity {
 		}
 	}
 	
-	private boolean RaceIsInProgress(Cursor theRace){
+	private boolean IsRaceInProgress(Cursor theRace){
 		boolean foundRaceInProgress = false;
 		try{			
 			if(theRace.getCount() > 0 && theRace.isNull(theRace.getColumnIndex(RaceResults.EndTime)) && 
@@ -249,7 +248,7 @@ public class TTTimerTabsActivity extends FragmentActivity {
 		return foundRaceInProgress;
 	}
 	
-	private boolean RaceIsAvailable(Cursor theRace){
+	private boolean IsRaceAvailable(Cursor theRace){
 		boolean foundAvailableRace = false;
 		try{						
 			if(theRace.getCount() > 0 && !theRace.isNull(theRace.getColumnIndex(Race.RaceDate)) && theRace.isNull(theRace.getColumnIndex(Race.RaceStartTime))){	
@@ -261,7 +260,7 @@ public class TTTimerTabsActivity extends FragmentActivity {
 		return foundAvailableRace;
 	}
 	
-	private boolean RaceIsFinished(Cursor theRace){
+	private boolean IsRaceFinished(Cursor theRace){
 		boolean foundFinishedRace = false;
 		try{									
 			if(theRace.getCount() > 0 && !theRace.isNull(theRace.getColumnIndex(Race.RaceDate)) &&  
@@ -370,7 +369,8 @@ public class TTTimerTabsActivity extends FragmentActivity {
         	} else if(intent.getAction().equals(TTTimerTabsActivity.CHANGE_VISIBLE_TAB)){
         		tabHost.setCurrentTabByTag(intent.getStringExtra(TTTimerTabsActivity.VISIBLE_TAB_TAG));
         	} else if(intent.getAction().equals(Timer.RACE_IS_FINISHED_ACTION)){
-        		SetupFinishedRace();
+				timer.CleanUpExtraUnassignedTimes();
+				SetupFinishedRace();
         	} else if(intent.getAction().equals(TTTimerTabsActivity.RACE_ID_CHANGED_ACTION)){
         		long raceID = Long.parseLong(intent.getStringExtra(RaceResults.Race_ID));
         		UpdatePreviousRaceState(raceID);

@@ -16,9 +16,10 @@
     <TextView
 	    android:id="@+id/txtTimerBottom"
 	    android:layout_width="fill_parent"
-	    android:layout_height="fill_parent"
+	    android:layout_height="wrap_content"
 	    android:text="@string/defaultTime"
 	    style="@style/ExtraLarge.Padded"
+	    android:paddingBottom="0sp"
     	android:layout_toRightOf="@id/lblTimer"
     	android:layout_alignParentTop="true" />
 
@@ -48,5 +49,18 @@
 	    android:visibility="invisible"
 	    android:layout_below="@+id/lblTimer"
     	android:layout_alignParentLeft="true"/>
+    
+    <TextView
+        android:id="@+id/lblMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="italic"
+        android:paddingLeft="10sp"
+        android:paddingRight="3sp"
+    	android:background="#D08E8E8B"
+	    style="@style/SmallMedium" 
+	    android:visibility="invisible"
+	    android:layout_toRightOf="@+id/lblLaps"
+	    android:layout_alignBottom="@+id/lblLaps"/>
 
 </RelativeLayout>

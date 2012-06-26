@@ -80,6 +80,12 @@
         android:layout_height="wrap_content"
 	    android:gravity="right" >
         
+        <Button android:id="@+id/btnAddGhostRacer"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:text="@string/AddGhostRacer"
+		    style="@style/Medium" />
+        
         <Button
             android:id="@+id/btnAddNewTeam"
             android:layout_width="wrap_content"

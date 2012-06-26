@@ -3,7 +3,8 @@
     android:id="@+id/AdminAuthID"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    style="@style/Padded" >
 
 
     <TextView
@@ -14,39 +15,31 @@
 		style="@style/Medium" />
 
     <EditText
-        android:id="@+id/editText1"
+        android:id="@+id/txtPassword"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:inputType="textPassword" >
-
-        <requestFocus />
     </EditText>
 
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" >
-
-
-
-
         <Button
             android:id="@+id/btnSubmit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="btnSubmitAdminPasswordClick"
-            android:text="@string/btnSubmit" />
-
-
-
+            android:text="@string/btnSubmit"
+            style="@style/Medium.Padded" />
 
         <Button
             android:id="@+id/btnCancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="btnCancelAdminPasswordClick"
-            android:text="@string/btnCancel" />
-
+            android:text="@string/btnCancel"
+            style="@style/Medium.Padded" />
     </LinearLayout>
 
 </LinearLayout>

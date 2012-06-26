@@ -40,9 +40,14 @@ public class EditRaceConfiguration extends AddRaceView implements View.OnClickLi
     	
     	btnAddNewRace.setText(R.string.SaveChanges);
     	
-		this.getLoaderManager().initLoader(RACE_INFO_LOADER, null, this);
-    	
 		return v;
+    }
+    
+    @Override
+    public void onResume() {
+    	super.onResume();
+
+		this.getLoaderManager().initLoader(RACE_INFO_LOADER, null, this);
     }
     
     @Override
@@ -56,7 +61,6 @@ public class EditRaceConfiguration extends AddRaceView implements View.OnClickLi
 				
 				// Figure out if checkin has already started.  If checkin has started, and start interval has changed, update the start intervals of everyone.
 				Cursor checkins = RaceResults.Read(getActivity(), new String[]{RaceResults._ID, RaceResults.StartOrder}, RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name), null, RaceResults.StartOrder);
-				getActivity().startManagingCursor(checkins);
 				if(checkins.getCount() > 0){
 					checkins.moveToFirst();
 					// Checkin was already started, so update all startIntervals
@@ -68,6 +72,10 @@ public class EditRaceConfiguration extends AddRaceView implements View.OnClickLi
 						content.put(RaceResults.StartTimeOffset, startTimeOffset);
 						RaceResults.Update(getActivity(), content,  RaceResults._ID + "=?", new String[]{Long.toString(raceResultID)});
 					} while(checkins.moveToNext());
+				}
+				if(checkins != null){
+					checkins.close();
+					checkins = null;
 				}
 				
 	 			// Hide the dialog
