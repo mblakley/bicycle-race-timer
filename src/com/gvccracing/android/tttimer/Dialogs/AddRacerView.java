@@ -55,6 +55,8 @@ public class AddRacerView extends BaseDialog implements View.OnClickListener {
 
 		btnAddRacer = (Button) v.findViewById(R.id.btnAddNewRacer);
 		btnAddRacer.setOnClickListener(this);
+		// set the cancel button
+		v.findViewById(R.id.btnCancel).setOnClickListener(this);
 
 		btnCancel = (Button) v.findViewById(R.id.btnCancel);
 		btnCancel.setOnClickListener(this);
