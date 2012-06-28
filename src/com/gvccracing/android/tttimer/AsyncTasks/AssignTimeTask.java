@@ -44,7 +44,7 @@ public class AssignTimeTask extends AsyncTask<Long, Void, AssignResult> {
 			Long raceResult_ID = params[1];
 
     		Long race_ID = Long.parseLong(AppSettings.ReadValue(context, AppSettings.AppSetting_RaceID_Name, "-1"));
-	    	Cursor unassignedTime = context.getContentResolver().query(UnassignedTimes.CONTENT_URI, new String[]{UnassignedTimes.FinishTime}, UnassignedTimes._ID + " = ?", 
+	    	Cursor unassignedTime = UnassignedTimes.Read(context, new String[]{UnassignedTimes.FinishTime}, UnassignedTimes._ID + " = ?", 
 				  													new String[]{Long.toString(unassignedTime_ID)}, null);
 	    	unassignedTime.moveToFirst();
 	    	
@@ -54,8 +54,10 @@ public class AssignTimeTask extends AsyncTask<Long, Void, AssignResult> {
 	    	unassignedTime.close();
 	    	unassignedTime = null;
 	    	
+			UnassignedTimes.Update(context, unassignedTime_ID, null, null, raceResult_ID);
+	    	
 	    	// Get the race result record based on the racerInfo_ID and the race_ID
-	    	Cursor raceResultToAssignTo = context.getContentResolver().query(RaceResults.CONTENT_URI, new String[]{RaceResults._ID, RaceResults.StartTime, RaceResults.RacerClubInfo_ID}, RaceResults._ID + " = ?", 
+	    	Cursor raceResultToAssignTo = RaceResults.Read(context, new String[]{RaceResults._ID, RaceResults.StartTime, RaceResults.RacerClubInfo_ID}, RaceResults._ID + " = ?", 
 	    																  new String[]{raceResult_ID.toString()}, null);
 	    	raceResultToAssignTo.moveToFirst();
 	    	
@@ -84,7 +86,7 @@ public class AssignTimeTask extends AsyncTask<Long, Void, AssignResult> {
 			context.sendBroadcast(messageToShow);
 			
 	    	// Delete the unassignedTimes row from the database
-			context.getContentResolver().delete(UnassignedTimes.CONTENT_URI, UnassignedTimes._ID + "=?", new String[]{Long.toString(unassignedTime_ID)});	    	
+			// context.getContentResolver().delete(UnassignedTimes.CONTENT_URI, UnassignedTimes._ID + "=?", new String[]{Long.toString(unassignedTime_ID)});	    	
 
 	    	raceResultToAssignTo.close();
 	    	raceResultToAssignTo = null;

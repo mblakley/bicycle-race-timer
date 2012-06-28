@@ -21,7 +21,7 @@ public class RaceResultsCP {
     public static final class RaceResults implements BaseColumns {
 
         public static final Uri CONTENT_URI = Uri.withAppendedPath(TTProvider.CONTENT_URI, RaceResults.class.getSimpleName() + "~");
-
+        
         // Table column
         public static final String RacerClubInfo_ID = "RacerClubInfo_ID";
         public static final String TeamInfo_ID = "TeamInfo_ID";

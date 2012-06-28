@@ -49,8 +49,7 @@ public class AssignLapTimeTask extends AsyncTask<Long, Void, AssignResult> {
 			// Figure out if the race has been started yet
 			Cursor numStarted = RaceResults.Read(context, new String[]{RaceResults._ID, RaceResults.StartTime}, RaceResults.Race_ID + "=? AND " + RaceResults.StartTime + " IS NOT NULL", new String[]{Long.toString(race_ID)}, null);
 			if(numStarted.getCount() > 0){
-				Cursor unassignedTime = context.getContentResolver().query(UnassignedTimes.CONTENT_URI, new String[]{UnassignedTimes.FinishTime}, UnassignedTimes._ID + " = ?", 
-							new String[]{Long.toString(unassignedTime_ID)}, null);
+				Cursor unassignedTime = UnassignedTimes.Read(context, new String[]{UnassignedTimes.FinishTime}, UnassignedTimes._ID + " = ?", new String[]{Long.toString(unassignedTime_ID)}, null);
 				unassignedTime.moveToFirst();
 				
 				int finishTimeCol = unassignedTime.getColumnIndex(UnassignedTimes.FinishTime);	
@@ -59,8 +58,10 @@ public class AssignLapTimeTask extends AsyncTask<Long, Void, AssignResult> {
 				unassignedTime.close();
 				unassignedTime = null;
 				
+				UnassignedTimes.Update(context, unassignedTime_ID, null, null, raceResult_ID);
+				
 				// Get the race result record based on the raceResult_ID
-				Cursor raceResultToAssignTo = context.getContentResolver().query(RaceResults.CONTENT_URI, new String[]{RaceResults._ID, RaceResults.StartTime, RaceResults.TeamInfo_ID}, RaceResults._ID + " = ?", 
+				Cursor raceResultToAssignTo = RaceResults.Read(context, new String[]{RaceResults._ID, RaceResults.StartTime, RaceResults.TeamInfo_ID}, RaceResults._ID + " = ?", 
 											  new String[]{raceResult_ID.toString()}, null);
 				raceResultToAssignTo.moveToFirst();
 				
@@ -68,7 +69,7 @@ public class AssignLapTimeTask extends AsyncTask<Long, Void, AssignResult> {
 				Long totalRaceLaps = raceValues.get(Race.NumLaps); 
 				
 				// Find any other laps associated with this raceResultID
-				Cursor raceLaps = context.getContentResolver().query(RaceLaps.CONTENT_URI, new String[]{RaceLaps._ID, RaceLaps.RaceResult_ID, RaceLaps.LapNumber, RaceLaps.StartTime, RaceLaps.FinishTime, RaceLaps.ElapsedTime}, RaceLaps.RaceResult_ID + " = ?", new String[]{raceResult_ID.toString()}, RaceLaps.LapNumber + " desc");
+				Cursor raceLaps = RaceLaps.Read(context , new String[]{RaceLaps._ID, RaceLaps.RaceResult_ID, RaceLaps.LapNumber, RaceLaps.StartTime, RaceLaps.FinishTime, RaceLaps.ElapsedTime}, RaceLaps.RaceResult_ID + " = ?", new String[]{raceResult_ID.toString()}, RaceLaps.LapNumber + " desc");
 				raceLaps.moveToFirst();
 				int numRaceLaps = raceLaps.getCount();
 				// If the number of laps >= Race.NumLaps, there's a problem because we have assigned too many laps to this team somehow, so don't do anything but return
@@ -132,7 +133,7 @@ public class AssignLapTimeTask extends AsyncTask<Long, Void, AssignResult> {
 				raceResultToAssignTo = null;
 		    	
 		    	// Delete the unassignedTimes row from the database
-				context.getContentResolver().delete(UnassignedTimes.CONTENT_URI, UnassignedTimes._ID + "=?", new String[]{Long.toString(unassignedTime_ID)});
+				// context.getContentResolver().delete(UnassignedTimes.CONTENT_URI, UnassignedTimes._ID + "=?", new String[]{Long.toString(unassignedTime_ID)});
 				
 				// Figure out if he's the last finisher, and if so, stop the timer, hide it, and transition to the results screen
 				Cursor numUnfinished = RaceResultsTeamOrRacerView.Read(context, new String[]{RaceResults.getTableName() + "." + RaceResults._ID}, RaceResults.Race_ID + "=? AND " + RaceResults.ElapsedTime + " IS NULL AND (" + RacerClubInfo.Category + "!=? OR " + TeamInfo.TeamCategory + "!=?)", new String[]{Long.toString(race_ID), "G", "G"}, null);

@@ -19,6 +19,12 @@
         android:layout_height="wrap_content" >
     </com.gvccracing.android.tttimer.Controls.TimePicker>
     
+    <Button
+		android:id="@+id/btnUnassignTime"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:text="@string/UnassignTime" />
+    
     <TextView
         android:id="@+id/lblDNF"
         android:layout_width="wrap_content"

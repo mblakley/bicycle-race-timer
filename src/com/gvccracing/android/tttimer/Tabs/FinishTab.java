@@ -173,7 +173,7 @@ public class FinishTab extends BaseTab implements View.OnClickListener,	LoaderMa
 						});
 				}
 				projection = new String[] { UnassignedTimes._ID, UnassignedTimes.FinishTime };
-				selection = UnassignedTimes.Race_ID	+ "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
+				selection = UnassignedTimes.Race_ID	+ "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + UnassignedTimes.RaceResult_ID + " IS NULL";
 				selectionArgs = null;
 				sortOrder = UnassignedTimes.FinishTime;
 				loader = new CursorLoader(getActivity(), UnassignedTimes.CONTENT_URI, projection, selection, selectionArgs, sortOrder);

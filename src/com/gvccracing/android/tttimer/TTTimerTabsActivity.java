@@ -367,7 +367,13 @@ public class TTTimerTabsActivity extends FragmentActivity {
         		AppSettings.Update(context, AppSettings.AppSetting_StartInterval_Name, Long.toString(intent.getLongExtra(AppSettings.AppSetting_StartInterval_Name, 60l)), true);
         		SetupAvailableRace();
         	} else if(intent.getAction().equals(TTTimerTabsActivity.CHANGE_VISIBLE_TAB)){
-        		tabHost.setCurrentTabByTag(intent.getStringExtra(TTTimerTabsActivity.VISIBLE_TAB_TAG));
+        		String visibleTabTag = intent.getStringExtra(TTTimerTabsActivity.VISIBLE_TAB_TAG);
+        		if(visibleTabTag == FinishTab.FinishTabSpecName && tabHost.getTabWidget().getChildTabViewAt(3).getVisibility() == View.GONE){
+        			tabHost.getTabWidget().getChildTabViewAt(3).setVisibility(View.VISIBLE);
+        		} else if(visibleTabTag == CheckInTab.CheckInTabSpecName && tabHost.getTabWidget().getChildTabViewAt(1).getVisibility() == View.GONE){
+        			tabHost.getTabWidget().getChildTabViewAt(1).setVisibility(View.VISIBLE);
+        		}
+        		tabHost.setCurrentTabByTag(visibleTabTag);
         	} else if(intent.getAction().equals(Timer.RACE_IS_FINISHED_ACTION)){
 				timer.CleanUpExtraUnassignedTimes();
 				SetupFinishedRace();

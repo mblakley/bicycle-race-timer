@@ -48,7 +48,7 @@ public class TTProvider extends ContentProvider {
     private static final String TAG = "DBAdapter";
     
     private static final String DATABASE_NAME = "GVCCRaces";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
 	
 	private DatabaseHelper mDB;
 
@@ -548,6 +548,10 @@ public class TTProvider extends ContentProvider {
 			numChanged = mDB.getWritableDatabase().update(Racer.getTableName(), content, selection, selectionArgs);
 
 			notifyUris = Racer.getAllUrisToNotifyOnChange();
+		} else if(uri.toString().contains(UnassignedTimes.CONTENT_URI.toString())){
+			numChanged = mDB.getWritableDatabase().update(UnassignedTimes.getTableName(), content, selection, selectionArgs);
+
+			notifyUris = UnassignedTimes.getAllUrisToNotifyOnChange();
 		} else{
 			throw new UnsupportedOperationException("You're an idiot...add the uri " + uri.toString() + " to the TTProvider.update if/else statement");
 		}
@@ -666,6 +670,15 @@ public class TTProvider extends ContentProvider {
 			        			+ " FROM tmp_" + RaceResults.getTableName() + ";");
 			        db.execSQL("DROP TABLE tmp_" +  RaceResults.getTableName() + ";");
 			        db.execSQL("UPDATE " + RacerClubInfo.getTableName() + " SET " + RacerClubInfo.Category + "='W' WHERE " + RacerClubInfo.Category + "='Women'");
+			        db.setTransactionSuccessful();
+	    		} finally{
+	    			db.endTransaction();
+	    		}
+	    	} 
+	    	if(oldVersion < 4 && newVersion >= 4){
+	    		db.beginTransaction();
+	    		try{
+		    		db.execSQL("ALTER TABLE " + UnassignedTimes.getTableName() + " ADD COLUMN " + UnassignedTimes.RaceResult_ID + " integer null");
 			        db.setTransactionSuccessful();
 	    		} finally{
 	    			db.endTransaction();

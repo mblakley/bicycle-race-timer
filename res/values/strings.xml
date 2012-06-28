@@ -186,4 +186,5 @@
 	<string name="AdminAuth">Administrator Authorization</string>
 	<string name="AddGhostRacer">Add Ghost Racer</string>
 	<string name="txtNumGhostSpots">Number of Ghost Spots</string>
+	<string name="UnassignTime">Unassign Time from Racer</string>
 </resources>

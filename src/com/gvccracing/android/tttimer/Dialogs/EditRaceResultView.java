@@ -1,11 +1,15 @@
 package com.gvccracing.android.tttimer.Dialogs;
 
 import com.gvccracing.android.tttimer.R;
+import com.gvccracing.android.tttimer.TTTimerTabsActivity;
 import com.gvccracing.android.tttimer.Controls.TimePicker;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.UnassignedTimesCP.UnassignedTimes;
+import com.gvccracing.android.tttimer.Tabs.FinishTab;
 import com.gvccracing.android.tttimer.Utilities.Calculations;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,6 +29,7 @@ public class EditRaceResultView extends BaseDialog implements View.OnClickListen
 	
 	private Button btnSaveChanges;
 	private Button btnDNF;
+	private Button btnUnassignTime;
 	private TimePicker tpElapsed;
 	private EditText txtPoints;
 	private TextView lblDNF;
@@ -52,6 +57,9 @@ public class EditRaceResultView extends BaseDialog implements View.OnClickListen
 		
 		btnDNF = (Button) v.findViewById(R.id.btnDNF);
 		btnDNF.setOnClickListener(this);
+		
+		btnUnassignTime = (Button) v.findViewById(R.id.btnUnassignTime);
+		btnUnassignTime.setOnClickListener(this);
 		
 		tpElapsed = (TimePicker) v.findViewById(R.id.elapsedTime);
 		
@@ -106,6 +114,30 @@ public class EditRaceResultView extends BaseDialog implements View.OnClickListen
 				}else{
 					showTime();
 				}
+			} else if(v==btnUnassignTime){
+				ContentValues content = new ContentValues();
+				content.putNull(UnassignedTimes.RaceResult_ID);
+				
+				// Update the unassigned time's raceResult_ID to null, which will place that unassigned time into the list again
+				UnassignedTimes.Update(getActivity(), content, UnassignedTimes.Race_ID + "=? AND " + UnassignedTimes.RaceResult_ID + "=?", new String[]{Long.toString(raceID), Long.toString(raceResultID)});
+
+				ContentValues result = new ContentValues();
+				result.putNull(RaceResults.EndTime);
+				result.putNull(RaceResults.ElapsedTime);
+				
+				RaceResults.Update(getActivity(), result, RaceResults._ID + "=?", new String[]{Long.toString(raceResultID)});
+				
+				dismiss();
+				
+				// Make sure the finish tab is visible
+				Intent changeTab = new Intent();
+				changeTab.setAction(TTTimerTabsActivity.CHANGE_VISIBLE_TAB);
+				changeTab.putExtra(TTTimerTabsActivity.VISIBLE_TAB_TAG, FinishTab.FinishTabSpecName);
+				getActivity().sendBroadcast(changeTab);
+				
+				// Recalculate placings and points
+		    	Calculations.CalculateCategoryPlacings(getActivity(), raceID);
+		    	Calculations.CalculateOverallPlacings(getActivity(), raceID); 
 			}
 		}
 		catch(Exception ex){
