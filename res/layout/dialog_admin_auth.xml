@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/AdminAuthID"
+    android:id="@+id/dialogContainer"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
+    android:orientation="vertical" 
+    android:background="#FFFF"
     style="@style/Padded" >
 
 
@@ -21,25 +22,12 @@
         android:inputType="textPassword" >
     </EditText>
 
-    <LinearLayout
-        android:id="@+id/linearLayout1"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
-        <Button
-            android:id="@+id/btnSubmit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="btnSubmitAdminPasswordClick"
-            android:text="@string/btnSubmit"
-            style="@style/Medium.Padded" />
-
-        <Button
-            android:id="@+id/btnCancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="btnCancelAdminPasswordClick"
-            android:text="@string/btnCancel"
-            style="@style/Medium.Padded" />
-    </LinearLayout>
+    <Button
+        android:id="@+id/btnSubmit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="btnSubmitAdminPasswordClick"
+        android:text="@string/btnSubmit"
+        style="@style/Medium.Padded" />
 
 </LinearLayout>

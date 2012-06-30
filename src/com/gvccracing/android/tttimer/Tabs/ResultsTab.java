@@ -30,6 +30,7 @@ import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
 import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
 import com.gvccracing.android.tttimer.DataAccess.TeamCheckInViewCP.TeamCheckInViewExclusive;
 import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
+import com.gvccracing.android.tttimer.Dialogs.AdminAuthView;
 import com.gvccracing.android.tttimer.Dialogs.EditRaceResultView;
 import com.gvccracing.android.tttimer.Dialogs.RacerPreviousResults;
 
@@ -143,18 +144,21 @@ public class ResultsTab extends BaseTab implements LoaderManager.LoaderCallbacks
 					overallResultsList.setOnItemClickListener(new OnItemClickListener(){
 						public void onItemClick(AdapterView<?> arg0, View arg1,
 								int position, long id) {
-							RacerPreviousResults showPreviousRaceResultsDialog = new RacerPreviousResults(id);
 							FragmentManager fm = getActivity().getSupportFragmentManager();
+							RacerPreviousResults showPreviousRaceResultsDialog = new RacerPreviousResults(id);
 							showPreviousRaceResultsDialog.show(fm, RacerPreviousResults.LOG_TAG);
 						}
 		    		});
 					overallResultsList.setOnItemLongClickListener( new OnItemLongClickListener(){
 						public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
 								int position, long id) {
+							FragmentManager fm = getActivity().getSupportFragmentManager();
+							EditRaceResultView editRaceResultDialog = new EditRaceResultView(id);
 							if(Boolean.parseBoolean(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_AdminMode_Name, "false"))){
-								EditRaceResultView editRaceResultDialog = new EditRaceResultView(id);
-								FragmentManager fm = getActivity().getSupportFragmentManager();
 								editRaceResultDialog.show(fm, EditRaceResultView.LOG_TAG);
+							}else{
+								AdminAuthView adminAuthDialog = new AdminAuthView(editRaceResultDialog);
+						        adminAuthDialog.show(fm, AdminAuthView.LOG_TAG);
 							}
 							return false;
 						}
@@ -185,10 +189,15 @@ public class ResultsTab extends BaseTab implements LoaderManager.LoaderCallbacks
 					overallResultsList.setOnItemLongClickListener( new OnItemLongClickListener(){
 						public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
 								int position, long id) {
+							//FragmentManager fm = getActivity().getSupportFragmentManager();
+							//EditLappedRaceResultView editRaceResultDialog = new EditLappedRaceResultView(id);
 							if(Boolean.parseBoolean(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_AdminMode_Name, "false"))){
 //								EditLappedRaceResultView editRaceResultDialog = new EditLappedRaceResultView(id);
 //								FragmentManager fm = getActivity().getSupportFragmentManager();
 //								editRaceResultDialog.show(fm, EditLappedRaceResultView.LOG_TAG);
+							}else{
+								//AdminAuthView adminAuthDialog = new AdminAuthView(editRaceResultDialog);
+						        //adminAuthDialog.show(fm, AdminAuthView.LOG_TAG);
 							}
 							return false;
 						}

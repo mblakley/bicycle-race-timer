@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/AppSettingsID"
+    android:id="@+id/dialogContainer"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    style="@style/Padded"
+    android:background="#FFFF" >
 
     <TextView
         android:id="@+id/lblDistanceUnits"
@@ -30,21 +32,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <LinearLayout android:layout_width="fill_parent"
-	    android:layout_height="fill_parent"
-	    android:orientation="horizontal">
-	
-	    <Button
-	        android:id="@+id/btnSaveSettings"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:text="@string/SaveSettings" />
-	    <Button
-	        android:id="@+id/btnCancel"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:text="@string/Cancel" />
-    
-    </LinearLayout>
+	<Button
+	    android:id="@+id/btnSaveSettings"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:text="@string/SaveSettings" />
 
 </LinearLayout>

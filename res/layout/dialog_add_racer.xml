@@ -1,8 +1,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/AddRacerID"
+    android:id="@+id/dialogContainer"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
+    android:orientation="vertical" 
+    android:background="#FFFF"
     style="@style/Padded" >
 
     <TextView 
@@ -64,24 +65,11 @@
         android:layout_height="wrap_content"
         android:layout_gravity="fill_vertical"
         style="@style/Medium" />
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
-
-        <Button
-            android:id="@+id/btnAddNewRacer"
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-        	style="@style/Medium.Padded" 
-            android:text="@string/btnAddNewRacer" />
-
-        <Button
-            android:id="@+id/btnCancel"
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-        	style="@style/Medium.Padded" 
-            android:text="@string/btnCancel" />
-
-    </LinearLayout>
+    
+    <Button
+        android:id="@+id/btnAddNewRacer"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+    	style="@style/Medium.Padded" 
+        android:text="@string/btnAddNewRacer" />
 </LinearLayout>

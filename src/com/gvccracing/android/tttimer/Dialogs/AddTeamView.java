@@ -46,9 +46,6 @@ public class AddTeamView extends BaseDialog implements View.OnClickListener, Cho
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.dialog_add_team, container, false);
-		TextView titleView = (TextView) getDialog().findViewById(android.R.id.title);
-		titleView.setText(R.string.AddNewTeam);
-		titleView.setTextAppearance(getActivity(), R.style.Large);
 
 		btnAddNewTeam = (Button) v.findViewById(R.id.btnAddNewTeam);
 		btnAddNewTeam.setOnClickListener(this);
@@ -59,11 +56,14 @@ public class AddTeamView extends BaseDialog implements View.OnClickListener, Cho
 		((Button) v.findViewById(R.id.btnEditRacer2)).setOnClickListener(this);
 		((Button) v.findViewById(R.id.btnEditRacer3)).setOnClickListener(this);
 		((Button) v.findViewById(R.id.btnEditRacer4)).setOnClickListener(this);
-		((Button) v.findViewById(R.id.btnEditRacer5)).setOnClickListener(this);
-		
-		((Button) v.findViewById(R.id.btnCancel)).setOnClickListener(this);
+		((Button) v.findViewById(R.id.btnEditRacer5)).setOnClickListener(this);		
 		
 		return v;
+	}
+	
+	@Override 
+	protected int GetTitleResourceID() {
+		return R.string.AddNewTeam;
 	}
 
 	@Override
@@ -133,8 +133,8 @@ public class AddTeamView extends BaseDialog implements View.OnClickListener, Cho
 				showChooseTeamRacerDialog(3);				
 			} else if(v.getId() == R.id.btnEditRacer5){
 				showChooseTeamRacerDialog(4);			
-			} else if(v.getId() == R.id.btnCancel){
-				this.dismiss();
+			} else {
+				super.onClick(v);
 			}
 		}
 		catch(Exception ex){
@@ -260,5 +260,10 @@ public class AddTeamView extends BaseDialog implements View.OnClickListener, Cho
 		}catch(Exception ex){
 			Log.e(LOG_TAG, "onLoaderReset error", ex); 
 		}
+	}
+
+	@Override
+	protected String LOG_TAG() {
+		return LOG_TAG;
 	}
 }

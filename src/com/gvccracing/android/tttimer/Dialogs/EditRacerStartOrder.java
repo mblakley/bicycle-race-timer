@@ -22,9 +22,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
-
 
 public class EditRacerStartOrder extends BaseDialog implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 	public static final String LOG_TAG = "EditRacerStartOrder";
@@ -53,9 +51,6 @@ public class EditRacerStartOrder extends BaseDialog implements View.OnClickListe
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.dialog_edit_racer_start_order, container, false);
-		TextView titleView = (TextView) getDialog().findViewById(android.R.id.title);
-		titleView.setText(R.string.ReorderRacer);
-		titleView.setTextAppearance(getActivity(), R.style.Large);
 
 		btnChangeOrder = (Button) v.findViewById(R.id.btnChangeOrder);
 		btnChangeOrder.setOnClickListener(this);
@@ -67,11 +62,14 @@ public class EditRacerStartOrder extends BaseDialog implements View.OnClickListe
 		            getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 		        }
 		    }
-		});
-		
-		((Button) v.findViewById(R.id.btnCancel)).setOnClickListener(this);
+		});		
 		
 		return v;
+	}
+	
+	@Override 
+	protected int GetTitleResourceID() {
+		return R.string.ReorderRacer;
 	}
 	
 	@Override
@@ -132,9 +130,8 @@ public class EditRacerStartOrder extends BaseDialog implements View.OnClickListe
 					allStartOrders.close();
 					allStartOrders = null;
 				}
-			} else if(v.getId() == R.id.btnCancel){
-				// Hide the dialog
-		    	dismiss();
+			} else {
+				super.onClick(v);
 			}
 		}
 		catch(Exception ex){
@@ -246,5 +243,10 @@ public class EditRacerStartOrder extends BaseDialog implements View.OnClickListe
 		}catch(Exception ex){
 			Log.e(LOG_TAG, "onLoaderReset error", ex); 
 		}
+	}
+
+	@Override
+	protected String LOG_TAG() {
+		return LOG_TAG;
 	}
 }

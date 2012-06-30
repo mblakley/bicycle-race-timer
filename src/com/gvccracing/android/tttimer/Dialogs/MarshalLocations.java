@@ -22,26 +22,17 @@ public class MarshalLocations extends BaseDialog implements View.OnClickListener
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.dialog_marshal_locations, container, false);
-		TextView titleView = (TextView) getDialog().findViewById(android.R.id.title);
-		titleView.setText(R.string.MarshalLocation);
-		titleView.setTextAppearance(getActivity(), R.style.Large);
 	    super.onCreate(savedInstanceState);
 
 	    Gallery gallery = (Gallery) v.findViewById(R.id.gallery);
 	    gallery.setAdapter(new ImageAdapter(this.getActivity()));
 	    
 	    imageView = (ImageView) v.findViewById(R.id.ImageView01);
-	    v.findViewById(R.id.btnCancel).setOnClickListener(this);
 	    
 	    marshalLocationDescription = (TextView) v.findViewById(R.id.marshalLocationDescription);
 	    
 	    gallery.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View v, int position,long id) {
-				if (id == R.id.btnCancel)
-				{
-					// Hide the dialog
-		 			dismiss();					
-				}
 				imageView.setImageResource(ImageAdapter.ImageIds[position]);
 				marshalLocationDescription.setText("Description of position " + position);
 			}
@@ -52,19 +43,24 @@ public class MarshalLocations extends BaseDialog implements View.OnClickListener
 	    
 	    return v;
 	}
+	
+	@Override 
+	protected int GetTitleResourceID() {
+		return R.string.MarshalLocation;
+	}
 
 	public void onClick(View v) { 
 		try{
 			//The cancel button was pressed
-			{
-				// Hide the dialog
-	 			dismiss();
-
-			}
-			
+			super.onClick(v);			
 		}
 		catch(Exception ex){
 			Log.e(LOG_TAG, "onClick failed",ex);
 		}
+	}
+
+	@Override
+	protected String LOG_TAG() {
+		return LOG_TAG;
 	}
 }

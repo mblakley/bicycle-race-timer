@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialogContainer"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
+    android:orientation="vertical" 
+    android:background="#FFFF"
     style="@style/Padded" >
 
     <TextView
@@ -19,15 +21,7 @@
             android:id="@+id/btnRacerUpgraded"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
-            android:text="Racer Upgraded"
-        	android:layout_gravity="center_horizontal"
-            android:layout_weight="0.3" />
-
-        <Button
-            android:id="@+id/btnCancel"
-            android:layout_width="0dip"
-            android:layout_height="wrap_content"
-            android:text="Cancel"
+            android:text="@string/RacerUpgraded"
         	android:layout_gravity="center_horizontal"
             android:layout_weight="0.3" />
 
@@ -35,7 +29,7 @@
             android:id="@+id/btnIncorrectCategory"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
-            android:text="Incorrect Category"
+            android:text="@string/IncorrectCategory"
         	android:layout_gravity="center_horizontal"
             android:layout_weight="0.3" />
 

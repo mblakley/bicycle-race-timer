@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialogContainer"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
+    android:orientation="vertical" 
+    android:background="#FFFF"
     style="@style/Padded" >
-
-
 
     <TextView
         android:id="@+id/txtWouldYouLikeTo"
@@ -14,28 +14,17 @@
         android:text="@string/RacerViewMode"
 		style="@style/Medium" />
 
-
-
-
     <Button
         android:id="@+id/btnViewRacerInfo"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/ViewRacerInfo"
         style="@style/Medium"  />
-
-
-
-
+    
     <Button
         android:id="@+id/btnCorrectRacerTime"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/EditRaceResult" />
-    
-    <Button android:id="@+id/btnCancel"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/Cancel"/>
 
 </LinearLayout>

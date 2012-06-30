@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.gvccracing.android.tttimer.R;
 import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
@@ -26,10 +25,10 @@ import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.RaceInfoResultsV
 import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.RaceInfoView;
 import com.gvccracing.android.tttimer.DataAccess.RaceLocationCP.RaceLocation;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
-import com.gvccracing.android.tttimer.Dialogs.EditRaceConfiguration;
+import com.gvccracing.android.tttimer.Dialogs.AdminAuthView;
+import com.gvccracing.android.tttimer.Dialogs.AdminMenuView;
 import com.gvccracing.android.tttimer.Dialogs.MarshalLocations;
-import com.gvccracing.android.tttimer.Dialogs.PreviousRaceResults;
-import com.gvccracing.android.tttimer.Utilities.Calculations;
+import com.gvccracing.android.tttimer.Dialogs.OtherRaceResults;
 import com.gvccracing.android.tttimer.Utilities.TimeFormatter;
 import com.gvccracing.android.tttimer.Utilities.Enums.RaceType;
 
@@ -59,9 +58,8 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
         View view = inflater.inflate(R.layout.tab_race_info, container, false);
         
         ((Button) view.findViewById(R.id.btnMarshalLocations)).setOnClickListener(this);
-    	((Button) view.findViewById(R.id.btnEditRace)).setOnClickListener(this);
-    	((Button) view.findViewById(R.id.btnRecalculateResults)).setOnClickListener(this); 
         ((Button) view.findViewById(R.id.btnPreviousResults)).setOnClickListener(this);
+        ((Button) view.findViewById(R.id.btnAdminMenu)).setOnClickListener(this);
         
         raceDate = ((TextView) view.findViewById(R.id.raceDate));
         raceCourseName = ((TextView) view.findViewById(R.id.raceCourseName));
@@ -84,14 +82,6 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 	    getActivity().getSupportLoaderManager().initLoader(APP_SETTINGS_LOADER_RACEINFO, null, this);
 	    
 	    getActivity().getSupportLoaderManager().initLoader(COURSE_RECORD_LOADER, null, this);
-	    
-	    if(getParentActivity().timer.racerStarted){
-	    	((Button) getView().findViewById(R.id.btnRecalculateResults)).setEnabled(false);
-	    	((Button) getView().findViewById(R.id.btnEditRace)).setEnabled(false);
-	    }else{
-	    	((Button) getView().findViewById(R.id.btnRecalculateResults)).setEnabled(true);
-	    	((Button) getView().findViewById(R.id.btnEditRace)).setEnabled(true);
-	    }
 	}
 
 	@Override
@@ -172,38 +162,30 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 					}
 					break;
 				case APP_SETTINGS_LOADER_RACEINFO:	
-					if(getView() != null){
-						if(Boolean.parseBoolean(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_AdminMode_Name, "false"))){
-				        	((Button) getView().findViewById(R.id.btnEditRace)).setVisibility(View.VISIBLE);
-				        	((Button) getView().findViewById(R.id.btnRecalculateResults)).setVisibility(View.VISIBLE);
-				        }else{
-				        	((Button) getView().findViewById(R.id.btnEditRace)).setVisibility(View.GONE);
-				        	((Button) getView().findViewById(R.id.btnRecalculateResults)).setVisibility(View.GONE);
-				        }
-					}
-					if(getActivity() == null){
-						Log.e(LOG_TAG(), "getActivity is null");
-					}
-					if(getActivity().getSupportLoaderManager() == null){
-						Log.e(LOG_TAG(), "getActivity().getSupportLoaderManager() is null");
-					}
 					getActivity().getSupportLoaderManager().restartLoader(RACE_INFO_LOADER, null, this);
 					getActivity().getSupportLoaderManager().restartLoader(COURSE_RECORD_LOADER, null, this);
+					
+					Integer distanceUnitID = Integer.parseInt(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_DistanceUnits_Name, "1"));
+					String distanceUnitText = "mi";
+					switch(distanceUnitID){
+						case 1:
+							distanceUnitText = "mi";
+							break;
+						case 2:
+							distanceUnitText = "km";
+							break;
+						default:
+							distanceUnitText = "mi";
+							break;
+					}
+					
+					((TextView)getView().findViewById(R.id.lblDistanceUnit)).setText(distanceUnitText);
 					break;	
 				case COURSE_RECORD_LOADER:
 					if(cursor != null && cursor.getCount() > 0){
 						cursor.moveToFirst();
 						long elapsedTime = cursor.getLong(cursor.getColumnIndex(RaceResults.ElapsedTime));
 						if (courseRecord != null) {
-//				        	Time elapsed = new Time(elapsedTime);
-//				        	SimpleDateFormat formatter = new SimpleDateFormat("m:ss.S");
-//				        	if(elapsedTime >= 36000000) {
-//				        		formatter = new SimpleDateFormat("HH:mm:ss.S");
-//				        	}
-//				        	else if(elapsedTime >= 3600000) {
-//				        		formatter = new SimpleDateFormat("H:mm:ss.S");	
-//				        	}
-//				        	courseRecord.setText(formatter.format(elapsed).toString());
 				        	courseRecord.setText(TimeFormatter.Format(elapsedTime, true, true, true, true, true, false, false, false));
 				        }
 					}
@@ -222,8 +204,6 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 				case RACE_INFO_LOADER:
 					break;
 				case APP_SETTINGS_LOADER_RACEINFO:
-					getActivity().getSupportLoaderManager().restartLoader(RACE_INFO_LOADER, null, this);				    
-				    getActivity().getSupportLoaderManager().restartLoader(COURSE_RECORD_LOADER, null, this);
 					break;
 				case COURSE_RECORD_LOADER:
 					break;
@@ -235,51 +215,36 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 	}
 
 	public void onClick(View v) {
+        FragmentManager fm = getActivity().getSupportFragmentManager();
 		switch (v.getId())
 		{
 			case R.id.btnMarshalLocations:
 				showMarshalLocations(v);
 				break;
-			case R.id.btnEditRace:
-		        if(Boolean.parseBoolean(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_AdminMode_Name, "false"))){
-		        	showEditRace(v);
-		        }else{
-		        	Toast.makeText(getActivity(), "Unable to save edit race.  Please login as administrator", Toast.LENGTH_LONG).show();
-		        }
-				break;
 			case R.id.btnPreviousResults:
 				showChoosePreviousRace();
 				break;
-			case R.id.btnRecalculateResults:
+			case R.id.btnAdminMenu:
 				if(Boolean.parseBoolean(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_AdminMode_Name, "false"))){
-		        	RecalculateResults();
-		        }else{
-		        	Toast.makeText(getActivity(), "Unable to recalculate race results.  Please login as administrator", Toast.LENGTH_LONG).show();
-		        }
+					AdminMenuView adminMenuDialog = new AdminMenuView();
+					adminMenuDialog.show(fm, AdminMenuView.LOG_TAG);
+				}else{
+					AdminAuthView adminAuthDialog = new AdminAuthView();
+			        adminAuthDialog.show(fm, AdminAuthView.LOG_TAG);
+				}
 				break;
 		}
 	}
 
-	private void RecalculateResults() {
-    	Calculations.CalculateCategoryPlacings(getActivity(), Long.parseLong(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_RaceID_Name, "0")));
-    	Calculations.CalculateOverallPlacings(getActivity(), Long.parseLong(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_RaceID_Name, "0")));  
-	}
-
 	private void showChoosePreviousRace() {
-		PreviousRaceResults previousResultsDialog = new PreviousRaceResults();
+		OtherRaceResults previousResultsDialog = new OtherRaceResults();
 		FragmentManager fm = getParentActivity().getSupportFragmentManager();
-		previousResultsDialog.show(fm, PreviousRaceResults.LOG_TAG);
+		previousResultsDialog.show(fm, OtherRaceResults.LOG_TAG);
 	}
 
 	private void showMarshalLocations(View v) {
 		MarshalLocations marshalLocationsDialog = new MarshalLocations();
 		FragmentManager fm = getParentActivity().getSupportFragmentManager();
 		marshalLocationsDialog.show(fm, MarshalLocations.LOG_TAG);
-	}
-
-	private void showEditRace(View v) {
-		EditRaceConfiguration editRaceDialog = new EditRaceConfiguration();
-		FragmentManager fm = getParentActivity().getSupportFragmentManager();
-		editRaceDialog.show(fm, EditRaceConfiguration.LOG_TAG);
 	}
 }

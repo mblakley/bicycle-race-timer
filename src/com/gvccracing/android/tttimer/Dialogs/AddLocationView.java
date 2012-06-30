@@ -22,9 +22,6 @@ public class AddLocationView extends BaseDialog implements View.OnClickListener 
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.dialog_add_location, container, false);
-		TextView titleView = (TextView) getDialog().findViewById(android.R.id.title);
-		titleView.setText(R.string.AddLocation);
-		titleView.setTextAppearance(getActivity(), R.style.Large);
 
 		btnAddLocation = (Button) v.findViewById(R.id.btnAddLocation);
 		btnAddLocation.setOnClickListener(this);
@@ -49,6 +46,11 @@ public class AddLocationView extends BaseDialog implements View.OnClickListener 
 		return v;
 	}
 	
+	@Override 
+	protected int GetTitleResourceID() {
+		return R.string.AddLocation;
+	}
+	
 	public void onClick(View v) { 
 		try{
 			if (v == btnAddLocation){
@@ -63,10 +65,17 @@ public class AddLocationView extends BaseDialog implements View.OnClickListener 
 					    			
 				// Hide the dialog
 				dismiss();
+			} else {
+				super.onClick(v);
 			}
 		}
 		catch(Exception ex){
 			Log.e(LOG_TAG, "btnStartCheckIn failed",ex);
 		}
+	}
+
+	@Override
+	protected String LOG_TAG() {
+		return LOG_TAG;
 	}
 }

@@ -94,7 +94,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/Medium"
-            android:text="sec" />
+            android:text="@string/sec" />
 
     </LinearLayout>
 
@@ -123,8 +123,7 @@
             android:id="@+id/distanceUnit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/Medium"
-            android:text="mi" />
+            style="@style/Medium"/>
 
     </LinearLayout>
     
@@ -168,54 +167,39 @@
             android:id="@+id/raceLaps"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/Medium.Padded"
-            android:text="" />
-    </LinearLayout>
-    
-    <LinearLayout
-        android:id="@+id/linearLayout7"
-        android:layout_width="fill_parent"
+            style="@style/Medium.Padded" />
+    </LinearLayout>    
+
+    <Button
+        android:id="@+id/btnMarshalLocations"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="bottom|right"
-        android:orientation="horizontal" >
+    	android:layout_gravity="bottom|right"
+        style="@style/Medium"
+        android:text="@string/MarshalLocations" />
 
-        <Button
-            android:id="@+id/btnMarshalLocations"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/Medium"
-            android:text="@string/MarshalLocations" />
-
-        <Button
-            android:id="@+id/btnEditRace"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/Medium"
-            android:text="@string/EditRace"
-            android:visibility="gone" />
-    </LinearLayout>
-    
-    <LinearLayout
-        android:id="@+id/linearLayout8"
-        android:layout_width="fill_parent"
+    <Button
+        android:id="@+id/btnEditRace"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="bottom|right"
-        android:orientation="horizontal" >
+        style="@style/Medium"
+        android:text="@string/EditRace"
+        android:visibility="gone" />
 
-        <Button
-            android:id="@+id/btnPreviousResults"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/Medium"
-            android:text="@string/btnPreviousRaces" />  
-            
-        <Button
-            android:id="@+id/btnRecalculateResults"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/Medium"
-            android:text="Recalculate Results"
-            android:visibility="gone" />
-    </LinearLayout>
+    <Button
+        android:id="@+id/btnPreviousResults"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"	    
+    	android:layout_gravity="bottom|right"
+        style="@style/Medium"
+        android:text="@string/btnPreviousRaces" />  
+    
+    <Button
+	    android:id="@+id/btnAdminMenu"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"	    
+        android:layout_gravity="bottom|right"
+	    style="@style/Medium"
+	    android:text="@string/AdminMenu" />
 
 </LinearLayout>

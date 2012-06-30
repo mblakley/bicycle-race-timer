@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialogContainer"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
+    android:orientation="vertical" 
+    android:background="#FFFF"
     style="@style/Padded" >
-
-
 
     <TextView
         android:id="@+id/txtChangeOrderExplanation"
@@ -20,25 +20,12 @@
         android:layout_height="wrap_content"
         style="@style/Medium.Padded" 
         android:inputType="number" />
-    
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
 
-        <Button
-            android:id="@+id/btnChangeOrder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-        	style="@style/Medium.Padded" 
-            android:text="@string/ReorderRacer" />
-
-        <Button
-            android:id="@+id/btnCancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-        	style="@style/Medium.Padded" 
-            android:text="@string/btnCancel" />
-
-    </LinearLayout>
+    <Button
+        android:id="@+id/btnChangeOrder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+    	style="@style/Medium.Padded" 
+        android:text="@string/ReorderRacer" />
 
 </LinearLayout>

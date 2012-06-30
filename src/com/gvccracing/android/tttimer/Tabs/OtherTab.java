@@ -41,12 +41,7 @@ public class OtherTab extends BaseTab implements View.OnClickListener, LoaderMan
 	        ((Button) view.findViewById(R.id.btnSaveNotesResults)).setOnClickListener(this);
 	        ((Button) view.findViewById(R.id.btnSubmitAllResults)).setOnClickListener(this);
 
-	        spinHumidity = (Spinner) view.findViewById(R.id.spinnerHumidity);
-			
-	        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-	        		getActivity(), R.array.humidity_array, android.R.layout.simple_spinner_item );
-	 		adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
-	 		spinHumidity.setAdapter(adapter);
+	        spinHumidity = (Spinner) view.findViewById(R.id.spinnerHumidity);			
 		}catch(Exception ex){
 			Log.e(LOG_TAG(), "onCreateView error", ex); 
 		}
@@ -56,16 +51,20 @@ public class OtherTab extends BaseTab implements View.OnClickListener, LoaderMan
 	@Override
 	public void onResume() {
 		super.onResume();
+		
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+        		getActivity(), R.array.humidity_array, android.R.layout.simple_spinner_item );
+ 		adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
+ 		spinHumidity.setAdapter(adapter);
+		
 		getActivity().getSupportLoaderManager().initLoader(RACE_NOTES_LOADER, null, this);
 		getActivity().getSupportLoaderManager().initLoader(APP_SETTINGS_LOADER_OTHER, null, this);
 	}
 	
-
 	@Override
 	public String TabSpecName() {
 		return OtherTabSpecName;
 	}
-
 
 	@Override
 	protected String LOG_TAG() {
@@ -125,43 +124,10 @@ public class OtherTab extends BaseTab implements View.OnClickListener, LoaderMan
 		        }else{
 		        	Toast.makeText(getActivity(), "Unable to save race notes.  Please login as administrator", Toast.LENGTH_LONG).show();
 		        }
-			}else if (v.getId() == R.id.btnSubmitAllResults) {
-				// Create a file on the SD card for the results and roster, and upload the roster to dropbox
-				Intent intent = new Intent(this.getParentActivity(), UploadToDropBox.class);
-            	//EditText mFileName = (EditText) findViewById(R.id.txtFileName);
-		        //intent.putExtra("FILENAME", mFileName.getText().toString());
-				startActivityForResult(intent, 0);
 			}
 		} catch (Exception ex) {
 			Log.e(LOG_TAG(), "OtherTab.onClick failed", ex);
 		}
-	}
-
-	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-	    if (requestCode == 0) {
-	        if (resultCode == Activity.RESULT_OK) {
-//	            String contents = intent.getStringExtra("SCAN_RESULT");
-//	            // Handle successful scan
-//	            //Toast.makeText(getBaseContext(), "The barcode is " + contents, Toast.LENGTH_LONG).show();
-//	            //EditText mFileName = (EditText) findViewById(R.id.txtFileName);
-//				String filename = mFileName.getText().toString();
-//				
-//				Date dateNow = new Date();
-//				SimpleDateFormat format = new SimpleDateFormat("h:mm:ss a  M/dd/yyyy");
-//			    contents = contents + ", " + format.format(dateNow) + "\n";
-//				
-//	            WriteToFile(filename, contents);
-//	            
-//	            
-//	            intent = new Intent("com.google.zxing.client.android.SCAN");
-//		        intent.setPackage("com.google.zxing.client.android");
-//		        intent.putExtra("SCAN_MODE", "ONE_D_MODE");
-//		        startActivityForResult(intent, 0);
-	        } else if (resultCode == Activity.RESULT_CANCELED) {
-	            // Handle cancel
-//	            Toast.makeText(getBaseContext(), "Done scanning", Toast.LENGTH_LONG).show();	        	
-	        }
-	    }
 	}
 
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {	

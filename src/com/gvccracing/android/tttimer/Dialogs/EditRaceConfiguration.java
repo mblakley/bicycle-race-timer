@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.gvccracing.android.tttimer.R;
 import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
@@ -34,13 +33,15 @@ public class EditRaceConfiguration extends AddRaceView implements View.OnClickLi
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     	View v = super.onCreateView(inflater, container, savedInstanceState);
-		TextView titleView = (TextView) getDialog().findViewById(android.R.id.title);
-		titleView.setText(R.string.RaceConfiguration);
-		titleView.setTextAppearance(getActivity(), R.style.Large);
     	
     	btnAddNewRace.setText(R.string.SaveChanges);
     	
 		return v;
+    }
+    
+    @Override
+    protected int GetTitleResourceID() {
+    	return R.string.RaceConfiguration;
     }
     
     @Override
@@ -80,6 +81,8 @@ public class EditRaceConfiguration extends AddRaceView implements View.OnClickLi
 				
 	 			// Hide the dialog
 	 			dismiss();
+			} else {
+				super.onClick(v);
 			}
 		}
 		catch(Exception ex){

@@ -19,7 +19,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -34,7 +33,6 @@ public class AddRacerView extends BaseDialog implements View.OnClickListener {
 	public static final String CHECKIN_RACER_ACTION = "com.gvccracing.android.tttimer.CHECKIN_RACER";
 	
 	protected Button btnAddRacer;
-	protected Button btnCancel;
 	
 	protected EditText txtFirstName;
 	protected EditText txtLastName;
@@ -50,17 +48,9 @@ public class AddRacerView extends BaseDialog implements View.OnClickListener {
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.dialog_add_racer, container, false);
-		TextView titleView = (TextView) getDialog().findViewById(android.R.id.title);
-		titleView.setText(R.string.AddNewRacer);
-		titleView.setTextAppearance(getActivity(), R.style.Large);
 
 		btnAddRacer = (Button) v.findViewById(R.id.btnAddNewRacer);
 		btnAddRacer.setOnClickListener(this);
-		// set the cancel button
-		v.findViewById(R.id.btnCancel).setOnClickListener(this);
-
-		btnCancel = (Button) v.findViewById(R.id.btnCancel);
-		btnCancel.setOnClickListener(this);
 		
 		txtFirstName = (EditText) v.findViewById(R.id.txtFirstName);
 		txtLastName = (EditText) v.findViewById(R.id.txtLastName);
@@ -79,6 +69,11 @@ public class AddRacerView extends BaseDialog implements View.OnClickListener {
  		adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
  		spinCategory.setAdapter(adapter);
 		return v;
+	}
+	
+	@Override 
+	protected int GetTitleResourceID() {
+		return R.string.AddNewRacer;
 	}
 
  	/*
@@ -229,6 +224,17 @@ public class AddRacerView extends BaseDialog implements View.OnClickListener {
 		getActivity().sendBroadcast(racerAdded);
 	}
 	
+	@Override
+	public void dismiss() {
+		// Hide the dialog
+    	super.dismiss();
+		
+		// Set the textboxes in the dialog to an empty string
+		txtFirstName.setText("");
+		txtLastName.setText("");
+		txtUSACNumber.setText("");
+	}
+	
 	public void onClick(View v) { 
 		try{
 			if (v == btnAddRacer)
@@ -262,22 +268,18 @@ public class AddRacerView extends BaseDialog implements View.OnClickListener {
 				if(AddNewRacer(firstName, lastName, usacNumber, category)){
 					// Hide the dialog
 			    	dismiss();
-					
-					// Set the textboxes in the dialog to an empty string
-					txtFirstName.setText("");
-					txtLastName.setText("");
-					txtUSACNumber.setText("");
 				}
-			} else if(v == btnCancel){
-				dismiss();
-				
-				txtFirstName.setText("");
-				txtLastName.setText("");
-				txtUSACNumber.setText("");
+			} else {
+				super.onClick(v);
 			}
 		}
 		catch(Exception ex){
 			Log.e(LOG_TAG, "btnAddNewRacerClickHandler failed",ex);
 		}
+	}
+
+	@Override
+	protected String LOG_TAG() {
+		return LOG_TAG;
 	}
 }

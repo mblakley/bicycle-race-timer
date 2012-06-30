@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 public class AppSettingsView extends BaseDialog implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
 	public static final String LOG_TAG = "AppSettingsView";
@@ -31,9 +30,6 @@ public class AppSettingsView extends BaseDialog implements LoaderManager.LoaderC
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.dialog_settings, container, false);
-		TextView titleView = (TextView) getDialog().findViewById(android.R.id.title);
-		titleView.setText(R.string.AppSettings);
-		titleView.setTextAppearance(getActivity(), R.style.Large);
 
 		btnSaveSettings = (Button) v.findViewById(R.id.btnSaveSettings);
 		btnSaveSettings.setOnClickListener(this);	
@@ -51,6 +47,11 @@ public class AppSettingsView extends BaseDialog implements LoaderManager.LoaderC
 		temperatureUnits.setAdapter(adapter);
 		
 		return v;
+	}
+	
+	@Override 
+	protected int GetTitleResourceID() {
+		return R.string.AppSettings;
 	}
 	
 	@Override
@@ -74,6 +75,8 @@ public class AppSettingsView extends BaseDialog implements LoaderManager.LoaderC
 				
 				// Hide the dialog
 		    	dismiss();
+			} else {
+				super.onClick(v);
 			}
 		}
 		catch(Exception ex){
@@ -151,5 +154,10 @@ public class AppSettingsView extends BaseDialog implements LoaderManager.LoaderC
 		}catch(Exception ex){
 			Log.e(LOG_TAG, "onLoaderReset error", ex); 
 		}
+	}
+
+	@Override
+	protected String LOG_TAG() {
+		return LOG_TAG;
 	}
 }

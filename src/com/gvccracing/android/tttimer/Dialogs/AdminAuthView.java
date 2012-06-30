@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -20,32 +19,44 @@ public class AdminAuthView extends BaseDialog implements View.OnClickListener {
 	public static final String LOG_TAG = "AdminAuthView";
 	
 	private Button btnSubmit;
-	private Button btnCancel;
 	private EditText txtPassword;
+	private BaseDialog navigateAfterAuth;
+	
+	public AdminAuthView(){
+		navigateAfterAuth = null;
+	}
+	
+	public AdminAuthView(BaseDialog navigateAfter){
+		this.navigateAfterAuth = navigateAfter;
+	}
 	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.dialog_admin_auth, container, false);
-		TextView titleView = (TextView) getDialog().findViewById(android.R.id.title);
-		titleView.setText(R.string.AdminAuth);
-		titleView.setTextAppearance(getActivity(), R.style.Large);
 
 		btnSubmit = (Button) v.findViewById(R.id.btnSubmit);
 		btnSubmit.setOnClickListener(this);
-
-		btnCancel = (Button) v.findViewById(R.id.btnCancel);
-		btnCancel.setOnClickListener(this);
 		
 		txtPassword = (EditText) v.findViewById(R.id.txtPassword);
 		
 		return v;
 	}
 	
+	@Override 
+	protected int GetTitleResourceID() {
+		return R.string.AdminAuth;
+	}
+	
 	@Override
 	public void onResume() {
 		super.onResume();
 		if(Boolean.parseBoolean(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_AdminMode_Name, "false"))){
-			GoToAdminMenu();
+			if(navigateAfterAuth == null){
+				GoToAdminMenu();
+			}else{
+				FragmentManager fm = getFragmentManager();
+		        navigateAfterAuth.show(fm, navigateAfterAuth.LOG_TAG());
+			}
 			this.dismiss();
 		}else{		
 			txtPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -66,24 +77,32 @@ public class AdminAuthView extends BaseDialog implements View.OnClickListener {
 
 	public void onClick(View v) { 
 		try{
-			if (v == btnCancel){
-				dismiss();
-			}else if(v == btnSubmit){
+			if(v == btnSubmit){
 				String password = txtPassword.getText().toString();
 				if(password.equals("gvccracing")){
 					AppSettings.Update(getActivity(), AppSettings.AppSetting_AdminMode_Name, Boolean.toString(true), true);
-					
-					GoToAdminMenu();
-					
+					if(navigateAfterAuth == null){
+						GoToAdminMenu();
+					}else{
+						FragmentManager fm = getFragmentManager();
+				        navigateAfterAuth.show(fm, navigateAfterAuth.LOG_TAG());
+					}
 					this.dismiss();
 				}else{
 					// Display an invalid password message
 					Toast.makeText(getActivity(), R.string.InvalidPassword, 3000).show();
 				}
+			} else{
+				super.onClick(v);
 			}
 		}
 		catch(Exception ex){
 			Log.e(LOG_TAG, "onClick failed",ex);
 		}
+	}
+
+	@Override
+	protected String LOG_TAG() {
+		return LOG_TAG;
 	}
 }

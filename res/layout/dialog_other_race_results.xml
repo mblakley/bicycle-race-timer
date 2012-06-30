@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialogContainer"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
+    android:orientation="vertical" 
+    android:background="#FFFF"
     style="@style/Padded" >
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Race to View"
+        android:text="@string/RaceToView"
         style="@style/Medium" />
 
     <Spinner
@@ -21,7 +23,7 @@
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Race Info"
+        android:text="@string/RaceInfo"
         style="@style/Large" />
 
     <LinearLayout
@@ -33,20 +35,18 @@
 	        android:id="@+id/lblNumberOfRacers"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:text="Number of racers:"
+	        android:text="@string/NumberOfRacers"
 	        style="@style/Medium" />
 	    
 	    <TextView
 	        android:id="@+id/txtNumberOfRacers"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:text=""
 	        style="@style/Medium.Padded" />
     </LinearLayout>
 
-    
     <LinearLayout
-        android:id="@+id/linearLayout2"
+        android:id="@+id/linearLayout22"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical" >
@@ -54,7 +54,7 @@
 	        android:id="@+id/lblRaceDistance"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:text="Race distance:"
+	        android:text="@string/RaceDistance"
 	        style="@style/Medium" />
 	    
 	    <TextView
@@ -65,22 +65,10 @@
 	        style="@style/Medium.Padded" />
 	</LinearLayout>
 	
-    <LinearLayout
-    	android:layout_width="fill_parent"
-    	android:layout_height="fill_parent"
-    	android:orientation="horizontal"
-    	style="@style/Padded" >
     <Button
         android:id="@+id/btnSaveSelection"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         style="@style/Medium.Padded" 
         android:text="@string/Select" />
-    <Button
-        android:id="@+id/btnCancel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/Medium.Padded" 
-        android:text="@string/Cancel" />
-	</LinearLayout>
 </LinearLayout>

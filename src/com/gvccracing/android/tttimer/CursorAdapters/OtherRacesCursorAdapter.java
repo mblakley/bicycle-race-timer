@@ -15,9 +15,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-public class PreviousRacesCursorAdapter extends BaseCursorAdapter {
+public class OtherRacesCursorAdapter extends BaseCursorAdapter {
 
-    public PreviousRacesCursorAdapter (Context context, Cursor c) {
+    public OtherRacesCursorAdapter (Context context, Cursor c) {
     	super(context, c, FLAG_REGISTER_CONTENT_OBSERVER);
     }
 

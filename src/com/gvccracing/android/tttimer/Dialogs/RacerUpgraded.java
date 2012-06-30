@@ -17,7 +17,6 @@ public class RacerUpgraded extends BaseDialog implements OnClickListener {
 	public static final String LOG_TAG = "RacerUpgraded";
 	
 	private Button btnRacerUpgraded;
-	private Button btnCancel;
 	private Button btnIncorrectCategory;
 	private TextView txtRacerUpgrade;
 	
@@ -36,23 +35,22 @@ public class RacerUpgraded extends BaseDialog implements OnClickListener {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.dialog_racer_upgraded, container, false);
-		TextView titleView = (TextView) getDialog().findViewById(android.R.id.title);
-		titleView.setText("Racer Upgrade");
-		titleView.setTextAppearance(getActivity(), R.style.Large);
 		
 		txtRacerUpgrade = (TextView) v.findViewById(R.id.txtMessage);
 		txtRacerUpgrade.setText("Did this racer just upgrade from category " + initCategory + ", or was their inital category incorrect?");
 
 		btnRacerUpgraded = (Button) v.findViewById(R.id.btnRacerUpgraded);
 		btnRacerUpgraded.setOnClickListener(this);
-
-		btnCancel = (Button) v.findViewById(R.id.btnCancel);
-		btnCancel.setOnClickListener(this);
 		
 		btnIncorrectCategory = (Button) v.findViewById(R.id.btnIncorrectCategory);
 		btnIncorrectCategory.setOnClickListener(this);
 				
 		return v;
+	}
+	
+	@Override 
+	protected int GetTitleResourceID() {
+		return R.string.RacerUpgrade;
 	}
 	
 	public void UpgradeRacerCategory(){
@@ -79,9 +77,13 @@ public class RacerUpgraded extends BaseDialog implements OnClickListener {
 		} else if (v == btnIncorrectCategory){
 			UpdateRacerCategory();
 			dismiss();
-		} else if (v == btnCancel){
-			dismiss();
+		} else {
+			super.onClick(v);
 		}
 	}
 
+	@Override
+	protected String LOG_TAG() {
+		return LOG_TAG;
+	}
 }

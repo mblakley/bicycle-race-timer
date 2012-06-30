@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 
@@ -19,19 +18,23 @@ public class ChooseViewingMode extends BaseDialog implements View.OnClickListene
 	 
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+            Bundle savedInstanceState) {		
 		View v = inflater.inflate(R.layout.dialog_viewing_mode, container, false);
-		TextView titleView = (TextView) getDialog().findViewById(android.R.id.title);
-		titleView.setText(R.string.viewingMode);
-		titleView.setTextAppearance(getActivity(), R.style.Large);
 		  
 		btnAddNewRace = (Button) v.findViewById(R.id.btnAddNewRace);
-		btnAddNewRace.setOnClickListener(this);
+		btnAddNewRace.setOnClickListener(this);		
 
 		btnPreviousRaces = (Button) v.findViewById(R.id.btnPreviousRaces);
 		btnPreviousRaces.setOnClickListener(this);
+		
+		ShowCancelButton(false);
 	
 		return v;
+	}
+
+	@Override 
+	protected int GetTitleResourceID() {
+		return R.string.viewingMode;
 	}
 	
 	@Override
@@ -40,22 +43,32 @@ public class ChooseViewingMode extends BaseDialog implements View.OnClickListene
 		dismiss();
 	}
 
+	@Override
 	public void onClick(View v) { 
 		try{
 			if (v == btnAddNewRace){
 				AddRaceView addRaceDialog = new AddRaceView();
 				FragmentManager fm = getFragmentManager();
 				addRaceDialog.show(fm, AddRaceView.LOG_TAG);
+				// Hide the dialog
+		    	dismiss();
 			} else if (v == btnPreviousRaces) {
-				PreviousRaceResults previousRaceResultsView = new PreviousRaceResults();
+				OtherRaceResults previousRaceResultsView = new OtherRaceResults();
 				FragmentManager fm = getFragmentManager();
-				previousRaceResultsView.show(fm, PreviousRaceResults.LOG_TAG);
+				previousRaceResultsView.show(fm, OtherRaceResults.LOG_TAG);
+				// Hide the dialog
+		    	dismiss();
+			} else{
+				super.onClick(v);
 			}
-			// Hide the dialog
-	    	dismiss();
 		}
 		catch(Exception ex){
 			Log.e(LOG_TAG, "onClick failed",ex);
 		}
+	}
+	
+	@Override
+	protected String LOG_TAG() {
+		return LOG_TAG;
 	}
 }

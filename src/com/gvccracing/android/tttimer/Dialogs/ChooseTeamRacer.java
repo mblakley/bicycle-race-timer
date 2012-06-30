@@ -23,8 +23,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
-
 
 public class ChooseTeamRacer extends BaseDialog implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 	public static final String LOG_TAG = "ChooseRacer";
@@ -39,7 +37,6 @@ public class ChooseTeamRacer extends BaseDialog implements View.OnClickListener,
 	
 	private Button btnChoose;
 	private Button btnRemove;
-	private Button btnCancel;
 	private Button btnAddRacer;
 	private Spinner spinnerTeamRacer;
 	private EditText racerNameSearchText;
@@ -56,11 +53,13 @@ public class ChooseTeamRacer extends BaseDialog implements View.OnClickListener,
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.dialog_choose_team_racer, container, false);
-		TextView titleView = (TextView) getDialog().findViewById(android.R.id.title);
-		titleView.setText(R.string.btnChooseRacer);
-		titleView.setTextAppearance(getActivity(), R.style.Large);
 		
 		return v;
+	}
+	
+	@Override 
+	protected int GetTitleResourceID() {
+		return R.string.btnChooseRacer;
 	}
 	
 	@Override
@@ -72,9 +71,6 @@ public class ChooseTeamRacer extends BaseDialog implements View.OnClickListener,
 
 		btnChoose = (Button) getView().findViewById(R.id.btnDone);
 		btnChoose.setOnClickListener(this);
-		
-		btnCancel = (Button) getView().findViewById(R.id.btnCancel);
-		btnCancel.setOnClickListener(this);
 
 		btnRemove = (Button) getView().findViewById(R.id.btnRemove);
 		btnRemove.setOnClickListener(this);
@@ -103,12 +99,12 @@ public class ChooseTeamRacer extends BaseDialog implements View.OnClickListener,
 				// Return -1 to activity - this signifies a removal/invalid id
 	            caller.onFinishEditDialog(racerNum, -1l);
 	            this.dismiss();
-			} else if (v == btnCancel){
-	            this.dismiss();
 			} else if (v == btnAddRacer){
 	            AddRacerView addRacer = new AddRacerView(false);
 				FragmentManager fm = getActivity().getSupportFragmentManager();
 				addRacer.show(fm, AddRacerView.LOG_TAG);
+			} else {
+				super.onClick(v);
 			}
 		}
 		catch(Exception ex){
@@ -185,5 +181,10 @@ public class ChooseTeamRacer extends BaseDialog implements View.OnClickListener,
 		}catch(Exception ex){
 			Log.e(LOG_TAG, "onLoaderReset error", ex); 
 		}
+	}
+
+	@Override
+	protected String LOG_TAG() {
+		return LOG_TAG;
 	}
 }

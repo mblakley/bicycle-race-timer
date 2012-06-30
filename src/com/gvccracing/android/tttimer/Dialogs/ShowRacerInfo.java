@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.gvccracing.android.tttimer.R;
 
@@ -25,17 +24,18 @@ public class ShowRacerInfo extends BaseDialog implements LoaderManager.LoaderCal
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.dialog_racer_info, container, false);
-		TextView titleView = (TextView) getDialog().findViewById(android.R.id.title);
-		titleView.setText(R.string.viewingMode);
-		titleView.setTextAppearance(getActivity(), R.style.Large);
 		
 		return v;
 	}
 	
+	@Override 
+	protected int GetTitleResourceID() {
+		return R.string.viewingMode;
+	}
+	
 	public void onClick(View v) { 
 		try{
-			// Hide the dialog
-	    	dismiss();
+			super.onClick(v);
 		}
 		catch(Exception ex){
 			Log.e(LOG_TAG, "onClick failed",ex);
@@ -55,5 +55,10 @@ public class ShowRacerInfo extends BaseDialog implements LoaderManager.LoaderCal
 	public void onLoaderReset(Loader<Cursor> arg0) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	protected String LOG_TAG() {
+		return LOG_TAG;
 	}
 }

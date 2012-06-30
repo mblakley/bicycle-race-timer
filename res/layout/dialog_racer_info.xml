@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialogContainer"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
+    android:orientation="vertical" 
+    android:background="#FFFF"
     style="@style/Padded" >
-
 
     <TextView
         android:id="@+id/txtRIRacerName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Racer Name"
+        android:text="@string/RacerName"
 		style="@style/Medium" />
 
 
@@ -18,7 +19,7 @@
         android:id="@+id/txtRICategoryRank"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Category rank"
+        android:text="@string/CategoryRank"
 		style="@style/Small" />
 
 
@@ -26,7 +27,7 @@
         android:id="@+id/txtRICategoryPoints"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Category points"
+        android:text="@string/CategoryPoints"
 		style="@style/Small" />
 
     <!-- Previous results at this course -->

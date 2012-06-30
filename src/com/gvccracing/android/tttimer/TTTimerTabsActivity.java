@@ -13,9 +13,6 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.TabHost;
 
@@ -25,10 +22,8 @@ import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
 import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.RaceInfoResultsView;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 import com.gvccracing.android.tttimer.Dialogs.AddRaceView;
-import com.gvccracing.android.tttimer.Dialogs.AdminAuthView;
-import com.gvccracing.android.tttimer.Dialogs.AppSettingsView;
 import com.gvccracing.android.tttimer.Dialogs.ChooseViewingMode;
-import com.gvccracing.android.tttimer.Dialogs.PreviousRaceResults;
+import com.gvccracing.android.tttimer.Dialogs.OtherRaceResults;
 import com.gvccracing.android.tttimer.Tabs.CheckInTab;
 import com.gvccracing.android.tttimer.Tabs.FinishTab;
 import com.gvccracing.android.tttimer.Tabs.OtherTab;
@@ -393,38 +388,7 @@ public class TTTimerTabsActivity extends FragmentActivity {
     		Log.e(LOG_TAG, "Unexpected error in onStop", ex);
     	}
         
-    }
-	 
-	/**
-	 * Inflate the options menu and show it
-	 */
-    @Override
-	public boolean onCreateOptionsMenu(Menu menu) {  
-		MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.menu, menu);
-	    return true;  
-	} 
-
-	/**
-	 * A menu option was selected, so handle the selection
-	 */
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-        FragmentManager fm = getSupportFragmentManager();
-	    // Handle item selection
-	    switch (item.getItemId()) {
-		    case R.id.settings_menu:	// Adjust settings for the app, such as units
-		    	AppSettingsView appSettingsDialog = new AppSettingsView();
-		        appSettingsDialog.show(fm, AppSettingsView.LOG_TAG);
-		        return true;
-		    case R.id.admin_menu:	// Add race locations and new races
-		    	AdminAuthView adminAuthDialog = new AdminAuthView();
-		        adminAuthDialog.show(fm, AdminAuthView.LOG_TAG);
-		        return true;
-		    default:
-		        return super.onOptionsItemSelected(item);	// Not sure what this was, but it wasn't for us!
-	    }
-	}
+    }	 
 	
 	/**
 	 * Figure out if there are any previous races in the DB
@@ -527,9 +491,9 @@ public class TTTimerTabsActivity extends FragmentActivity {
 					Long startInterval = currentRace.getLong(currentRace.getColumnIndex(Race.StartInterval));
 					AppSettings.Update(this, AppSettings.AppSetting_StartInterval_Name, Long.toString(startInterval), true);
 				}else{
-					PreviousRaceResults previousRaces = new PreviousRaceResults();
+					OtherRaceResults previousRaces = new OtherRaceResults();
 					FragmentManager fm = getSupportFragmentManager();
-					previousRaces.show(fm, PreviousRaceResults.LOG_TAG);
+					previousRaces.show(fm, OtherRaceResults.LOG_TAG);
 				}
 			}
 			

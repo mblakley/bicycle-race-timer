@@ -45,6 +45,7 @@
             android:layout_height="wrap_content"
             android:layout_weight=".65"
             android:singleLine="true"
+            android:inputType="textCapWords"
             style="@style/Medium" />
 
         <TextView
@@ -63,6 +64,7 @@
             android:layout_height="wrap_content"
             android:layout_weight=".35"
             android:singleLine="true" 
+            android:inputType="number"
             android:visibility="gone"/>
         
     </LinearLayout>

@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -49,12 +48,7 @@ public class RacerPreviousResults extends BaseDialog implements View.OnClickList
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-		View v = inflater.inflate(R.layout.dialog_racer_previous_results, container, false);
-		TextView titleView = (TextView) getDialog().findViewById(android.R.id.title);
-		titleView.setText(R.string.RaceResults);
-		titleView.setTextAppearance(getActivity(), R.style.Large);
-		
-		((Button) v.findViewById(R.id.btnBack)).setOnClickListener(this);
+		View v = inflater.inflate(R.layout.dialog_racer_previous_results, container, false);		
 		  
 		// Now create a cursor adapter and set it to display using our row
 		lvResults = new RacerPreviousResultsCursorAdapter(getActivity(), null);	
@@ -72,6 +66,11 @@ public class RacerPreviousResults extends BaseDialog implements View.OnClickList
 		return v;
 	}
 	
+	@Override 
+	protected int GetTitleResourceID() {
+		return R.string.RaceResults;
+	}
+	
 	@Override
 	public void onResume(){
 		super.onResume();
@@ -81,10 +80,7 @@ public class RacerPreviousResults extends BaseDialog implements View.OnClickList
 	
 	public void onClick(View v) { 
 		try{
-			if( v.getId() == R.id.btnBack){
-				// Hide the dialog
-		    	dismiss();
-			}
+			super.onClick(v);
 		}
 		catch(Exception ex){
 			Log.e(LOG_TAG, "onClick failed",ex);
@@ -196,6 +192,11 @@ public class RacerPreviousResults extends BaseDialog implements View.OnClickList
 		}catch(Exception ex){
 			Log.e(LOG_TAG, "onLoaderReset error", ex); 
 		}
+	}
+
+	@Override
+	protected String LOG_TAG() {
+		return LOG_TAG;
 	}
 }
 

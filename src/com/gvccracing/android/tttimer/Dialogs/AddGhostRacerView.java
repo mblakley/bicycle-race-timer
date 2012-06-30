@@ -17,35 +17,31 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
-
 
 public class AddGhostRacerView extends BaseDialog implements View.OnClickListener {
 	public static final String LOG_TAG = "AddGhostRacerView";
 	
 	protected Button btnAddGhostRacer;
-	protected Button btnCancel;
 	
 	protected NumberPicker numGhostSpots;
 	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.dialog_add_ghost_racer, container, false);
-		TextView titleView = (TextView) getDialog().findViewById(android.R.id.title);
-		titleView.setText(R.string.AddGhostRacer);
-		titleView.setTextAppearance(getActivity(), R.style.Large);
 
 		btnAddGhostRacer = (Button) v.findViewById(R.id.btnAddGhostRacer);
 		btnAddGhostRacer.setOnClickListener(this);
-
-		btnCancel = (Button) v.findViewById(R.id.btnCancel);
-		btnCancel.setOnClickListener(this);
 		
 		numGhostSpots = (NumberPicker) v.findViewById(R.id.numSpots);
 		numGhostSpots.setRange(1, 25);
 		numGhostSpots.setFormatter(NumberPicker.TWO_DIGIT_FORMATTER);
 		
 		return v;
+	}
+	
+	@Override 
+	protected int GetTitleResourceID() {
+		return R.string.AddGhostRacer;
 	}
 
  	/*
@@ -124,6 +120,13 @@ public class AddGhostRacerView extends BaseDialog implements View.OnClickListene
 		
 		return success;
 	}
+ 	
+ 	@Override
+ 	public void dismiss() {
+ 		super.dismiss();
+
+    	numGhostSpots.setCurrent(1);
+ 	}
 	
 	public void onClick(View v) { 
 		try{
@@ -137,18 +140,18 @@ public class AddGhostRacerView extends BaseDialog implements View.OnClickListene
 				if(AddGhostRacer(numSpots)){
 					// Hide the dialog
 			    	dismiss();
-					
-			    	numGhostSpots.setCurrent(1);
 				}
-			} else if(v == btnCancel){
-				// Hide the dialog
-				dismiss();
-				
-		    	numGhostSpots.setCurrent(1);
+			} else {
+				super.onClick(v);
 			}
 		}
 		catch(Exception ex){
 			Log.e(LOG_TAG, "btnAddGhostRacerClickHandler failed",ex);
 		}
+	}
+
+	@Override
+	protected String LOG_TAG() {
+		return LOG_TAG;
 	}
 }

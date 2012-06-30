@@ -48,9 +48,6 @@ public class EditRaceResultView extends BaseDialog implements View.OnClickListen
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.dialog_edit_race_result, container, false);
-		TextView titleView = (TextView) getDialog().findViewById(android.R.id.title);
-		titleView.setText(R.string.EditRaceResult);
-		titleView.setTextAppearance(getActivity(), R.style.Large);
 
 		btnSaveChanges = (Button) v.findViewById(R.id.btnSaveResultChanges);
 		btnSaveChanges.setOnClickListener(this);
@@ -67,6 +64,11 @@ public class EditRaceResultView extends BaseDialog implements View.OnClickListen
 		lblDNF = (TextView) v.findViewById(R.id.lblDNF);
 			
 		return v;
+	}
+	
+	@Override 
+	protected int GetTitleResourceID() {
+		return R.string.EditRaceResult;
 	}
 	
 	@Override
@@ -138,6 +140,8 @@ public class EditRaceResultView extends BaseDialog implements View.OnClickListen
 				// Recalculate placings and points
 		    	Calculations.CalculateCategoryPlacings(getActivity(), raceID);
 		    	Calculations.CalculateOverallPlacings(getActivity(), raceID); 
+			} else {
+				super.onClick(v);
 			}
 		}
 		catch(Exception ex){
@@ -221,5 +225,10 @@ public class EditRaceResultView extends BaseDialog implements View.OnClickListen
 		}catch(Exception ex){
 			Log.e(LOG_TAG, "onLoaderReset error", ex); 
 		}
+	}
+
+	@Override
+	protected String LOG_TAG() {
+		return LOG_TAG;
 	}
 }

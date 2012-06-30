@@ -3,7 +3,6 @@
     <string name="app_name">GVCC TT Timer</string>
     <string name="CheckIns">Check In</string>
     <string name="RacerID">ID</string>
-    <string name="RacerName">Name</string>
     <string name="AddNewRacer">Add New Racer</string>
     <string name="VerifyRacers">Verify Racers</string>
     <string name="StartOrder"><u>Start Order</u></string>
@@ -40,6 +39,7 @@
 	<string name="WindSpeed">Wind Speed</string>
 	<string name="WindDirection">Wind Direction</string>
 	<string name="Humidity">Humidity</string>
+	
 	<string-array name="humidity_array">
 	<item>Dry</item>
 	<item>Moderate</item>
@@ -183,8 +183,22 @@
 	<string name="HeaderPoints"><u>Pts</u></string>
 	<string name="Cancel">Cancel</string>
 	<string name="Select">Select</string>
-	<string name="AdminAuth">Administrator Authorization</string>
+	<string name="AdminAuth">Admin Authorization</string>
 	<string name="AddGhostRacer">Add Ghost Racer</string>
 	<string name="txtNumGhostSpots">Number of Ghost Spots</string>
 	<string name="UnassignTime">Unassign Time from Racer</string>
+	<string name="RacerUpgrade">Racer Upgrade</string>
+	<string name="RecalcResults">Recalculate Results</string>
+	<string name="OtherRaceResults">Other Race Results</string>
+	<string name="RaceToView">Race to View</string>
+	<string name="RaceInfo">Race Info</string>	 	
+	<string name="NumberOfRacers">Number of racers:</string>
+	<string name="RaceDistance">Race distance:</string>
+	<string name="sec">sec</string>
+	<string name="RacerName">Racer Name</string>
+	<string name="CategoryRank">Category rank</string>
+	<string name="CategoryPoints">Category points</string>
+	<string name="RacerUpgraded">Racer Upgraded</string>
+	<string name="IncorrectCategory">Incorrect Category</string>
+	<string name="UploadToDropbox">Upload Roster to Dropbox</string>	
 </resources>

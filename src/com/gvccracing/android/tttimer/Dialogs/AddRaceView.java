@@ -23,7 +23,6 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.LinearLayout;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -47,14 +46,9 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.dialog_add_race, container, false);
-		TextView titleView = (TextView) getDialog().findViewById(android.R.id.title);
-		titleView.setText(R.string.AddRace);
-		titleView.setTextAppearance(getActivity(), R.style.Large);
 
 		btnAddNewRace = (Button) v.findViewById(R.id.btnAddNewRace);
-		btnAddNewRace.setOnClickListener(this);
-		
-		v.findViewById(R.id.btnCancel).setOnClickListener(this);
+		btnAddNewRace.setOnClickListener(this);		
 		
 		raceLocation = (Spinner) v.findViewById(R.id.spinnerRaceLocation);
 		
@@ -111,6 +105,11 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 		return v;
 	}
 	
+	@Override 
+	protected int GetTitleResourceID() {
+		return R.string.AddRace;
+	}
+	
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -164,11 +163,12 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
     			raceAdded.putExtra(AppSettings.AppSetting_RaceID_Name, race_ID);
     			raceAdded.putExtra(AppSettings.AppSetting_StartInterval_Name, GetRaceStartInterval());
     			getActivity().sendBroadcast(raceAdded);
+
+    			// Hide the dialog
+     			dismiss();
+			} else {
+				super.onClick(v);
 			}
-			
-				
-			// Hide the dialog
- 			dismiss();
 		}
 		catch(Exception ex){
 			Log.e(LOG_TAG, "onClick failed",ex);
@@ -231,5 +231,10 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 		}catch(Exception ex){
 			Log.e(LOG_TAG, "onLoaderReset error", ex); 
 		}
+	}
+
+	@Override
+	protected String LOG_TAG() {
+		return LOG_TAG;
 	}
 }

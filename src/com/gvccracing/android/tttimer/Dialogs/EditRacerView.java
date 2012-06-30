@@ -20,7 +20,6 @@ import android.widget.Toast;
 
 public class EditRacerView extends AddRacerView implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 
-	
 	private static final int RACER_INFO_LOADER = 0x88;
 	private Long racerClubInfo_ID;
 	private Long racer_ID;
@@ -40,8 +39,12 @@ public class EditRacerView extends AddRacerView implements View.OnClickListener,
 
 		btnAddRacer.setText(getResources().getString(R.string.SaveChanges));
 		
-		
 		return v;
+	}
+	
+	@Override
+	protected int GetTitleResourceID() {
+		return R.string.EditRacerInfo;
 	}
 	
 	@Override
@@ -90,7 +93,7 @@ public class EditRacerView extends AddRacerView implements View.OnClickListener,
 					txtLastName.setText("");
 					txtUSACNumber.setText("");
 				}
-			}else{
+			} else {
 				super.onClick(v);
 			}
 		}

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/AdminMenuID"
+    android:id="@+id/dialogContainer"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
+    android:orientation="vertical" 
+    android:background="#FFFF"
     style="@style/Padded" >
     <Button
         android:id="@+id/btnAddLocation"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:onClick="btnAddLocationAdminClick"
         android:text="@string/AddLocation"
         style="@style/Medium.Padded" />
 
@@ -17,8 +17,44 @@
         android:id="@+id/btnAddRace"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:onClick="btnAddRace"
         android:text="@string/AddRace"
         style="@style/Medium.Padded" />
+    
+    <Button
+        android:id="@+id/btnEditRace"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/EditRace"
+        style="@style/Medium.Padded" />
+    
+    <Button
+        android:id="@+id/btnRecalculateResults"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/RecalcResults"
+        style="@style/Medium.Padded" />
+    
+    <Button
+        android:id="@+id/btnUploadToDropbox"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/UploadToDropbox"
+        style="@style/Medium.Padded" />
+    
+    <Button
+        android:id="@+id/btnSettings"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/Settings"
+        style="@style/Medium.Padded" />
 
+    <TextView
+        android:id="@+id/txtMessage"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        style="@style/Small"
+        android:textStyle="italic|bold"
+        android:gravity="center"
+        android:visibility="invisible" />
+    
 </LinearLayout>

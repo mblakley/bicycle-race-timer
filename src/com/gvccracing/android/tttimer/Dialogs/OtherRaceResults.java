@@ -19,30 +19,27 @@ import android.widget.TextView;
 
 import com.gvccracing.android.tttimer.R;
 import com.gvccracing.android.tttimer.TTTimerTabsActivity;
-import com.gvccracing.android.tttimer.CursorAdapters.PreviousRacesCursorAdapter;
+import com.gvccracing.android.tttimer.CursorAdapters.OtherRacesCursorAdapter;
 import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
 import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
 import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.RaceInfoView;
 import com.gvccracing.android.tttimer.DataAccess.RaceLocationCP.RaceLocation;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 
-public class PreviousRaceResults extends BaseDialog implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
+public class OtherRaceResults extends BaseDialog implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
 	public static final String LOG_TAG = "PreviousRaceResults";
 	private static final int RACE_INFO_LOADER = 0x56;
 	private static final int SELECTED_RACE_INFO_LOADER = 0x57;
 	private static final int ALL_RACES_LOADER = 0x58;
 	
 	private Spinner spinnerRaceToView = null;
-	private PreviousRacesCursorAdapter raceInfoCursorAdapter = null;
+	private OtherRacesCursorAdapter raceInfoCursorAdapter = null;
 	private long selectedRaceID = 0;
 	 
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-		View v = inflater.inflate(R.layout.dialog_previous_race_results, container, false);
-		TextView titleView = (TextView) getDialog().findViewById(android.R.id.title);
-		titleView.setText(R.string.viewingMode);
-		titleView.setTextAppearance(getActivity(), R.style.Large);
+		View v = inflater.inflate(R.layout.dialog_other_race_results, container, false);
 		
 		selectedRaceID = Long.parseLong(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_RaceID_Name, "0"));
 
@@ -51,17 +48,21 @@ public class PreviousRaceResults extends BaseDialog implements LoaderManager.Loa
 		spinnerRaceToView.setOnItemSelectedListener(new OnItemSelectedListener() {
 			public void onItemSelected(AdapterView<?> arg0, View v, int position, long id) {
 				selectedRaceID = id;
-				getActivity().getSupportLoaderManager().restartLoader(SELECTED_RACE_INFO_LOADER, null, PreviousRaceResults.this);
-				getActivity().getSupportLoaderManager().restartLoader(RACE_INFO_LOADER, null, PreviousRaceResults.this);
+				getActivity().getSupportLoaderManager().restartLoader(SELECTED_RACE_INFO_LOADER, null, OtherRaceResults.this);
+				getActivity().getSupportLoaderManager().restartLoader(RACE_INFO_LOADER, null, OtherRaceResults.this);
 			}
 
 			public void onNothingSelected(AdapterView<?> arg0) {}
 		});
 		
 		((Button) v.findViewById(R.id.btnSaveSelection)).setOnClickListener(this);
-		((Button) v.findViewById(R.id.btnCancel)).setOnClickListener(this);
 		
 		return v;
+	}
+	
+	@Override 
+	protected int GetTitleResourceID() {
+		return R.string.OtherRaceResults;
 	}
 
 	@Override
@@ -82,10 +83,8 @@ public class PreviousRaceResults extends BaseDialog implements LoaderManager.Loa
 				raceHasChanged.setAction(TTTimerTabsActivity.RACE_ID_CHANGED_ACTION);
 				raceHasChanged.putExtra(RaceResults.Race_ID, Long.toString(spinnerRaceToView.getSelectedItemId()));
         		getActivity().sendBroadcast(raceHasChanged);
-			} 
-			else if (v.getId() == R.id.btnCancel)
-			{
-				// Just dismiss the dialog
+			} else {
+				super.onClick(v);
 			}
 			// Hide the dialog
 	    	dismiss();
@@ -137,7 +136,7 @@ public class PreviousRaceResults extends BaseDialog implements LoaderManager.Loa
 					cursor.moveToFirst();
 					if(cursor.getCount() > 0){				            
 						// Create the cursor adapter for the list of races
-			            raceInfoCursorAdapter = new PreviousRacesCursorAdapter(getActivity(), cursor);
+			            raceInfoCursorAdapter = new OtherRacesCursorAdapter(getActivity(), cursor);
 			        	spinnerRaceToView.setAdapter(raceInfoCursorAdapter);
 					}
 					break;
@@ -187,6 +186,11 @@ public class PreviousRaceResults extends BaseDialog implements LoaderManager.Loa
 		}catch(Exception ex){
 			Log.e(LOG_TAG, "onLoaderReset error", ex); 
 		}
+	}
+
+	@Override
+	protected String LOG_TAG() {
+		return LOG_TAG;
 	}
 }
 
