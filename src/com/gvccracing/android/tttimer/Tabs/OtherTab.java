@@ -1,7 +1,5 @@
 package com.gvccracing.android.tttimer.Tabs;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -20,7 +18,6 @@ import android.widget.Toast;
 import com.gvccracing.android.tttimer.R;
 import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
 import com.gvccracing.android.tttimer.DataAccess.RaceNotesCP.RaceNotes;
-import com.gvccracing.android.tttimer.Utilities.UploadToDropBox;
 
 public class OtherTab extends BaseTab implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 

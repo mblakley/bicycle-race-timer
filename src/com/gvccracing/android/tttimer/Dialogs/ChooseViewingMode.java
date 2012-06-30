@@ -26,8 +26,6 @@ public class ChooseViewingMode extends BaseDialog implements View.OnClickListene
 
 		btnPreviousRaces = (Button) v.findViewById(R.id.btnPreviousRaces);
 		btnPreviousRaces.setOnClickListener(this);
-		
-		ShowCancelButton(false);
 	
 		return v;
 	}
