@@ -176,14 +176,7 @@
         android:layout_height="wrap_content"
     	android:layout_gravity="bottom|right"
         style="@style/Medium"
-        android:text="@string/MarshalLocations" />
-
-    <Button
-        android:id="@+id/btnEditRace"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/Medium"
-        android:text="@string/EditRace"
+        android:text="@string/MarshalLocations"
         android:visibility="gone" />
 
     <Button

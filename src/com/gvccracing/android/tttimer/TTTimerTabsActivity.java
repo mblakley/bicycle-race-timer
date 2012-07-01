@@ -159,6 +159,10 @@ public class TTTimerTabsActivity extends FragmentActivity {
         		} else {
         			SetupAvailableRace();
         		}
+        		if(theRace != null){
+        			theRace.close();
+        			theRace = null;
+        		}
         	}else{
         		AppSettings.Update(this, AppSettings.AppSetting_RaceID_Name, Long.toString(-1l), true);
         	}

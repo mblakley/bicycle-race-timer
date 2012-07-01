@@ -120,12 +120,12 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 	protected long GetRaceStartInterval(){
 			Spinner startIntervalSpinner = (Spinner) getView().findViewById(R.id.spinnerStartInterval);
 			int raceStartIntervalID = (int)startIntervalSpinner.getSelectedItemId();
-			long raceStartInterval = 60l;
+			long raceStartInterval = 30l;
 			switch(raceStartIntervalID){
-				case 1:
+				case 0:
 					raceStartInterval = 30l;
 					break;
-				case 2:
+				case 1:
 					raceStartInterval = 60l;
 					break;
 			}

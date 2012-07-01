@@ -7,6 +7,11 @@
         <item name="android:paddingBottom">10sp</item>
 	    <item name="android:windowTitleSize">10sp</item>
 	    <item name="android:windowTitleStyle">@style/Small</item>
+    </style>    
+    <style name="btnBack">
+        <item name="android:layout_marginRight">5sp</item>
+        <item name="android:layout_width">32sp</item>
+        <item name="android:layout_height">32sp</item>
     </style>
     <style name="Small" parent="@android:style/TextAppearance.Small">
         <item name="android:textSize">12sp</item>

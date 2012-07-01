@@ -192,7 +192,7 @@ public class CheckInTab extends BaseTab implements LoaderManager.LoaderCallbacks
 				String racerNameText = racerNameSearchText.getText().toString();
 				if(!racerNameText.equals("")){
 					selection += " AND UPPER(" + Racer.LastName + ") GLOB ?";
-					selectionArgs = new String[]{ Integer.toString(Calendar.getInstance().get(Calendar.YEAR)), Long.toString(0l), racerNameSearchText.getText().toString().toUpperCase() + "*"};
+					selectionArgs = new String[]{ Integer.toString(Calendar.getInstance().get(Calendar.YEAR)), Long.toString(0l), "G", racerNameSearchText.getText().toString().toUpperCase() + "*"};
 				}
 				loader = new CursorLoader(getActivity(), CheckInViewInclusive.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;

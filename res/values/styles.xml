@@ -7,8 +7,6 @@
         <item name="android:paddingRight">20sp</item>
         <item name="android:paddingTop">0sp</item>
         <item name="android:paddingBottom">10sp</item>
-	    <item name="android:windowTitleSize">10sp</item>
-	    <item name="android:windowTitleStyle">@style/Small</item>
 	    <item name="android:background">#FFFF</item>
     </style>
     <style name="CustomTheme" parent="@android:style/Theme.Light.NoTitleBar.Fullscreen">
@@ -28,6 +26,11 @@
         <item name="android:windowAnimationStyle">@null</item>
         <item name="android:backgroundDimAmount">0.3</item>
         <item name="android:background">@drawable/translucent_background</item>
+    </style>
+    <style name="btnBack">
+        <item name="android:layout_marginRight">10sp</item>
+        <item name="android:layout_width">48sp</item>
+        <item name="android:layout_height">48sp</item>
     </style>
     <style name="Small" parent="@android:style/TextAppearance.Small">
         <item name="android:textSize">20sp</item>
