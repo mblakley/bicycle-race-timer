@@ -85,6 +85,8 @@ public class CheckInTab extends BaseTab implements LoaderManager.LoaderCallbacks
 	private ListView startOrderList;
 	private ListView checkInList;
 	
+	private boolean autoCheckIn = false;
+	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -331,6 +333,7 @@ public class CheckInTab extends BaseTab implements LoaderManager.LoaderCallbacks
 					if( teamStartOrderLoader != null){
 						getActivity().getSupportLoaderManager().restartLoader(TEAM_START_ORDER_LOADER, null, this);
 					}
+					autoCheckIn = Boolean.parseBoolean(AppSettings.ReadValue(getActivity(), AppSettings.AppSettings_AutoCheckIn_Name, "true"));
 					break;
 			}
 			Log.i(LOG_TAG(), "onLoadFinished complete: id=" + Integer.toString(loader.getId()));
@@ -371,7 +374,7 @@ public class CheckInTab extends BaseTab implements LoaderManager.LoaderCallbacks
  			Log.v(LOG_TAG(), "btnNewRacerClick");
  			if (v == btnAddRacer)
 			{
-	            AddRacerView chooseModeDialog = new AddRacerView(true);
+	            AddRacerView chooseModeDialog = new AddRacerView(autoCheckIn);
 				FragmentManager fm = getActivity().getSupportFragmentManager();
 				chooseModeDialog.show(fm, AddRacerView.LOG_TAG);
 			} else if (v == btnAddNewTeam){

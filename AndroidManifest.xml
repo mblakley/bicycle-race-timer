@@ -32,6 +32,12 @@
 				<category android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
 	    </activity>
+	    <receiver android:enabled="true" android:name=".BootReceiver">  
+	        <intent-filter>  
+                <action android:name="android.intent.action.USER_PRESENT"/>  
+                <category android:name="android.intent.category.DEFAULT" />  
+	        </intent-filter>  
+		</receiver> 
 		<provider
 		    android:authorities="com.gvccracing.android.tttimer.DataAccess.TTProvider"
 		    android:multiprocess="true"

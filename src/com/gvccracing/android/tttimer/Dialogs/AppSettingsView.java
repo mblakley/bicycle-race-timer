@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckedTextView;
 import android.widget.Spinner;
 
 public class AppSettingsView extends BaseDialog implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
@@ -22,10 +23,16 @@ public class AppSettingsView extends BaseDialog implements LoaderManager.LoaderC
 	private static final int TEMPERATURE_UNITS_LOADER = 32;
 
 	private static final int DISTANCE_UNITS_LOADER = 33;
+
+	private static final int AUTO_CHECKIN_LOADER = 66;
+
+	private static final int AUTO_START_APP_LOADER = 67;
 	
 	private Button btnSaveSettings;
 	private Spinner distanceUnits;
 	private Spinner temperatureUnits;
+	private CheckedTextView autoCheckIn;
+	private CheckedTextView autoStartApp;
 	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -46,6 +53,12 @@ public class AppSettingsView extends BaseDialog implements LoaderManager.LoaderC
 		adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
 		temperatureUnits.setAdapter(adapter);
 		
+		autoCheckIn = (CheckedTextView) v.findViewById(R.id.chkAutoCheckIn);
+		autoCheckIn.setOnClickListener(this);
+		
+		autoStartApp = (CheckedTextView) v.findViewById(R.id.chkAutoStartApp);
+		autoStartApp.setOnClickListener(this);
+		
 		return v;
 	}
 	
@@ -60,6 +73,8 @@ public class AppSettingsView extends BaseDialog implements LoaderManager.LoaderC
 
 		getActivity().getSupportLoaderManager().initLoader(TEMPERATURE_UNITS_LOADER, null, this);
 		getActivity().getSupportLoaderManager().initLoader(DISTANCE_UNITS_LOADER, null, this);
+		getActivity().getSupportLoaderManager().initLoader(AUTO_CHECKIN_LOADER, null, this);
+		getActivity().getSupportLoaderManager().initLoader(AUTO_START_APP_LOADER, null, this);
 	}
 
 	public void onClick(View v) { 
@@ -73,8 +88,18 @@ public class AppSettingsView extends BaseDialog implements LoaderManager.LoaderC
 				Integer temperatureUnitID = temperatureUnits.getSelectedItemPosition();
 				AppSettings.Update(getActivity(), AppSettings.AppSetting_TemperatureUnits_Name, Integer.toString(temperatureUnitID), true);
 				
+				boolean autoCheckInVal = autoCheckIn.isChecked();
+				AppSettings.Update(getActivity(), AppSettings.AppSettings_AutoCheckIn_Name, Boolean.toString(autoCheckInVal), true);
+				
+				boolean autoStartAppVal = autoStartApp.isChecked();
+				AppSettings.Update(getActivity(), AppSettings.AppSettings_AutoStartApp_Name, Boolean.toString(autoStartAppVal), true);
+				
 				// Hide the dialog
 		    	dismiss();
+			} else if( v == autoCheckIn){
+				autoCheckIn.setChecked(!autoCheckIn.isChecked());
+			} else if( v == autoStartApp){
+				autoStartApp.setChecked(!autoStartApp.isChecked());
 			} else {
 				super.onClick(v);
 			}
@@ -103,6 +128,18 @@ public class AppSettingsView extends BaseDialog implements LoaderManager.LoaderC
 				selectionArgs = new String[]{AppSettings.AppSetting_DistanceUnits_Name};
 				loader = new CursorLoader(getActivity(), AppSettings.CONTENT_URI, projection, selection, selectionArgs, null);
 				break;
+			case AUTO_CHECKIN_LOADER:
+				projection = new String[]{AppSettings._ID, AppSettings.AppSettingValue};
+				selection = AppSettings.AppSettingName + "=?";
+				selectionArgs = new String[]{AppSettings.AppSettings_AutoCheckIn_Name};
+				loader = new CursorLoader(getActivity(), AppSettings.CONTENT_URI, projection, selection, selectionArgs, null);
+				break;
+			case AUTO_START_APP_LOADER:
+				projection = new String[]{AppSettings._ID, AppSettings.AppSettingValue};
+				selection = AppSettings.AppSettingName + "=?";
+				selectionArgs = new String[]{AppSettings.AppSettings_AutoStartApp_Name};
+				loader = new CursorLoader(getActivity(), AppSettings.CONTENT_URI, projection, selection, selectionArgs, null);
+				break;
 		}
 		Log.i(LOG_TAG, "onCreateLoader complete: id=" + Integer.toString(id));
 		return loader;
@@ -112,27 +149,45 @@ public class AppSettingsView extends BaseDialog implements LoaderManager.LoaderC
 		try{
 			Log.i(LOG_TAG, "onLoadFinished start: id=" + Integer.toString(loader.getId()));
 
-			if(cursor != null && cursor.getCount() > 0){
-				cursor.moveToFirst();
-				switch(loader.getId()){
-					case TEMPERATURE_UNITS_LOADER:
+			
+			switch(loader.getId()){
+				case TEMPERATURE_UNITS_LOADER:
+					if(cursor != null && cursor.getCount() > 0){
+						cursor.moveToFirst();
 						// Set the selected value of the drop down
 						Integer tempUnit = cursor.getInt(cursor.getColumnIndex(AppSettings.AppSettingValue));
-	//					ArrayAdapter<Object> myAdap = (ArrayAdapter<Object>) temperatureUnits.getAdapter(); //cast to an ArrayAdapter
-	//
-	//					int tempPos = myAdap.getPosition(tempUnit);
 						temperatureUnits.setSelection(tempUnit, false);
-						break;
-					case DISTANCE_UNITS_LOADER:
+					}
+					break;
+				case DISTANCE_UNITS_LOADER:
+					if(cursor != null && cursor.getCount() > 0){
+						cursor.moveToFirst();
 						// Set the selected value of the drop down
 						Integer distUnit = cursor.getInt(cursor.getColumnIndex(AppSettings.AppSettingValue));
-	//					ArrayAdapter<Object> distAdap = (ArrayAdapter<Object>) temperatureUnits.getAdapter(); //cast to an ArrayAdapter
-	//
-	//					int distPos = distAdap.getPosition(distUnit);
 						distanceUnits.setSelection(distUnit, false);
-						break;
-				}
-			}
+					}
+					break;
+				case AUTO_CHECKIN_LOADER:
+					if(cursor != null && cursor.getCount() > 0){
+						cursor.moveToFirst();						
+						boolean autoCheckInVal = Boolean.parseBoolean(cursor.getString(cursor.getColumnIndex(AppSettings.AppSettingValue)));
+						autoCheckIn.setChecked(autoCheckInVal);
+					}else{
+						// The default is "true"
+						autoCheckIn.setChecked(true);
+					}
+					break;
+				case AUTO_START_APP_LOADER:
+					if(cursor != null && cursor.getCount() > 0){
+						cursor.moveToFirst();						
+						boolean autoStartAppVal = Boolean.parseBoolean(cursor.getString(cursor.getColumnIndex(AppSettings.AppSettingValue)));
+						autoStartApp.setChecked(autoStartAppVal);
+					}else{
+						// The default is "false"
+						autoStartApp.setChecked(false);
+					}
+					break;
+			}			
 			Log.i(LOG_TAG, "onLoadFinished complete: id=" + Integer.toString(loader.getId()));
 		}catch(Exception ex){
 			Log.e(LOG_TAG, "onLoadFinished error", ex); 
@@ -148,6 +203,10 @@ public class AppSettingsView extends BaseDialog implements LoaderManager.LoaderC
 					break;
 				case DISTANCE_UNITS_LOADER:
 					temperatureUnits.setSelection(0, false);
+					break;
+				case AUTO_CHECKIN_LOADER:
+					break;
+				case AUTO_START_APP_LOADER:
 					break;
 			}
 			Log.i(LOG_TAG, "onLoaderReset complete: id=" + Integer.toString(loader.getId()));

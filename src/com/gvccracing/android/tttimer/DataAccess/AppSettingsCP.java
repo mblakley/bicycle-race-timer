@@ -29,6 +29,8 @@ public class AppSettingsCP {
 		public static final String AppSetting_AdminMode_Name = "AdminMode";
 		public static final String AppSetting_DropBox_Key_Name = "DropBoxKey";
 		public static final String AppSetting_DropBox_Secret_Name = "DropBoxSecret";
+		public static final String AppSettings_AutoCheckIn_Name = "AutoCheckIn";
+		public static final String AppSettings_AutoStartApp_Name = "AutoStartApp";
         
         public static String getTableName(){
         	return AppSettings.class.getSimpleName();

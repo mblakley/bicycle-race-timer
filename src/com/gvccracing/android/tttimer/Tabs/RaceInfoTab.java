@@ -50,6 +50,7 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 	private TextView courseRecord;
 	private TextView raceLaps;
 	private LinearLayout llRaceLaps;
+	private TextView lblDistanceUnit;
 	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -69,6 +70,7 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
         courseRecord = ((TextView) view.findViewById(R.id.courseRecord));
         raceLaps = ((TextView) view.findViewById(R.id.raceLaps));
         llRaceLaps = ((LinearLayout) view.findViewById(R.id.llRaceLaps));
+        lblDistanceUnit = ((TextView) view.findViewById(R.id.lblDistanceUnit));
         
         return view;
     }	
@@ -165,13 +167,13 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 					getActivity().getSupportLoaderManager().restartLoader(RACE_INFO_LOADER, null, this);
 					getActivity().getSupportLoaderManager().restartLoader(COURSE_RECORD_LOADER, null, this);
 					
-					Integer distanceUnitID = Integer.parseInt(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_DistanceUnits_Name, "1"));
+					Integer distanceUnitID = Integer.parseInt(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_DistanceUnits_Name, "0"));
 					String distanceUnitText = "mi";
 					switch(distanceUnitID){
-						case 1:
+						case 0:
 							distanceUnitText = "mi";
 							break;
-						case 2:
+						case 1:
 							distanceUnitText = "km";
 							break;
 						default:
@@ -179,7 +181,7 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 							break;
 					}
 					
-					((TextView)getView().findViewById(R.id.lblDistanceUnit)).setText(distanceUnitText);
+					lblDistanceUnit.setText(distanceUnitText);
 					break;	
 				case COURSE_RECORD_LOADER:
 					if(cursor != null && cursor.getCount() > 0){

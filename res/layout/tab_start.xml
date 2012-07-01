@@ -74,8 +74,7 @@
 		    android:id="@+id/llTimerControls"
 		    android:layout_width="fill_parent"
 		    android:layout_height="0dip"
-    		android:layout_weight="0.15"
-			android:weightSum="1.0" >
+    		android:layout_weight="0.15" >
 	
 	        <Button
 	            android:id="@+id/stopButton"
@@ -84,7 +83,6 @@
 	            android:layout_gravity="center"
 	            android:layout_marginLeft="5dp"
 	            android:layout_marginRight="5dp"
-	            android:layout_weight="1"
 	            android:text="@string/stopText"
 	            android:visibility="gone"
 	            style="@style/Medium.Padded" >
@@ -95,7 +93,6 @@
 			    android:layout_width="fill_parent"  
 			    android:layout_height="wrap_content"  
 			    android:layout_gravity="center"  
-			    android:layout_weight="0.5"  
 			    android:text="@string/startText"  
 			    android:id="@+id/btnStartTimer"
 	            style="@style/Medium.Padded"
@@ -106,7 +103,6 @@
 		        android:layout_height="wrap_content"
 		        android:layout_gravity="center"
 		        android:layout_marginRight="5dp"
-		        android:layout_weight="0.5"
 		        android:text="@string/resetText"
 	            style="@style/Medium.Padded"
 	            android:state_enabled="false" />

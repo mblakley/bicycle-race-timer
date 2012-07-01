@@ -200,5 +200,7 @@
 	<string name="CategoryPoints">Category points</string>
 	<string name="RacerUpgraded">Racer Upgraded</string>
 	<string name="IncorrectCategory">Incorrect Category</string>
-	<string name="UploadToDropbox">Upload Roster to Dropbox</string>	
+	<string name="UploadToDropbox">Upload Roster to Dropbox</string>
+	<string name="AutoCheckIn">Check In New Racer After Add?</string>
+	<string name="AutoStartApp">Auto Start App After Unlock?</string>		
 </resources>
