@@ -65,8 +65,8 @@ public class AddRacerView extends BaseDialog implements View.OnClickListener {
 		});
 		
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-        		getActivity(), R.array.category_array, android.R.layout.simple_spinner_item );
- 		adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
+        		getActivity(), R.array.category_array, R.layout.control_simple_spinner );
+ 		adapter.setDropDownViewResource( R.layout.control_simple_spinner_dropdown );
  		spinCategory.setAdapter(adapter);
 		return v;
 	}
