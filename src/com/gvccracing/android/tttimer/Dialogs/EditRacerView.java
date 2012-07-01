@@ -15,7 +15,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class EditRacerView extends AddRacerView implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
@@ -32,10 +31,7 @@ public class EditRacerView extends AddRacerView implements View.OnClickListener,
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View v = super.onCreateView(inflater, container, savedInstanceState);
-		TextView titleView = (TextView) getDialog().findViewById(android.R.id.title);
-		titleView.setText(R.string.EditRacerInfo);
-		titleView.setTextAppearance(getActivity(), R.style.Large);	
+		View v = super.onCreateView(inflater, container, savedInstanceState);	
 
 		btnAddRacer.setText(getResources().getString(R.string.SaveChanges));
 		

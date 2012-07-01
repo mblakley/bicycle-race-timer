@@ -29,7 +29,7 @@ public class UnassignedTimesCP {
         	return "create table " + UnassignedTimes.getTableName()
                     + " (" + _ID + " integer primary key autoincrement, "
                     + Race_ID + " integer references " + Race.getTableName() + "(" + Race._ID + ") not null," 
-                    + FinishTime + " integer not null"
+                    + FinishTime + " integer not null,"
                     + RaceResult_ID + " integer references " + RaceResults.getTableName() + "(" + RaceResults._ID + ") null"
                     + ");";
         }

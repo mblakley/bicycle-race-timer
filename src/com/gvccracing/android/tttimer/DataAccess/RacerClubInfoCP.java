@@ -45,7 +45,7 @@ public class RacerClubInfoCP {
         	        + RRPoints + " integer not null," 
         	        + PrimePoints + " integer not null," 
         	        + RacerAge + " integer not null," 
-        	        + GVCCID + " text null"
+        	        + GVCCID + " text null,"
         	        + Upgraded + " integer null" 
         			+ ");";
         }
