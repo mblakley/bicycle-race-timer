@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+    xmlns:android="http://schemas.android.com/apk/res/android">
+	
+	<!-- Bring in both sides so it looks like a dialog  -->
+    <item    
+        android:left="25px"
+        android:right="25px" >
+
+        <shape android:shape="rectangle"> 
+        	<!--  Basically make it transparent -->
+			<gradient
+	     	   	android:startColor="#FFFFFFFF"
+	   	     	android:endColor="#FFFFFFFF"/>
+			
+	    	<padding android:left="25dp"
+	        	android:top="9dp"
+	        	android:right="25dp"
+	        	android:bottom="9dp"/>
+	    	
+    		<corners android:radius="10dp" />
+		</shape>
+    </item>
+</layer-list>
