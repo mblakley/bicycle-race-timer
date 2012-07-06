@@ -8,21 +8,32 @@
         android:id="@+id/linearLayout1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical" >
+        android:layout_gravity="center"
+        android:layout_marginTop="25.3dp" >
 
         <TextView
             android:id="@+id/lblDate"
-            style="@style/Medium"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/Date" />
+            android:layout_gravity="center"
+            android:layout_weight="1.2"
+            android:text="@string/Date"
+            android:textAppearance="@style/TextAppearanceLarge"
+            android:textColor="@color/normal_fg"
+            android:textStyle="bold" >
+        </TextView>
 
         <TextView
             android:id="@+id/raceDate"
-            style="@style/Medium.Padded"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="" />
+            android:layout_gravity="center"
+            android:layout_weight="1.2"
+            android:text="@string/Date"
+            android:textAppearance="@style/TextAppearanceLarge"
+            android:textColor="@color/normal_fg"
+            android:textStyle="bold" >
+        </TextView>
 
     </LinearLayout>
 
@@ -34,18 +45,28 @@
 
         <TextView
             android:id="@+id/lblCourse"
-            style="@style/Medium"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/Course" />
-
+            android:layout_gravity="center"
+            android:layout_weight="1.2"
+            android:text="@string/Course"
+            android:textAppearance="@style/TextAppearanceLarge"
+            android:textColor="@color/normal_fg"
+            android:textStyle="bold" >
+        </TextView>
+        
         <TextView
             android:id="@+id/raceCourseName"
-            style="@style/Medium.Padded"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="" />
-
+            android:layout_gravity="center"
+            android:layout_weight="1.2"
+            android:text=""
+            android:textAppearance="@style/TextAppearanceLarge"
+            android:textColor="@color/normal_fg"
+            android:textStyle="bold" >
+        </TextView>
+ 
     </LinearLayout>
 
     <LinearLayout
@@ -53,19 +74,30 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical" >
-
+        
         <TextView
             android:id="@+id/lblRaceType"
-            style="@style/Medium"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/lblRaceType" />
-
-        <TextView
+            android:layout_gravity="center"
+            android:layout_weight="1.2"
+            android:text="@string/lblRaceType"
+            android:textAppearance="@style/TextAppearanceLarge"
+            android:textColor="@color/normal_fg"
+            android:textStyle="bold" >
+        </TextView>
+        
+       <TextView
             android:id="@+id/raceType"
-            style="@style/Medium.Padded"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1.2"
+            android:text=""
+            android:textAppearance="@style/TextAppearanceLarge"
+            android:textColor="@color/normal_fg"
+            android:textStyle="bold" >
+        </TextView>
     </LinearLayout>
     
     <LinearLayout
@@ -73,28 +105,31 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical">
-
-        <TextView
+       
+       <TextView
             android:id="@+id/lblStartInterval"
-            style="@style/Medium"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1.2"
             android:text="@string/lblStartInterval"
-             />
+            android:textAppearance="@style/TextAppearanceLarge"
+            android:textColor="@color/normal_fg"
+            android:textStyle="bold" >
+        </TextView>
 
         <TextView
             android:id="@+id/raceStartInterval"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            style="@style/Medium.Padded"
-            android:text="" />
-        
-        <TextView
-            android:id="@+id/startIntervalUnit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/Medium"
-            android:text="@string/sec" />
+            android:layout_gravity="center"
+            android:layout_weight="1.2"
+            android:text=""
+            android:textAppearance="@style/TextAppearanceLarge"
+            android:textColor="@color/normal_fg"
+            android:textStyle="bold" >
+        </TextView>
+       
 
     </LinearLayout>
 
@@ -104,27 +139,29 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical">
 
-        <TextView
+       <TextView
             android:id="@+id/lblDistance"
-            style="@style/Medium"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1.2"
             android:text="@string/lblDistance"
-             />
-
-        <TextView
+            android:textAppearance="@style/TextAppearanceLarge"
+            android:textColor="@color/normal_fg"
+            android:textStyle="bold" >
+        </TextView>
+		<TextView
             android:id="@+id/raceDistance"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            style="@style/Medium.Padded"
-            android:text="" />
+            android:layout_gravity="center"
+            android:layout_weight="1.2"
+            android:text=""
+            android:textAppearance="@style/TextAppearanceLarge"
+            android:textColor="@color/normal_fg"
+            android:textStyle="bold" >
+        </TextView>        
         
-        <TextView
-            android:id="@+id/lblDistanceUnit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/Medium"/>
-
     </LinearLayout>
     
     <LinearLayout
@@ -132,21 +169,30 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical">
-        
-        <TextView
+		
+		<TextView
             android:id="@+id/lblCourseRecord"
-            style="@style/Medium"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1.2"
             android:text="@string/lblCourseRecord"
-             />
-
-        <TextView
+            android:textAppearance="@style/TextAppearanceLarge"
+            android:textColor="@color/normal_fg"
+            android:textStyle="bold" >
+        </TextView>        
+        
+		<TextView
             android:id="@+id/courseRecord"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            style="@style/Medium.Padded"
-            android:text="" />
+            android:layout_gravity="center"
+            android:layout_weight="1.2"
+            android:text=""
+            android:textAppearance="@style/TextAppearanceLarge"
+            android:textColor="@color/normal_fg"
+            android:textStyle="bold" >
+        </TextView>        
     </LinearLayout>
     
     <LinearLayout
@@ -170,6 +216,13 @@
             style="@style/Medium.Padded" />
     </LinearLayout>    
 
+    <LinearLayout
+        android:id="@+id/linearLayoutButtons"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginTop="4dp"
+        android:layout_weight="0.5" >
+    
     <Button
         android:id="@+id/btnMarshalLocations"
         android:layout_width="wrap_content"
@@ -179,20 +232,34 @@
         android:text="@string/MarshalLocations"
         android:visibility="gone" />
 
-    <Button
-        android:id="@+id/btnPreviousResults"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"	    
-    	android:layout_gravity="bottom|right"
-        style="@style/Medium"
-        android:text="@string/btnPreviousRaces" />  
-    
-    <Button
-	    android:id="@+id/btnAdminMenu"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"	    
-        android:layout_gravity="bottom|right"
-	    style="@style/Medium"
-	    android:text="@string/AdminMenu" />
-
+       <Button
+            android:id="@+id/btnPreviousResults"
+            android:layout_width="fill_parent"
+            android:layout_height="110dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background="@drawable/main_button"
+            android:drawableTop="@drawable/history"
+            android:paddingBottom="16dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="8dp"
+            android:text="@string/btnPreviousRaces" >
+        </Button>
+        <Button
+            android:id="@+id/btnAdminMenu"
+            android:layout_width="fill_parent"
+            android:layout_height="110dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="4dp"
+            android:layout_weight="1"
+            android:background="@drawable/main_button"
+            android:drawableTop="@drawable/tools"
+            android:paddingBottom="16dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="8dp"
+            android:text="@string/AdminMenu" >
+        </Button>
+ 	</LinearLayout>
 </LinearLayout>

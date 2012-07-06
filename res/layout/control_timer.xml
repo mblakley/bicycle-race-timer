@@ -2,27 +2,39 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="horizontal" >
-
-    <TextView
-        android:id="@+id/lblTimer"
-        android:layout_width="wrap_content"
+    android:orientation="horizontal" >
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/lblElapsedTime" 
-	    style="@style/Medium" 
-	    android:layout_alignBaseline="@+id/txtTimerBottom"
-    	android:layout_alignParentLeft="true"/>
-
-    <TextView
-	    android:id="@+id/txtTimerBottom"
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:text="@string/defaultTime"
-	    style="@style/ExtraLarge.Padded"
-	    android:paddingBottom="0sp"
-    	android:layout_toRightOf="@id/lblTimer"
-    	android:layout_alignParentTop="true" />
-
+        android:layout_gravity="center"
+        android:layout_marginTop="0.0dp">
+        
+      <TextView
+	        android:id="@+id/lblTimer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1.2"
+	        android:text="@string/lblElapsedTime" 
+            android:textAppearance="@style/TextAppearanceLarge"
+            android:textColor="@color/normal_fg"
+            android:textStyle="normal" >
+      </TextView>
+      <TextView
+		    android:id="@+id/txtTimerBottom"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1.2"
+	        android:text="@string/defaultTime" 
+            android:textAppearance="@style/TextAppearanceExtraLarge"
+            android:textColor="@color/normal_fg"
+            android:textStyle="normal" >
+        </TextView>
+      
+	</LinearLayout>
+    
     <LinearLayout
         android:id="@+id/llToast"
         android:layout_width="fill_parent"

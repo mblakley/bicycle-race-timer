@@ -82,12 +82,18 @@
         <item name="android:textColor">#000000</item>
     </style>
     <style name="ExtraLarge.Padded">
-        <item name="android:paddingLeft">5sp</item>
-        <item name="android:paddingRight">5sp</item>
+        <item name="android:paddingLeft">0sp</item>
+        <item name="android:paddingRight">0sp</item>
     </style>
     <style name="ExtraLargeToast" parent="@android:style/TextAppearance.Medium">
         <item name="android:textSize">80sp</item>
         <item name="android:textStyle">bold|italic</item>
         <item name="android:textColor">#000000</item>
     </style>
+    <style name="TextAppearanceLarge" parent="@android:attr/textAppearanceLarge">
+		<item name="android:textSize">30sp</item>
+	</style>
+    <style name="TextAppearanceExtraLarge" parent="@android:attr/textAppearanceLarge">
+		<item name="android:textSize">60sp</item>
+	</style>
 </resources>

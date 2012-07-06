@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="normal_bg">#FFFFFFFF</color>
+    <color name="normal_fg">#FF000000</color>
+    <color name="normal_bg_gray">#FFD0D0D0</color>
+    <color name="normal_fg_gray">#FF808080</color>
+    <color name="normal_transparent">#00FFFFFF</color>
+    <color name="wifi_settings_selected_item_bg">#FFFFFFFF</color>
+    <color name="wifi_settings_selected_item_fg">#FF000000</color>
+    <color name="wifi_settings_not_highlighted_bg">#FFD0D0D0</color>
+    <color name="wifi_settings_not_highlighted_fg">#FF000000</color>
+</resources>

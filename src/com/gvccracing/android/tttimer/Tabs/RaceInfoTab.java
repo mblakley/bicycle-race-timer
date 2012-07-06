@@ -50,7 +50,8 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 	private TextView courseRecord;
 	private TextView raceLaps;
 	private LinearLayout llRaceLaps;
-	private TextView lblDistanceUnit;
+	private String distanceUnit;
+	private String distance;
 	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -70,7 +71,6 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
         courseRecord = ((TextView) view.findViewById(R.id.courseRecord));
         raceLaps = ((TextView) view.findViewById(R.id.raceLaps));
         llRaceLaps = ((LinearLayout) view.findViewById(R.id.llRaceLaps));
-        lblDistanceUnit = ((TextView) view.findViewById(R.id.lblDistanceUnit));
         
         return view;
     }	
@@ -145,7 +145,7 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 						String raceTypeName = RaceType.DescriptionFromRaceTypeID(raceTypeID);
 						String startIntervalText = Long.toString(cursor.getLong(cursor.getColumnIndex(Race.StartInterval)));
 						long numRaceLaps = cursor.getLong(cursor.getColumnIndex(Race.NumLaps));
-						String distance = Float.toString(cursor.getFloat(cursor.getColumnIndex(RaceLocation.Distance)) * (float)numRaceLaps);						
+						distance = Float.toString(cursor.getFloat(cursor.getColumnIndex(RaceLocation.Distance)) * (float)numRaceLaps);						
 						
 						if(raceTypeID == 1){							
 							raceLaps.setText(Long.toString(numRaceLaps));
@@ -160,28 +160,28 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 						raceCourseName.setText(courseName);
 						raceType.setText(raceTypeName);
 						raceStartInterval.setText(startIntervalText);
-						raceDistance.setText(distance);
+						SetDistance();
 					}
 					break;
 				case APP_SETTINGS_LOADER_RACEINFO:	
 					getActivity().getSupportLoaderManager().restartLoader(RACE_INFO_LOADER, null, this);
 					getActivity().getSupportLoaderManager().restartLoader(COURSE_RECORD_LOADER, null, this);
+
 					
 					Integer distanceUnitID = Integer.parseInt(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_DistanceUnits_Name, "0"));
-					String distanceUnitText = "mi";
+					distanceUnit = "mi";
 					switch(distanceUnitID){
 						case 0:
-							distanceUnitText = "mi";
+							distanceUnit = "mi";
 							break;
 						case 1:
-							distanceUnitText = "km";
+							distanceUnit = "km";
 							break;
 						default:
-							distanceUnitText = "mi";
+							distanceUnit = "mi";
 							break;
 					}
-					
-					lblDistanceUnit.setText(distanceUnitText);
+					SetDistance();
 					break;	
 				case COURSE_RECORD_LOADER:
 					if(cursor != null && cursor.getCount() > 0){
@@ -199,6 +199,19 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 		}
 	}
 
+	private void SetDistance()
+	{
+		if (distance != "" && distanceUnit == "")
+		{
+			raceDistance.setText(distance);
+		}
+		else if (distanceUnit != "" && distance != "")
+		{
+			distance += distanceUnit;
+			raceDistance.setText(distance);
+		}
+	}
+	
 	public void onLoaderReset(Loader<Cursor> loader) {
 		try{
 			Log.i(LOG_TAG(), "onLoaderReset start: id=" + Integer.toString(loader.getId()));
