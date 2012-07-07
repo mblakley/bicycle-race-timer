@@ -9,7 +9,6 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.gvccracing.android.tttimer.TTTimerTabsActivity;
 import com.gvccracing.android.tttimer.Controls.Timer;
 import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
@@ -18,7 +17,6 @@ import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
 import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
 import com.gvccracing.android.tttimer.DataAccess.RacerInfoViewCP.RacerInfoView;
 import com.gvccracing.android.tttimer.DataAccess.UnassignedTimesCP.UnassignedTimes;
-import com.gvccracing.android.tttimer.Tabs.ResultsTab;
 import com.gvccracing.android.tttimer.Utilities.AssignResult;
 import com.gvccracing.android.tttimer.Utilities.Calculations;
 import com.gvccracing.android.tttimer.Utilities.TimeFormatter;
@@ -125,16 +123,5 @@ public class AssignTimeTask extends AsyncTask<Long, Void, AssignResult> {
 	    	Calculations.CalculateOverallPlacings(context, race_ID);  
 		}catch(Exception ex){Log.e("AssignTime", "onClick failed:", ex);}
 		return result;
-	}
-	
-	@Override
-	protected void onPostExecute(AssignResult result) {
-		if(result.numUnfinishedRacers <= 0){
-			// Transition to the results tab
-			Intent changeTab = new Intent();
-			changeTab.setAction(TTTimerTabsActivity.CHANGE_VISIBLE_TAB);
-			changeTab.putExtra(TTTimerTabsActivity.VISIBLE_TAB_TAG, ResultsTab.ResultsTabSpecName);
-			context.sendBroadcast(changeTab);
-		}
 	}
 }	

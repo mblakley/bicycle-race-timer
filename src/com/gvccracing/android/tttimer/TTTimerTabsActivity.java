@@ -130,13 +130,7 @@ public class TTTimerTabsActivity extends FragmentActivity {
         	UpdateFromRaceInProgress();
         } else if (FindAvailableRace()){
         	// Find a race that's not started yet, but has been set up for this date
-        	timer.setVisibility(View.VISIBLE);     	
-	    	// Show "check in" tab
-	    	tabHost.getTabWidget().getChildTabViewAt(1).setVisibility(View.VISIBLE);
-	    	// Show "finish" tab
-	    	tabHost.getTabWidget().getChildTabViewAt(3).setVisibility(View.VISIBLE);
-        	// Navigate to Race Info tab
-        	tabHost.setCurrentTabByTag(RaceInfoTab.RaceInfoTabSpecName);
+        	SetupAvailableRace();
         } else if (FindFinishedRace()) {
         	// Find a finished race on the current date
         	SetupFinishedRace();
@@ -321,7 +315,7 @@ public class TTTimerTabsActivity extends FragmentActivity {
 	    // Start Tab
 	    tabManager.addTab(tabHost.newTabSpec(StartTab.StartTabSpecName).setIndicator("Start"), StartTab.class, null);
 	    // Finish Tab
-	    tabManager.addTab(tabHost.newTabSpec(FinishTab.FinishTabSpecName).setIndicator("Finish"), FinishTab.class, null);
+	    tabManager.addTab(tabHost.newTabSpec(FinishTab.FinishTabSpecName).setIndicator(FinishTab.FinishTabSpecName), FinishTab.class, null);
 	    // Results Tab
 	    tabManager.addTab(tabHost.newTabSpec(ResultsTab.ResultsTabSpecName).setIndicator("Results"), ResultsTab.class, null);
 	    // Other Tab
@@ -332,34 +326,30 @@ public class TTTimerTabsActivity extends FragmentActivity {
 	 * Set up the tabs control display for a finished race
 	 */
 	private void SetupFinishedRace(){
+		// Reset the timer
+		timer.resetTimer();
     	// Hide the timer
-    	timer.setVisibility(View.GONE);     	
+    	timer.setVisibility(View.GONE);  
     	// Remove "check in" tab - Don't allow any more racers to check in, the race is done!
-    	tabHost.getTabWidget().getChildTabViewAt(1).setVisibility(View.GONE);//.setEnabled(false);
+    	tabHost.getTabWidget().getChildTabViewAt(1).setVisibility(View.GONE);
     	// Remove "finish" tab - There are no unfinished racers
-    	tabHost.getTabWidget().getChildTabViewAt(3).setVisibility(View.GONE);//.setEnabled(false);
+    	tabHost.getTabWidget().getChildTabViewAt(3).setVisibility(View.GONE);
     	// Show "results" panel - This is really what people care about when looking at a finished race
     	tabHost.setCurrentTabByTag(ResultsTab.ResultsTabSpecName);
-    	
-
-//		long race_ID = Long.parseLong(AppSettings.ReadValue(this, AppSettings.AppSetting_RaceID_Name, "-1"));
-//    	// Calculate Category Placing, Overall Placing, Points
-//    	Calculations.CalculateCategoryPlacings(this, race_ID);
-//    	Calculations.CalculateOverallPlacings(this, race_ID); 
 	}
 	
 	/**
 	 * Setup a race that could be running
 	 */
 	private void SetupAvailableRace(){
-    	// Show the timer
-    	timer.setVisibility(View.VISIBLE);
     	// Reset the timer
     	timer.resetTimer();
+    	// Show the timer
+    	timer.setVisibility(View.VISIBLE);
     	// Enable "check in" tab - Allow racers to check in
-		tabHost.getTabWidget().getChildTabViewAt(1).setVisibility(View.VISIBLE);//.setEnabled(true);
+		tabHost.getTabWidget().getChildTabViewAt(1).setVisibility(View.VISIBLE);
     	// Enable "finish" tab - Nothing has even started yet!
-    	tabHost.getTabWidget().getChildTabViewAt(3).setVisibility(View.VISIBLE);//.setEnabled(true);
+    	tabHost.getTabWidget().getChildTabViewAt(3).setVisibility(View.VISIBLE);
     	// Show "race info" panel - Let the user know which race they are looking at
     	tabHost.setCurrentTabByTag(RaceInfoTab.RaceInfoTabSpecName);
 	}
@@ -400,14 +390,14 @@ public class TTTimerTabsActivity extends FragmentActivity {
         		SetupAvailableRace();
         	} else if(intent.getAction().equals(TTTimerTabsActivity.CHANGE_VISIBLE_TAB)){
         		String visibleTabTag = intent.getStringExtra(TTTimerTabsActivity.VISIBLE_TAB_TAG);
-        		if(visibleTabTag == FinishTab.FinishTabSpecName && tabHost.getTabWidget().getChildTabViewAt(3).getVisibility() == View.GONE){
+        		if(visibleTabTag.equals(FinishTab.FinishTabSpecName) && tabHost.getTabWidget().getChildTabViewAt(3).getVisibility() == View.GONE){
         			tabHost.getTabWidget().getChildTabViewAt(3).setVisibility(View.VISIBLE);
         		} else if(visibleTabTag == CheckInTab.CheckInTabSpecName && tabHost.getTabWidget().getChildTabViewAt(1).getVisibility() == View.GONE){
         			tabHost.getTabWidget().getChildTabViewAt(1).setVisibility(View.VISIBLE);
         		}
         		tabHost.setCurrentTabByTag(visibleTabTag);
         	} else if(intent.getAction().equals(Timer.RACE_IS_FINISHED_ACTION)){
-				timer.CleanUpExtraUnassignedTimes();
+				//timer.CleanUpExtraUnassignedTimes();
 				SetupFinishedRace();
         	} else if(intent.getAction().equals(TTTimerTabsActivity.RACE_ID_CHANGED_ACTION)){
         		long raceID = Long.parseLong(intent.getStringExtra(RaceResults.Race_ID));
@@ -516,7 +506,7 @@ public class TTTimerTabsActivity extends FragmentActivity {
 			
 			Cursor currentRace = getContentResolver().query(Race.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 			
-			if(currentRace.getCount() > 0){	
+			if(currentRace != null && currentRace.getCount() > 0){
 				foundAvailableRace = true;
 				currentRace.moveToFirst();
 				int raceCount = currentRace.getCount();

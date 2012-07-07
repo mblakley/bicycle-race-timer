@@ -46,7 +46,7 @@ import com.gvccracing.android.tttimer.Dialogs.RemoveUnassignedTime;
  */
 public class FinishTab extends BaseTab implements View.OnClickListener,	LoaderManager.LoaderCallbacks<Cursor> {
 
-	public static final String FinishTabSpecName = "FinishActivity";
+	public static final String FinishTabSpecName = "Finish";
 
 	private static final int TEAM_FINISH_ORDER_LOADER = 0x34;
 
@@ -187,10 +187,12 @@ public class FinishTab extends BaseTab implements View.OnClickListener,	LoaderMa
 		        	finishOrderList.setOnItemClickListener(new OnItemClickListener() {
 						public void onItemClick(AdapterView<?> arg0, View v, int pos, long raceResult_ID) {
 							Cursor unassignedCursor = unassignedCA.getCursor();
-							unassignedCursor.moveToPosition(unassignedTimes.getCheckedItemPosition());
-							long unassignedID = unassignedCursor.getLong(unassignedCursor.getColumnIndex(UnassignedTimes._ID));
-							AssignTimeTask task = new AssignTimeTask(FinishTab.this.getActivity());
-							task.execute(new Long[] { unassignedID, raceResult_ID });	
+							if(unassignedCursor != null && unassignedCursor.getCount() > 0){
+								unassignedCursor.moveToPosition(unassignedTimes.getCheckedItemPosition());
+								long unassignedID = unassignedCursor.getLong(unassignedCursor.getColumnIndex(UnassignedTimes._ID));
+								AssignTimeTask task = new AssignTimeTask(FinishTab.this.getActivity());
+								task.execute(new Long[] { unassignedID, raceResult_ID });	
+							}
 						}
 					});
 		        }

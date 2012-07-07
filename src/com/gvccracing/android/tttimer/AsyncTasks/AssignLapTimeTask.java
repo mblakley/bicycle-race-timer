@@ -9,7 +9,6 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.gvccracing.android.tttimer.TTTimerTabsActivity;
 import com.gvccracing.android.tttimer.Controls.Timer;
 import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
 import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
@@ -19,7 +18,6 @@ import com.gvccracing.android.tttimer.DataAccess.RaceResultsTeamOrRacerViewCP.Ra
 import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
 import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
 import com.gvccracing.android.tttimer.DataAccess.UnassignedTimesCP.UnassignedTimes;
-import com.gvccracing.android.tttimer.Tabs.ResultsTab;
 import com.gvccracing.android.tttimer.Utilities.AssignResult;
 import com.gvccracing.android.tttimer.Utilities.Calculations;
 import com.gvccracing.android.tttimer.Utilities.TimeFormatter;
@@ -147,7 +145,6 @@ public class AssignLapTimeTask extends AsyncTask<Long, Void, AssignResult> {
 					
 					RaceResults.Update(context, endUpdate, RaceResults.Race_ID + "=? AND " + RaceResults.ElapsedTime + " IS NULL", new String[]{Long.toString(race_ID)});
 					
-					Log.w(LOG_TAG(), "Getting ready to STOP_AND_HIDE_TIMER_ACTION");
 					// Stop and hide the timer
 					Intent stopAndHideTimer = new Intent();
 					stopAndHideTimer.setAction(Timer.STOP_AND_HIDE_TIMER_ACTION);
@@ -171,17 +168,5 @@ public class AssignLapTimeTask extends AsyncTask<Long, Void, AssignResult> {
 			numStarted = null;
 		}catch(Exception ex){Log.e("AssignTime", "onClick failed:", ex);}
 		return result;
-	}
-	
-	@Override
-	protected void onPostExecute(AssignResult result) {		
-		if(result.numUnfinishedRacers <= 0){
-			Log.w(LOG_TAG(), "Transition to Results tab");
-			// Transition to the results tab
-			Intent changeTab = new Intent();
-			changeTab.setAction(TTTimerTabsActivity.CHANGE_VISIBLE_TAB);
-			changeTab.putExtra(TTTimerTabsActivity.VISIBLE_TAB_TAG, ResultsTab.ResultsTabSpecName);
-			context.sendBroadcast(changeTab);
-		}
 	}
 }	

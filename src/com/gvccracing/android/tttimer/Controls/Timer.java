@@ -1,7 +1,6 @@
 package com.gvccracing.android.tttimer.Controls;
 
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.TTTimerTabsActivity;
 import com.gvccracing.android.tttimer.AsyncTasks.RacerStartedTask;
 import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
 import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
@@ -225,7 +224,7 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
         	} else if(intent.getAction().equals(STOP_TIMER_ACTION)){	// Stop the timer
         		stopTimer();
         	} else if(intent.getAction().equals(RESET_TIMER_ACTION)){	// Reset the timer to 0
-        		resetTimer();
+        		resetStartTime();
         	} else if(intent.getAction().equals(STOP_AND_HIDE_TIMER_ACTION)){	// Stop the timer and hide it...the race is done
         		stopTimer();
         		// hide the timer
@@ -306,13 +305,15 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
      	mTimerHandler.removeCallbacks(startTimer);
      	paused = true;
     }
-     
-    public void resetTimer (){
+    
+    public void resetTimer(){
      	paused = true;
      	started = false;
      	elapsedTime = 0l;
  		txtTimer.setText("00:00:00.0");
- 		
+    }
+     
+    private void resetStartTime (){ 		
  		// TODO: Ask the user if they really want to do this.
  		
  		// Reset the start time value in the database
@@ -465,21 +466,10 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
 				    	// We found a race, so get the raceResult_ID and StartTimeOffset
 				    	raceResult_ID = cursor.getLong(0);
 				    	startTimeOffset = cursor.getLong(cursor.getColumnIndex(RaceResults.StartTimeOffset));
-				    }else{
-				    	long raceID = Long.parseLong(AppSettings.ReadValue(getContext(), AppSettings.AppSetting_RaceID_Name, "-1"));
-				    	if(raceID > 0){
-				        	// Move to the finish tab (if the race is actually running), since there are no more racers to start
-				        	if(!RaceInProgress(raceID)){
-				        		Intent changeToFinishTab = new Intent();
-				        		changeToFinishTab.setAction(TTTimerTabsActivity.CHANGE_VISIBLE_TAB);
-				        		changeToFinishTab.putExtra(TTTimerTabsActivity.VISIBLE_TAB_TAG, "Finish");
-						    	
-				        		getContext().sendBroadcast(changeToFinishTab);
-				        	}
-				    	}
-			        }
 
-				    setNewRacerOnDeck(raceResult_ID, startTimeOffset);
+					    setNewRacerOnDeck(raceResult_ID, startTimeOffset);
+				    }
+
 					break;
 				case START_INTERVAL_LOADER:
 					startTimeInterval = Long.parseLong(AppSettings.ReadValue(getContext(), AppSettings.AppSetting_StartInterval_Name, "60"));
