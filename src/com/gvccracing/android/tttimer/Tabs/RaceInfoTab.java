@@ -145,7 +145,11 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 						String raceTypeName = RaceType.DescriptionFromRaceTypeID(raceTypeID);
 						String startIntervalText = Long.toString(cursor.getLong(cursor.getColumnIndex(Race.StartInterval)));
 						long numRaceLaps = cursor.getLong(cursor.getColumnIndex(Race.NumLaps));
-						distance = Float.toString(cursor.getFloat(cursor.getColumnIndex(RaceLocation.Distance)) * (float)numRaceLaps);						
+						distance = Float.toString(cursor.getFloat(cursor.getColumnIndex(RaceLocation.Distance)) * (float)numRaceLaps);	
+						
+						if(distance == null){
+							distance = "";
+						}
 						
 						if(raceTypeID == 1){							
 							raceLaps.setText(Long.toString(numRaceLaps));
