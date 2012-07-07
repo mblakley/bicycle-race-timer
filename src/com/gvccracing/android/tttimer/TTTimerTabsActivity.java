@@ -130,6 +130,12 @@ public class TTTimerTabsActivity extends FragmentActivity {
         	UpdateFromRaceInProgress();
         } else if (FindAvailableRace()){
         	// Find a race that's not started yet, but has been set up for this date
+        	timer.setVisibility(View.VISIBLE);     	
+	    	// Show "check in" tab
+	    	tabHost.getTabWidget().getChildTabViewAt(1).setVisibility(View.VISIBLE);
+	    	// Show "finish" tab
+	    	tabHost.getTabWidget().getChildTabViewAt(3).setVisibility(View.VISIBLE);
+        	// Navigate to Race Info tab
         	tabHost.setCurrentTabByTag(RaceInfoTab.RaceInfoTabSpecName);
         } else if (FindFinishedRace()) {
         	// Find a finished race on the current date
@@ -169,7 +175,7 @@ public class TTTimerTabsActivity extends FragmentActivity {
         	tabHost.setCurrentTabByTag(RaceInfoTab.RaceInfoTabSpecName);
         	// Couldn't find a race in progress, or an unstarted race, or a finished race, so need to add a race, or select a previous one
         	// Let the user choose whether to add a race or view a previous one	 
-        	if(FindAnyPreviousRaces()){
+        	if(FindAnyRaces()){
 				ChooseViewingMode chooseModeDialog = new ChooseViewingMode();
 				FragmentManager fm = getSupportFragmentManager();
 				chooseModeDialog.show(fm, ChooseViewingMode.LOG_TAG);
@@ -425,15 +431,15 @@ public class TTTimerTabsActivity extends FragmentActivity {
 	 * Figure out if there are any previous races in the DB
 	 * @return True if there are other races in the DB
 	 */
-	private boolean FindAnyPreviousRaces() {
+	private boolean FindAnyRaces() {
 		boolean foundRace = false;
 		try{
-			String[] projection = new String[]{Race.getTableName() + "." + Race._ID + " as _id"};
-			String selection = RaceResults.EndTime + " IS NOT NULL";
+			String[] projection = new String[]{Race._ID + " as _id"};
+			String selection = null;
 			String[] selectionArgs = null; 
-			String sortOrder = Race.getTableName() + "." + Race._ID;
+			String sortOrder = Race._ID;
 			
-			Cursor currentRace = getContentResolver().query(RaceInfoResultsView.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+			Cursor currentRace = getContentResolver().query(Race.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 			
 			if(currentRace.getCount() > 0){	
 				foundRace = true;
@@ -592,7 +598,9 @@ public class TTTimerTabsActivity extends FragmentActivity {
 	
 	private void UpdateFromRaceInProgress(Cursor theRace) {
 		try{
-	    	// Show all tabs
+			// Show timer
+			timer.setVisibility(View.VISIBLE);
+	    	// Show all tabs		
 	    	tabHost.getTabWidget().getChildTabViewAt(1).setVisibility(View.VISIBLE);//.setEnabled(false);
 	    	tabHost.getTabWidget().getChildTabViewAt(3).setVisibility(View.VISIBLE);//.setEnabled(false);
 			

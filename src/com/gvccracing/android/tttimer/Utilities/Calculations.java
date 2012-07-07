@@ -1,8 +1,9 @@
 package com.gvccracing.android.tttimer.Utilities;
 
 import java.security.InvalidParameterException;
+import java.util.ArrayList;
 
-import android.content.ContentValues;
+import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
@@ -12,6 +13,7 @@ import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsTeamOrRacerViewCP.RaceResultsTeamOrRacerView;
 import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
+import com.gvccracing.android.tttimer.DataAccess.TTProvider;
 import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
 
 public class Calculations {
@@ -25,6 +27,9 @@ public class Calculations {
     public static void CalculateOverallPlacings(Context context, Long race_ID) {
 		try{
 			Log.v(LOG_TAG(), "CalculateOverallPlacings");
+			
+			// Create the list of operations to perform in the batch
+			ArrayList<ContentProviderOperation> operations = new ArrayList<ContentProviderOperation>();
 
 			Cursor overallResults = context.getContentResolver().query(RaceResultsTeamOrRacerView.CONTENT_URI, new String[] {RaceResults.getTableName() + "." + RaceResults._ID}, 
 																	RaceResults.Race_ID + "=?" + 
@@ -42,12 +47,13 @@ public class Calculations {
 				Integer overallPlacing = 1;
 				do{
 					Long raceResult_ID = overallResults.getLong(0);
-					// Update the placing and points for this raceResult
-					ContentValues content = new ContentValues();
-					content.put(RaceResults.OverallPlacing, overallPlacing);
-
-					context.getContentResolver().update(RaceResults.CONTENT_URI, content, RaceResults._ID + "=?", new String[]{Long.toString(raceResult_ID)});
 					
+					// Update the placing and points for this raceResult					
+					operations.add(ContentProviderOperation.newUpdate(RaceResults.CONTENT_URI)
+						    .withValue(RaceResults.OverallPlacing, overallPlacing)
+						    .withSelection(RaceResults._ID + "=?", new String[]{Long.toString(raceResult_ID)})
+						    .build());
+
 					// Increment the placing
 					overallPlacing++;
 				} while(overallResults.moveToNext());
@@ -55,7 +61,10 @@ public class Calculations {
 			
 			overallResults.close();
 			overallResults = null;
-		} catch(Exception ex) {Log.e(LOG_TAG(), "CalculateOverallPlacing failed");}
+			
+			// Run the batch of updates
+			context.getContentResolver().applyBatch(TTProvider.PROVIDER_NAME.toString(), operations);
+		} catch(Exception ex) {Log.e(LOG_TAG(), "CalculateOverallPlacing failed", ex);}
 	}
 
     /*
@@ -64,6 +73,8 @@ public class Calculations {
 	public static void CalculateCategoryPlacings(Context context, Long race_ID) {
 		try{
 			Log.v(LOG_TAG(), "CalculateCategoryPlacings");
+			// Create the list of operations to perform in the batch
+			ArrayList<ContentProviderOperation> operations = new ArrayList<ContentProviderOperation>();
 			// Get the categories that are checked in for this race
 			Cursor categories = context.getContentResolver().query(CheckInViewExclusive.CONTENT_URI, new String[] {RacerClubInfo.Category}, RaceResults.Race_ID + "=?", 
 																	new String[]{Long.toString(race_ID)}, RacerClubInfo.Category);
@@ -91,13 +102,15 @@ public class Calculations {
 							Long raceResult_ID = categoryResults.getLong(0);
 							Long elapsedTime = categoryResults.getLong(categoryResults.getColumnIndex(RaceResults.ElapsedTime));
 							// Get the points for the current placing
-							Integer points = GetPoints(categoryPlacing, totalCategoryRacers, raceType_ID, elapsedTime);
-							// Update the placing and points for this raceResult
-							ContentValues content = new ContentValues();
-							content.put(RaceResults.CategoryPlacing, categoryPlacing);
-							content.put(RaceResults.Points, points);
+							Integer points = GetPoints(categoryPlacing, totalCategoryRacers, raceType_ID, elapsedTime);							
+
+							// Update the placing and points for this raceResult					
+							operations.add(ContentProviderOperation.newUpdate(RaceResults.CONTENT_URI)
+								    .withValue(RaceResults.CategoryPlacing, categoryPlacing)
+								    .withValue(RaceResults.Points, points)
+								    .withSelection(RaceResults._ID + "=?", new String[]{Long.toString(raceResult_ID)})
+								    .build());
 							
-							context.getContentResolver().update(RaceResults.CONTENT_URI, content, RaceResults._ID + "=?", new String[]{Long.toString(raceResult_ID)});
 							// Increment the placing
 							categoryPlacing++;
 						} while(categoryResults.moveToNext());
@@ -107,8 +120,11 @@ public class Calculations {
 				} while(categories.moveToNext());
 			}
 			categories.close();
-			categories = null;
-		}catch(Exception ex){Log.e(LOG_TAG(), "CalculateCategoryPlacings failed:" + ex.toString());}
+			categories = null;			
+			
+			// Run the batch of updates
+			context.getContentResolver().applyBatch(TTProvider.PROVIDER_NAME.toString(), operations);
+		}catch(Exception ex){Log.e(LOG_TAG(), "CalculateCategoryPlacings failed:", ex);}
 	}
 
 	/*
