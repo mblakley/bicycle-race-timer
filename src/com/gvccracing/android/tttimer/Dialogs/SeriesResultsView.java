@@ -3,7 +3,6 @@ package com.gvccracing.android.tttimer.Dialogs;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -77,11 +76,11 @@ public class SeriesResultsView extends BaseDialog implements View.OnClickListene
 		String sortOrder;
 		switch(id){			
 			case SERIES_RESULTS_LOADER:
-				projection = new String[]{Racer.getTableName() + "." + Racer._ID, Racer.LastName, Racer.FirstName, RacerClubInfo.Category, "SUM(" + RaceResults.Points + ") as " + RaceResults.Points};
+				projection = new String[]{RacerClubInfo.getTableName() + "." + RacerClubInfo._ID, Racer.LastName, Racer.FirstName, RacerClubInfo.Category, "SUM(" + RaceResults.Points + ") as " + RaceResults.Points};
 				selection = RaceResults.ElapsedTime + " IS NOT NULL AND " + RacerClubInfo.Category + "!=?";
 				selectionArgs = new String[]{"G"};
 				sortOrder = RacerClubInfo.Category + "," + RaceResults.Points + " DESC," + Racer.LastName;
-				loader = new CursorLoader(getActivity(), Uri.withAppendedPath(CheckInViewExclusive.CONTENT_URI, "group by " + Racer.getTableName() + "." + Racer._ID + "," + Racer.LastName + "," + Racer.FirstName + "," + RacerClubInfo.Category), projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), Uri.withAppendedPath(CheckInViewExclusive.CONTENT_URI, "group by " + RacerClubInfo.getTableName() + "." + RacerClubInfo._ID + "," + Racer.LastName + "," + Racer.FirstName + "," + RacerClubInfo.Category), projection, selection, selectionArgs, sortOrder);
 				break;
 		}
 		Log.i(LOG_TAG, "onCreateLoader complete: id=" + Integer.toString(id));
