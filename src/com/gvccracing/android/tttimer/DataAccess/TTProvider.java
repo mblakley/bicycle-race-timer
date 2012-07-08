@@ -175,6 +175,12 @@ public class TTProvider extends ContentProvider {
 		} else if(uri.toString().contains(CheckInViewExclusive.CONTENT_URI.toString())){
 			// CheckInViewExclusive
 			qBuilder.setTables(CheckInViewExclusive.getTableName());
+			String groupBy = null;
+			if(!uri.getLastPathSegment().contains("~")){
+				if(uri.getLastPathSegment().contains("group by")){
+					groupBy = uri.getLastPathSegment().replace("group by", "");
+				}
+			}
 			
 			String limit = null;
 			if(uri.toString().contains("OnDeck")){
@@ -184,7 +190,7 @@ public class TTProvider extends ContentProvider {
 			Cursor checkInCursor = qBuilder.query(mDB.getReadableDatabase(),
 													projection, 
 													selection, 
-													selectionArgs, null, null, sortOrder,
+													selectionArgs, groupBy, null, sortOrder,
 													limit);
 			checkInCursor.setNotificationUri(getContext().getContentResolver(), CheckInViewExclusive.CONTENT_URI);	
 			Log.i("TTProvider", "query complete: uri=" + uri.toString() + " selection=" + selection + " count=" + checkInCursor.getCount());

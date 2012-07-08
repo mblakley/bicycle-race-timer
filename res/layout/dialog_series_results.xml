@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialogContainer"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:padding="2sp" >
+    
+    <LinearLayout 
+        android:id="@+id/llCategoryHeader"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:weightSum="1.0"
+		android:padding="1dp">  
+		<TextView
+			android:id="@+id/lblPlacingCat"
+			android:layout_weight=".15"
+			android:layout_width="0dip"
+			android:layout_height="wrap_content"
+			style="@style/Small.Padded" />	
+	
+        <TextView
+            android:id="@+id/lblNameCat"
+			android:layout_weight=".55"
+			android:layout_width="0dip"
+			android:layout_height="wrap_content"
+            android:text="@string/HeaderRacerName"
+            android:textStyle="bold"
+            android:singleLine="true"
+			style="@style/Small.Padded" />
+	
+        <TextView
+            android:id="@+id/lblCategoryCat"
+			android:layout_weight=".15"
+			android:layout_width="0dip"
+			android:layout_height="wrap_content"
+            android:text="@string/HeaderCat"
+            android:textStyle="bold"
+			style="@style/Small.Padded" />
+
+        <TextView
+            android:id="@+id/lblPointsCat"
+			android:layout_weight=".15"
+			android:layout_width="0dip"
+			android:layout_height="wrap_content"
+            android:text="@string/HeaderPoints"
+            android:textStyle="bold"
+			style="@style/Small.Padded" /> 
+	</LinearLayout>
+
+    <ListView
+        android:id="@+id/lvResults"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:minHeight="300sp" />
+
+</LinearLayout>

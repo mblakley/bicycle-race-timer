@@ -213,7 +213,14 @@
     	android:layout_gravity="bottom|right"
         style="@style/Medium"
         android:text="@string/MarshalLocations"
-        android:visibility="gone" />   
+        android:visibility="gone" /> 
+        
+    <Button
+        android:id="@+id/btnSeriesResults"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/btnSeriesResults"
+        style="@style/Medium" />
 
     <LinearLayout
         android:id="@+id/linearLayoutButtons"

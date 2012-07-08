@@ -210,4 +210,6 @@
 	<string name="ResetRacersText">WARNING!!!!\n\nWould you like to reset all racers start times?\n\nYou should only reset the start times if you are going to restart every racer in the race.  Use this if you accidentally pushed the "Start" button, and no racers have actually started yet.  Resetting racer\'s start times will affect the time calculations.</string>
 	<string name="ResetAllRacersStartTime">Racers start times reset!</string>
 	<string name="GO">GO!</string>
+	<string name="btnSeriesResults">Show Series Results</string>
+	<string name="SeriesResults">Series Results</string>
 </resources>

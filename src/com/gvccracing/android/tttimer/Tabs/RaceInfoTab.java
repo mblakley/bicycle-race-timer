@@ -29,6 +29,7 @@ import com.gvccracing.android.tttimer.Dialogs.AdminAuthView;
 import com.gvccracing.android.tttimer.Dialogs.AdminMenuView;
 import com.gvccracing.android.tttimer.Dialogs.MarshalLocations;
 import com.gvccracing.android.tttimer.Dialogs.OtherRaceResults;
+import com.gvccracing.android.tttimer.Dialogs.SeriesResultsView;
 import com.gvccracing.android.tttimer.Utilities.TimeFormatter;
 import com.gvccracing.android.tttimer.Utilities.Enums.RaceType;
 
@@ -60,6 +61,7 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
         View view = inflater.inflate(R.layout.tab_race_info, container, false);
         
         ((Button) view.findViewById(R.id.btnMarshalLocations)).setOnClickListener(this);
+        ((Button) view.findViewById(R.id.btnSeriesResults)).setOnClickListener(this);
         ((Button) view.findViewById(R.id.btnPreviousResults)).setOnClickListener(this);
         ((Button) view.findViewById(R.id.btnAdminMenu)).setOnClickListener(this);
         
@@ -251,6 +253,9 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 					AdminAuthView adminAuthDialog = new AdminAuthView();
 			        adminAuthDialog.show(fm, AdminAuthView.LOG_TAG);
 				}
+			case R.id.btnSeriesResults:
+				SeriesResultsView seriesResultsDialog = new SeriesResultsView();
+				seriesResultsDialog.show(fm, SeriesResultsView.LOG_TAG);
 				break;
 		}
 	}
