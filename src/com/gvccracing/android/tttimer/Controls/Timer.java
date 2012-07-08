@@ -213,8 +213,12 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
         	Log.v(LOG_TAG, "onReceive");
         	
         	if(intent.getAction().equals(START_TIMER_ACTION)) {	// If the timer needs to be started
-        		// Set the start time to the time included in the bundle, since there might have been a delay before receiving this intent
-        		startTime = intent.getLongExtra(START_TIME, System.currentTimeMillis());
+        		if(started && paused){
+        			// If we were previously started, and we're just paused, don't set the start time to a new value
+        		} else {
+	        		// Set the start time to the time included in the bundle, since there might have been a delay before receiving this intent
+	        		startTime = intent.getLongExtra(START_TIME, System.currentTimeMillis());
+        		}
         		// Show the timer, since we're in a new race
         		if(txtTimer != null){
         			txtTimer.setVisibility(View.VISIBLE);
@@ -307,15 +311,14 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
     }
     
     public void resetTimer(){
+    	racerStarted = false;
      	paused = true;
      	started = false;
      	elapsedTime = 0l;
  		txtTimer.setText("00:00:00.0");
     }
      
-    private void resetStartTime (){ 		
- 		// TODO: Ask the user if they really want to do this.
- 		
+    private void resetStartTime (){     	
  		// Reset the start time value in the database
  		ContentValues content = new ContentValues();
  		Long race_ID = Long.parseLong(AppSettings.ReadValue(getContext(), AppSettings.AppSetting_RaceID_Name, "-1"));
@@ -323,6 +326,8 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
 		content.putNull(Race.RaceStartTime);
 		Uri fullUri = Uri.withAppendedPath(Race.CONTENT_URI, Long.toString(race_ID));
 		getContext().getContentResolver().update(fullUri, content, null, null);
+		
+		resetTimer();
     }
     
     private long timerMessageEndTime;
@@ -330,7 +335,7 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
     
     public void showMessage(String message, long duration){
     	timerMessageEndTime = System.currentTimeMillis() + duration;
-    	lblMessage.setText(message);
+    	lblMessage.setText("\u00A0" + message + "\u00A0");
     	// Show the message
     	lblMessage.setVisibility(View.VISIBLE);
     	showingMessage = true;
@@ -365,14 +370,14 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
  		
 		if(startTimeOffsetOnDeck >= 0 && 
 		   ((startTimeInterval == 30 && 
-		   (secs == 0 || secs == 15 || secs == 30 || secs == 45 || (secs >= 25 && secs <= 29) || (secs >= 55 && secs <= 59))) ||
+		   ((racerStarted && secs == 0) || secs == 15 || secs == 30 || secs == 45 || (secs >= 25 && secs <= 29) || (secs >= 55 && secs <= 59))) ||
 		   (startTimeInterval == 60 && 
-		   (secs == 0 || secs == 30 || secs == 45 || (secs >= 55 && secs <= 59)))) && 
+		   ((racerStarted && secs == 0) || secs == 30 || secs == 45 || (secs >= 55 && secs <= 59)))) && 
 		   toastTime != secs){
 			
 			toastTime = secs;
 			String toastSecs = startTimeInterval > secs ? Long.toString(startTimeInterval - secs) : Long.toString((startTimeInterval * 2) - secs);
-			toastText = (secs == 0 || secs == startTimeInterval) ? "GO!" : toastSecs;
+			toastText = (secs == 0 || secs == startTimeInterval) ? getContext().getResources().getString(R.string.GO) : toastSecs;
 			toastVisibilityTime = (secs == 0 || secs == startTimeInterval) ? 2500 : 900;
 					
 			if(!showingToast){
@@ -382,7 +387,7 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
 				showingToast = true;
 			}
 			toastEndTime = toastStartTime + toastVisibilityTime;
-	    	toast_text.setText(toastText);         
+	    	toast_text.setText("\u00A0" + toastText + "\u00A0");         
 		}
 		
  		// Figure out if the racer on deck has started yet, and if so, do some other updates
@@ -402,9 +407,9 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
     private Runnable startTimer = new Runnable() {
 	    public void run() {
 	    	long currentTime = System.currentTimeMillis();
-		   elapsedTime = currentTime - startTime;
-		   updateTimer(elapsedTime, currentTime);
-		   mTimerHandler.postDelayed(this,REFRESH_RATE);
+	    	elapsedTime = currentTime - startTime;
+	    	updateTimer(elapsedTime, currentTime);
+	    	mTimerHandler.postDelayed(this,REFRESH_RATE);
 		}
 	};	
 
@@ -421,7 +426,7 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
 		String sortOrder;
 		switch(id){
 			case ON_DECK_LOADER_TIMER:
-				projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID + " as _id", RaceResults.StartOrder, RaceResults.StartTimeOffset};
+				projection = new String[]{RaceResults._ID, RaceResults.StartOrder, RaceResults.StartTimeOffset};
 				selection = RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.StartTime + " IS NULL";
 				selectionArgs = null;
 				sortOrder = RaceResults.StartOrder;
@@ -464,12 +469,11 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
 				    if( cursor != null && cursor.getCount() > 0) {
 				    	cursor.moveToFirst();
 				    	// We found a race, so get the raceResult_ID and StartTimeOffset
-				    	raceResult_ID = cursor.getLong(0);
+				    	raceResult_ID = cursor.getLong(cursor.getColumnIndex(RaceResults._ID));
 				    	startTimeOffset = cursor.getLong(cursor.getColumnIndex(RaceResults.StartTimeOffset));
 
 					    setNewRacerOnDeck(raceResult_ID, startTimeOffset);
 				    }
-
 					break;
 				case START_INTERVAL_LOADER:
 					startTimeInterval = Long.parseLong(AppSettings.ReadValue(getContext(), AppSettings.AppSetting_StartInterval_Name, "60"));

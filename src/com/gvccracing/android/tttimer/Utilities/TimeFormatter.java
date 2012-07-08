@@ -72,7 +72,7 @@ public class TimeFormatter {
  		}
 
 		if(showThousandths){
-			if(showIfZero || secs > 0){
+			if(showIfZero || secs > 0 || showSeconds){
 				formattedTime += ".";
 			}
 	     	String milliseconds = String.valueOf((long)timeInMillseconds);

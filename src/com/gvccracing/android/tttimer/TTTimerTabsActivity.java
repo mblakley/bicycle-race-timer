@@ -311,7 +311,7 @@ public class TTTimerTabsActivity extends FragmentActivity {
 	    // Race Info Tab
 	    tabManager.addTab(tabHost.newTabSpec(RaceInfoTab.RaceInfoTabSpecName).setIndicator("Race Info"), RaceInfoTab.class, null);
 	    // Check In Tab
-	    tabManager.addTab(tabHost.newTabSpec(CheckInTab.CheckInTabSpecName).setIndicator("Check In"), CheckInTab.class, null);
+	    tabManager.addTab(tabHost.newTabSpec(CheckInTab.CheckInTabSpecName).setIndicator(CheckInTab.CheckInTabSpecName), CheckInTab.class, null);
 	    // Start Tab
 	    tabManager.addTab(tabHost.newTabSpec(StartTab.StartTabSpecName).setIndicator("Start"), StartTab.class, null);
 	    // Finish Tab
@@ -392,7 +392,7 @@ public class TTTimerTabsActivity extends FragmentActivity {
         		String visibleTabTag = intent.getStringExtra(TTTimerTabsActivity.VISIBLE_TAB_TAG);
         		if(visibleTabTag.equals(FinishTab.FinishTabSpecName) && tabHost.getTabWidget().getChildTabViewAt(3).getVisibility() == View.GONE){
         			tabHost.getTabWidget().getChildTabViewAt(3).setVisibility(View.VISIBLE);
-        		} else if(visibleTabTag == CheckInTab.CheckInTabSpecName && tabHost.getTabWidget().getChildTabViewAt(1).getVisibility() == View.GONE){
+        		} else if(visibleTabTag.equals(CheckInTab.CheckInTabSpecName) && tabHost.getTabWidget().getChildTabViewAt(1).getVisibility() == View.GONE){
         			tabHost.getTabWidget().getChildTabViewAt(1).setVisibility(View.VISIBLE);
         		}
         		tabHost.setCurrentTabByTag(visibleTabTag);

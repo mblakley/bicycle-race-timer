@@ -6,7 +6,7 @@ import android.os.AsyncTask;
 
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 
-public class RacerStartedTask  extends AsyncTask<Long, Void, Void> {
+public class RacerStartedTask extends AsyncTask<Long, Void, Void> {
 	
 	private Context context;
 	

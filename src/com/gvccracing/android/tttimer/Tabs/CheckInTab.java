@@ -53,7 +53,7 @@ import android.widget.AdapterView.OnItemLongClickListener;
  */
 public class CheckInTab extends BaseTab implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
 
-	public static final String CheckInTabSpecName =  "CheckInActivity";
+	public static final String CheckInTabSpecName =  "Check In";
 
 	private static final int TEAM_CHECKIN_LOADER = 0x61;
 

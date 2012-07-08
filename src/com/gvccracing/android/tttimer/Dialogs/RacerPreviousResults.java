@@ -125,15 +125,6 @@ public class RacerPreviousResults extends BaseDialog implements View.OnClickList
 							if(curRaceResultID == raceResultID){
 								long elapsedTime = cursor.getLong(cursor.getColumnIndex(RaceResults.ElapsedTime));
 								if (currentRaceResult != null) {
-//						        	Time elapsed = new Time(elapsedTime);
-//						        	SimpleDateFormat formatter = new SimpleDateFormat("m:ss.S");
-//						        	if(elapsedTime >= 36000000) {
-//						        		formatter = new SimpleDateFormat("HH:mm:ss.S");
-//						        	}
-//						        	else if(elapsedTime >= 3600000) {
-//						        		formatter = new SimpleDateFormat("H:mm:ss.S");	
-//						        	}
-//						        	currentRaceResult.setText(formatter.format(elapsed).toString());
 						        	currentRaceResult.setText(TimeFormatter.Format(elapsedTime, true, true, true, true, true, false, false, false));
 						        }
 								currentCourseID = cursor.getLong(cursor.getColumnIndex(Race.RaceLocation_ID));
@@ -159,15 +150,6 @@ public class RacerPreviousResults extends BaseDialog implements View.OnClickList
 						}while(cursor.moveToNext());
 						
 						// Set the course PR
-//						Time elapsed = new Time(coursePR);
-//			        	SimpleDateFormat formatter = new SimpleDateFormat("m:ss.S");
-//			        	if(coursePR >= 36000000) {
-//			        		formatter = new SimpleDateFormat("HH:mm:ss.S");
-//			        	}
-//			        	else if(coursePR >= 3600000) {
-//			        		formatter = new SimpleDateFormat("H:mm:ss.S");	
-//			        	}
-//						txtCoursePR.setText(formatter.format(elapsed).toString());
 						txtCoursePR.setText(TimeFormatter.Format(coursePR, true, true, true, true, true, false, false, false));
 						
 						lvResults.swapCursor(cursor);

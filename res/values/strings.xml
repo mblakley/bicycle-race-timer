@@ -74,7 +74,7 @@
 	<string name="OnDeck"><u>On Deck</u></string>
 	<string name="startText">Start</string>
 	<string name="resetText">Reset</string>
-	<string name="stopText">Stop</string>
+	<string name="pauseText">Pause</string>
 	<string name="SaveNotes">Save</string>
 	<string name="StartCheckIn">Start Check In</string>
 	<string name="ChooseRace">Race Configuration</string>
@@ -201,5 +201,13 @@
 	<string name="IncorrectCategory">Incorrect Category</string>
 	<string name="UploadToDropbox">Upload Roster to Dropbox</string>
 	<string name="AutoCheckIn">Check In New Racer After Add?</string>
-	<string name="AutoStartApp">Auto Start App After Unlock?</string>		
+	<string name="AutoStartApp">Auto Start App After Unlock?</string>	
+	<string name="btnContinue">Continue</string>
+	<string name="ResetTimer">Reset Timer</string>
+	<string name="ResetTimerText">Are you sure you want to reset the timer?\n\nIf you reset, you may want to continue any timing manually (use a stopwatch outside of this app).  Resetting the timer will affect the displayed time, but the racer\'s times will still be calculated from the initial start.</string>
+	<string name="YesReset">Yes, Reset</string>
+	<string name="NoDontReset">No, Don\'t Reset</string>
+	<string name="ResetRacersText">WARNING!!!!\n\nWould you like to reset all racers start times?\n\nYou should only reset the start times if you are going to restart every racer in the race.  Use this if you accidentally pushed the "Start" button, and no racers have actually started yet.  Resetting racer\'s start times will affect the time calculations.</string>
+	<string name="ResetAllRacersStartTime">Racers start times reset!</string>
+	<string name="GO">GO!</string>
 </resources>

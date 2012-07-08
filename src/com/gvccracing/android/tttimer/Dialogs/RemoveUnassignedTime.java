@@ -36,7 +36,7 @@ public class RemoveUnassignedTime extends BaseDialog implements View.OnClickList
 	
 	@Override 
 	protected int GetTitleResourceID() {
-		return R.string.RemoveRacer;
+		return R.string.RemoveUnassignedTime;
 	}
 	
 	public void onClick(View v) { 

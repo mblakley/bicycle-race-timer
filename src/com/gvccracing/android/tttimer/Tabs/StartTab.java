@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -32,8 +33,11 @@ import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
 import com.gvccracing.android.tttimer.DataAccess.TeamCheckInViewCP.TeamCheckInViewExclusive;
 import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
+import com.gvccracing.android.tttimer.Dialogs.ResetStartedRacersConfirmation;
+import com.gvccracing.android.tttimer.Dialogs.ResetTimerConfirmation;
+import com.gvccracing.android.tttimer.Dialogs.ResetTimerConfirmation.ResetTimerDialogListener;
 
-public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
+public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ResetTimerDialogListener {
 
 	public static final String StartTabSpecName =  "StartActivity";
 
@@ -210,10 +214,9 @@ public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
     }
      
     public void resetClick (View view){
-    	// TODO: Check if a racer already started, and if so, ask if all of the racers start times should be reset
-		Intent resetTimer = new Intent();
-		resetTimer.setAction(Timer.RESET_TIMER_ACTION);
-		getActivity().sendBroadcast(resetTimer);
+    	FragmentManager fm = getActivity().getSupportFragmentManager();
+    	ResetTimerConfirmation resetTimer = new ResetTimerConfirmation(this);
+    	resetTimer.show(fm, ResetStartedRacersConfirmation.LOG_TAG);
     }
      
 	private void showStopButton(){
@@ -221,6 +224,8 @@ public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 			Button startButton = (Button)getView().findViewById(R.id.btnStartTimer);
 			if(startButton != null){
 				startButton.setVisibility(View.GONE);
+				// Set the start button to "continue", since that is what it will do
+				startButton.setText(R.string.btnContinue);
 			}
 			Button resetButton = (Button)getView().findViewById(R.id.resetButton);
 			if(resetButton != null){
@@ -307,14 +312,6 @@ public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 			Log.i(LOG_TAG(), "onLoadFinished start: id=" + Integer.toString(loader.getId()));			
 			switch(loader.getId()){
 				case ON_DECK_LOADER_START:
-//					onDeckCA = new OnDeckCursorAdapter(getActivity(), null);
-//					
-//			        if( onDeckRacer != null){
-//			        	onDeckRacer.setAdapter(onDeckCA);
-//			        }
-//				
-//					onDeckCA.swapCursor(cursor);
-
 					if(getView() != null){
 						if(cursor != null && cursor.getCount() > 0){
 							cursor.moveToFirst();
@@ -390,15 +387,6 @@ public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 					}
 					break;
 				case TEAM_ON_DECK_LOADER:
-//					
-//					onDeckCA = new TeamOnDeckCursorAdapter(getActivity(), null);
-//
-//			        if( onDeckRacer != null){
-//			        	onDeckRacer.setAdapter(onDeckCA);
-//			        }
-//			
-//					onDeckCA.swapCursor(cursor);
-
 					if(getView() != null){
 						if(cursor != null && cursor.getCount() > 0){
 							cursor.moveToFirst();
@@ -549,6 +537,18 @@ public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 			case R.id.resetButton:
 				resetClick(v);
 				break;
+		}
+	}
+
+	public void onFinishResetTimerDialog(boolean doReset) {
+		if(doReset){
+			Intent resetTimer = new Intent();
+			resetTimer.setAction(Timer.RESET_TIMER_ACTION);
+			getActivity().sendBroadcast(resetTimer);
+			
+			// Set the start button text to "Start"
+			Button startButton = (Button)getView().findViewById(R.id.btnStartTimer);
+			startButton.setText(R.string.Start);
 		}
 	}
 }
