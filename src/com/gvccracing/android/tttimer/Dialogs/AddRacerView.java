@@ -92,22 +92,23 @@ public class AddRacerView extends BaseDialog implements View.OnClickListener {
  			if(previousRacers != null && previousRacers.getCount() > 0){
  				previousRacers.moveToFirst();
  				// Found at least one other racer with the same name.
- 				// TODO: show another dialog to ask if the racer had signed up previously
  				racer_ID = previousRacers.getLong(previousRacers.getColumnIndex(Racer._ID));
  				
  				selection = RacerClubInfo.Racer_ID + "=? and " + RacerClubInfo.Upgraded + "=?";
  	 			selectionArgs = new String[]{Long.toString(racer_ID), Long.toString(0l)}; 
  				
+ 	 			// Get the current category of this racer
  				Cursor racerCategory = RacerClubInfo.Read(getActivity(), new String[]{RacerClubInfo._ID, RacerClubInfo.Category}, selection, selectionArgs, null);
- 				
+				// Found a racer category
  				if(racerCategory != null && racerCategory.getCount() > 0){
  					racerCategory.moveToFirst();
  					
  					int catCol = racerCategory.getColumnIndex(RacerClubInfo._ID);
 	 				Long racerClubInfo_ID = racerCategory.getLong(catCol);
 	 				String racerCat = racerCategory.getString(racerCategory.getColumnIndex(RacerClubInfo.Category));
-	 				
+	 				// If the new category doesn't equal the old category, do an upgrade
 	 				if(!racerCat.equals(category)){
+	 					Toast.makeText(getActivity(), R.string.IdenticalRacerUpgrade, 4000);
 	 					RacerClubInfo.Update(getActivity(), racerClubInfo_ID, null, null, null, null, null, null, null, null, null, true);
 	 				}
  				}
@@ -116,23 +117,6 @@ public class AddRacerView extends BaseDialog implements View.OnClickListener {
  					racerCategory.close();
  					racerCategory = null;
  	 			}
-// 				AlertDialog.Builder b = new AlertDialog.Builder(getActivity().getApplicationContext());
-// 			    b.setTitle("Please enter a password");
-// 			    final EditText input = new EditText(getActivity().getApplicationContext());
-// 			    b.setView(input);
-// 			    b.setPositiveButton("OK", new DialogInterface.OnClickListener()
-// 			    {
-// 			        public void onClick(DialogInterface dialog, int whichButton)
-// 			        {
-// 			           // SHOULD NOW WORK
-// 			           result = input.getText().toString();
-// 			        }
-// 			    });
-// 			    b.setNegativeButton("CANCEL", null);
-// 			    b.create().show();
-// 	        	AddLocationView addLocationDialog = new AddLocationView();
-// 				FragmentManager fm = getActivity().getSupportFragmentManager();
-// 				addLocationDialog.show(fm, AddLocationView.LOG_TAG);
  			}else{
 	 			resultUri = Racer.Create(getActivity(), firstName, lastName, Integer.parseInt(usacNumber), 0, 0, "None", 0);
 	 			racer_ID = Long.parseLong(resultUri.getLastPathSegment());
@@ -143,67 +127,19 @@ public class AddRacerView extends BaseDialog implements View.OnClickListener {
  			}
  			
  			long racerInfo_ID = -1;
- 			// Check if there's a racerClubInfo record for the given barcode for this year
  			int year = Calendar.getInstance().get(Calendar.YEAR);
- 			/*Cursor racerClubInfo = RacerClubInfo.Read(getActivity(), barcode, year);
  			
- 			if(racerClubInfo != null && racerClubInfo.getCount() > 0){
- 				racerClubInfo.moveToFirst();
- 				// This barcode already exists in the DB for this year
- 				// Figure out if it's associated with the correct racer_ID
- 				Long prevRacerID = racerClubInfo.getLong(racerClubInfo.getColumnIndex(RacerClubInfo.Racer_ID));
- 				if( prevRacerID == racer_ID){
- 					// The barcode is in the DB, and it's associated with the correct racer
- 					// TODO: Notify the user that the record already exists
- 					AlertDialog.Builder b = new AlertDialog.Builder(getActivity());
- 	 			    b.setTitle("Duplicate");
- 	 			    TextView message = new TextView(getActivity());
- 	 			    message.setText("This racer already exists in the database");
- 	 			    b.setView(message);
- 	 			    b.setPositiveButton("OK", new DialogInterface.OnClickListener()
- 	 			    {
- 	 			        public void onClick(DialogInterface dialog, int whichButton)
- 	 			        {
- 	 			           // Dismiss all dialogs, since the racer has previously been added
- 	 			           dismiss();
- 	 			        }
- 	 			    });
- 	 			    b.create().show();
- 				}else{
- 					// The barcode is in the DB, but it's associated with a different racer
- 					// TODO: Ask the racer what needs to be done
- 					AlertDialog.Builder b = new AlertDialog.Builder(getActivity());
- 	 			    b.setTitle("Duplicate");
- 	 			    TextView message = new TextView(getActivity());
- 	 			    message.setText("This barcode already exists in the database.  Please enter a different barcode.");
- 	 			    b.setView(message);
- 	 			    b.setPositiveButton("OK", new DialogInterface.OnClickListener()
- 	 			    {
- 	 			        public void onClick(DialogInterface dialog, int whichButton)
- 	 			        {
- 	 			           // Don't need to do anything in here, it was just a message to the user
- 	 			        }
- 	 			    });
- 	 			    b.create().show();
- 				}
- 			}else*/{
-	 			// Create the RacerClubInfo record
-	 			int age = 0;
-	 			Long gvccID = null;
-		     	resultUri = RacerClubInfo.Create(getActivity(), racer_ID, "0", year, category, 0, 0, 0, age, gvccID, false);
-		     	racerInfo_ID = Long.parseLong(resultUri.getLastPathSegment());
-	 			Log.i(LOG_TAG, "AddNewRacer racerInfo_ID: " + Long.toString(racerInfo_ID));
-	 			//SendNotification(racerInfo_ID);
-	 			if(checkin){
-	 				CheckInHandler task = new CheckInHandler(getActivity());
-	 				task.execute(new Long[] { racerInfo_ID });	
-	 			}
-	 			success = true;
+ 			// Create the RacerClubInfo record
+ 			int age = 0;
+ 			Long gvccID = null;
+	     	resultUri = RacerClubInfo.Create(getActivity(), racer_ID, "0", year, category, 0, 0, 0, age, gvccID, false);
+	     	racerInfo_ID = Long.parseLong(resultUri.getLastPathSegment());
+ 			Log.i(LOG_TAG, "AddNewRacer racerInfo_ID: " + Long.toString(racerInfo_ID));
+ 			if(checkin){
+ 				CheckInHandler task = new CheckInHandler(getActivity());
+ 				task.execute(new Long[] { racerInfo_ID });	
  			}
- 			/*if(racerClubInfo != null){
- 				racerClubInfo.close();
- 				racerClubInfo = null;
- 			}*/
+ 			success = true;
  		}else{
  			// Show a message that says that something isn't valid    
  			Log.e(LOG_TAG, "AddNewRacer failed");

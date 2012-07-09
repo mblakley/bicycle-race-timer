@@ -213,4 +213,6 @@
 	<string name="btnSeriesResults">Show Series Results</string>
 	<string name="SeriesResults">Series Results</string>
 	<string name="EditLocation">Edit Location</string>
+	<string name="IdenticalRacerUpgrade">Found identical racer name with different category.\n\nUpgrading racer category.</string>
+	
 </resources>
