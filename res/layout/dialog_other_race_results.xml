@@ -61,14 +61,13 @@
 	        android:id="@+id/txtRaceDistance"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:text=""
 	        style="@style/Medium.Padded" />
 	</LinearLayout>
 	
     <Button
         android:id="@+id/btnSaveSelection"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        style="@style/Medium.Padded" 
+        style="@style/Medium" 
         android:text="@string/Select" />
 </LinearLayout>

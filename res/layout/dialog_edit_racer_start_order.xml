@@ -18,14 +18,14 @@
         android:id="@+id/txtNewOrder"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        style="@style/Medium.Padded" 
+        style="@style/Medium" 
         android:inputType="number" />
 
     <Button
         android:id="@+id/btnChangeOrder"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-    	style="@style/Medium.Padded" 
+    	style="@style/Medium" 
         android:text="@string/ReorderRacer" />
 
 </LinearLayout>

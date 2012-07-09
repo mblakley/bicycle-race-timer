@@ -5,7 +5,8 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" 
     android:background="#FFFF"
-    style="@style/Padded" >
+    style="@style/Padded" 
+    android:weightSum="1">
 
     <Gallery
         android:id="@+id/gallery"
@@ -22,7 +23,7 @@
     <TextView
         android:id="@+id/marshalLocationDescription"
         android:layout_width="fill_parent"
-        android:layout_height="50dip"
+        android:layout_height="wrap_content"
         android:layout_weight="0.2"
 		style="@style/Medium" />
     

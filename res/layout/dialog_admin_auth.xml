@@ -24,10 +24,10 @@
 
     <Button
         android:id="@+id/btnSubmit"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:onClick="btnSubmitAdminPasswordClick"
         android:text="@string/btnSubmit"
-        style="@style/Medium.Padded" />
+        style="@style/Medium" />
 
 </LinearLayout>

@@ -45,6 +45,19 @@ public class RaceLocationCP {
 		public static Cursor Read(Context context, String[] fieldsToRetrieve, String selection, String[] selectionArgs, String sortOrder) {
 			return context.getContentResolver().query(RaceLocation.CONTENT_URI, fieldsToRetrieve, selection, selectionArgs, sortOrder);
 		}
+		
+		public static int Update(Context context, long raceLocation_ID, String courseName, String distance) {
+			ContentValues content = new ContentValues();
+			if(courseName != null)
+	        {
+				content.put(RaceLocation.CourseName, courseName);
+	        }
+			if(distance != null)
+	        {
+				content.put(RaceLocation.Distance, distance);
+	        }
+			return context.getContentResolver().update(RaceLocation.CONTENT_URI, content, RaceLocation._ID + "=?", new String[]{Long.toString(raceLocation_ID)});
+		}
 
 		public static Uri[] getAllUrisToNotifyOnChange() {
 			return new Uri[]{RaceLocation.CONTENT_URI};

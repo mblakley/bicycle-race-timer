@@ -211,9 +211,9 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 		{
 			raceDistance.setText(distance);
 		}
-		else if (distanceUnit != "" && distance != "")
+		else if (distanceUnit != "" && distance != "" && !distance.contains(" "))
 		{
-			distance += distanceUnit;
+			distance += " " + distanceUnit;
 			raceDistance.setText(distance);
 		}
 	}
@@ -253,6 +253,7 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 					AdminAuthView adminAuthDialog = new AdminAuthView();
 			        adminAuthDialog.show(fm, AdminAuthView.LOG_TAG);
 				}
+				break;
 			case R.id.btnSeriesResults:
 				SeriesResultsView seriesResultsDialog = new SeriesResultsView();
 				seriesResultsDialog.show(fm, SeriesResultsView.LOG_TAG);

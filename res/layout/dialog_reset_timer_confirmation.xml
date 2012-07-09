@@ -9,7 +9,7 @@
 
     <TextView
         android:id="@+id/lblConfirmationText"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/ResetTimerText"
         style="@style/Medium" />
@@ -25,14 +25,16 @@
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
-            android:text="@string/YesReset" />
+            android:text="@string/YesReset"
+            style="@style/Medium" />
 
         <Button
             android:id="@+id/btnNoReset"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
-            android:text="@string/NoDontReset" />
+            android:text="@string/NoDontReset"
+            style="@style/Medium" />
 
     </LinearLayout>
 

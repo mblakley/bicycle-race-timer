@@ -3,5 +3,4 @@
     style="@style/Medium.Padded"
     android:singleLine="true"
     android:layout_width="fill_parent"
-    android:layout_height="?android:attr/listPreferredItemHeight"
-    android:ellipsize="marquee" />
+    android:layout_height="wrap_content" />

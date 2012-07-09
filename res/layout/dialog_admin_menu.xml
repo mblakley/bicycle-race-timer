@@ -11,42 +11,49 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/AddLocation"
-        style="@style/Medium.Padded" />
+        style="@style/Medium" />
+    
+    <Button
+        android:id="@+id/btnEditLocation"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/EditLocation"
+        style="@style/Medium" />
 
     <Button
         android:id="@+id/btnAddRace"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/AddRace"
-        style="@style/Medium.Padded" />
+        style="@style/Medium" />
     
     <Button
         android:id="@+id/btnEditRace"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/EditRace"
-        style="@style/Medium.Padded" />
+        style="@style/Medium" />
     
     <Button
         android:id="@+id/btnRecalculateResults"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/RecalcResults"
-        style="@style/Medium.Padded" />
+        style="@style/Medium" />
     
     <Button
         android:id="@+id/btnUploadToDropbox"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/UploadToDropbox"
-        style="@style/Medium.Padded" />
+        style="@style/Medium" />
     
     <Button
         android:id="@+id/btnSettings"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/Settings"
-        style="@style/Medium.Padded" />
+        style="@style/Medium" />
 
     <TextView
         android:id="@+id/txtMessage"

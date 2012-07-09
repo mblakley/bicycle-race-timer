@@ -550,7 +550,7 @@ public class TTProvider extends ContentProvider {
 			numChanged = mDB.getWritableDatabase().update(RaceLaps.getTableName(), content, selection, selectionArgs);
 
 			notifyUris = RaceLaps.getAllUrisToNotifyOnChange();
-		}  else if(uri.toString().contains(Racer.CONTENT_URI.toString())){
+		} else if(uri.toString().contains(Racer.CONTENT_URI.toString())){
 			numChanged = mDB.getWritableDatabase().update(Racer.getTableName(), content, selection, selectionArgs);
 
 			notifyUris = Racer.getAllUrisToNotifyOnChange();
@@ -558,7 +558,11 @@ public class TTProvider extends ContentProvider {
 			numChanged = mDB.getWritableDatabase().update(UnassignedTimes.getTableName(), content, selection, selectionArgs);
 
 			notifyUris = UnassignedTimes.getAllUrisToNotifyOnChange();
-		} else{
+		} else if(uri.toString().contains(RaceLocation.CONTENT_URI.toString())){
+			numChanged = mDB.getWritableDatabase().update(RaceLocation.getTableName(), content, selection, selectionArgs);
+
+			notifyUris = RaceLocation.getAllUrisToNotifyOnChange();
+		} else {
 			throw new UnsupportedOperationException("You're an idiot...add the uri " + uri.toString() + " to the TTProvider.update if/else statement");
 		}
 		// notify all of the uris in the list

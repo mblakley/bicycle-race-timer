@@ -212,4 +212,5 @@
 	<string name="GO">GO!</string>
 	<string name="btnSeriesResults">Show Series Results</string>
 	<string name="SeriesResults">Series Results</string>
+	<string name="EditLocation">Edit Location</string>
 </resources>

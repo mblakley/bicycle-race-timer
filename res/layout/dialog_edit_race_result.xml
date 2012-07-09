@@ -8,7 +8,7 @@
     style="@style/Padded" >
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/lblElapsedTimeDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/lblElapsedTimeDescription"
@@ -24,7 +24,8 @@
 		android:id="@+id/btnUnassignTime"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		android:text="@string/UnassignTime" />
+		android:text="@string/UnassignTime"
+		style="@style/Medium" />
     
     <TextView
         android:id="@+id/lblDNF"
@@ -38,7 +39,8 @@
 		android:id="@+id/btnDNF"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		android:text="@string/DNF" />
+		android:text="@string/DNF"
+		style="@style/Medium" />
     
     <TextView
         android:id="@+id/textView3"
@@ -51,11 +53,13 @@
         android:id="@+id/txtPoints"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:inputType="number" />
+        android:inputType="number"
+		style="@style/Medium" />
         
 	<Button
 		android:id="@+id/btnSaveResultChanges"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		android:text="@string/SaveChanges" />
+		android:text="@string/SaveChanges"
+		style="@style/Medium" />
 </LinearLayout>

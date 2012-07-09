@@ -7,13 +7,27 @@
     android:background="#FFFF"
     style="@style/Padded" >
 
+
+    <TextView
+        android:id="@+id/lblCourse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/RaceLocation"
+    	style="@style/Medium" />
+
+    <Spinner
+        android:id="@+id/spinnerRaceLocation"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+    	style="@style/Medium.Padded" />
+    
     <TextView
         android:id="@+id/lblCourseName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/CourseName"
-        style="@style/Medium"
-        android:layout_marginLeft="10sp" />
+        style="@style/Medium" />
+
     <EditText
         android:id="@+id/txtCourseName"
         android:layout_width="fill_parent"
@@ -24,11 +38,10 @@
     
     <TextView
         android:id="@+id/lblDistance"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/Distance"
-        style="@style/Medium"
-        android:layout_marginLeft="10sp" />
+        style="@style/Medium" />
 
     <LinearLayout
         android:id="@+id/linearLayout1"
@@ -45,19 +58,17 @@
 
         <TextView
             android:id="@+id/lblDistanceUnit"
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-        	style="@style/Medium"
-        	android:layout_marginRight="10sp" />
+        	style="@style/Medium" />
 
     </LinearLayout>
 
     <Button
-        android:id="@+id/btnAddLocation"
+        android:id="@+id/btnSaveChanges"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:onClick="btnAddLocationClick"
-        android:text="@string/AddLocation"
+        android:layout_height="wrap_content"       
+        android:text="@string/SaveChanges"
         style="@style/Medium" />
 
 </LinearLayout>

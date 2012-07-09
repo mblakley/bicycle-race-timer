@@ -21,6 +21,7 @@ public class AdminMenuView extends BaseDialog implements View.OnClickListener {
 	public static final String LOG_TAG = "AdminMenuView";
 	
 	private Button btnAddLocation;
+	private Button btnEditLocation;
 	private Button btnAddRace;
 	private Button btnEditRace;
 	private Button btnRecalculateResults;
@@ -43,6 +44,9 @@ public class AdminMenuView extends BaseDialog implements View.OnClickListener {
 		btnAddLocation = (Button) v.findViewById(R.id.btnAddLocation);
 		btnAddLocation.setOnClickListener(this);
 
+		btnEditLocation = (Button) v.findViewById(R.id.btnEditLocation);
+		btnEditLocation.setOnClickListener(this);
+		
 		btnAddRace = (Button) v.findViewById(R.id.btnAddRace);
 		btnAddRace.setOnClickListener(this);
 		
@@ -107,6 +111,9 @@ public class AdminMenuView extends BaseDialog implements View.OnClickListener {
             	//EditText mFileName = (EditText) findViewById(R.id.txtFileName);
 		        //intent.putExtra("FILENAME", mFileName.getText().toString());
 				startActivityForResult(intent, 0);
+			} else if (v == btnEditLocation){
+		    	EditLocation editLocation = new EditLocation();
+		    	editLocation.show(fm, EditLocation.LOG_TAG);
 			} else {
 				super.onClick(v);
 			}

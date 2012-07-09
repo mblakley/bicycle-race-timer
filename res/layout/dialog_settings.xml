@@ -66,8 +66,9 @@
 
 	<Button
 	    android:id="@+id/btnSaveSettings"
-	    android:layout_width="wrap_content"
+	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
-	    android:text="@string/SaveSettings" />
+	    android:text="@string/SaveSettings"
+        style="@style/Medium" />
 
 </LinearLayout>

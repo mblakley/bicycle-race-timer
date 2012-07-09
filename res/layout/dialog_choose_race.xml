@@ -24,7 +24,6 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" >
 
-
         <TextView
             android:id="@+id/lblCourse"
             android:layout_width="wrap_content"
@@ -97,17 +96,10 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/btnInitialPopulate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="btnInitialPopulateClick"
-        android:text="@string/InitialPopulate"
-        android:visibility="gone" />
-
-    <Button
         android:id="@+id/btnStartCheckIn"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/StartCheckIn" />
+        android:text="@string/StartCheckIn"
+        style="@style/Medium" />
 
 </LinearLayout>
