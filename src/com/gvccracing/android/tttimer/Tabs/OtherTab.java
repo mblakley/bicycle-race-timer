@@ -9,13 +9,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.gvccracing.android.tttimer.R;
+import com.gvccracing.android.tttimer.CursorAdapters.StableArrayAdapter;
 import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
 import com.gvccracing.android.tttimer.DataAccess.RaceNotesCP.RaceNotes;
 
@@ -49,9 +49,13 @@ public class OtherTab extends BaseTab implements View.OnClickListener, LoaderMan
 	public void onResume() {
 		super.onResume();
 		
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-        		getActivity(), R.array.humidity_array, android.R.layout.simple_spinner_item );
- 		adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
+        StableArrayAdapter adapter = new StableArrayAdapter(getActivity(), R.layout.control_simple_spinner);
+        String[] humidArray = getResources().getStringArray(R.array.humidity_array);
+        for(int count = 0; count < humidArray.length; count++){
+        	String humidVal = humidArray[count];
+        	adapter.add(humidVal);
+        }
+ 		adapter.setDropDownViewResource( R.layout.control_simple_spinner_dropdown );
  		spinHumidity.setAdapter(adapter);
 		
 		getActivity().getSupportLoaderManager().initLoader(RACE_NOTES_LOADER, null, this);
