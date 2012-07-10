@@ -5,27 +5,29 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.CursorAdapter;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.gvccracing.android.tttimer.R;
 import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
+import com.gvccracing.android.tttimer.DataAccess.LookupGroupsCP.LookupGroups;
 import com.gvccracing.android.tttimer.DataAccess.RaceNotesCP.RaceNotes;
 
-public class OtherTab extends BaseTab implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
+public class OtherTab extends BaseTab implements LoaderManager.LoaderCallbacks<Cursor> {
 
 	public static final String OtherTabSpecName =  "OtherTab";
 	private static final int RACE_NOTES_LOADER = 0x176;
 	private static final int APP_SETTINGS_LOADER_OTHER = 0x117;
+	private static final int ALL_HUMIDITY_LOADER = 1110;
 	
 	private Spinner spinHumidity;
+	private SimpleCursorAdapter humidityCA;
 	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -34,9 +36,6 @@ public class OtherTab extends BaseTab implements View.OnClickListener, LoaderMan
 		try{
 	        // Inflate the layout for this fragment
 	        view = inflater.inflate(R.layout.tab_other, container, false);
-	        
-	        ((Button) view.findViewById(R.id.btnSaveNotesResults)).setOnClickListener(this);
-	        ((Button) view.findViewById(R.id.btnSubmitAllResults)).setOnClickListener(this);
 
 	        spinHumidity = (Spinner) view.findViewById(R.id.spinnerHumidity);			
 		}catch(Exception ex){
@@ -49,13 +48,24 @@ public class OtherTab extends BaseTab implements View.OnClickListener, LoaderMan
 	public void onResume() {
 		super.onResume();
 		
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-        		getActivity(), R.array.humidity_array, android.R.layout.simple_spinner_item );
- 		adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
- 		spinHumidity.setAdapter(adapter);
+		String[] columns = new String[] { LookupGroups.LookupValue };
+        int[] to = new int[] {android.R.id.text1 };
+        
+		// Create the cursor adapter for the list of races
+        humidityCA = new SimpleCursorAdapter(getActivity(), R.layout.control_simple_spinner, null, columns, to, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+        humidityCA.setDropDownViewResource( R.layout.control_simple_spinner_dropdown );
+        spinHumidity.setAdapter(humidityCA);
 		
-		getActivity().getSupportLoaderManager().initLoader(RACE_NOTES_LOADER, null, this);
-		getActivity().getSupportLoaderManager().initLoader(APP_SETTINGS_LOADER_OTHER, null, this);
+        getActivity().getSupportLoaderManager().initLoader(ALL_HUMIDITY_LOADER, null, this);
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		SaveNotes();
+		getActivity().getSupportLoaderManager().destroyLoader(APP_SETTINGS_LOADER_OTHER);
+		getActivity().getSupportLoaderManager().destroyLoader(ALL_HUMIDITY_LOADER);
+		getActivity().getSupportLoaderManager().destroyLoader(RACE_NOTES_LOADER);
 	}
 	
 	@Override
@@ -81,50 +91,26 @@ public class OtherTab extends BaseTab implements View.OnClickListener, LoaderMan
     		String otherNotes = txtOtherNotes.getText().toString();
 
  			EditText txtTemperature = (EditText) getView().findViewById(R.id.txtTemperature);
-    		Integer temperature = Integer.parseInt(txtTemperature.getText().toString());
+    		Integer temperature = null;
+    		if(txtTemperature.getText().length() > 0){
+    			temperature = Integer.parseInt(txtTemperature.getText().toString());
+    		}
 
  			EditText txtWindSpeed = (EditText) getView().findViewById(R.id.txtWindSpeed);
-    		Integer windSpeed = Integer.parseInt(txtWindSpeed.getText().toString());
+ 			Integer windSpeed = null;
+ 			if(txtWindSpeed.getText().length() > 0){
+ 				windSpeed = Integer.parseInt(txtWindSpeed.getText().toString());
+ 			}
 
  			EditText txtWindDirection = (EditText) getView().findViewById(R.id.txtWindDirection);
     		String windDirection = txtWindDirection.getText().toString();
 
  			Spinner spinHumidity = (Spinner) getView().findViewById(R.id.spinnerHumidity);
-    		Integer humidity = getHumidityID(spinHumidity.getSelectedItem().toString());
+    		Long humidity = spinHumidity.getSelectedItemId();
     		
     		// If raceNotes already exists, do an update
     		RaceNotes.Update(getActivity(), race_ID, weatherNotes, temperature, windSpeed, windDirection, humidity, otherNotes, true);
 		} catch(Exception ex){Log.e(LOG_TAG(), "SaveNotes failed", ex);}
-	}
-	
-	private Integer getHumidityID(String humidityDescription) {
-		Integer humidityID = null;
-		if(humidityDescription == "Dry")
-		{
-			humidityID = 1;
-		}else if(humidityDescription == "Moderate"){	
-			humidityID = 2;
-		}else if(humidityDescription == "Humid"){
-			humidityID = 3;
-		}else if(humidityDescription == "Raining"){
-			humidityID = 4;
-		}
-		
-		return humidityID;
-	}
-	
-	public void onClick(View v) {
-		try {
-			if (v.getId() == R.id.btnSaveNotesResults) {
-		        if(Boolean.parseBoolean(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_AdminMode_Name, "false"))){
-		        	SaveNotes();
-		        }else{
-		        	Toast.makeText(getActivity(), "Unable to save race notes.  Please login as administrator", Toast.LENGTH_LONG).show();
-		        }
-			}
-		} catch (Exception ex) {
-			Log.e(LOG_TAG(), "OtherTab.onClick failed", ex);
-		}
 	}
 
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {	
@@ -135,6 +121,13 @@ public class OtherTab extends BaseTab implements View.OnClickListener, LoaderMan
 		String[] selectionArgs = null;
 		String sortOrder;
 		switch(id){
+			case ALL_HUMIDITY_LOADER:
+				projection = new String[]{LookupGroups._ID, LookupGroups.LookupGroup, LookupGroups.LookupValue};
+				selection = LookupGroups.LookupGroup + "='" + LookupGroups.Lookup_Group_Humidity + "'";
+				selectionArgs = null;
+				sortOrder = LookupGroups.LookupValue;
+				loader = new CursorLoader(getActivity(), LookupGroups.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				break;
 			case RACE_NOTES_LOADER:
 				projection = new String[]{RaceNotes.WeatherNotes, RaceNotes.Temperature, RaceNotes.WindSpeed, RaceNotes.WindDirection, RaceNotes.Humidity, RaceNotes.OtherNotes};
 				selection = RaceNotes.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
@@ -158,6 +151,14 @@ public class OtherTab extends BaseTab implements View.OnClickListener, LoaderMan
 		try{
 			Log.i(LOG_TAG(), "onLoadFinished start: id=" + Integer.toString(loader.getId()));			
 			switch(loader.getId()){
+				case ALL_HUMIDITY_LOADER:
+					cursor.moveToFirst();
+					if(cursor.getCount() > 0){
+						//humidityCA.swapCursor(cursor);
+					}
+					getActivity().getSupportLoaderManager().restartLoader(RACE_NOTES_LOADER, null, this);
+					getActivity().getSupportLoaderManager().restartLoader(APP_SETTINGS_LOADER_OTHER, null, this);
+					break;
 				case RACE_NOTES_LOADER:
 					cursor.moveToFirst();
 					if(cursor.getCount() > 0){
@@ -166,7 +167,7 @@ public class OtherTab extends BaseTab implements View.OnClickListener, LoaderMan
 						Integer temperature = cursor.getInt(cursor.getColumnIndex(RaceNotes.Temperature));
 						Integer windSpeed = cursor.getInt(cursor.getColumnIndex(RaceNotes.WindSpeed));
 						String windDirection = cursor.getString(cursor.getColumnIndex(RaceNotes.WindDirection));
-						Integer humidity = cursor.getInt(cursor.getColumnIndex(RaceNotes.Humidity));
+						Long humidity = cursor.getLong(cursor.getColumnIndex(RaceNotes.Humidity));
 						String otherNotes = cursor.getString(cursor.getColumnIndex(RaceNotes.OtherNotes));
 						
 						EditText txtWeatherNotes = (EditText) getView().findViewById(R.id.txtWeatherNotes);
@@ -185,23 +186,20 @@ public class OtherTab extends BaseTab implements View.OnClickListener, LoaderMan
 			    		txtWindDirection.setText(windDirection);
 
 			 			Spinner spinHumidity = (Spinner) getView().findViewById(R.id.spinnerHumidity);
-			    		spinHumidity.setSelection(humidity);
+			 			for(int count = 0; count < spinHumidity.getCount(); count++){
+			 				long id = spinHumidity.getItemIdAtPosition(count);
+			 				if(id == humidity){
+			 					spinHumidity.setSelection(count);
+			 					break;
+			 				}
+			 			}
 						}catch(Exception ex){
 							Log.e(LOG_TAG(), "RACE_NOTES_LOADER error", ex); 
 						}
 					}
 					break;
 				case APP_SETTINGS_LOADER_OTHER:
-					if(getView() != null){
-						if(Boolean.parseBoolean(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_AdminMode_Name, "false"))){
-				        	((Button) getView().findViewById(R.id.btnSaveNotesResults)).setVisibility(View.VISIBLE);
-				        	((Button) getView().findViewById(R.id.btnSubmitAllResults)).setVisibility(View.VISIBLE);
-				        }else{
-				        	((Button) getView().findViewById(R.id.btnSaveNotesResults)).setVisibility(View.GONE);
-				        	((Button) getView().findViewById(R.id.btnSubmitAllResults)).setVisibility(View.GONE);
-				        }
-					}
-					//getActivity().getSupportLoaderManager().restartLoader(RACE_NOTES_LOADER, null, this);
+					getActivity().getSupportLoaderManager().restartLoader(RACE_NOTES_LOADER, null, this);
 					break;	
 			}
 			Log.i(LOG_TAG(), "onLoadFinished complete: id=" + Integer.toString(loader.getId()));

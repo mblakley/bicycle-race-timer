@@ -5,6 +5,7 @@ import java.util.Calendar;
 import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
 import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewExclusive;
 import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewInclusive;
+import com.gvccracing.android.tttimer.DataAccess.LookupGroupsCP.LookupGroups;
 import com.gvccracing.android.tttimer.DataAccess.PrimesCP.Primes;
 import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
 import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.RaceInfoResultsView;
@@ -48,7 +49,7 @@ public class TTProvider extends ContentProvider {
     private static final String TAG = "DBAdapter";
     
     private static final String DATABASE_NAME = "GVCCRaces";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
 	
 	private DatabaseHelper mDB;
 
@@ -137,6 +138,12 @@ public class TTProvider extends ContentProvider {
 			resultUri = Uri.withAppendedPath(resultUri, Long.toString(raceLap_ID));
 			
 			notifyUris = RaceLaps.getAllUrisToNotifyOnChange();
+		} else if(uri.toString().contains(LookupGroups.CONTENT_URI.toString())){
+			long lookupGroup_ID = mDB.getWritableDatabase().insert(LookupGroups.getTableName(), null, content);
+			
+			resultUri = Uri.withAppendedPath(resultUri, Long.toString(lookupGroup_ID));
+			
+			notifyUris = LookupGroups.getAllUrisToNotifyOnChange();
 		} else{
 			throw new UnsupportedOperationException("You're an idiot...add the uri " + uri.toString() + " to the TTProvider.insert if/else statement");
 		}
@@ -503,6 +510,19 @@ public class TTProvider extends ContentProvider {
 			raceResultsCursor.setNotificationUri(getContext().getContentResolver(), uri);	
 			Log.i("TTProvider", "query complete: uri=" + uri.toString() + " selection=" + selection);
 			return raceResultsCursor;
+		} else if(uri.toString().contains(LookupGroups.CONTENT_URI.toString())){
+			// LookupGroups
+			qBuilder.setTables(LookupGroups.getTableName());		
+			
+			Cursor lookupGroupsCursor = qBuilder.query(mDB.getReadableDatabase(),
+													projection, 
+													selection, 
+													selectionArgs, null, null, sortOrder,
+													null);	
+			
+			lookupGroupsCursor.setNotificationUri(getContext().getContentResolver(), uri);	
+			Log.i("TTProvider", "query complete: uri=" + uri.toString() + " selection=" + selection);
+			return lookupGroupsCursor;
 		} else{
 			throw new UnsupportedOperationException("You're an idiot...add the uri " + uri.toString() + " to the TTProvider.query if/else statement");
 		}		
@@ -562,6 +582,10 @@ public class TTProvider extends ContentProvider {
 			numChanged = mDB.getWritableDatabase().update(RaceLocation.getTableName(), content, selection, selectionArgs);
 
 			notifyUris = RaceLocation.getAllUrisToNotifyOnChange();
+		} else if(uri.toString().contains(LookupGroups.CONTENT_URI.toString())){
+			numChanged = mDB.getWritableDatabase().update(LookupGroups.getTableName(), content, selection, selectionArgs);
+
+			notifyUris = LookupGroups.getAllUrisToNotifyOnChange();
 		} else {
 			throw new UnsupportedOperationException("You're an idiot...add the uri " + uri.toString() + " to the TTProvider.update if/else statement");
 		}
@@ -598,6 +622,10 @@ public class TTProvider extends ContentProvider {
 			numChanged = mDB.getWritableDatabase().delete(RaceLaps.getTableName(), selection, selectionArgs);
 
 			notifyUris = RaceLaps.getAllUrisToNotifyOnChange();
+		} else if(uri.toString().contains(LookupGroups.CONTENT_URI.toString())){
+			numChanged = mDB.getWritableDatabase().delete(LookupGroups.getTableName(), selection, selectionArgs);
+
+			notifyUris = LookupGroups.getAllUrisToNotifyOnChange();
 		} else{
 			throw new UnsupportedOperationException("You're an idiot...add the uri " + uri.toString() + " to the TTProvider.delete if/else statement");
 		}
@@ -689,6 +717,23 @@ public class TTProvider extends ContentProvider {
 	    		db.beginTransaction();
 	    		try{
 		    		db.execSQL("ALTER TABLE " + UnassignedTimes.getTableName() + " ADD COLUMN " + UnassignedTimes.RaceResult_ID + " integer null");
+			        db.setTransactionSuccessful();
+	    		} finally{
+	    			db.endTransaction();
+	    		}
+	    	} 
+	    	if(oldVersion < 5 && newVersion >= 5){
+	    		db.beginTransaction();
+	    		try{
+	    			db.execSQL(LookupGroups.getCreate());
+		    		db.execSQL("INSERT INTO " + LookupGroups.getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Humidity + "', 'Dry');");
+		    		db.execSQL("INSERT INTO " + LookupGroups.getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Humidity + "', 'Moderate');");
+		    		db.execSQL("INSERT INTO " + LookupGroups.getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Humidity + "', 'Humid');");
+		    		db.execSQL("INSERT INTO " + LookupGroups.getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Humidity + "', 'Raining');");
+		    		db.execSQL("INSERT INTO " + LookupGroups.getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Category + "', 'A');");
+		    		db.execSQL("INSERT INTO " + LookupGroups.getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Category + "', 'B4');");
+		    		db.execSQL("INSERT INTO " + LookupGroups.getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Category + "', 'B5');");
+		    		// Still need to do a bunch of updates to be able to use the category group, so we'll leave that until the next database upgrade
 			        db.setTransactionSuccessful();
 	    		} finally{
 	    			db.endTransaction();

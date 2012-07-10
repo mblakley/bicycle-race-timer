@@ -170,9 +170,7 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 					}
 					break;
 				case APP_SETTINGS_LOADER_RACEINFO:	
-					getActivity().getSupportLoaderManager().restartLoader(RACE_INFO_LOADER, null, this);
 					getActivity().getSupportLoaderManager().restartLoader(COURSE_RECORD_LOADER, null, this);
-
 					
 					Integer distanceUnitID = Integer.parseInt(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_DistanceUnits_Name, "0"));
 					distanceUnit = "mi";
@@ -187,7 +185,7 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 							distanceUnit = "mi";
 							break;
 					}
-					SetDistance();
+					getActivity().getSupportLoaderManager().restartLoader(RACE_INFO_LOADER, null, this);
 					break;	
 				case COURSE_RECORD_LOADER:
 					if(cursor != null && cursor.getCount() > 0){

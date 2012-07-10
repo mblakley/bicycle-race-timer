@@ -35,7 +35,7 @@ public class RaceNotesCP {
                     + Temperature + " text null,"
                     + WindSpeed + " text null,"
                     + WindDirection + " text null,"
-                    + Humidity + " text null,"
+                    + Humidity + " integer null,"
                     + OtherNotes + " text null"
                     + ");";
         }
@@ -46,7 +46,7 @@ public class RaceNotesCP {
 
 		public static int Update(Context context, Long race_ID,
 				String weatherNotes, Integer temperature, Integer windSpeed,
-				String windDirection, Integer humidity, String otherNotes,
+				String windDirection, Long humidity, String otherNotes,
 				boolean addIfNotExist) {
 			ContentValues content = new ContentValues();
 	        if(weatherNotes != null)
