@@ -33,7 +33,7 @@
 
         <TextView
             android:id="@+id/lblTemperature"
-            android:layout_width="fill_parent"
+            android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight=".4"
             android:text="@string/Temperature"
@@ -41,7 +41,7 @@
 
         <EditText
             android:id="@+id/txtTemperature"
-            android:layout_width="fill_parent"
+            android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight=".6"
             android:inputType="numberDecimal" />
@@ -58,7 +58,7 @@
 
         <TextView
             android:id="@+id/lblWindSpeed"
-            android:layout_width="fill_parent"
+            android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight=".4"
             android:text="@string/WindSpeed"
@@ -67,7 +67,7 @@
 
         <EditText
             android:id="@+id/txtWindSpeed"
-            android:layout_width="fill_parent"
+            android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight=".6"
             android:inputType="number" />
@@ -85,7 +85,7 @@
 
         <TextView
             android:id="@+id/lblWindDirection"
-            android:layout_width="fill_parent"
+            android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight=".4"
             android:text="@string/WindDirection"
@@ -94,7 +94,7 @@
 
         <EditText
             android:id="@+id/txtWindDirection"
-            android:layout_width="fill_parent"
+            android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight=".6"
             android:inputType="textCapCharacters" />
@@ -106,18 +106,17 @@
         android:id="@+id/trHumidity"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:weightSum="1"
-        android:visibility="gone" >
+        android:weightSum="1" >
         <TextView
             android:id="@+id/lblHumidity"
-            android:layout_width="fill_parent"
+            android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight=".4"
             android:text="@string/Humidity"
 			style="@style/Medium" />
         <Spinner
             android:id="@+id/spinnerHumidity"
-            android:layout_width="fill_parent"
+            android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight=".6" />
     </LinearLayout>
@@ -126,7 +125,7 @@
 
     <TextView
         android:id="@+id/lblOtherNotes"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/Notes"
 		style="@style/Medium" />
@@ -138,11 +137,10 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0.10"
-        android:inputType="textCapSentences"
-        android:singleLine="false"
-        android:lines="2"
-        android:minLines="3"
+        android:inputType="textMultiLine"
+        android:lines="5"
+        android:minLines="1"
         android:maxLines="10"
-        android:scrollbars="vertical" />
+        android:gravity="bottom|left" />
 
 </LinearLayout>

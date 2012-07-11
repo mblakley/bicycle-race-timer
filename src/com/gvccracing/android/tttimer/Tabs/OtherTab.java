@@ -6,7 +6,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +14,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.gvccracing.android.tttimer.R;
+import com.gvccracing.android.tttimer.CursorAdapters.StableSimpleCursorAdapter;
 import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
 import com.gvccracing.android.tttimer.DataAccess.LookupGroupsCP.LookupGroups;
 import com.gvccracing.android.tttimer.DataAccess.RaceNotesCP.RaceNotes;
@@ -27,7 +27,7 @@ public class OtherTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 	private static final int ALL_HUMIDITY_LOADER = 1110;
 	
 	private Spinner spinHumidity;
-	private SimpleCursorAdapter humidityCA;
+	private StableSimpleCursorAdapter humidityCA;
 	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -52,7 +52,7 @@ public class OtherTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
         int[] to = new int[] {android.R.id.text1 };
         
 		// Create the cursor adapter for the list of races
-        humidityCA = new SimpleCursorAdapter(getActivity(), R.layout.control_simple_spinner, null, columns, to, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+        humidityCA = new StableSimpleCursorAdapter(getActivity(), R.layout.control_simple_spinner, null, columns, to, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         humidityCA.setDropDownViewResource( R.layout.control_simple_spinner_dropdown );
         spinHumidity.setAdapter(humidityCA);
 		
@@ -154,7 +154,7 @@ public class OtherTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 				case ALL_HUMIDITY_LOADER:
 					cursor.moveToFirst();
 					if(cursor.getCount() > 0){
-						//humidityCA.swapCursor(cursor);
+						humidityCA.swapCursor(cursor);
 					}
 					getActivity().getSupportLoaderManager().restartLoader(RACE_NOTES_LOADER, null, this);
 					getActivity().getSupportLoaderManager().restartLoader(APP_SETTINGS_LOADER_OTHER, null, this);
