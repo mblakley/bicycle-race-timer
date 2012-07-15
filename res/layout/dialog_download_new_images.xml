@@ -7,14 +7,36 @@
     android:background="#FFFF"
     android:orientation="vertical"
     android:weightSum="1" >
-
     <ImageView
         android:id="@+id/imgLocationImage"
         android:layout_width="fill_parent"
         android:layout_height="0dip"
         android:layout_weight="0.45"
         android:contentDescription="@string/LocationImage"
-        android:scaleType="centerInside" />
+        android:scaleType="centerInside"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/llProgress"
+        android:layout_width="fill_parent"
+        android:layout_height="0dip"
+        android:orientation="vertical" 
+        android:layout_weight="0.45">
+        
+        <TextView
+	        android:id="@+id/lblDownloading"
+	        style="@style/Medium"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:gravity="center_horizontal"
+	        android:text="@string/DownloadProgress"/>
+	        
+	    <ProgressBar
+	        android:id="@+id/progressImageLoad"
+	        style="@android:style/Widget.ProgressBar.Horizontal"
+	        android:layout_width="fill_parent"
+	        android:layout_height="fill_parent" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/lblFileName"
@@ -64,6 +86,7 @@
 	        android:lines="5"
 	        android:maxLines="10"
 	        android:minLines="1"
+	        android:gravity="top|left"
             style="@style/Medium" />
 	</LinearLayout>
 
@@ -78,9 +101,11 @@
             android:id="@+id/btnPrevImage"
             android:layout_width="0dip"
             android:layout_height="fill_parent"
+            android:layout_gravity="center"
             android:layout_weight="1"
             android:contentDescription="@string/PrevImage"
             android:src="@android:drawable/ic_media_rew"
+            android:visibility="invisible"
             style="@style/Medium" />
 
         <ToggleButton
@@ -88,6 +113,7 @@
             style="@style/Small"
             android:layout_width="0dip"
             android:layout_height="fill_parent"
+            android:layout_gravity="center"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_weight="1"
@@ -100,9 +126,11 @@
             android:id="@+id/btnNextImage"
             android:layout_width="0dip"
             android:layout_height="fill_parent"
+            android:layout_gravity="center"
             android:layout_weight="1"
             android:contentDescription="@string/NextImage"
             android:src="@android:drawable/ic_media_ff"
+            android:visibility="invisible"
             style="@style/Medium" />
     </LinearLayout>
 

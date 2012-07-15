@@ -223,4 +223,5 @@
 	<string name="Keep">Keep</string>
 	<string name="Discard">Discard</string>
 	<string name="LocationNotes">Notes</string>
+	<string name="DownloadProgress"><b>Downloading Image</b>\nProgress:</string>
 </resources>

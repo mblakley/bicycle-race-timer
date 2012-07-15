@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import com.dropbox.client2.DropboxAPI;
+import com.dropbox.client2.ProgressListener;
 import com.dropbox.client2.android.AndroidAuthSession;
 import com.dropbox.client2.exception.DropboxException;
 import com.dropbox.client2.session.AccessTokenPair;
@@ -34,7 +35,7 @@ public class ImageFormatter {
 		return buffer.array();
 	}
 	
-	public static byte[] GetImageBytesFromDropBox(String imageLocation, Context context){
+	public static byte[] GetImageBytesFromDropBox(String imageLocation, Context context, ProgressListener listener){
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		try {
 			AppKeyPair appKeys = new AppKeyPair(APP_KEY, APP_SECRET);
@@ -43,7 +44,7 @@ public class ImageFormatter {
 			AccessTokenPair access = new AccessTokenPair(AppSettings.ReadValue(context, AppSettings.AppSetting_DropBox_Key_Name, null), AppSettings.ReadValue(context, AppSettings.AppSetting_DropBox_Secret_Name, null));
 			mDBApi.getSession().setAccessTokenPair(access);
 			
-		    mDBApi.getFile(imageLocation, null, outputStream, null);
+		    mDBApi.getFile(imageLocation, null, outputStream, listener);
 		} catch (DropboxException e) {
 		    Log.e("ImageFormatter", "Something went wrong while downloading.", e);
 		} finally {
@@ -83,7 +84,7 @@ public class ImageFormatter {
 		return b;
 	}
 	
-	public static Bitmap GetImageFromDropBox(String imageLocation, Context context){
-		return GetImageFromBytes(GetImageBytesFromDropBox(imageLocation, context));
+	public static Bitmap GetImageFromDropBox(String imageLocation, Context context, ProgressListener listener){
+		return GetImageFromBytes(GetImageBytesFromDropBox(imageLocation, context, listener));
 	}
 }
