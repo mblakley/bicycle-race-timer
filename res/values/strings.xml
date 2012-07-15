@@ -214,5 +214,13 @@
 	<string name="SeriesResults">Series Results</string>
 	<string name="EditLocation">Edit Location</string>
 	<string name="IdenticalRacerUpgrade">Found identical racer name with different category.\n\nUpgrading racer category.</string>
-	
+	<string name="GetLocationImagesFromDropbox">Get Location Images from Dropbox</string>
+	<string name="LocationImage">An Image that will be associated with a location</string>
+	<string name="PrevImage">Go to Previous Image</string>
+	<string name="NextImage">Go to Next Image</string>
+	<string name="KeepImage">Keep this Image</string>
+	<string name="SubmitAllChanges">Submit All Changes</string>
+	<string name="Keep">Keep</string>
+	<string name="Discard">Discard</string>
+	<string name="LocationNotes">Notes</string>
 </resources>

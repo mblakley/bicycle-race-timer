@@ -5,6 +5,7 @@ import java.util.Calendar;
 import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
 import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewExclusive;
 import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewInclusive;
+import com.gvccracing.android.tttimer.DataAccess.LocationImagesCP.LocationImages;
 import com.gvccracing.android.tttimer.DataAccess.LookupGroupsCP.LookupGroups;
 import com.gvccracing.android.tttimer.DataAccess.PrimesCP.Primes;
 import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
@@ -49,7 +50,7 @@ public class TTProvider extends ContentProvider {
     private static final String TAG = "DBAdapter";
     
     private static final String DATABASE_NAME = "GVCCRaces";
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 6;
 	
 	private DatabaseHelper mDB;
 
@@ -144,6 +145,12 @@ public class TTProvider extends ContentProvider {
 			resultUri = Uri.withAppendedPath(resultUri, Long.toString(lookupGroup_ID));
 			
 			notifyUris = LookupGroups.getAllUrisToNotifyOnChange();
+		} else if(uri.toString().contains(LocationImages.CONTENT_URI.toString())){
+			long locationImage_ID = mDB.getWritableDatabase().insert(LocationImages.getTableName(), null, content);
+			
+			resultUri = Uri.withAppendedPath(resultUri, Long.toString(locationImage_ID));
+			
+			notifyUris = LocationImages.getAllUrisToNotifyOnChange();
 		} else{
 			throw new UnsupportedOperationException("You're an idiot...add the uri " + uri.toString() + " to the TTProvider.insert if/else statement");
 		}
@@ -523,6 +530,19 @@ public class TTProvider extends ContentProvider {
 			lookupGroupsCursor.setNotificationUri(getContext().getContentResolver(), uri);	
 			Log.i("TTProvider", "query complete: uri=" + uri.toString() + " selection=" + selection);
 			return lookupGroupsCursor;
+		} else if(uri.toString().contains(LocationImages.CONTENT_URI.toString())){
+			// LocationImages
+			qBuilder.setTables(LocationImages.getTableName());		
+			
+			Cursor locationImagesCursor = qBuilder.query(mDB.getReadableDatabase(),
+													projection, 
+													selection, 
+													selectionArgs, null, null, sortOrder,
+													null);	
+			
+			locationImagesCursor.setNotificationUri(getContext().getContentResolver(), uri);	
+			Log.i("TTProvider", "query complete: uri=" + uri.toString() + " selection=" + selection);
+			return locationImagesCursor;
 		} else{
 			throw new UnsupportedOperationException("You're an idiot...add the uri " + uri.toString() + " to the TTProvider.query if/else statement");
 		}		
@@ -586,6 +606,10 @@ public class TTProvider extends ContentProvider {
 			numChanged = mDB.getWritableDatabase().update(LookupGroups.getTableName(), content, selection, selectionArgs);
 
 			notifyUris = LookupGroups.getAllUrisToNotifyOnChange();
+		} else if(uri.toString().contains(LocationImages.CONTENT_URI.toString())){
+			numChanged = mDB.getWritableDatabase().update(LocationImages.getTableName(), content, selection, selectionArgs);
+
+			notifyUris = LocationImages.getAllUrisToNotifyOnChange();
 		} else {
 			throw new UnsupportedOperationException("You're an idiot...add the uri " + uri.toString() + " to the TTProvider.update if/else statement");
 		}
@@ -626,6 +650,10 @@ public class TTProvider extends ContentProvider {
 			numChanged = mDB.getWritableDatabase().delete(LookupGroups.getTableName(), selection, selectionArgs);
 
 			notifyUris = LookupGroups.getAllUrisToNotifyOnChange();
+		} else if(uri.toString().contains(LocationImages.CONTENT_URI.toString())){
+			numChanged = mDB.getWritableDatabase().delete(LocationImages.getTableName(), selection, selectionArgs);
+
+			notifyUris = LocationImages.getAllUrisToNotifyOnChange();
 		} else{
 			throw new UnsupportedOperationException("You're an idiot...add the uri " + uri.toString() + " to the TTProvider.delete if/else statement");
 		}
@@ -672,7 +700,7 @@ public class TTProvider extends ContentProvider {
     		db.execSQL("INSERT INTO " + LookupGroups.getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Category + "', 'A');");
     		db.execSQL("INSERT INTO " + LookupGroups.getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Category + "', 'B4');");
     		db.execSQL("INSERT INTO " + LookupGroups.getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Category + "', 'B5');");
-    		
+    		db.execSQL(LocationImages.getCreate());
 	    }
 
 	    @Override
@@ -744,6 +772,15 @@ public class TTProvider extends ContentProvider {
 		    		db.execSQL("INSERT INTO " + LookupGroups.getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Category + "', 'B4');");
 		    		db.execSQL("INSERT INTO " + LookupGroups.getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Category + "', 'B5');");
 		    		// Still need to do a bunch of updates to be able to use the category group, so we'll leave that until the next database upgrade
+			        db.setTransactionSuccessful();
+	    		} finally{
+	    			db.endTransaction();
+	    		}
+	    	} 
+	    	if(oldVersion < 6 && newVersion >= 6){
+	    		db.beginTransaction();
+	    		try{
+	    			db.execSQL(LocationImages.getCreate());
 			        db.setTransactionSuccessful();
 	    		} finally{
 	    			db.endTransaction();

@@ -110,7 +110,10 @@ public class TTTimerTabsActivity extends FragmentActivity {
         this.registerReceiver(mActionReceiver, actionFilter);
 		timer.RegisterReceiver();
 		
-		UpdateRaceState();
+		if(Boolean.parseBoolean(AppSettings.ReadValue(this, AppSettings.AppSetting_ResumePreviousState_Name, "false"))){
+			UpdateRaceState();
+			AppSettings.Update(this, AppSettings.AppSetting_ResumePreviousState_Name, "false", true);
+		}
 	}
 	
 	@Override 

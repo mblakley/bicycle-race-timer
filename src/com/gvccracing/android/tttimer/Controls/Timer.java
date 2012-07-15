@@ -196,6 +196,14 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
 	 */
 	private Loader<Cursor> currentLapsLoader = null;
 	
+	private Handler messageTimerHandler = new Handler();
+    private Runnable hideMessage = new Runnable() {
+	    public void run() {
+			lblMessage.setVisibility(View.INVISIBLE);
+			lblMessage.setText("");
+		}
+	};
+	
 	protected void setNewRacerOnDeck(long raceResult_ID, long startTimeOffset) {
 		raceResult_IDOnDeck = raceResult_ID;
 		startTimeOffsetOnDeck = startTimeOffset;
@@ -328,17 +336,16 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
 		getContext().getContentResolver().update(fullUri, content, null, null);
 		
 		resetTimer();
-    }
-    
-    private long timerMessageEndTime;
-    private boolean showingMessage = false;
+    }    
     
     public void showMessage(String message, long duration){
-    	timerMessageEndTime = System.currentTimeMillis() + duration;
-    	lblMessage.setText("\u00A0" + message + "\u00A0");
     	// Show the message
+    	lblMessage.setText("\u00A0" + message + "\u00A0");
     	lblMessage.setVisibility(View.VISIBLE);
-    	showingMessage = true;
+
+		// Hide the message after a few seconds
+		messageTimerHandler.removeCallbacks(hideMessage);
+		messageTimerHandler.postDelayed(hideMessage, duration);
     }
      
     private long toastTime = 0;
@@ -360,13 +367,7 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
 		if(showingToast && (updatePerformedTime > toastEndTime)){
 			llToast.setVisibility(View.INVISIBLE);
 			showingToast = false;
-		}
-		
-		if(showingMessage && (updatePerformedTime > timerMessageEndTime)){
-			lblMessage.setText("");
-			lblMessage.setVisibility(View.INVISIBLE);
-			showingMessage = false;
-		}
+		}		
  		
 		if(startTimeOffsetOnDeck >= 0 && 
 		   ((startTimeInterval == 30 && 

@@ -4,4 +4,4 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:singleLine="true"
-        style="@style/Medium"/>
+        style="@style/Medium.PaddedTopBottom"/>

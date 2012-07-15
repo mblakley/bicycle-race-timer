@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialogContainer"
+    style="@style/Padded"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#FFFF"
+    android:orientation="vertical"
+    android:weightSum="1" >
+
+    <ImageView
+        android:id="@+id/imgLocationImage"
+        android:layout_width="fill_parent"
+        android:layout_height="0dip"
+        android:layout_weight="0.45"
+        android:contentDescription="@string/LocationImage"
+        android:scaleType="centerInside" />
+
+    <TextView
+        android:id="@+id/lblFileName"
+        style="@style/Small"
+        android:layout_width="fill_parent"
+        android:layout_height="0dip"
+        android:gravity="center_horizontal"
+        android:layout_weight="0.05"
+        android:singleLine="true"/>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dip"
+        android:layout_weight="0.1">
+        <TextView
+            android:id="@+id/lblCourseName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/CourseName"
+            style="@style/Medium" />"
+    
+	    <Spinner
+	        android:id="@+id/spinCourseName"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+            style="@style/Medium" />
+        
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dip"
+        android:layout_weight="0.2" >
+		<TextView
+            android:id="@+id/lblNotes"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_gravity="top|left"
+            android:layout_marginTop="10dp"
+            android:text="@string/LocationNotes"
+            style="@style/Medium" />
+        <EditText
+	        android:id="@+id/txtNotes"
+	        android:layout_width="fill_parent"
+	        android:layout_height="fill_parent"
+	        android:inputType="textMultiLine"
+	        android:lines="5"
+	        android:maxLines="10"
+	        android:minLines="1"
+            style="@style/Medium" />
+	</LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dip"
+        android:layout_weight="0.1"
+        android:weightSum="3">
+
+        <ImageButton
+            android:id="@+id/btnPrevImage"
+            android:layout_width="0dip"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:contentDescription="@string/PrevImage"
+            android:src="@android:drawable/ic_media_rew"
+            style="@style/Medium" />
+
+        <ToggleButton
+            android:id="@+id/toggleKeepImage"
+            style="@style/Small"
+            android:layout_width="0dip"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:checked="true"
+            android:text="@string/KeepImage"
+            android:textOff="@string/Discard"
+            android:textOn="@string/Keep" />
+
+        <ImageButton
+            android:id="@+id/btnNextImage"
+            android:layout_width="0dip"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:contentDescription="@string/NextImage"
+            android:src="@android:drawable/ic_media_ff"
+            style="@style/Medium" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnSubmitChanges"
+        style="@style/Medium"
+        android:layout_width="fill_parent"
+        android:layout_height="0dip"
+        android:layout_weight="0.1"
+        android:text="@string/SubmitAllChanges" />
+
+</LinearLayout>
