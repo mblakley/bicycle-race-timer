@@ -654,6 +654,10 @@ public class TTProvider extends ContentProvider {
 			numChanged = mDB.getWritableDatabase().delete(LocationImages.getTableName(), selection, selectionArgs);
 
 			notifyUris = LocationImages.getAllUrisToNotifyOnChange();
+		} else if(uri.toString().contains(AppSettings.CONTENT_URI.toString())){
+			numChanged = mDB.getWritableDatabase().delete(AppSettings.getTableName(), selection, selectionArgs);
+
+			notifyUris = AppSettings.getAllUrisToNotifyOnChange();
 		} else{
 			throw new UnsupportedOperationException("You're an idiot...add the uri " + uri.toString() + " to the TTProvider.delete if/else statement");
 		}

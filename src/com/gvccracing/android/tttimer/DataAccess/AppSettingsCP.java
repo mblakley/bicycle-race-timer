@@ -91,5 +91,9 @@ public class AppSettingsCP {
 			temp = null;
 			return val;
 		}
+		
+		public static int Delete(Context context, String appSettingName){
+			return context.getContentResolver().delete(AppSettings.CONTENT_URI, AppSettings.AppSettingName + "=?", new String[]{appSettingName});	
+		}
     }
 }

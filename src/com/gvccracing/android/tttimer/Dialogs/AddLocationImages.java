@@ -158,6 +158,8 @@ public class AddLocationImages extends BaseDialog implements View.OnClickListene
 	public void onPause() {
 		super.onPause();
 		
+		this.getLoaderManager().destroyLoader(ALL_RACE_LOCATIONS_LOADER);
+		
 		for(DownloadImageTask task : tasks){
 			task.cancel(true);
 		}

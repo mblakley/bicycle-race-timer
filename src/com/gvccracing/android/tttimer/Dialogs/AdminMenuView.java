@@ -156,7 +156,7 @@ public class AdminMenuView extends BaseDialog implements View.OnClickListener {
 				}else{
 					// Create a file on the SD card for the results and roster, and upload the roster to dropbox
 					UploadUSACNumbersToDropboxTask uploadTask = new UploadUSACNumbersToDropboxTask(getActivity());
-					uploadTask.execute((Void[])null);
+					uploadTask.execute();
 				}
 			} else if (v == btnEditLocation){
 		    	EditLocation editLocation = new EditLocation();
@@ -165,14 +165,14 @@ public class AdminMenuView extends BaseDialog implements View.OnClickListener {
 				AppKeyPair appKeys = new AppKeyPair(APP_KEY, APP_SECRET);
 				AndroidAuthSession session = new AndroidAuthSession(appKeys, ACCESS_TYPE);
 				mDBApi = new DropboxAPI<AndroidAuthSession>(session);
+		    	
 				if(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_DropBox_Key_Name, null) == null || AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_DropBox_Secret_Name, null) == null){				
 					AppSettings.Update(getActivity(), AppSettings.AppSetting_ResumePreviousState_Name, "true", true);
 					AppSettings.Update(getActivity(), AppSettings.AppSetting_AuthenticatingDropbox_Name, "true", true);
 					mDBApi.getSession().startAuthentication(getActivity());
-				}else{
-			    	AddLocationImages downloadNewImages = new AddLocationImages();
-			    	downloadNewImages.show(fm, AddLocationImages.LOG_TAG);
 				}
+	            AddLocationImages downloadNewImages = new AddLocationImages();
+		    	downloadNewImages.show(fm, AddLocationImages.LOG_TAG);
 			} else {
 				super.onClick(v);
 			}
