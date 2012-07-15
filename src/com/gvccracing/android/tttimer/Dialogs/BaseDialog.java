@@ -54,7 +54,7 @@ public abstract class BaseDialog extends DialogFragment implements View.OnClickL
 			dialog.addView(title, 0);
 			
 			getDialog().getWindow().setLayout(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
-			btnBack = (Button)getView().findViewById(R.id.btnBack);
+			btnBack = (Button)getView().findViewById(R.id.btnBaseDialogClose1);
 			btnBack.setOnClickListener(this);
 		}
 		if(showCancelButton){
