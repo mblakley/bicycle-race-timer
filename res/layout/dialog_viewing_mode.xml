@@ -13,20 +13,49 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="10sp"
+        android:layout_marginTop="20dp"
         android:text="@string/lblViewingMode" />
     
-    <Button
-        android:id="@+id/btnAddNewRace"
+    <LinearLayout
+        android:id="@+id/linearLayoutButtons"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/btnAddNewRace"
-        style="@style/Medium" />
+        android:layout_height="110sp"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="bottom"
+        android:weightSum="2">
+    
 
     <Button
-        android:id="@+id/btnPreviousRaces"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/btnPreviousRaces"
-        style="@style/Medium" />
-
+            android:id="@+id/btnAddNewRace"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center"
+            android:layout_marginRight="2dp"
+            android:layout_weight="1"
+            android:background="@drawable/main_button"
+            android:drawableTop="@drawable/add"
+            android:paddingBottom="16dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="8dp"
+            android:text="@string/btnAddNewRace" >
+        </Button>
+    
+      <Button
+            android:id="@+id/btnPreviousRaces"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center"
+            android:layout_marginLeft="2dp"
+            android:layout_weight="1"
+            android:background="@drawable/main_button"
+            android:drawableTop="@drawable/history"
+            android:paddingBottom="16dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="8dp"
+            android:text="@string/btnPreviousRaces" >
+        </Button>
+    
+</LinearLayout>
 </LinearLayout>
