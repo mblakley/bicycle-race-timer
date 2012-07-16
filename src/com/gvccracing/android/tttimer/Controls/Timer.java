@@ -94,6 +94,7 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
 	private static final int START_INTERVAL_LOADER = 0x55;
 	private static final int RACE_INFO_LOADER_TIMER = 0x143;
 	private static final int CURRENT_LAPS_LOADER = 0x144;
+	private static final int APP_SETTINGS_LOADER = 1111;
 	/**
 	 * The timer at the bottom of the screen - displayed in the format HH:MM:SS.m
 	 */
@@ -453,6 +454,13 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
 				sortOrder = null;
 				loader = new CursorLoader(getContext(), RaceLapsInfoView.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
+			case APP_SETTINGS_LOADER:
+				projection = new String[]{AppSettings.AppSettingName, AppSettings.AppSettingValue};
+				selection = null;
+				sortOrder = null;
+				selectionArgs = null;
+				loader = new CursorLoader(getContext(), AppSettings.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				break;
 		}
 		Log.i("Timer", "onCreateLoader complete: id=" + Integer.toString(id));
 		return loader;
@@ -505,6 +513,12 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
 						}
 						lblLaps.setText("Lap " + Long.toString(currentLaps) + " of " + Long.toString(totalRaceLaps));
 					}
+					break;
+				case APP_SETTINGS_LOADER:
+			        ((FragmentActivity) getContext()).getSupportLoaderManager().restartLoader(ON_DECK_LOADER_TIMER, null, this);
+			        ((FragmentActivity) getContext()).getSupportLoaderManager().restartLoader(UNFINISHED_RACERS_LOADER, null, this);
+			        ((FragmentActivity) getContext()).getSupportLoaderManager().restartLoader(START_INTERVAL_LOADER, null, this);
+			        ((FragmentActivity) getContext()).getSupportLoaderManager().restartLoader(RACE_INFO_LOADER_TIMER, null, this);
 					break;
 			}
 			Log.i(LOG_TAG, "onLoadFinished complete: id=" + Integer.toString(loader.getId()));
