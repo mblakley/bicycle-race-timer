@@ -7,7 +7,7 @@ import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.view.WindowManager.LayoutParams;
 
@@ -18,7 +18,7 @@ import android.view.WindowManager.LayoutParams;
 public abstract class BaseDialog extends DialogFragment implements View.OnClickListener {
 	protected static final int RACE_LOCATIONS_LOADER = 0x01;
 	
-	protected Button btnBack;
+	protected ImageButton btnBack;
 	
 	private boolean showCancelButton = true;
 	
@@ -54,7 +54,7 @@ public abstract class BaseDialog extends DialogFragment implements View.OnClickL
 			dialog.addView(title, 0);
 			
 			getDialog().getWindow().setLayout(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
-			btnBack = (Button)getView().findViewById(R.id.btnBaseDialogClose1);
+			btnBack = (ImageButton)getView().findViewById(R.id.btnBaseDialogClose1);
 			btnBack.setOnClickListener(this);
 		}
 		if(showCancelButton){
