@@ -3,20 +3,25 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
+    android:weightSum="1.01"
     android:padding="0dip">
-
-    <Button
-        android:id="@+id/btnBack"
-        android:background="@drawable/back_button"
-        android:layout_gravity="center_vertical"
-        style="@style/btnBack" />
-
+    
     <TextView
         android:id="@+id/title"
         style="@style/Large"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:singleLine="true"
-        android:layout_gravity="center_vertical" />
+        android:layout_weight="1"
+        android:layout_gravity="left" />
 
+        <Button
+            android:id="@+id/btnBaseDialogClose1"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="right"
+            android:layout_weight=".01"
+            android:background="@drawable/close">
+        </Button>    
+    
 </LinearLayout>
