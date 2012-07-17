@@ -13,8 +13,10 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TabHost;
+import android.widget.TextView;
 
 import com.gvccracing.android.tttimer.Controls.Timer;
 import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
@@ -312,19 +314,29 @@ public class TTTimerTabsActivity extends FragmentActivity {
 	    tabHost.setup();
 	    tabManager = new TabManagerContainer.TabManager(this, tabHost, R.id.realtabcontent);
 	    
+	    tabHost.getTabWidget().setDividerDrawable(R.drawable.tab_divider);
+	    
 	    // Race Info Tab
-	    tabManager.addTab(tabHost.newTabSpec(RaceInfoTab.RaceInfoTabSpecName).setIndicator("Race Info"), RaceInfoTab.class, null);
+	    tabManager.addTab(tabHost.newTabSpec(RaceInfoTab.RaceInfoTabSpecName).setIndicator(createTabView(this,"Race Info")), RaceInfoTab.class, null);
 	    // Check In Tab
-	    tabManager.addTab(tabHost.newTabSpec(CheckInTab.CheckInTabSpecName).setIndicator(CheckInTab.CheckInTabSpecName), CheckInTab.class, null);
+	    tabManager.addTab(tabHost.newTabSpec(CheckInTab.CheckInTabSpecName).setIndicator(createTabView(this,CheckInTab.CheckInTabSpecName)), CheckInTab.class, null);
 	    // Start Tab
-	    tabManager.addTab(tabHost.newTabSpec(StartTab.StartTabSpecName).setIndicator("Start"), StartTab.class, null);
+	    tabManager.addTab(tabHost.newTabSpec(StartTab.StartTabSpecName).setIndicator(createTabView(this,"Start")), StartTab.class, null);
 	    // Finish Tab
-	    tabManager.addTab(tabHost.newTabSpec(FinishTab.FinishTabSpecName).setIndicator(FinishTab.FinishTabSpecName), FinishTab.class, null);
+	    tabManager.addTab(tabHost.newTabSpec(FinishTab.FinishTabSpecName).setIndicator(createTabView(this,FinishTab.FinishTabSpecName)), FinishTab.class, null);
 	    // Results Tab
-	    tabManager.addTab(tabHost.newTabSpec(ResultsTab.ResultsTabSpecName).setIndicator("Results"), ResultsTab.class, null);
+	    tabManager.addTab(tabHost.newTabSpec(ResultsTab.ResultsTabSpecName).setIndicator(createTabView(this,"Results")), ResultsTab.class, null);
 	    // Other Tab
-	    tabManager.addTab(tabHost.newTabSpec(OtherTab.OtherTabSpecName).setIndicator("Other"), OtherTab.class, null);
+	    tabManager.addTab(tabHost.newTabSpec(OtherTab.OtherTabSpecName).setIndicator(createTabView(this,"Other")), OtherTab.class, null);
 	}
+	
+	private View createTabView(final Context context, final String text) {
+	    View view = LayoutInflater.from(context).inflate(R.layout.tabs_bg, null);	
+	    TextView tv = (TextView) view.findViewById(R.id.tabsText);	
+	    tv.setText(text);	
+	    return view;	
+	}
+
 
 	/**
 	 * Set up the tabs control display for a finished race
