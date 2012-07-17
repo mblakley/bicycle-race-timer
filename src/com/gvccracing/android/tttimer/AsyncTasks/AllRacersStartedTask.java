@@ -7,7 +7,7 @@ import android.os.AsyncTask;
 import com.gvccracing.android.tttimer.TTTimerTabsActivity;
 import com.gvccracing.android.tttimer.Tabs.FinishTab;
 
-public class AllRacersStartedTask  extends AsyncTask<Void, Void, Void> {
+public class AllRacersStartedTask extends AsyncTask<Void, Void, Void> {
 	
 	private Context context;
 	

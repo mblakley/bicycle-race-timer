@@ -211,10 +211,8 @@
         android:id="@+id/btnMarshalLocations"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-    	android:layout_gravity="bottom|right"
         style="@style/Medium"
-        android:text="@string/MarshalLocations"
-        android:visibility="gone" /> 
+        android:text="@string/MarshalLocations" /> 
         
 
     <LinearLayout

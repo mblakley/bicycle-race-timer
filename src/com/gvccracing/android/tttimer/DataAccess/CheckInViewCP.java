@@ -10,7 +10,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-
 public class CheckInViewCP {
 
     // BaseColumn contains _id.
@@ -58,6 +57,10 @@ public class CheckInViewCP {
         	return new Uri[]{CheckInViewExclusive.CONTENT_URI, CheckInViewInclusive.CONTENT_URI};
         }
 
+        public static Cursor Read(Context context, String[] fieldsToRetrieve, String selection, String[] selectionArgs, String sortOrder) {
+			return context.getContentResolver().query(CheckInViewExclusive.CONTENT_URI, fieldsToRetrieve, selection, selectionArgs, sortOrder);
+		}
+        
 		public static int ReadCount(Context context, String[] fieldsToRetrieve, String selection, String[] selectionArgs, String sortOrder) {
 			Cursor checkIns = context.getContentResolver().query(CheckInViewExclusive.CONTENT_URI, fieldsToRetrieve, selection, selectionArgs, sortOrder);
 			int numCheckIns = checkIns.getCount();

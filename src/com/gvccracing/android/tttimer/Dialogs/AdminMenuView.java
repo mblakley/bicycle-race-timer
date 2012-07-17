@@ -1,12 +1,15 @@
 package com.gvccracing.android.tttimer.Dialogs;
 
+import com.dropbox.client2.DropboxAPI;
+import com.dropbox.client2.android.AndroidAuthSession;
+import com.dropbox.client2.session.AccessTokenPair;
+import com.dropbox.client2.session.AppKeyPair;
+import com.dropbox.client2.session.Session.AccessType;
 import com.gvccracing.android.tttimer.R;
+import com.gvccracing.android.tttimer.AsyncTasks.UploadUSACNumbersToDropboxTask;
 import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
 import com.gvccracing.android.tttimer.Utilities.Calculations;
-import com.gvccracing.android.tttimer.Utilities.UploadToDropBox;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentManager;
@@ -27,6 +30,7 @@ public class AdminMenuView extends BaseDialog implements View.OnClickListener {
 	private Button btnRecalculateResults;
 	private Button btnSettings;
 	private Button btnUploadToDropbox;
+	private Button btnGetImagesFromDropbox;
 	private TextView txtMessage;
 
     private Handler messageTimerHandler = new Handler();
@@ -35,7 +39,15 @@ public class AdminMenuView extends BaseDialog implements View.OnClickListener {
 			txtMessage.setVisibility(View.INVISIBLE);
 			txtMessage.setText("");
 		}
-	};
+	};	
+
+    /**
+     * Used for dropbox
+     */
+    final static private String APP_KEY = "6c113yzcd8p714m";
+    final static private String APP_SECRET = "j0thz9yz7w1u80z";
+	private DropboxAPI<AndroidAuthSession> mDBApi;
+	final static private AccessType ACCESS_TYPE = AccessType.APP_FOLDER;
 	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -62,6 +74,9 @@ public class AdminMenuView extends BaseDialog implements View.OnClickListener {
 		btnUploadToDropbox = (Button) v.findViewById(R.id.btnUploadToDropbox);
 		btnUploadToDropbox.setOnClickListener(this);
 		
+		btnGetImagesFromDropbox = (Button) v.findViewById(R.id.btnGetImagesFromDropbox);
+		btnGetImagesFromDropbox.setOnClickListener(this);
+		
 		txtMessage = (TextView) v.findViewById(R.id.txtMessage);
 		return v;
 	}
@@ -72,9 +87,34 @@ public class AdminMenuView extends BaseDialog implements View.OnClickListener {
 	}
 	
 	@Override
+	public void onResume() {
+		super.onResume();
+		// If we're resuming this activity from going out and attempting to authenticate dropbox account, do extra stuff
+		if(Boolean.parseBoolean(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_AuthenticatingDropbox_Name, "false"))){
+			AppSettings.Update(getActivity(), AppSettings.AppSetting_AuthenticatingDropbox_Name, "false", true);
+    		if (mDBApi.getSession().authenticationSuccessful()) {
+	            // MANDATORY call to complete auth.
+	            // Sets the access token on the session
+	            mDBApi.getSession().finishAuthentication();
+	            
+	            AccessTokenPair tokens = mDBApi.getSession().getAccessTokenPair();
+
+	            // Provide your own storeKeys to persist the access token pair
+	            // A typical way to store tokens is using SharedPreferences
+	            AppSettings.Update(getActivity(), AppSettings.AppSetting_DropBox_Key_Name, tokens.key, true);
+	            AppSettings.Update(getActivity(), AppSettings.AppSetting_DropBox_Secret_Name, tokens.secret, true);
+    	    }else{
+    	    	Log.i(LOG_TAG, "Authentication not successful");
+    	    }
+        }
+	}
+	
+	@Override
 	public void onPause() {
 		super.onPause();
 
+		txtMessage.setVisibility(View.INVISIBLE);
+		txtMessage.setText("");
 		messageTimerHandler.removeCallbacks(hideMessage);
 	}
 	
@@ -106,14 +146,38 @@ public class AdminMenuView extends BaseDialog implements View.OnClickListener {
 		    	AppSettingsView appSettingsDialog = new AppSettingsView();
 		        appSettingsDialog.show(fm, AppSettingsView.LOG_TAG);
 			} else if (v.getId() == R.id.btnUploadToDropbox) {
-				// Create a file on the SD card for the results and roster, and upload the roster to dropbox
-				Intent intent = new Intent(this.getActivity(), UploadToDropBox.class);
-            	//EditText mFileName = (EditText) findViewById(R.id.txtFileName);
-		        //intent.putExtra("FILENAME", mFileName.getText().toString());
-				startActivityForResult(intent, 0);
+				AppKeyPair appKeys = new AppKeyPair(APP_KEY, APP_SECRET);
+				AndroidAuthSession session = new AndroidAuthSession(appKeys, ACCESS_TYPE);
+				mDBApi = new DropboxAPI<AndroidAuthSession>(session);
+				if(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_DropBox_Key_Name, null) == null || AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_DropBox_Secret_Name, null) == null){				
+					AppSettings.Update(getActivity(), AppSettings.AppSetting_ResumePreviousState_Name, "true", true);
+					AppSettings.Update(getActivity(), AppSettings.AppSetting_AuthenticatingDropbox_Name, "true", true);
+					mDBApi.getSession().startAuthentication(getActivity());
+				}else{
+					// Create a file on the SD card for the results and roster, and upload the roster to dropbox
+					UploadUSACNumbersToDropboxTask uploadTask = new UploadUSACNumbersToDropboxTask(getActivity());
+					uploadTask.execute();
+				}
+				txtMessage.setVisibility(View.VISIBLE);
+				txtMessage.setText("Started roster upload.");
+				// Hide the message after a few seconds
+				messageTimerHandler.removeCallbacks(hideMessage);
+				messageTimerHandler.postDelayed(hideMessage, 3000);
 			} else if (v == btnEditLocation){
 		    	EditLocation editLocation = new EditLocation();
 		    	editLocation.show(fm, EditLocation.LOG_TAG);
+			} else if (v == btnGetImagesFromDropbox){
+				AppKeyPair appKeys = new AppKeyPair(APP_KEY, APP_SECRET);
+				AndroidAuthSession session = new AndroidAuthSession(appKeys, ACCESS_TYPE);
+				mDBApi = new DropboxAPI<AndroidAuthSession>(session);
+		    	
+				if(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_DropBox_Key_Name, null) == null || AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_DropBox_Secret_Name, null) == null){				
+					AppSettings.Update(getActivity(), AppSettings.AppSetting_ResumePreviousState_Name, "true", true);
+					AppSettings.Update(getActivity(), AppSettings.AppSetting_AuthenticatingDropbox_Name, "true", true);
+					mDBApi.getSession().startAuthentication(getActivity());
+				}
+	            AddLocationImages downloadNewImages = new AddLocationImages();
+		    	downloadNewImages.show(fm, AddLocationImages.LOG_TAG);
 			} else {
 				super.onClick(v);
 			}
@@ -131,32 +195,5 @@ public class AdminMenuView extends BaseDialog implements View.OnClickListener {
 	@Override
 	protected String LOG_TAG() {
 		return LOG_TAG;
-	}
-
-	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-	    if (requestCode == 0) {
-	        if (resultCode == Activity.RESULT_OK) {
-//	            String contents = intent.getStringExtra("SCAN_RESULT");
-//	            // Handle successful scan
-//	            //Toast.makeText(getBaseContext(), "The barcode is " + contents, Toast.LENGTH_LONG).show();
-//	            //EditText mFileName = (EditText) findViewById(R.id.txtFileName);
-//				String filename = mFileName.getText().toString();
-//				
-//				Date dateNow = new Date();
-//				SimpleDateFormat format = new SimpleDateFormat("h:mm:ss a  M/dd/yyyy");
-//			    contents = contents + ", " + format.format(dateNow) + "\n";
-//				
-//	            WriteToFile(filename, contents);
-//	            
-//	            
-//	            intent = new Intent("com.google.zxing.client.android.SCAN");
-//		        intent.setPackage("com.google.zxing.client.android");
-//		        intent.putExtra("SCAN_MODE", "ONE_D_MODE");
-//		        startActivityForResult(intent, 0);
-	        } else if (resultCode == Activity.RESULT_CANCELED) {
-	            // Handle cancel
-//	            Toast.makeText(getBaseContext(), "Done scanning", Toast.LENGTH_LONG).show();	        	
-	        }
-	    }
 	}
 }

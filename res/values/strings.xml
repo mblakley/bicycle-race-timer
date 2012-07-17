@@ -215,4 +215,19 @@
 	<string name="EditLocation">Edit Location</string>
 	<string name="IdenticalRacerUpgrade">Found identical racer name with different category.\n\nUpgrading racer category.</string>
 	<string name="UnlockDesktop">Unlock Home Button</string>
+	<string name="GetLocationImagesFromDropbox">Get Location Images from Dropbox</string>
+	<string name="LocationImage">An Image that will be associated with a location</string>
+	<string name="PrevImage">Go to Previous Image</string>
+	<string name="NextImage">Go to Next Image</string>
+	<string name="KeepImage">Keep this Image</string>
+	<string name="SubmitAllChanges">Submit All Changes</string>
+	<string name="Keep">Keep</string>
+	<string name="Discard">Discard</string>
+	<string name="LocationNotes">Notes</string>
+	<string name="DownloadProgress"><b>Downloading Image</b>\nProgress:</string>
+	<string name="RetrievingDropboxImageList"><b>Retrieving Image List</b>\nProgress:</string>
+	<string name="ComparingImageLists"><b>Comparing to Stored Image List</b>\nProgress:</string>
+	<string name="NoNewImagesFound">No New Images Found</string>
+	<string name="Retry">Retry</string>
+	<string name="NoMarshalLocationImages">No marshal location images found for the current location!</string>
 </resources>

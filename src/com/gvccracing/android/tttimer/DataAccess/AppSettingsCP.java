@@ -31,6 +31,8 @@ public class AppSettingsCP {
 		public static final String AppSetting_DropBox_Secret_Name = "DropBoxSecret";
 		public static final String AppSettings_AutoCheckIn_Name = "AutoCheckIn";
 		public static final String AppSettings_AutoStartApp_Name = "AutoStartApp";
+		public static final String AppSetting_AuthenticatingDropbox_Name = "AuthenticatingDropbox";
+		public static final String AppSetting_ResumePreviousState_Name = "ResumePreviousState";
         
         public static String getTableName(){
         	return AppSettings.class.getSimpleName();
@@ -88,6 +90,10 @@ public class AppSettingsCP {
 			temp.close();
 			temp = null;
 			return val;
+		}
+		
+		public static int Delete(Context context, String appSettingName){
+			return context.getContentResolver().delete(AppSettings.CONTENT_URI, AppSettings.AppSettingName + "=?", new String[]{appSettingName});	
 		}
     }
 }
