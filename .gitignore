@@ -65,3 +65,4 @@ BuildConfig.java
 >>>>>>> ee6efa163b36189c5f6a3b0705cb67f95bb02211
 
 lint.xml
+*.orig
