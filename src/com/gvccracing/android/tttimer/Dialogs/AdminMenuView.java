@@ -158,6 +158,11 @@ public class AdminMenuView extends BaseDialog implements View.OnClickListener {
 					UploadUSACNumbersToDropboxTask uploadTask = new UploadUSACNumbersToDropboxTask(getActivity());
 					uploadTask.execute();
 				}
+				txtMessage.setVisibility(View.VISIBLE);
+				txtMessage.setText("Started roster upload.");
+				// Hide the message after a few seconds
+				messageTimerHandler.removeCallbacks(hideMessage);
+				messageTimerHandler.postDelayed(hideMessage, 3000);
 			} else if (v == btnEditLocation){
 		    	EditLocation editLocation = new EditLocation();
 		    	editLocation.show(fm, EditLocation.LOG_TAG);

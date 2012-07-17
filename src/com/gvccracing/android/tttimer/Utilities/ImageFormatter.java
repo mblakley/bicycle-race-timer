@@ -15,6 +15,7 @@ import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
@@ -28,11 +29,13 @@ public class ImageFormatter {
 	final static private AccessType ACCESS_TYPE = AccessType.APP_FOLDER;
 	
 	public static byte[] GetByteArrayFromImage(Bitmap image) {
-		int size = image.getRowBytes() * image.getHeight();
-		ByteBuffer buffer = ByteBuffer.allocate(size);
-		image.copyPixelsToBuffer(buffer);
+//		int size = image.getRowBytes() * image.getHeight();
+//		ByteBuffer buffer = ByteBuffer.allocate(size);
+//		image.copyPixelsToBuffer(buffer);
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		image.compress(CompressFormat.PNG, 0, outputStream);
 	    
-		return buffer.array();
+		return outputStream.toByteArray();//buffer.array();
 	}
 	
 	public static byte[] GetImageBytesFromDropBox(String imageLocation, Context context, ProgressListener listener){
@@ -58,7 +61,7 @@ public class ImageFormatter {
 		return outputStream.toByteArray();
 	}
 	
-	public static Bitmap GetImageFromBytes(byte[] imageBytes){
+	public static Bitmap GetScaledImageFromBytes(byte[] imageBytes){
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inJustDecodeBounds = true;
         BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length, o);
@@ -84,7 +87,11 @@ public class ImageFormatter {
 		return b;
 	}
 	
+	public static Bitmap GetImageFromBytes(byte[] imageBytes){
+		return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+	}
+	
 	public static Bitmap GetImageFromDropBox(String imageLocation, Context context, ProgressListener listener){
-		return GetImageFromBytes(GetImageBytesFromDropBox(imageLocation, context, listener));
+		return GetScaledImageFromBytes(GetImageBytesFromDropBox(imageLocation, context, listener));
 	}
 }

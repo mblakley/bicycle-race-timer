@@ -224,4 +224,9 @@
 	<string name="Discard">Discard</string>
 	<string name="LocationNotes">Notes</string>
 	<string name="DownloadProgress"><b>Downloading Image</b>\nProgress:</string>
+	<string name="RetrievingDropboxImageList"><b>Retrieving Image List</b>\nProgress:</string>
+	<string name="ComparingImageLists"><b>Comparing to Stored Image List</b>\nProgress:</string>
+	<string name="NoNewImagesFound">No New Images Found</string>
+	<string name="Retry">Retry</string>
+	<string name="NoMarshalLocationImages">No marshal location images found for the current location!</string>
 </resources>

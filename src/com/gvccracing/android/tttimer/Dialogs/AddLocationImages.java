@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -73,15 +74,20 @@ public class AddLocationImages extends BaseDialog implements View.OnClickListene
 	private DownloadedImage selectedImage;
 	
 	private Button btnSubmitChanges;
+	private Button btnRetry;
 	private ToggleButton toggleKeepImage;
 	private ImageButton btnPrevImage;
 	private ImageButton btnNextImage;
 	private EditText txtNotes;
 	private TextView lblFilename;
+	private TextView lblCompare;
 	private ImageView imgLocationImage;
 	private Spinner spinCourseName;
 	private ProgressBar progressImageLoad;
+	private ProgressBar progressImageCompare;
 	private LinearLayout llProgress;
+	private LinearLayout llViewImages;
+	private LinearLayout llAllProgress;
 	private SimpleCursorAdapter locationsCA = null;
 
     /**
@@ -116,6 +122,9 @@ public class AddLocationImages extends BaseDialog implements View.OnClickListene
 
 		btnNextImage = (ImageButton) v.findViewById(R.id.btnNextImage);
 		btnNextImage.setOnClickListener(this);
+		
+		btnRetry = (Button) v.findViewById(R.id.btnRetry);
+		btnRetry.setOnClickListener(this);
 
 		toggleKeepImage = (ToggleButton) v.findViewById(R.id.toggleKeepImage);
 		toggleKeepImage.setOnClickListener(this);
@@ -131,7 +140,15 @@ public class AddLocationImages extends BaseDialog implements View.OnClickListene
 		progressImageLoad = (ProgressBar) v.findViewById(R.id.progressImageLoad);
 		progressImageLoad.setMax(100);
 		
+		progressImageCompare = (ProgressBar) v.findViewById(R.id.progressImageCompare);
+		
+		lblCompare = (TextView) v.findViewById(R.id.lblCompare);
+		
 		llProgress = (LinearLayout) v.findViewById(R.id.llProgress);
+		
+		llViewImages = (LinearLayout) v.findViewById(R.id.llViewImages);
+		
+		llAllProgress = (LinearLayout) v.findViewById(R.id.llAllProgress);
 		
 		return v;
 	}
@@ -150,7 +167,7 @@ public class AddLocationImages extends BaseDialog implements View.OnClickListene
         locationsCA.setDropDownViewResource( R.layout.control_simple_spinner_dropdown );
     	spinCourseName.setAdapter(locationsCA);
 
-		// Initialize the cursor loader for the races list
+		// Initialize the cursor loader for the locations list
 		this.getLoaderManager().restartLoader(ALL_RACE_LOCATIONS_LOADER, null, this);
 	}
 	
@@ -175,16 +192,53 @@ public class AddLocationImages extends BaseDialog implements View.OnClickListene
 	@Override
 	public void onClick(View v) { 
 		try{
-			if(v == btnSubmitChanges){
+			if(v == btnRetry){
+				progressImageCompare.setProgress(0);
+				progressImageCompare.setVisibility(View.VISIBLE);
+				lblCompare.setText(R.string.RetrievingDropboxImageList);
+				btnRetry.setVisibility(View.GONE);
+				
+				// Initialize the cursor loader for the races list
+				this.getLoaderManager().restartLoader(ALL_RACE_LOCATIONS_LOADER, null, this);				
+			}else if(v == btnSubmitChanges){
+				// Store off the state of the current image
+				selectedImage.notes = txtNotes.getText().toString();
+				selectedImage.raceLocation_ID = spinCourseName.getSelectedItemId();
 				// Go through each image in the list and save to database (if enabled)
 				for(DownloadedImage image : images.values()){
-					byte[] imageBytes = ImageFormatter.GetByteArrayFromImage(image.image);
-					if(image.updated){
-						LocationImages.Update(getActivity(), image.locationImages_ID, imageBytes, image.notes, image.raceLocation_ID, image.filename, image.revision);
-					} else {
-						LocationImages.Create(getActivity(), imageBytes, image.notes, image.raceLocation_ID, image.filename, image.revision);
+					if(image.keepImage){
+						byte[] imageBytes = ImageFormatter.GetByteArrayFromImage(image.image);
+						if(image.updated){
+							LocationImages.Update(getActivity(), image.locationImages_ID, imageBytes, image.notes, image.raceLocation_ID, image.filename, image.revision);
+						} else {
+							String notes = image.notes;
+							Long id = image.raceLocation_ID;
+							String filename = image.filename;
+							String rev = image.revision;
+							if(notes == null){
+								Log.e("Loop", "notes is null");
+							}
+							if(id == null){
+								Log.e("Loop", "id is null");
+							}
+							if(filename == null){
+								Log.e("Loop", "filename is null");
+							}
+							if(rev == null){
+								Log.e("Loop", "rev is null");
+							}
+							LocationImages.Create(getActivity(), imageBytes, image.notes, image.raceLocation_ID, image.filename, image.revision);
+//							String id = create.getLastPathSegment();
+//							Cursor afterInsert = LocationImages.Read(getActivity(), new String[]{LocationImages.Image}, LocationImages._ID + "=" + id, null, null);
+//							afterInsert.moveToFirst();
+//							byte[] afterBytes = afterInsert.getBlob(0);
+//							if(afterBytes != imageBytes){
+//								Log.e("Wrong", "found a difference after insert");
+//							}
+						}
 					}
 				}
+				dismiss();
 			} else if(v == btnPrevImage){
 				// Store off the state of the current image
 				selectedImage.notes = txtNotes.getText().toString();
@@ -332,16 +386,37 @@ public class AddLocationImages extends BaseDialog implements View.OnClickListene
 		}
 	}
 	
-	private class GetDropboxImagesTask extends AsyncTask<Void, Void, Void> {			
+	private class GetDropboxImagesTask extends AsyncTask<Void, Integer, Void> {
+		private boolean retrievingImageList = false;
+		private boolean comparingImageLists = false;
+		private int progressMax;
+		
+		@Override
+		protected void onProgressUpdate(Integer... progressParam) {
+			super.onProgressUpdate(progressParam);
+			if(retrievingImageList){
+			    progressImageCompare.setMax(progressMax);
+				lblCompare.setText(R.string.RetrievingDropboxImageList);
+				retrievingImageList = false;
+			}else if(comparingImageLists){
+			    progressImageCompare.setMax(progressMax);
+				lblCompare.setText(R.string.ComparingImageLists);				
+				comparingImageLists = false;
+			}
+		    progressImageCompare.setProgress(progressParam[0]);
+		}
+		
 		@Override
 		protected Void doInBackground(Void... notUsed) {
+			retrievingImageList = true;
 			AppKeyPair appKeys = new AppKeyPair(APP_KEY, APP_SECRET);
 			AndroidAuthSession session = new AndroidAuthSession(appKeys, ACCESS_TYPE);
 			mDBApi = new DropboxAPI<AndroidAuthSession>(session);
 			
 			AccessTokenPair access = new AccessTokenPair(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_DropBox_Key_Name, null), AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_DropBox_Secret_Name, null));
 			mDBApi.getSession().setAccessTokenPair(access);
-			
+
+		    int progress = 0;
 			try {
 				// Get the list of all images from the "LocationImages" folder on dropbox
 			    Entry imageFiles = mDBApi.metadata("/LocationImages", 1000, null, true, null);
@@ -351,9 +426,10 @@ public class AddLocationImages extends BaseDialog implements View.OnClickListene
 			    	String filename = file.fileName();
 			    	String revision = file.rev;
 			    	Bitmap image = null;
-			    	Long raceLocation_ID = null;
+			    	Long raceLocation_ID = spinCourseName.getSelectedItemId();;
 			    	DownloadedImage imageHolder = new DownloadedImage(image, filename, revision, true, "", raceLocation_ID, false);
 			    	images.put(filename, imageHolder);
+			    	publishProgress(new Integer[]{progress++});
 			    }
 			    
 			} catch (DropboxUnlinkedException e) {
@@ -363,9 +439,14 @@ public class AddLocationImages extends BaseDialog implements View.OnClickListene
 			    Log.e(LOG_TAG, "Something went wrong while uploading.", e);
 			}
 			
+			// Get the image list from the database, and compare the lists
+			comparingImageLists = true;
+			
 			String[] fieldsToRetrieve = new String[]{LocationImages._ID, LocationImages.DropboxFilename, LocationImages.DropboxRevision, LocationImages.Notes, LocationImages.RaceLocation_ID};
 			
 		    Cursor allImagesInDB = LocationImages.Read(getActivity(), fieldsToRetrieve, null, null, null);
+		    progress = 0;
+		    progressMax = allImagesInDB.getCount();
 			allImagesInDB.moveToFirst();
 
 			// Check the list against the list of current LocationImages in the database (filename, revision), and remove the ones that are in the db already
@@ -376,7 +457,7 @@ public class AddLocationImages extends BaseDialog implements View.OnClickListene
 					// Figure out if the image is the same revision
 					DownloadedImage tempImage = images.get(filenameInDB);
 					String revisionInDB = allImagesInDB.getString(allImagesInDB.getColumnIndex(LocationImages.DropboxRevision));
-					if(tempImage.revision != revisionInDB){
+					if(!tempImage.revision.equals(revisionInDB)){
 						// Update the downloadedImage
 						tempImage.updated = true;
 						String notes = allImagesInDB.getString(allImagesInDB.getColumnIndex(LocationImages.Notes));
@@ -390,13 +471,17 @@ public class AddLocationImages extends BaseDialog implements View.OnClickListene
 						images.remove(filenameInDB);
 					}
 				}
+		    	publishProgress(new Integer[]{progress++});
+				allImagesInDB.moveToNext();
 			}
 			return null;
 		}
 
 		@Override
 		protected void onPostExecute(Void notUsed) {
-			if(images.size() > 0){				
+			if(images.size() > 0){	
+				llAllProgress.setVisibility(View.GONE);
+				llViewImages.setVisibility(View.VISIBLE);
 				for(int index = 0; index < images.size(); index++){
 					DownloadImageTask getImage = new DownloadImageTask(index);
 					tasks.add(getImage);
@@ -404,6 +489,10 @@ public class AddLocationImages extends BaseDialog implements View.OnClickListene
 
 				// Fill in the layout with the image and metadata from the selected image (start with the first)
 				SetupImage();
+			}else{
+				lblCompare.setText(R.string.NoNewImagesFound);
+				progressImageCompare.setVisibility(View.GONE);
+				btnRetry.setVisibility(View.VISIBLE);
 			}
 		}
 	}

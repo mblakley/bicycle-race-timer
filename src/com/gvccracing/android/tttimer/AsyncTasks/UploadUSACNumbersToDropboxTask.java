@@ -24,14 +24,12 @@ import com.dropbox.client2.exception.DropboxUnlinkedException;
 import com.dropbox.client2.session.AccessTokenPair;
 import com.dropbox.client2.session.AppKeyPair;
 import com.dropbox.client2.session.Session.AccessType;
-import com.gvccracing.android.tttimer.TTTimerTabsActivity;
 import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
 import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewExclusive;
 import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
 import com.gvccracing.android.tttimer.DataAccess.TeamCheckInViewCP.TeamCheckInViewExclusive;
-import com.gvccracing.android.tttimer.Tabs.FinishTab;
 
 public class UploadUSACNumbersToDropboxTask extends AsyncTask<Void, Void, Void> {
 	private Context context;
@@ -95,10 +93,10 @@ public class UploadUSACNumbersToDropboxTask extends AsyncTask<Void, Void, Void> 
 	@Override
 	protected void onPostExecute(Void nothing) {
 		// Transition to the results tab
-		Intent changeTab = new Intent();
-		changeTab.setAction(TTTimerTabsActivity.CHANGE_VISIBLE_TAB);
-		changeTab.putExtra(TTTimerTabsActivity.VISIBLE_TAB_TAG, FinishTab.FinishTabSpecName);
-		context.sendBroadcast(changeTab);
+//		Intent changeTab = new Intent();
+//		changeTab.setAction(TTTimerTabsActivity.CHANGE_VISIBLE_TAB);
+//		changeTab.putExtra(TTTimerTabsActivity.VISIBLE_TAB_TAG, ResultsTab.ResultsTabSpecName);
+//		context.sendBroadcast(changeTab);
 	}
 	
 	private void UploadFileToDropBox(String filename) {
