@@ -5,7 +5,15 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" 
     android:background="#FFFF"
-    style="@style/Padded" >
+    style="@style/Padded" >
+
+    <Button
+        android:id="@+id/btnExcel"
+        style="@style/Medium"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Excel Test" />
+
     <Button
         android:id="@+id/btnAddLocation"
         android:layout_width="fill_parent"

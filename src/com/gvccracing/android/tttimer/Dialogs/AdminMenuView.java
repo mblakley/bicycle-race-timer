@@ -1,5 +1,7 @@
 package com.gvccracing.android.tttimer.Dialogs;
 
+import java.io.File;
+
 import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.android.AndroidAuthSession;
 import com.dropbox.client2.session.AccessTokenPair;
@@ -9,8 +11,10 @@ import com.gvccracing.android.tttimer.R;
 import com.gvccracing.android.tttimer.AsyncTasks.UploadUSACNumbersToDropboxTask;
 import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
 import com.gvccracing.android.tttimer.Utilities.Calculations;
+import com.gvccracing.android.tttimer.Utilities.ExcelUtils;
 
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
@@ -22,6 +26,8 @@ import android.widget.TextView;
 
 public class AdminMenuView extends BaseDialog implements View.OnClickListener {
 	public static final String LOG_TAG = "AdminMenuView";
+	
+	private Button btnExcelTest;
 	
 	private Button btnAddLocation;
 	private Button btnEditLocation;
@@ -52,6 +58,9 @@ public class AdminMenuView extends BaseDialog implements View.OnClickListener {
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.dialog_admin_menu, container, false);
+		
+		btnExcelTest = (Button) v.findViewById(R.id.btnExcel);
+		btnExcelTest.setOnClickListener(this);
 
 		btnAddLocation = (Button) v.findViewById(R.id.btnAddLocation);
 		btnAddLocation.setOnClickListener(this);
@@ -121,6 +130,12 @@ public class AdminMenuView extends BaseDialog implements View.OnClickListener {
 	public void onClick(View v) { 
 		try{
 			FragmentManager fm = getFragmentManager();
+			if (v == btnExcelTest){
+				ExcelUtils test = new ExcelUtils();
+			    File rootDir = Environment.getExternalStorageDirectory();
+			    test.setInputFile(rootDir.toString() + "/excel/test.xls");
+			    test.read();
+			} else
 			if (v == btnAddRace){
 				AddRaceView addRaceDialog = new AddRaceView();
 				addRaceDialog.show(fm, AddRaceView.LOG_TAG);
