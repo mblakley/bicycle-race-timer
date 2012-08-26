@@ -36,6 +36,7 @@ import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
 import com.gvccracing.android.tttimer.Dialogs.ResetStartedRacersConfirmation;
 import com.gvccracing.android.tttimer.Dialogs.ResetTimerConfirmation;
 import com.gvccracing.android.tttimer.Dialogs.ResetTimerConfirmation.ResetTimerDialogListener;
+import com.gvccracing.android.tttimer.Utilities.Enums;
 
 public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ResetTimerDialogListener {
 
@@ -57,13 +58,7 @@ public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 	private ListView startOrderList;
 	private TextView lblStartPosition;
 	private TextView lblName;
-	//private ListView onDeckRacer;
 	private LinearLayout timerControls;
-
-	private Loader<Cursor> startOrderLoader = null;
-	private Loader<Cursor> onDeckLoader = null;
-	private Loader<Cursor> teamsStartOrderLoader = null;
-	private Loader<Cursor> teamOnDeckLoader = null;
 	
 	private boolean initialLoad = false;
 	
@@ -194,7 +189,7 @@ public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 			} 				
 		}
 		else{
-			Toast.makeText(getActivity(), "Unable to find race to start", 3000).show();
+			Toast.makeText(getActivity(), "Unable to find race to start", Toast.LENGTH_LONG).show();
 		}
 		race.close();
 		race = null;
@@ -317,6 +312,12 @@ public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 							cursor.moveToFirst();
 							lblName.setText(cursor.getString(cursor.getColumnIndex(Racer.FirstName)) + " " + cursor.getString(cursor.getColumnIndex(Racer.LastName)));
 							lblStartPosition.setText(Long.toString(cursor.getLong(cursor.getColumnIndex(RaceResults.StartOrder))));
+							
+							// Position the start order list based on the next person to start
+							int nextStartOrder = (int) cursor.getLong(cursor.getColumnIndex(RaceResults.StartOrder));
+							//if(startOrderList.getCount() >= nextStartOrder){
+								startOrderList.setSelectionFromTop(2, 0);
+							//}
 						}
 						
 				    	LinearLayout llOnDeck = (LinearLayout) getView().findViewById(R.id.llOnDeckRacer);
@@ -357,7 +358,11 @@ public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 					initialLoad = false;
 					break;
 				case START_ORDER_LOADER_START:
-					startOrderCA = new StartOrderCursorAdapter(getActivity(), null);
+					if(raceTypeID == Enums.RaceType.Criterium.ID()){
+						startOrderCA = new StartOrderCursorAdapter(getActivity(), null, false, false);
+					} else{
+						startOrderCA = new StartOrderCursorAdapter(getActivity(), null, true, true);
+					}
 					
 			        if( startOrderList != null){
 			        	startOrderList.setAdapter(startOrderCA);
@@ -466,31 +471,30 @@ public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 						// Set up the tab based on the race information
 						raceTypeID = cursor.getLong(cursor.getColumnIndex(Race.RaceType));
 						if(getView() != null){
-							if(raceTypeID == 1){
-								if( teamsStartOrderLoader == null){
-									teamsStartOrderLoader = getActivity().getSupportLoaderManager().initLoader(TEAM_START_ORDER_LOADER, null, this);
-								} else {
-									teamsStartOrderLoader = getActivity().getSupportLoaderManager().restartLoader(TEAM_START_ORDER_LOADER, null, this);
-								}
+							if(raceTypeID == Enums.RaceType.TeamTimeTrial.ID()){
+								getActivity().getSupportLoaderManager().restartLoader(TEAM_START_ORDER_LOADER, null, this);
 								
-								if( teamOnDeckLoader == null){
-									teamOnDeckLoader = getActivity().getSupportLoaderManager().initLoader(TEAM_ON_DECK_LOADER, null, this);
-								} else {
-									teamOnDeckLoader = getActivity().getSupportLoaderManager().restartLoader(TEAM_ON_DECK_LOADER, null, this);
-								}
+								getActivity().getSupportLoaderManager().restartLoader(TEAM_ON_DECK_LOADER, null, this);
 							}else {
-								if(onDeckLoader == null){
-								    // Initialize the cursor loader for the on deck list
-									onDeckLoader = getActivity().getSupportLoaderManager().initLoader(ON_DECK_LOADER_START, null, this);
-								} else {
-									onDeckLoader = getActivity().getSupportLoaderManager().restartLoader(ON_DECK_LOADER_START, null, this);
+
+								if(raceTypeID == Enums.RaceType.Criterium.ID()){
+									LinearLayout llOnDeck = (LinearLayout) getView().findViewById(R.id.llOnDeckRacer);
+									llOnDeck.setVisibility(View.GONE);
+									
+									LinearLayout llBottom = (LinearLayout) getView().findViewById(R.id.llBottom);
+									LinearLayout.LayoutParams bottomParams = (LinearLayout.LayoutParams)llBottom.getLayoutParams();
+									bottomParams.weight = 1.0f;
+									llBottom.setLayoutParams(bottomParams);
+								}else{
+									LinearLayout llBottom = (LinearLayout) getView().findViewById(R.id.llBottom);
+									LinearLayout.LayoutParams bottomParams = (LinearLayout.LayoutParams)llBottom.getLayoutParams();
+									bottomParams.weight = 0.85f;
+									llBottom.setLayoutParams(bottomParams);
+									
+									getActivity().getSupportLoaderManager().restartLoader(ON_DECK_LOADER_START, null, this);
 								}
 								
-								if(startOrderLoader == null){
-									startOrderLoader = getActivity().getSupportLoaderManager().initLoader(START_ORDER_LOADER_START, null, this);
-								} else {
-									startOrderLoader = getActivity().getSupportLoaderManager().restartLoader(START_ORDER_LOADER_START, null, this);
-								}
+								getActivity().getSupportLoaderManager().restartLoader(START_ORDER_LOADER_START, null, this);
 							}
 						}
 					}

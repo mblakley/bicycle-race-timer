@@ -30,6 +30,7 @@ import com.gvccracing.android.tttimer.Dialogs.AdminMenuView;
 import com.gvccracing.android.tttimer.Dialogs.MarshalLocations;
 import com.gvccracing.android.tttimer.Dialogs.OtherRaceResults;
 import com.gvccracing.android.tttimer.Dialogs.SeriesResultsView;
+import com.gvccracing.android.tttimer.Utilities.Enums;
 import com.gvccracing.android.tttimer.Utilities.TimeFormatter;
 import com.gvccracing.android.tttimer.Utilities.Enums.RaceType;
 
@@ -153,7 +154,7 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 							distance = "";
 						}
 						
-						if(raceTypeID == 1){							
+						if(raceTypeID == Enums.RaceType.TeamTimeTrial.ID()){							
 							raceLaps.setText(Long.toString(numRaceLaps));
 							llRaceLaps.setVisibility(View.VISIBLE);
 						}else{

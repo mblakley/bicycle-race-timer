@@ -33,6 +33,7 @@ import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
 import com.gvccracing.android.tttimer.Dialogs.AdminAuthView;
 import com.gvccracing.android.tttimer.Dialogs.EditRaceResultView;
 import com.gvccracing.android.tttimer.Dialogs.RacerPreviousResults;
+import com.gvccracing.android.tttimer.Utilities.Enums;
 
 public class ResultsTab extends BaseTab implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -249,7 +250,7 @@ public class ResultsTab extends BaseTab implements LoaderManager.LoaderCallbacks
 						// Set up the tab based on the race information
 						raceTypeID = cursor.getLong(cursor.getColumnIndex(Race.RaceType));
 						if(getView() != null){
-							if(raceTypeID == 1){								
+							if(raceTypeID == Enums.RaceType.TeamTimeTrial.ID()){								
 								if(categoryResultsList != null) {
 						        	categoryResultsList.setVisibility(View.GONE);
 						        	lblCategoryResults.setVisibility(View.GONE);

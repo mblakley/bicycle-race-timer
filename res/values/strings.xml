@@ -5,7 +5,7 @@
     <string name="RacerID">ID</string>
     <string name="AddNewRacer">Add New Racer</string>
     <string name="VerifyRacers">Verify Racers</string>
-    <string name="StartOrder"><u>Start Order</u></string>
+    <string name="StartList"><u>Start List</u></string>
 	<string name="btnNewRacer">Add New Racer</string>
 	<string name="btnNewRacerClickHandler">btnNewRacerClickHandler</string>
 	<string name="btnAddNewRacer">Submit New Racer</string>
@@ -230,4 +230,16 @@
 	<string name="NoNewImagesFound">No New Images Found</string>
 	<string name="Retry">Retry</string>
 	<string name="NoMarshalLocationImages">No marshal location images found for the current location!</string>
+	<string name="TimeUnit">min</string>
+	<string name="NumberOfMinutes">Race Length:</string>
+	<string name="Breakaway">Breakaway</string>
+	<string name="Chase">Chase</string>
+	<string name="Peleton">Peleton</string>
+	<string name="OffTheBack">Off the Back</string>
+	<string-array name="finish_groups_array">
+		<item>Breakaway</item>
+		<item>Chase</item>
+		<item>Peleton</item>
+		<item>Off the Back</item>
+	</string-array>
 </resources>

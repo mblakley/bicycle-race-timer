@@ -26,6 +26,7 @@ import com.gvccracing.android.tttimer.Dialogs.AddTeamView;
 import com.gvccracing.android.tttimer.Dialogs.EditRacerView;
 import com.gvccracing.android.tttimer.Dialogs.EditTeamView;
 import com.gvccracing.android.tttimer.Dialogs.StartOrderActions;
+import com.gvccracing.android.tttimer.Utilities.Enums;
 import com.gvccracing.android.tttimer.Utilities.RestartLoaderTextWatcher;
 
 import android.database.Cursor;
@@ -216,9 +217,14 @@ public class CheckInTab extends BaseTab implements LoaderManager.LoaderCallbacks
 				loader = new CursorLoader(getActivity(), Uri.withAppendedPath(TeamCheckInViewInclusive.CONTENT_URI, "group by " + TeamInfo.getTableName() + "." + TeamInfo._ID + "," + TeamInfo.TeamName), projection, selection, selectionArgs, sortOrder);
 				break;
 			case START_ORDER_LOADER_CHECKIN:
-				// Create the cursor adapter for the start order list
-				startOrderCA = new StartOrderCursorAdapter(getActivity(), null);
-
+				if(raceTypeID == Enums.RaceType.Criterium.ID()){
+					// Create the cursor adapter for the start order list without start order or time
+					startOrderCA = new StartOrderCursorAdapter(getActivity(), null, false, false);
+				} else{
+					// Create the cursor adapter for the start order list
+					startOrderCA = new StartOrderCursorAdapter(getActivity(), null, true, true);
+				}
+				
 				SetupList(startOrderList, startOrderCA, new OnItemLongClickListener(){
 					public boolean onItemLongClick(AdapterView<?> arg0, View v,
 							int pos, long id) {
@@ -302,16 +308,26 @@ public class CheckInTab extends BaseTab implements LoaderManager.LoaderCallbacks
 							LinearLayout llFilters = (LinearLayout) getView().findViewById(R.id.llFilters);
 							Button btnAddNewTeam = (Button) getView().findViewById(R.id.btnAddNewTeam);
 
-							if(raceTypeID == 1){						        
+							if(raceTypeID == Enums.RaceType.TeamTimeTrial.ID()){						        
 								btnAddNewTeam.setVisibility(View.VISIBLE);
 								btnAddRacer.setVisibility(View.GONE);
+								btnAddGhostRacer.setVisibility(View.GONE);
 								llFilters.setVisibility(View.GONE);
 
 								teamsCheckInLoader = getActivity().getSupportLoaderManager().restartLoader(TEAM_CHECKIN_LOADER, null, this);
 								teamStartOrderLoader = getActivity().getSupportLoaderManager().restartLoader(TEAM_START_ORDER_LOADER, null, this);
-							}else {								
+							} else if(raceTypeID == Enums.RaceType.Criterium.ID()){
+								btnAddNewTeam.setVisibility(View.GONE);
+								btnAddGhostRacer.setVisibility(View.GONE);
+								btnAddRacer.setVisibility(View.VISIBLE);
+								llFilters.setVisibility(View.VISIBLE);
+
+								checkInLoader = getActivity().getSupportLoaderManager().restartLoader(CHECKIN_LOADER_CHECKIN, null, this);
+								startOrderLoader = getActivity().getSupportLoaderManager().restartLoader(START_ORDER_LOADER_CHECKIN, null, this);
+							} else {								
 								btnAddNewTeam.setVisibility(View.GONE);
 								btnAddRacer.setVisibility(View.VISIBLE);
+								btnAddGhostRacer.setVisibility(View.VISIBLE);
 								llFilters.setVisibility(View.VISIBLE);
 
 								checkInLoader = getActivity().getSupportLoaderManager().restartLoader(CHECKIN_LOADER_CHECKIN, null, this);

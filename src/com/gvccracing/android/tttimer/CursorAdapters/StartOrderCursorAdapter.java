@@ -15,8 +15,14 @@ import android.widget.TextView;
 
 public class StartOrderCursorAdapter extends BaseCursorAdapter {
 	
-    public StartOrderCursorAdapter (Context context, Cursor c) {
+	boolean showStartOrder = true;
+	boolean showStartTime = true;
+	
+    public StartOrderCursorAdapter (Context context, Cursor c, boolean showStartOrder, boolean showStartTime) {
     	super(context, c, FLAG_REGISTER_CONTENT_OBSERVER);
+    	
+    	this.showStartOrder = showStartOrder;
+    	this.showStartTime = showStartOrder;
     }
 
     @Override
@@ -63,15 +69,22 @@ public class StartOrderCursorAdapter extends BaseCursorAdapter {
         
         TextView lblStartOrder = (TextView) v.findViewById(R.id.lblStartOrder);
         if (lblStartOrder != null) {
-        	lblStartOrder.setText(Integer.toString(startOrder));
+        	if(showStartOrder){
+        		lblStartOrder.setText(Integer.toString(startOrder));
+        		lblStartOrder.setVisibility(View.VISIBLE);
+        	}else{
+        		lblStartOrder.setVisibility(View.GONE);
+        	}
         }
         
         TextView lblStartTime = (TextView) v.findViewById(R.id.lblStartTime);
         if (lblStartTime != null) {
-//        	Time startTimeOffset = new Time(startTime);
-//        	SimpleDateFormat formatter = new SimpleDateFormat("m:ss");
-//        	lblStartTime.setText(formatter.format(startTimeOffset).toString());
-        	lblStartTime.setText(TimeFormatter.Format(startTime, true, true, true, true, false, false, false, false));
+        	if(showStartTime){
+        		lblStartTime.setText(TimeFormatter.Format(startTime, true, true, true, true, false, false, false, false));
+        		lblStartTime.setVisibility(View.VISIBLE);
+        	} else{
+        		lblStartTime.setVisibility(View.GONE);
+        	}
         }    	
     }
 }

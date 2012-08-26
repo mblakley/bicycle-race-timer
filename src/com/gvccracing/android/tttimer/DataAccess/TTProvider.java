@@ -5,6 +5,7 @@ import java.util.Calendar;
 import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
 import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewExclusive;
 import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewInclusive;
+import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.RacersAndGroups;
 import com.gvccracing.android.tttimer.DataAccess.LocationImagesCP.LocationImages;
 import com.gvccracing.android.tttimer.DataAccess.LookupGroupsCP.LookupGroups;
 import com.gvccracing.android.tttimer.DataAccess.PrimesCP.Primes;
@@ -20,6 +21,8 @@ import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsTeamOrRacerViewCP.RaceResultsTeamOrRacerView;
 import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
 import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
+import com.gvccracing.android.tttimer.DataAccess.RacerFinishGroupCP.RacerFinishGroup;
+import com.gvccracing.android.tttimer.DataAccess.RacerGroupCP.RacerGroup;
 import com.gvccracing.android.tttimer.DataAccess.RacerInfoViewCP.RacerInfoView;
 import com.gvccracing.android.tttimer.DataAccess.RacerPreviousResultsViewCP.RacerPreviousResultsView;
 import com.gvccracing.android.tttimer.DataAccess.TeamCheckInViewCP.TeamCheckInViewExclusive;
@@ -50,7 +53,7 @@ public class TTProvider extends ContentProvider {
     private static final String TAG = "DBAdapter";
     
     private static final String DATABASE_NAME = "GVCCRaces";
-    private static final int DATABASE_VERSION = 6;
+    private static final int DATABASE_VERSION = 7;
 	
 	private DatabaseHelper mDB;
 
@@ -151,6 +154,18 @@ public class TTProvider extends ContentProvider {
 			resultUri = Uri.withAppendedPath(resultUri, Long.toString(locationImage_ID));
 			
 			notifyUris = LocationImages.getAllUrisToNotifyOnChange();
+		} else if(uri.toString().contains(RacerGroup.CONTENT_URI.toString())){
+			long racerGroup_ID = mDB.getWritableDatabase().insert(RacerGroup.getTableName(), null, content);
+			
+			resultUri = Uri.withAppendedPath(resultUri, Long.toString(racerGroup_ID));
+			
+			notifyUris = RacerGroup.getAllUrisToNotifyOnChange();
+		} else if(uri.toString().contains(RacerFinishGroup.CONTENT_URI.toString())){
+			long racerFinishGroup_ID = mDB.getWritableDatabase().insert(RacerFinishGroup.getTableName(), null, content);
+			
+			resultUri = Uri.withAppendedPath(resultUri, Long.toString(racerFinishGroup_ID));
+			
+			notifyUris = RacerFinishGroup.getAllUrisToNotifyOnChange();
 		} else{
 			throw new UnsupportedOperationException("You're an idiot...add the uri " + uri.toString() + " to the TTProvider.insert if/else statement");
 		}
@@ -543,6 +558,52 @@ public class TTProvider extends ContentProvider {
 			locationImagesCursor.setNotificationUri(getContext().getContentResolver(), uri);	
 			Log.i("TTProvider", "query complete: uri=" + uri.toString() + " selection=" + selection);
 			return locationImagesCursor;
+		} else if(uri.toString().contains(RacerGroup.CONTENT_URI.toString())){
+			// RacerGroup
+			qBuilder.setTables(RacerGroup.getTableName());		
+			
+			Cursor racerGroupsCursor = qBuilder.query(mDB.getReadableDatabase(),
+													projection, 
+													selection, 
+													selectionArgs, null, null, sortOrder,
+													null);	
+			
+			racerGroupsCursor.setNotificationUri(getContext().getContentResolver(), uri);	
+			Log.i("TTProvider", "query complete: uri=" + uri.toString() + " selection=" + selection);
+			return racerGroupsCursor;
+		} else if(uri.toString().contains(RacerFinishGroup.CONTENT_URI.toString())){
+			// RacerFinishGroup
+			qBuilder.setTables(RacerFinishGroup.getTableName());		
+			
+			Cursor racerFinishGroupsCursor = qBuilder.query(mDB.getReadableDatabase(),
+													projection, 
+													selection, 
+													selectionArgs, null, null, sortOrder,
+													null);	
+			
+			racerFinishGroupsCursor.setNotificationUri(getContext().getContentResolver(), uri);	
+			Log.i("TTProvider", "query complete: uri=" + uri.toString() + " selection=" + selection);
+			return racerFinishGroupsCursor;
+		} else if(uri.toString().contains(RacersAndGroups.CONTENT_URI.toString())){
+			// RacerFinishGroup
+			qBuilder.setTables(RacersAndGroups.getTableName());	
+			
+			String groupBy = null;
+			if(!uri.getLastPathSegment().contains("~")){
+				if(uri.getLastPathSegment().contains("group by")){
+					groupBy = uri.getLastPathSegment().replace("group by", "");
+				}
+			}
+			
+			Cursor racersAndGroupsCursor = qBuilder.query(mDB.getReadableDatabase(),
+													projection, 
+													selection, 
+													selectionArgs, groupBy, null, sortOrder,
+													null);	
+			
+			racersAndGroupsCursor.setNotificationUri(getContext().getContentResolver(), uri);	
+			Log.i("TTProvider", "query complete: uri=" + uri.toString() + " selection=" + selection);
+			return racersAndGroupsCursor;
 		} else{
 			throw new UnsupportedOperationException("You're an idiot...add the uri " + uri.toString() + " to the TTProvider.query if/else statement");
 		}		
@@ -610,6 +671,14 @@ public class TTProvider extends ContentProvider {
 			numChanged = mDB.getWritableDatabase().update(LocationImages.getTableName(), content, selection, selectionArgs);
 
 			notifyUris = LocationImages.getAllUrisToNotifyOnChange();
+		} else if(uri.toString().contains(RacerGroup.CONTENT_URI.toString())){
+			numChanged = mDB.getWritableDatabase().update(RacerGroup.getTableName(), content, selection, selectionArgs);
+
+			notifyUris = RacerGroup.getAllUrisToNotifyOnChange();
+		} else if(uri.toString().contains(RacerFinishGroup.CONTENT_URI.toString())){
+			numChanged = mDB.getWritableDatabase().update(RacerFinishGroup.getTableName(), content, selection, selectionArgs);
+
+			notifyUris = RacerFinishGroup.getAllUrisToNotifyOnChange();
 		} else {
 			throw new UnsupportedOperationException("You're an idiot...add the uri " + uri.toString() + " to the TTProvider.update if/else statement");
 		}
@@ -785,6 +854,20 @@ public class TTProvider extends ContentProvider {
 	    		db.beginTransaction();
 	    		try{
 	    			db.execSQL(LocationImages.getCreate());
+			        db.setTransactionSuccessful();
+	    		} finally{
+	    			db.endTransaction();
+	    		}
+	    	} 
+	    	if(oldVersion < 7 && newVersion >= 7){
+	    		db.beginTransaction();
+	    		try{
+	    			db.execSQL(RacerGroup.getCreate());
+	    			db.execSQL("INSERT INTO " + RacerGroup.getTableName() + "(" + RacerGroup.GroupDescription + ") VALUES ('Breakaway');");
+	    			db.execSQL("INSERT INTO " + RacerGroup.getTableName() + "(" + RacerGroup.GroupDescription + ") VALUES ('Chase');");
+	    			db.execSQL("INSERT INTO " + RacerGroup.getTableName() + "(" + RacerGroup.GroupDescription + ") VALUES ('Peleton');");
+	    			db.execSQL("INSERT INTO " + RacerGroup.getTableName() + "(" + RacerGroup.GroupDescription + ") VALUES ('Off the Back');");
+	    			db.execSQL(RacerFinishGroup.getCreate());
 			        db.setTransactionSuccessful();
 	    		} finally{
 	    			db.endTransaction();

@@ -6,6 +6,7 @@ import com.gvccracing.android.tttimer.R;
 import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
 import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
 import com.gvccracing.android.tttimer.DataAccess.RaceLocationCP.RaceLocation;
+import com.gvccracing.android.tttimer.Utilities.Enums;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -38,6 +39,8 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 	private SimpleCursorAdapter locationsCursorAdapter = null;
 	protected Spinner raceLocation = null;
 	private EditText txtLaps = null;
+	private EditText txtTime = null;
+	private LinearLayout startInterval = null;
 	/**
      * This is a special intent action that means "load your tab data".
      */
@@ -69,19 +72,32 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 		locations = null;
 		
 		txtLaps = (EditText) v.findViewById(R.id.txtNumLaps);
+		txtTime = (EditText) v.findViewById(R.id.txtTime);
+		startInterval = (LinearLayout) v.findViewById(R.id.llStartInterval);
         
         Spinner raceType = (Spinner) v.findViewById(R.id.spinnerRaceType);
         raceType.setOnItemSelectedListener(new OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
         		LinearLayout laps = (LinearLayout) getView().findViewById(R.id.llLaps);
-            	if(id == 1){
+        		LinearLayout time = (LinearLayout) getView().findViewById(R.id.llTime);
+            	if(id == Enums.RaceType.TeamTimeTrial.ID()){
             		if(Long.parseLong(txtLaps.getText().toString()) <= 1){
             			txtLaps.setText("2");
             		}
             		laps.setVisibility(View.VISIBLE);
-            	}else{
+            		time.setVisibility(View.GONE);
+            		startInterval.setVisibility(View.VISIBLE);
+            	} else if(id == Enums.RaceType.Criterium.ID()){
+            		txtLaps.setText("5");
+            		txtTime.setText("30");
+            		laps.setVisibility(View.VISIBLE);
+            		time.setVisibility(View.VISIBLE);
+            		startInterval.setVisibility(View.GONE);
+            	} else{
             		txtLaps.setText("1");
             		laps.setVisibility(View.GONE);
+            		time.setVisibility(View.GONE);
+            		startInterval.setVisibility(View.VISIBLE);
             	}
             }
 
@@ -118,9 +134,10 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 	}
 	
 	protected long GetRaceStartInterval(){
+		long raceStartInterval = 0l;
+		if(startInterval.getVisibility() == View.VISIBLE){
 			Spinner startIntervalSpinner = (Spinner) getView().findViewById(R.id.spinnerStartInterval);
 			int raceStartIntervalID = (int)startIntervalSpinner.getSelectedItemId();
-			long raceStartInterval = 30l;
 			switch(raceStartIntervalID){
 				case 0:
 					raceStartInterval = 30l;
@@ -129,8 +146,9 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 					raceStartInterval = 60l;
 					break;
 			}
-			
-			return raceStartInterval;
+		}
+		
+		return raceStartInterval;
 	}
 	
 	protected long GetRaceTypeID(){

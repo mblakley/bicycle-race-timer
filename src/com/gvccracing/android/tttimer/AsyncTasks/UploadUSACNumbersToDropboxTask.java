@@ -30,6 +30,7 @@ import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
 import com.gvccracing.android.tttimer.DataAccess.TeamCheckInViewCP.TeamCheckInViewExclusive;
+import com.gvccracing.android.tttimer.Utilities.Enums;
 
 public class UploadUSACNumbersToDropboxTask extends AsyncTask<Void, Void, Void> {
 	private Context context;
@@ -73,7 +74,7 @@ public class UploadUSACNumbersToDropboxTask extends AsyncTask<Void, Void, Void> 
 			selectionArgs = null;
 			sortOrder = Racer.USACNumber;
 			Cursor usacNumbersCursor;
-			if(raceTypeID == 1){
+			if(raceTypeID == Enums.RaceType.TeamTimeTrial.ID()){
 				usacNumbersCursor = TeamCheckInViewExclusive.Read(context, projection, selection, selectionArgs, sortOrder);
 			}else{
 				usacNumbersCursor = CheckInViewExclusive.Read(context, projection, selection, selectionArgs, sortOrder);

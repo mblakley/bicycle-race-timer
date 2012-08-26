@@ -49,17 +49,7 @@ public class UnassignedTimeCursorAdapter extends BaseCursorAdapter {
 	        /**
 	         * Next set the name of the entry.
 	         */	        
-	        if (lblFinishTime != null) {
-	        	
-//	        	Time startTimeOffset = new Time(finishTime - raceStartTime);
-//	        	SimpleDateFormat formatter = new SimpleDateFormat("m:ss.SSS");
-//	        	if(finishTime - raceStartTime >= 36000000) {
-//	        		formatter = new SimpleDateFormat("HH:mm:ss.S");
-//	        	}
-//	        	else if(finishTime - raceStartTime >= 3600000) {
-//	        		formatter = new SimpleDateFormat("H:mm:ss.S");	
-//	        	}
-//	        	lblFinishTime.setText(formatter.format(startTimeOffset).toString());
+	        if (lblFinishTime != null) {	        	
 	        	lblFinishTime.setText(TimeFormatter.Format(finishTime - raceStartTime, true, true, true, true, true, false, false, false));
 	        }
     	}catch(Exception ex){
@@ -95,34 +85,8 @@ public class UnassignedTimeCursorAdapter extends BaseCursorAdapter {
 	         */	        
 	        CheckedTextView lblFinishTime = (CheckedTextView) v.findViewById(R.id.text1);
 	        if (lblFinishTime != null) {
-//	        	Time startTimeOffset = new Time(finishTime - raceStartTime);
-//	        	SimpleDateFormat formatter = new SimpleDateFormat("m:ss.SSS");
-//	        	if(finishTime - raceStartTime >= 36000000) {
-//	        		formatter = new SimpleDateFormat("HH:mm:ss.S");
-//	        	}
-//	        	else if(finishTime - raceStartTime >= 3600000) {
-//	        		formatter = new SimpleDateFormat("H:mm:ss.S");	
-//	        	}
-//	        	lblFinishTime.setText(formatter.format(startTimeOffset).toString());
 	        	lblFinishTime.setText(TimeFormatter.Format(finishTime - raceStartTime, true, true, true, true, true, false, false, false));
 	        }
-	        
-//	        String[] projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID + " as _id", RaceResults.StartOrder, Racer.FirstName, Racer.LastName};
-//			String selection = RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.StartTime + " IS NOT NULL" + " AND " + RaceResults.EndTime + " IS NULL";
-//			String[] selectionArgs = null;
-//			String sortOrder = RaceResults.StartOrder;
-//			Cursor unfinished = context.getContentResolver().query(CheckInViewExclusive.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
-//			getParentActivity().startManagingCursor(unfinished);  // OK, this is ugly and deprecated, but I'm being tricky here!
-//			
-//			Spinner spinAssignNumber = (Spinner) v.findViewById(R.id.spinnerAssignNumber);
-//	        
-//	        UnfinishedRacersCursorAdapter finishersCA = new UnfinishedRacersCursorAdapter(context, unfinished);
-//            spinAssignNumber.setAdapter(finishersCA);
-//            
-//	        Button btnAssign = (Button) v.findViewById(R.id.btnAssign);
-//	        if(btnAssign != null){
-//	        	btnAssign.setTag(unassignedTime_ID);
-//	        }
 		}catch(Exception ex){
 			Log.e(LOG_TAG(), ex.toString());
 		}

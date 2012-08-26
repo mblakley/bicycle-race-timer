@@ -4,6 +4,8 @@ import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
 import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
+import com.gvccracing.android.tttimer.DataAccess.RacerFinishGroupCP.RacerFinishGroup;
+import com.gvccracing.android.tttimer.DataAccess.RacerGroupCP.RacerGroup;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -63,6 +65,48 @@ public class CheckInViewCP {
         
 		public static int ReadCount(Context context, String[] fieldsToRetrieve, String selection, String[] selectionArgs, String sortOrder) {
 			Cursor checkIns = context.getContentResolver().query(CheckInViewExclusive.CONTENT_URI, fieldsToRetrieve, selection, selectionArgs, sortOrder);
+			int numCheckIns = checkIns.getCount();
+			if(checkIns != null){
+				checkIns.close();
+				checkIns = null;
+			}
+			return numCheckIns;
+		}
+    }
+    
+    // BaseColumn contains _id.
+    public static final class RacersAndGroups implements BaseColumns {
+
+        public static final Uri CONTENT_URI = Uri.withAppendedPath(TTProvider.CONTENT_URI, RacersAndGroups.class.getSimpleName() + "~");
+        
+        public static String getTableName(){
+        	return RacerClubInfo.getTableName() + 
+        			" JOIN " + Racer.getTableName() + 
+    				" ON (" + RacerClubInfo.getTableName() + "." + RacerClubInfo.Racer_ID + " = " + Racer.getTableName() + "." + Racer._ID + ")" +
+        			" JOIN " + RaceResults.getTableName() + 
+    				" ON (" + RaceResults.getTableName() + "." + RaceResults.RacerClubInfo_ID + " = " + RacerClubInfo.getTableName() + "." + RacerClubInfo._ID + ")" +
+    				" JOIN " + Race.getTableName() + 
+    				" ON (" + Race.getTableName() + "." + Race._ID + " = " + RaceResults.getTableName() + "." + RaceResults.Race_ID + ")" +
+        			" LEFT OUTER JOIN " + RacerFinishGroup.getTableName() + 
+    				" ON (" + RacerClubInfo.getTableName() + "." + RacerClubInfo._ID + " = " + RacerFinishGroup.getTableName() + "." + RacerFinishGroup.RacerClubInfo_ID + ")" + 
+    				" LEFT OUTER JOIN " + RacerGroup.getTableName() + 
+    				" ON (" + RacerFinishGroup.getTableName() + "." + RacerFinishGroup.RacerGroup_ID + " = " + RacerGroup.getTableName() + "." + RacerGroup._ID + ")";
+        }
+        
+        public static String getCreate(){
+        	return "";
+        }
+        
+        public static Uri[] getAllUrisToNotifyOnChange(){
+        	return new Uri[]{RacersAndGroups.CONTENT_URI, CheckInViewInclusive.CONTENT_URI};
+        }
+
+        public static Cursor Read(Context context, String[] fieldsToRetrieve, String selection, String[] selectionArgs, String sortOrder) {
+			return context.getContentResolver().query(RacersAndGroups.CONTENT_URI, fieldsToRetrieve, selection, selectionArgs, sortOrder);
+		}
+        
+		public static int ReadCount(Context context, String[] fieldsToRetrieve, String selection, String[] selectionArgs, String sortOrder) {
+			Cursor checkIns = context.getContentResolver().query(RacersAndGroups.CONTENT_URI, fieldsToRetrieve, selection, selectionArgs, sortOrder);
 			int numCheckIns = checkIns.getCount();
 			if(checkIns != null){
 				checkIns.close();

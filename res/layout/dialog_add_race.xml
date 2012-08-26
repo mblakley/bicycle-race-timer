@@ -22,7 +22,8 @@
     <LinearLayout
         android:id="@+id/linearLayout3"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical" >
 
         <TextView
             android:id="@+id/lblRaceType"
@@ -42,7 +43,8 @@
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical" >
 
         <TextView
             android:id="@+id/lblCourse"
@@ -59,9 +61,10 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/linearLayout2"
+        android:id="@+id/llStartInterval"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical" >
 
         <TextView
             android:id="@+id/lblStartInterval"
@@ -76,24 +79,57 @@
             android:layout_height="wrap_content" />
 
     </LinearLayout>
+    
+    <LinearLayout
+        android:id="@+id/llTime"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:weightSum="1" 
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/lblTime"
+            style="@style/Medium"
+            android:layout_width="0dip"
+            android:layout_weight="0.4"
+            android:layout_height="wrap_content"
+            android:text="@string/NumberOfMinutes" />
+
+        <EditText
+            android:id="@+id/txtTime"
+            style="@style/Medium.Padded"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:inputType="number" />
+
+        <TextView
+            android:id="@+id/lblTimeUnit"
+            style="@style/Small"
+            android:layout_width="0dip"
+            android:layout_weight="0.1"
+            android:layout_height="wrap_content"
+            android:text="@string/TimeUnit" />
+    </LinearLayout>
     
     <LinearLayout
         android:id="@+id/llLaps"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone" >
+        android:visibility="gone"
+        android:gravity="center_vertical" >
 
         <TextView
             android:id="@+id/lblLaps"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/NumberOfLaps"
-            android:layout_gravity="top" 
         	style="@style/Medium" />
 
-        <EditText android:layout_height="wrap_content" 
+        <EditText 
+            android:layout_height="wrap_content" 
 	        android:id="@+id/txtNumLaps" 
-	        android:layout_gravity="fill_vertical" 
 	        android:layout_width="fill_parent" 
 	        style="@style/Medium.Padded" 
 	        android:inputType="number" />

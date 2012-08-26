@@ -33,20 +33,22 @@
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:weightSum="1" >
 
         <EditText
             android:id="@+id/txtDistance"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="0.9"
         	style="@style/Medium.Padded"
         	android:inputType="numberDecimal" />
 
         <TextView
             android:id="@+id/lblDistanceUnit"
-            android:layout_width="fill_parent"
+            android:layout_width="0dip"
             android:layout_height="wrap_content"
+            android:layout_weight="0.1"
         	style="@style/Medium"
         	android:layout_marginRight="10sp" />
 

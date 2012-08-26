@@ -60,12 +60,70 @@
 	    </LinearLayout>
     </LinearLayout>    
 
-    <Button
-        android:id="@+id/btnRacerFinished"
+    <LinearLayout
+        android:id="@+id/llFinishButtons"
         android:layout_width="fill_parent"
         android:layout_height="0dip"
-        android:state_enabled="false"
-        android:text="@string/RacerFinished"
-        style="@style/Medium.Padded"
-        android:layout_weight="0.1" />
+        android:orientation="horizontal"
+        android:layout_weight="0.1">
+
+	    <TableLayout
+	        android:id="@+id/tblGroupButtons"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:stretchColumns="*"
+	        android:shrinkColumns="*"
+	        android:visibility="gone"
+	        android:gravity="bottom" >
+
+	        <TableRow
+	            android:id="@+id/tableRow1"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content" >
+	            <Button
+			        android:id="@+id/btnBreakaway"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:state_enabled="false"
+			        android:text="@string/Breakaway"
+			        style="@style/Medium" />
+			    <Button
+			        android:id="@+id/btnChase"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:state_enabled="false"
+			        android:text="@string/Chase"
+			        style="@style/Medium" />
+	        </TableRow>
+
+	        <TableRow
+	            android:id="@+id/tableRow2"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content" >
+			    
+			    <Button
+			        android:id="@+id/btnPeleton"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:state_enabled="false"
+			        android:text="@string/Peleton"
+			        style="@style/Medium" />
+			    
+			    <Button
+			        android:id="@+id/btnOffTheBack"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:state_enabled="false"
+			        android:text="@string/OffTheBack"
+			        style="@style/Medium" />
+	        </TableRow>
+	    </TableLayout>
+	    <Button
+	        android:id="@+id/btnRacerFinished"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:state_enabled="false"
+	        android:text="@string/RacerFinished"
+	        style="@style/Medium" />	    
+    </LinearLayout>
 </LinearLayout>

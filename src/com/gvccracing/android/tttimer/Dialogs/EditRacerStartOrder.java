@@ -8,6 +8,7 @@ import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
 import com.gvccracing.android.tttimer.DataAccess.TeamCheckInViewCP.TeamCheckInViewExclusive;
 import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
+import com.gvccracing.android.tttimer.Utilities.Enums;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -92,10 +93,10 @@ public class EditRacerStartOrder extends BaseDialog implements View.OnClickListe
 					Cursor allStartOrders = RaceResults.Read(getActivity(), new String[]{RaceResults._ID, RaceResults.StartOrder, RaceResults.StartTimeOffset, RaceResults.StartTime}, RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name), null, RaceResults.StartOrder);
 					if(origStartOrder > newStartOrder){
 						// Notify the user that you can't move a racer up in the order
-						Toast.makeText(getActivity(), "Can't move a racer up in the order!", 3000).show();
+						Toast.makeText(getActivity(), "Can't move a racer up in the order!", Toast.LENGTH_LONG).show();
 					} else if(newStartOrder > allStartOrders.getCount()){
 						// Notify the user that you can't move a racer past the end
-						Toast.makeText(getActivity(), "Can't move a racer past the maximum start order (" + allStartOrders.getCount() + ")!", 3000).show();
+						Toast.makeText(getActivity(), "Can't move a racer past the maximum start order (" + allStartOrders.getCount() + ")!", Toast.LENGTH_LONG).show();
 					} else {
 						// Update all race results that have higher start order than the racer to delete.  Change the start order and start time offset
 						if(allStartOrders.getCount() > 0){
@@ -201,7 +202,7 @@ public class EditRacerStartOrder extends BaseDialog implements View.OnClickListe
 						// Set up the tab based on the race information
 						raceTypeID = cursor.getLong(cursor.getColumnIndex(Race.RaceType));
 						if(getView() != null){
-							if(raceTypeID == 1){	
+							if(raceTypeID == Enums.RaceType.TeamTimeTrial.ID()){	
 								teamStartOrderLoader = getActivity().getSupportLoaderManager().restartLoader(TEAM_START_ORDER_LOADER, null, this);
 							}else {								
 								startOrderLoader = getActivity().getSupportLoaderManager().restartLoader(RACER_START_ORDER_LOADER, null, this);

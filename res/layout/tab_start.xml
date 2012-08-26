@@ -62,7 +62,7 @@
 		        android:id="@+id/lblStartOrder"
 		        android:layout_width="fill_parent"
 		        android:layout_height="wrap_content"
-		        android:text="@string/StartOrder"
+		        android:text="@string/StartList"
 		        style="@style/Medium" />		
 			<ListView
 			    android:id="@+id/svStartOrder"
