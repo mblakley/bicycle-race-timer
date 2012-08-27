@@ -10,7 +10,7 @@
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
     <application
         android:icon="@drawable/gvcc"
-        android:label="@string/app_name" 
+        android:label="@string/club_app_name" 
         android:theme="@style/CustomTheme">
         <activity
             android:label="@string/app_name"
@@ -20,7 +20,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-		<activity android:name=".Utilities.UploadToDropBox" android:label="Upload to DropBox" />
+<!--         <activity -->
+<!--             android:label="@string/usac_app_name" -->
+<!--             android:name=".USACOfficialActivity" > -->
+<!--             <intent-filter > -->
+<!--                 <action android:name="android.intent.action.MAIN" /> -->
+<!--                 <category android:name="android.intent.category.LAUNCHER" /> -->
+<!--             </intent-filter> -->
+<!--         </activity> -->
+<!-- 		<activity android:name=".Utilities.UploadToDropBox" android:label="Upload to DropBox" /> -->
 		<activity
 			android:name="com.dropbox.client2.android.AuthActivity"
 			android:launchMode="singleTask"

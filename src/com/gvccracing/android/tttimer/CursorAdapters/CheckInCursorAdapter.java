@@ -45,7 +45,7 @@ public class CheckInCursorAdapter extends BaseCursorAdapter {
 	        Long racerInfo_ID = c.getLong(0);
 	        v.setTag(racerInfo_ID);
 
-	        Cursor raceResult = RaceResults.Read(context, new String[]{RaceResults._ID}, RaceResults.RacerClubInfo_ID + "=? AND " + RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name), new String[]{Long.toString(racerInfo_ID)}, null);
+	        Cursor raceResult = RaceResults.Read(context, new String[]{RaceResults._ID}, RaceResults.RacerRegistration_ID + "=? AND " + RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name), new String[]{Long.toString(racerInfo_ID)}, null);
 	        /**
 	         * Next set the name of the entry.
 	         */     

@@ -55,7 +55,7 @@ public class AssignTimeTask extends AsyncTask<Long, Void, AssignResult> {
 			UnassignedTimes.Update(context, unassignedTime_ID, null, null, raceResult_ID);
 	    	
 	    	// Get the race result record based on the racerInfo_ID and the race_ID
-	    	Cursor raceResultToAssignTo = RaceResults.Read(context, new String[]{RaceResults._ID, RaceResults.StartTime, RaceResults.RacerClubInfo_ID}, RaceResults._ID + " = ?", 
+	    	Cursor raceResultToAssignTo = RaceResults.Read(context, new String[]{RaceResults._ID, RaceResults.StartTime, RaceResults.RacerRegistration_ID}, RaceResults._ID + " = ?", 
 	    																  new String[]{raceResult_ID.toString()}, null);
 	    	raceResultToAssignTo.moveToFirst();
 	    	
@@ -73,7 +73,7 @@ public class AssignTimeTask extends AsyncTask<Long, Void, AssignResult> {
 			RaceResults.Update(context, content, RaceResults._ID + "= ?", new String[]{Long.toString(raceResult_ID)});
 	    	
 			// Setup notification of assignment
-			Hashtable<String, Object> racerValues = RacerInfoView.getValues(context, raceResultToAssignTo.getLong(raceResultToAssignTo.getColumnIndex(RaceResults.RacerClubInfo_ID)));
+			Hashtable<String, Object> racerValues = RacerInfoView.getValues(context, raceResultToAssignTo.getLong(raceResultToAssignTo.getColumnIndex(RaceResults.RacerRegistration_ID)));
 			String racerName = racerValues.get(Racer.FirstName).toString() + " " + racerValues.get(Racer.LastName).toString();
 			
 			result.message = "Assigned time " + TimeFormatter.Format(elapsedTime, true, true, true, true, true, false, false, false) + " -> " + racerName;

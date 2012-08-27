@@ -10,7 +10,7 @@ import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewExclus
 import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewInclusive;
 import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsTeamOrRacerViewCP.RaceResultsTeamOrRacerView;
-import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
+import com.gvccracing.android.tttimer.DataAccess.RacerRegistrationCP.RacerRegistration;
 import com.gvccracing.android.tttimer.DataAccess.TeamCheckInViewCP.TeamCheckInViewExclusive;
 import com.gvccracing.android.tttimer.DataAccess.TeamCheckInViewCP.TeamCheckInViewInclusive;
 import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
@@ -23,7 +23,7 @@ public class RaceResultsCP {
         public static final Uri CONTENT_URI = Uri.withAppendedPath(TTProvider.CONTENT_URI, RaceResults.class.getSimpleName() + "~");
         
         // Table column
-        public static final String RacerClubInfo_ID = "RacerClubInfo_ID";
+        public static final String RacerRegistration_ID = "RacerRegistration_ID";
         public static final String TeamInfo_ID = "TeamInfo_ID";
         public static final String Race_ID = "Race_ID";
         public static final String StartOrder = "StartOrder";
@@ -43,7 +43,7 @@ public class RaceResultsCP {
         public static String getCreate(){
         	return "create table " + RaceResults.getTableName() 
         	        + " (" + _ID + " integer primary key autoincrement, "
-        	        + RacerClubInfo_ID + " integer references " + RacerClubInfo.getTableName() + "(" + RacerClubInfo._ID + ") null, "
+        	        + RacerRegistration_ID + " integer references " + RacerRegistration.getTableName() + "(" + RacerRegistration._ID + ") null, "
         	        + TeamInfo_ID + " integer references " + TeamInfo.getTableName() + "(" + TeamInfo._ID + ") null, "
         	        + Race_ID + " integer references " + Race.getTableName() + "(" + Race._ID + ") not null, "
         	        + StartOrder + " integer not null,"
@@ -63,12 +63,12 @@ public class RaceResultsCP {
         }
 
 		public static Uri Create(Context context,
-				Long racerInfo_ID, long race_ID, int startOrder,
+				Long racerRegistration_ID, long race_ID, int startOrder,
 				Long startTimeOffset, Long startTime, Long endTime,
 				Long elapsedTime, Integer overallPlacing,
 				Integer categoryPlacing, Integer points, Integer primePoints, Long teamInfo_ID) {
 			ContentValues content = new ContentValues();
-	     	content.put(RaceResults.RacerClubInfo_ID, racerInfo_ID);
+	     	content.put(RaceResults.RacerRegistration_ID, racerRegistration_ID);
 	     	content.put(RaceResults.Race_ID, race_ID);
 	     	content.put(RaceResults.StartOrder, startOrder);
 	     	content.put(RaceResults.StartTimeOffset, startTimeOffset);

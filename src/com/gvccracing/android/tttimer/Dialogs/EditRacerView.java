@@ -121,7 +121,7 @@ public class EditRacerView extends AddRacerView implements View.OnClickListener,
 		String sortOrder = null;
 		switch(id){
 			case RACER_INFO_LOADER:
-				projection = new String[]{RacerClubInfo.Racer_ID, Racer.LastName, Racer.FirstName, Racer.USACNumber, RacerClubInfo.Category};
+				projection = new String[]{RacerClubInfo.RacerUSACInfo_ID, Racer.LastName, Racer.FirstName, Racer.USACNumber, RacerClubInfo.Category};
 				selection = RacerClubInfo.getTableName() + "." + RacerClubInfo._ID + "=? AND " + RacerClubInfo.Upgraded + "=?";;
 				selectionArgs = new String[]{Long.toString(racerClubInfo_ID), Long.toString(0l)};
 				loader = new CursorLoader(getActivity(), CheckInViewInclusive.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
@@ -137,7 +137,7 @@ public class EditRacerView extends AddRacerView implements View.OnClickListener,
 			switch(loader.getId()){
 				case RACER_INFO_LOADER:	
 					cursor.moveToFirst();
-					racer_ID = cursor.getLong(cursor.getColumnIndex(RacerClubInfo.Racer_ID)); 
+					racer_ID = cursor.getLong(cursor.getColumnIndex(RacerClubInfo.RacerUSACInfo_ID)); 
 					
 					txtFirstName.setText(cursor.getString(cursor.getColumnIndex(Racer.FirstName)));
 					txtLastName.setText(cursor.getString(cursor.getColumnIndex(Racer.LastName)));

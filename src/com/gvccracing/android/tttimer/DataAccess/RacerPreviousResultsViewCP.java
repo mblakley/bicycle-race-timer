@@ -10,6 +10,8 @@ import com.gvccracing.android.tttimer.DataAccess.RaceLocationCP.RaceLocation;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
 import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
+import com.gvccracing.android.tttimer.DataAccess.RacerRegistrationCP.RacerRegistration;
+import com.gvccracing.android.tttimer.DataAccess.RacerUSACInfoCP.RacerUSACInfo;
 
 public class RacerPreviousResultsViewCP {
 	// BaseColumn contains _id.
@@ -18,11 +20,15 @@ public class RacerPreviousResultsViewCP {
         public static final Uri CONTENT_URI = Uri.withAppendedPath(TTProvider.CONTENT_URI, RacerPreviousResultsView.class.getSimpleName());
         
         public static String getTableName(){
-        	return RacerClubInfo.getTableName() + 
-        			" JOIN " + Racer.getTableName() + 
-    				" ON (" + RacerClubInfo.getTableName() + "." + RacerClubInfo.Racer_ID + " = " + Racer.getTableName() + "." + Racer._ID + ")" +
+        	return RacerRegistration.getTableName() + 
+        			" JOIN " + RacerUSACInfo.getTableName() + 
+        			" ON (" + RacerUSACInfo.getTableName() + "." + RacerUSACInfo._ID + " = " + RacerRegistration.getTableName() + "." + RacerRegistration._ID + ")" +
+        			" JOIN " + Racer.getTableName() +
+    				" ON (" + RacerUSACInfo.getTableName() + "." + RacerUSACInfo.Racer_ID + " = " + Racer.getTableName() + "." + Racer._ID + ")" +
+        			" JOIN " + RacerClubInfo.getTableName() + 
+    				" ON (" + RacerClubInfo.getTableName() + "." + RacerClubInfo.RacerUSACInfo_ID + " = " + RacerUSACInfo.getTableName() + "." + RacerUSACInfo._ID + ")" +
         			" JOIN " + RaceResults.getTableName() + 
-    				" ON (" + RacerClubInfo.getTableName() + "." + RacerClubInfo._ID + " = " + RaceResults.getTableName() + "." + RaceResults.RacerClubInfo_ID + ")" +
+    				" ON (" + RacerRegistration.getTableName() + "." + RacerRegistration._ID + " = " + RaceResults.getTableName() + "." + RaceResults.RacerRegistration_ID + ")" +
 		        	" JOIN " + Race.getTableName() + 
 					" ON (" + RaceResults.getTableName() + "." + RaceResults.Race_ID + " = " + Race.getTableName() + "." + Race._ID + ")" + 
 					" JOIN " + RaceLocation.getTableName() + 

@@ -81,6 +81,7 @@ public class AddRacerView extends BaseDialog implements View.OnClickListener {
  	 */
  	private boolean AddNewRacer(String firstName, String lastName, String usacNumber, String category) 
  	{
+ 		long categoryID = 0;
  		boolean success = false;
  		// If none of the fields are blank, we're ok to add the record
  		if(firstName.trim().length() != 0 && lastName.trim().length() != 0 && usacNumber.trim().length() != 0){
@@ -94,7 +95,7 @@ public class AddRacerView extends BaseDialog implements View.OnClickListener {
  				// Found at least one other racer with the same name.
  				racer_ID = previousRacers.getLong(previousRacers.getColumnIndex(Racer._ID));
  				
- 				selection = RacerClubInfo.Racer_ID + "=? and " + RacerClubInfo.Upgraded + "=?";
+ 				selection = RacerClubInfo.RacerUSACInfo_ID + "=? and " + RacerClubInfo.Upgraded + "=?";
  	 			selectionArgs = new String[]{Long.toString(racer_ID), Long.toString(0l)}; 
  				
  	 			// Get the current category of this racer
@@ -108,7 +109,7 @@ public class AddRacerView extends BaseDialog implements View.OnClickListener {
 	 				String racerCat = racerCategory.getString(racerCategory.getColumnIndex(RacerClubInfo.Category));
 	 				// If the new category doesn't equal the old category, do an upgrade
 	 				if(!racerCat.equals(category)){
-	 					Toast.makeText(getActivity(), R.string.IdenticalRacerUpgrade, 4000);
+	 					Toast.makeText(getActivity(), R.string.IdenticalRacerUpgrade, Toast.LENGTH_LONG).show();
 	 					RacerClubInfo.Update(getActivity(), racerClubInfo_ID, null, null, null, null, null, null, null, null, null, true);
 	 				}
  				}
@@ -132,7 +133,7 @@ public class AddRacerView extends BaseDialog implements View.OnClickListener {
  			// Create the RacerClubInfo record
  			int age = 0;
  			Long gvccID = null;
-	     	resultUri = RacerClubInfo.Create(getActivity(), racer_ID, "0", year, category, 0, 0, 0, age, gvccID, false);
+	     	resultUri = RacerClubInfo.Create(getActivity(), racer_ID, "0", year, categoryID, 0, 0, 0, age, gvccID, false);
 	     	racerInfo_ID = Long.parseLong(resultUri.getLastPathSegment());
  			Log.i(LOG_TAG, "AddNewRacer racerInfo_ID: " + Long.toString(racerInfo_ID));
  			if(checkin){
@@ -187,17 +188,17 @@ public class AddRacerView extends BaseDialog implements View.OnClickListener {
 				String usacNumber = txtUSACNumber.getText().toString();
 		
 				if(firstName.trim().equals("")){
-					Toast.makeText(getActivity(), "Please enter a first name", 3000).show();
+					Toast.makeText(getActivity(), "Please enter a first name", Toast.LENGTH_LONG).show();
 					return;
 				}
 				
 				if(lastName.trim().equals("")){
-					Toast.makeText(getActivity(), "Please enter a last name", 3000).show();
+					Toast.makeText(getActivity(), "Please enter a last name", Toast.LENGTH_LONG).show();
 					return;
 				}
 
 				if(usacNumber.trim().equals("")){
-					Toast.makeText(getActivity(), "Please enter a USAC license number", 3000).show();
+					Toast.makeText(getActivity(), "Please enter a USAC license number", Toast.LENGTH_LONG).show();
 					return;
 				}
 				

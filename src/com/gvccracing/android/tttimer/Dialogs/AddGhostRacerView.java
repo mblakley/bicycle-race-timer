@@ -72,7 +72,8 @@ public class AddGhostRacerView extends BaseDialog implements View.OnClickListene
 		int year = Calendar.getInstance().get(Calendar.YEAR);
 		
 		long racerClubInfo_ID = 0;		
-		selection = RacerClubInfo.Racer_ID + "=? and " + RacerClubInfo.Year + "=?";
+		long racerUSACInfo_ID = 0;
+		selection = RacerClubInfo.RacerUSACInfo_ID + "=? and " + RacerClubInfo.Year + "=?";
 		selectionArgs = new String[]{Long.toString(racer_ID), Integer.toString(year)};
 		Cursor previousGhostRacerClubInfo = RacerClubInfo.Read(getActivity(), new String[]{RacerClubInfo._ID}, selection, selectionArgs, null);
 		if(previousGhostRacerClubInfo != null && previousGhostRacerClubInfo.getCount() > 0){
@@ -81,7 +82,8 @@ public class AddGhostRacerView extends BaseDialog implements View.OnClickListene
 			racerClubInfo_ID = previousGhostRacerClubInfo.getLong(previousGhostRacerClubInfo.getColumnIndex(RacerClubInfo._ID));
 		}else{
 			// Create the RacerClubInfo record
-	     	resultUri = RacerClubInfo.Create(getActivity(), racer_ID, "0", year, "G", 0, 0, 0, 0, null, false);
+			long categoryID = 0;
+	     	resultUri = RacerClubInfo.Create(getActivity(), racerUSACInfo_ID, "0", year, categoryID, 0, 0, 0, 0, null, false);
 	     	racerClubInfo_ID = Long.parseLong(resultUri.getLastPathSegment());
 		}	
 		if(previousGhostRacerClubInfo != null){

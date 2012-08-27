@@ -7,8 +7,10 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
+import com.gvccracing.android.tttimer.DataAccess.ClubCategoryCP.ClubCategory;
 import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
 import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
+import com.gvccracing.android.tttimer.DataAccess.RacerUSACInfoCP.RacerUSACInfo;
 
 public class RacerInfoViewCP {
 	// BaseColumn contains _id.
@@ -17,8 +19,10 @@ public class RacerInfoViewCP {
         public static final Uri CONTENT_URI = Uri.withAppendedPath(TTProvider.CONTENT_URI, RacerInfoView.class.getSimpleName() + "~");
         
         public static String getTableName(){
-        	return Racer.getTableName() + " JOIN " + RacerClubInfo.getTableName() + 
-					" ON (" + RacerClubInfo.getTableName() + "." + RacerClubInfo.Racer_ID + " = " + Racer.getTableName() + "._ID)";
+        	return Racer.getTableName() + 
+        			" JOIN " + RacerUSACInfo.getTableName() + " ON (" + RacerUSACInfo.getTableName() + "." + RacerUSACInfo.Racer_ID + " = " + Racer.getTableName() + "._ID)" +
+        			" JOIN " + RacerClubInfo.getTableName() + " ON (" + RacerClubInfo.getTableName() + "." + RacerClubInfo.RacerUSACInfo_ID + " = " + RacerUSACInfo.getTableName() + "._ID)" +
+        			" JOIN " + ClubCategory.getTableName() + " ON (" + RacerClubInfo.getTableName() + "." + RacerClubInfo.ClubCategory_ID + " = " + ClubCategory.getTableName() + "._ID)";
         }
         
         public static String getCreate(){
@@ -40,16 +44,16 @@ public class RacerInfoViewCP {
 			if(racerCursor != null && racerCursor.getCount() > 0){
 				racerCursor.moveToFirst();
 				racerValues.put(RacerClubInfo._ID, racerClubInfo_ID);
-				racerValues.put(RacerClubInfo.Racer_ID, racerCursor.getLong(racerCursor.getColumnIndex(RacerClubInfo.Racer_ID)));
-				racerValues.put(RacerClubInfo.CheckInID, racerCursor.getString(racerCursor.getColumnIndex(RacerClubInfo.Racer_ID)));
-				racerValues.put(RacerClubInfo.Year, racerCursor.getLong(racerCursor.getColumnIndex(RacerClubInfo.Racer_ID)));
-				racerValues.put(RacerClubInfo.Category, racerCursor.getString(racerCursor.getColumnIndex(RacerClubInfo.Racer_ID)));
-				racerValues.put(RacerClubInfo.TTPoints, racerCursor.getLong(racerCursor.getColumnIndex(RacerClubInfo.Racer_ID)));
-				racerValues.put(RacerClubInfo.RRPoints, racerCursor.getLong(racerCursor.getColumnIndex(RacerClubInfo.Racer_ID)));
-				racerValues.put(RacerClubInfo.PrimePoints, racerCursor.getLong(racerCursor.getColumnIndex(RacerClubInfo.Racer_ID)));
-				racerValues.put(RacerClubInfo.RacerAge, racerCursor.getLong(racerCursor.getColumnIndex(RacerClubInfo.Racer_ID)));
-				racerValues.put(RacerClubInfo.GVCCID, racerCursor.getLong(racerCursor.getColumnIndex(RacerClubInfo.Racer_ID)));
-				racerValues.put(RacerClubInfo.Upgraded, racerCursor.getLong(racerCursor.getColumnIndex(RacerClubInfo.Racer_ID)));
+				racerValues.put(RacerClubInfo.CheckInID, racerCursor.getString(racerCursor.getColumnIndex(RacerClubInfo.CheckInID)));
+				racerValues.put(RacerClubInfo.Year, racerCursor.getLong(racerCursor.getColumnIndex(RacerClubInfo.Year)));
+				racerValues.put(RacerClubInfo.ClubCategory_ID, racerCursor.getString(racerCursor.getColumnIndex(RacerClubInfo.ClubCategory_ID)));
+				racerValues.put(RacerClubInfo.TTPoints, racerCursor.getLong(racerCursor.getColumnIndex(RacerClubInfo.TTPoints)));
+				racerValues.put(RacerClubInfo.RRPoints, racerCursor.getLong(racerCursor.getColumnIndex(RacerClubInfo.RRPoints)));
+				racerValues.put(RacerClubInfo.PrimePoints, racerCursor.getLong(racerCursor.getColumnIndex(RacerClubInfo.PrimePoints)));
+				racerValues.put(RacerClubInfo.RacerAge, racerCursor.getLong(racerCursor.getColumnIndex(RacerClubInfo.RacerAge)));
+				racerValues.put(RacerClubInfo.GVCCID, racerCursor.getLong(racerCursor.getColumnIndex(RacerClubInfo.GVCCID)));
+				racerValues.put(RacerClubInfo.Upgraded, racerCursor.getLong(racerCursor.getColumnIndex(RacerClubInfo.Upgraded)));
+				racerValues.put(RacerUSACInfo.Racer_ID, racerCursor.getLong(racerCursor.getColumnIndex(RacerUSACInfo.Racer_ID)));
 				racerValues.put(Racer.FirstName, racerCursor.getString(racerCursor.getColumnIndex(Racer.FirstName)));
 				racerValues.put(Racer.LastName, racerCursor.getString(racerCursor.getColumnIndex(Racer.LastName)));
 				racerValues.put(Racer.USACNumber, racerCursor.getLong(racerCursor.getColumnIndex(Racer.USACNumber)));

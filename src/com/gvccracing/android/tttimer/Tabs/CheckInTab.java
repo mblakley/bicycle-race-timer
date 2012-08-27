@@ -14,6 +14,7 @@ import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
 import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewExclusive;
 import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewInclusive;
 import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
+import com.gvccracing.android.tttimer.DataAccess.RaceCategoryCP.RaceCategory;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
 import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
@@ -186,7 +187,7 @@ public class CheckInTab extends BaseTab implements LoaderManager.LoaderCallbacks
 	    		});	
 				
 				projection = new String[]{RacerClubInfo.getTableName() + "." + RacerClubInfo._ID + " as _id", Racer.LastName, Racer.FirstName};
-				selection = RacerClubInfo.Year + "=? AND " + RacerClubInfo.Upgraded + "=? AND " + RacerClubInfo.Category + "!=?";
+				selection = RacerClubInfo.Year + "=? AND " + RacerClubInfo.Upgraded + "=? AND " + RaceCategory.FullCategoryName + "!=?";
 				selectionArgs = new String[]{ Integer.toString(Calendar.getInstance().get(Calendar.YEAR)), Long.toString(0l), "G"};
 				sortOrder = Racer.LastName;
 				String racerNameText = racerNameSearchText.getText().toString();

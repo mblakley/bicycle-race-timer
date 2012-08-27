@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">GVCC TT Timer</string>
+    <string name="club_app_name">Time Trial Timer</string>
+    <string name="usac_app_name">USAC Time Trial Timer</string>
     <string name="CheckIns">Check In</string>
     <string name="RacerID">ID</string>
     <string name="AddNewRacer">Add New Racer</string>

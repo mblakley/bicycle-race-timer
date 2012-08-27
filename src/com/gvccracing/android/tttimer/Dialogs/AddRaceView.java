@@ -154,7 +154,12 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 		try{
 			if (v == btnAddNewRace){
 				EditText txtLaps = (EditText) getView().findViewById(R.id.txtNumLaps);
-				Uri resultUri = Race.Create(getActivity(), GetRaceLocationID(), GetRaceDate(), null, GetRaceTypeID(), GetRaceStartInterval(), Long.parseLong(txtLaps.getText().toString()));
+				String eventName = "";
+				Long eventID = 0l;
+				String discipline = "";
+				Long series = 0l;
+				String scoring = "Both";
+				Uri resultUri = Race.Create(getActivity(), GetRaceLocationID(), GetRaceDate(), null, GetRaceTypeID(), GetRaceStartInterval(), Long.parseLong(txtLaps.getText().toString()), eventName, eventID, discipline, series, scoring);
 	 			long race_ID = Long.parseLong(resultUri.getLastPathSegment());
 	 			
 	 			// Broadcast that a race was added

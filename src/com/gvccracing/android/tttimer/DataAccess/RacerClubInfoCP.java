@@ -2,7 +2,7 @@ package com.gvccracing.android.tttimer.DataAccess;
 
 import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewExclusive;
 import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewInclusive;
-import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
+import com.gvccracing.android.tttimer.DataAccess.RacerUSACInfoCP.RacerUSACInfo;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -18,10 +18,11 @@ public class RacerClubInfoCP {
         public static final Uri CONTENT_URI = Uri.withAppendedPath(TTProvider.CONTENT_URI, RacerClubInfo.class.getSimpleName() + "~");
 
         // Table column
-        public static final String Racer_ID = "Racer_ID";
+        public static final String RacerUSACInfo_ID = "RacerUSACInfo_ID";
         public static final String CheckInID = "CheckInID";
         public static final String Year = "Year";
-        public static final String Category = "Category";
+        public static final String Category = "Category"; // Deprecated!
+        public static final String ClubCategory_ID = "ClubCategory_ID";
         public static final String TTPoints = "TTPoints";
         public static final String RRPoints = "RRPoints";
         public static final String PrimePoints = "PrimePoints";
@@ -37,10 +38,10 @@ public class RacerClubInfoCP {
         public static String getCreate(){
         	return "create table " + RacerClubInfo.getTableName() 
         	        + " (" + _ID + " integer primary key autoincrement, "
-        	        + Racer_ID + " integer references " + Racer.getTableName() + "(" + Racer._ID + ") not null, " 
+        	        + RacerUSACInfo_ID + " integer references " + RacerUSACInfo.getTableName() + "(" + RacerUSACInfo._ID + ") not null, " 
         	        + CheckInID + " text not null, " 
         	        + Year + " integer not null,"
-        	        + Category + " text not null," 
+        	        + ClubCategory_ID + " integer not null," 
         	        + TTPoints + " integer not null," 
         	        + RRPoints + " integer not null," 
         	        + PrimePoints + " integer not null," 
@@ -54,12 +55,12 @@ public class RacerClubInfoCP {
         	return new Uri[]{RacerClubInfo.CONTENT_URI, CheckInViewInclusive.CONTENT_URI, CheckInViewExclusive.CONTENT_URI};
         }
 
-		public static Uri Create(Context context, long racer_ID, String barcode, long year, String category, long ttPoints, long rrPoints, long primePoints, long age, Long gvccID, boolean upgraded) {
+		public static Uri Create(Context context, long racerUSACInfo_ID, String barcode, long year, long clubCategory_ID, long ttPoints, long rrPoints, long primePoints, long age, Long gvccID, boolean upgraded) {
 			ContentValues content = new ContentValues();
-			content.put(RacerClubInfo.Racer_ID, racer_ID);
+			content.put(RacerClubInfo.RacerUSACInfo_ID, racerUSACInfo_ID);
 	     	content.put(RacerClubInfo.CheckInID, barcode);
 	     	content.put(RacerClubInfo.Year, year);
-	     	content.put(RacerClubInfo.Category, category);
+	     	content.put(RacerClubInfo.ClubCategory_ID, clubCategory_ID);
 	     	content.put(RacerClubInfo.TTPoints, 0);
 	     	content.put(RacerClubInfo.RRPoints, 0);
 	     	content.put(RacerClubInfo.PrimePoints, 0);
@@ -70,19 +71,19 @@ public class RacerClubInfoCP {
 		}
 
 		public static Cursor Read(Context context, String barcode, int year) {
-			return context.getContentResolver().query(RacerClubInfo.CONTENT_URI, new String[]{RacerClubInfo._ID, RacerClubInfo.Racer_ID}, RacerClubInfo.CheckInID + "=? AND " + RacerClubInfo.Year + "=?", new String[]{barcode, Integer.toString(year)}, null);
+			return context.getContentResolver().query(RacerClubInfo.CONTENT_URI, new String[]{RacerClubInfo._ID, RacerClubInfo.RacerUSACInfo_ID}, RacerClubInfo.CheckInID + "=? AND " + RacerClubInfo.Year + "=?", new String[]{barcode, Integer.toString(year)}, null);
 		}
 		
 		public static Cursor Read(Context context, String[] fieldsToRetrieve, String selection, String[] selectionArgs, String sortOrder){
 			return context.getContentResolver().query(RacerClubInfo.CONTENT_URI, fieldsToRetrieve, selection, selectionArgs, sortOrder);
 		}
 		
-		public static int Update(Context context, long racerClubInfo_ID, Long racer_ID, String checkInID, Long year, 
-				 String category, Long ttPoints, Long rrPoints, Long primePoints, Long racerAge, String gvccID, Boolean upgraded) {
+		public static int Update(Context context, long racerClubInfo_ID, Long racerUSACInfo_ID, String checkInID, Long year, 
+				 Long clubCategory_ID, Long ttPoints, Long rrPoints, Long primePoints, Long racerAge, String gvccID, Boolean upgraded) {
 			ContentValues content = new ContentValues();
-			if(racer_ID != null)
+			if(racerUSACInfo_ID != null)
 			{
-				content.put(RacerClubInfo.Racer_ID, racer_ID);
+				content.put(RacerClubInfo.RacerUSACInfo_ID, racerUSACInfo_ID);
 			}
 			if(checkInID != null)
 			{
@@ -92,9 +93,9 @@ public class RacerClubInfoCP {
 			{
 				content.put(RacerClubInfo.Year, year);
 			}
-			if(category != null)
+			if(clubCategory_ID != null)
 			{
-				content.put(RacerClubInfo.Category, category);
+				content.put(RacerClubInfo.ClubCategory_ID, clubCategory_ID);
 			}
 			if(ttPoints != null)
 			{
@@ -126,4 +127,3 @@ public class RacerClubInfoCP {
 		}
     }
 }
-

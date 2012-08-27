@@ -4,6 +4,8 @@ import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
 import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
+import com.gvccracing.android.tttimer.DataAccess.RacerRegistrationCP.RacerRegistration;
+import com.gvccracing.android.tttimer.DataAccess.RacerUSACInfoCP.RacerUSACInfo;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -19,8 +21,10 @@ public class CheckInViewCP {
         
         public static String getTableName(){
         	return RacerClubInfo.getTableName() + 
+        			" JOIN " + RacerUSACInfo.getTableName() + 
+    				" ON (" + RacerClubInfo.getTableName() + "." + RacerClubInfo.RacerUSACInfo_ID + " = " + RacerUSACInfo.getTableName() + "." + RacerUSACInfo._ID + ")" +
         			" JOIN " + Racer.getTableName() + 
-    				" ON (" + RacerClubInfo.getTableName() + "." + RacerClubInfo.Racer_ID + " = " + Racer.getTableName() + "." + Racer._ID + ")";// +
+    				" ON (" + RacerUSACInfo.getTableName() + "." + RacerUSACInfo.Racer_ID + " = " + Racer.getTableName() + "." + Racer._ID + ")";// +
         			//" LEFT OUTER JOIN " + RaceResults.getTableName() + 
     				//" ON (" + RacerClubInfo.getTableName() + "." + RacerClubInfo._ID + " = " + RaceResults.getTableName() + "." + RaceResults.RacerClubInfo_ID + ")";
         }
@@ -41,10 +45,14 @@ public class CheckInViewCP {
         
         public static String getTableName(){
         	return RacerClubInfo.getTableName() + 
-        			" JOIN " + Racer.getTableName() + 
-    				" ON (" + RacerClubInfo.getTableName() + "." + RacerClubInfo.Racer_ID + " = " + Racer.getTableName() + "." + Racer._ID + ")" +
+        			" JOIN " + RacerUSACInfo.getTableName() + 
+    				" ON (" + RacerClubInfo.getTableName() + "." + RacerClubInfo.RacerUSACInfo_ID + " = " + RacerUSACInfo.getTableName() + "." + RacerUSACInfo._ID + ")" +
+    				" JOIN " + Racer.getTableName() + 
+    				" ON (" + RacerUSACInfo.getTableName() + "." + RacerUSACInfo.Racer_ID + " = " + Racer.getTableName() + "." + Racer._ID + ")" +
+    				" JOIN " + RacerRegistration.getTableName() + 
+    				" ON (" + RacerRegistration.getTableName() + "." + RacerRegistration.RacerUSACInfo_ID + " = " + RacerUSACInfo.getTableName() + "." + Racer._ID + ")" +
         			" JOIN " + RaceResults.getTableName() + 
-    				" ON (" + RaceResults.getTableName() + "." + RaceResults.RacerClubInfo_ID + " = " + RacerClubInfo.getTableName() + "." + RacerClubInfo._ID + ")" +
+    				" ON (" + RaceResults.getTableName() + "." + RaceResults.RacerRegistration_ID + " = " + RacerRegistration.getTableName() + "." + RacerRegistration._ID + ")" +
     				" JOIN " + Race.getTableName() + 
     				" ON (" + Race.getTableName() + "." + Race._ID + " = " + RaceResults.getTableName() + "." + RaceResults.Race_ID + ")";
         }

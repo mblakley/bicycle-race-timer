@@ -63,8 +63,8 @@ public class AssignLapTimeTask extends AsyncTask<Long, Void, AssignResult> {
 											  new String[]{raceResult_ID.toString()}, null);
 				raceResultToAssignTo.moveToFirst();
 				
-				Hashtable<String, Long> raceValues = Race.getValues(context, race_ID);
-				Long totalRaceLaps = raceValues.get(Race.NumLaps); 
+				Hashtable<String, Object> raceValues = Race.getValues(context, race_ID);
+				Long totalRaceLaps = (Long) raceValues.get(Race.NumLaps); 
 				
 				// Find any other laps associated with this raceResultID
 				Cursor raceLaps = RaceLaps.Read(context , new String[]{RaceLaps._ID, RaceLaps.RaceResult_ID, RaceLaps.LapNumber, RaceLaps.StartTime, RaceLaps.FinishTime, RaceLaps.ElapsedTime}, RaceLaps.RaceResult_ID + " = ?", new String[]{raceResult_ID.toString()}, RaceLaps.LapNumber + " desc");

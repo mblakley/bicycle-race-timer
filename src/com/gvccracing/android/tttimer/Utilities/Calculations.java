@@ -10,9 +10,9 @@ import android.util.Log;
 
 import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewExclusive;
 import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
+import com.gvccracing.android.tttimer.DataAccess.RaceCategoryCP.RaceCategory;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsTeamOrRacerViewCP.RaceResultsTeamOrRacerView;
-import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
 import com.gvccracing.android.tttimer.DataAccess.TTProvider;
 import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
 
@@ -34,7 +34,7 @@ public class Calculations {
 			Cursor overallResults = context.getContentResolver().query(RaceResultsTeamOrRacerView.CONTENT_URI, new String[] {RaceResults.getTableName() + "." + RaceResults._ID}, 
 																	RaceResults.Race_ID + "=?" + 
 																	" AND " + RaceResults.EndTime + " IS NOT NULL" + 
-																	" AND (" + RacerClubInfo.Category + "!=?" +
+																	" AND (" + RaceCategory.FullCategoryName + "!=?" +
 																	" OR " + TeamInfo.TeamCategory + "!=?)", 
 																	new String[]{Long.toString(race_ID), "G", "G"}, RaceResults.ElapsedTime);
 			// Get the total number of racers in this category
@@ -76,13 +76,13 @@ public class Calculations {
 			// Create the list of operations to perform in the batch
 			ArrayList<ContentProviderOperation> operations = new ArrayList<ContentProviderOperation>();
 			// Get the categories that are checked in for this race
-			Cursor categories = context.getContentResolver().query(CheckInViewExclusive.CONTENT_URI, new String[] {RacerClubInfo.Category}, RaceResults.Race_ID + "=?", 
-																	new String[]{Long.toString(race_ID)}, RacerClubInfo.Category);
+			Cursor categories = context.getContentResolver().query(CheckInViewExclusive.CONTENT_URI, new String[] {RaceCategory.FullCategoryName}, RaceResults.Race_ID + "=?", 
+																	new String[]{Long.toString(race_ID)}, RaceCategory.FullCategoryName);
 			if(categories.getCount() > 0)
 			{
 				categories.moveToFirst();
 
-	    		Long raceType_ID = Race.getValues(context, race_ID).get(Race.RaceType);
+	    		Long raceType_ID = (Long) Race.getValues(context, race_ID).get(Race.RaceType);
 				do{
 					// Set the initial placing
 					Integer categoryPlacing = 1;
@@ -90,7 +90,7 @@ public class Calculations {
 					String raceCategory = categories.getString(0);
 					// Get the race results for this race and this category
 					Cursor categoryResults = context.getContentResolver().query(CheckInViewExclusive.CONTENT_URI, new String[]{RaceResults.getTableName() + "." + RaceResults._ID + " as _id", RaceResults.ElapsedTime}, 
-																		     RaceResults.Race_ID + "=? AND " + RaceResults.ElapsedTime + " IS NOT NULL AND " + RacerClubInfo.Category + "=?", 
+																		     RaceResults.Race_ID + "=? AND " + RaceResults.ElapsedTime + " IS NOT NULL AND " + RaceCategory.FullCategoryName + "=?", 
 																			 new String[]{Long.toString(race_ID), raceCategory}, RaceResults.ElapsedTime);
 					// Get the total number of racers in this category
 					Integer totalCategoryRacers = categoryResults.getCount();

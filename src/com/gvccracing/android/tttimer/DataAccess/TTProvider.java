@@ -739,17 +739,17 @@ public class TTProvider extends ContentProvider {
 			        // and drop the tmp table
 			        db.execSQL("ALTER TABLE " + RaceResults.getTableName() + " RENAME TO tmp_" + RaceResults.getTableName() + ";");
 			        db.execSQL(RaceResults.getCreate());
-			        db.execSQL("INSERT INTO " + RaceResults.getTableName() + "(" + RaceResults._ID + "," + RaceResults.RacerClubInfo_ID + "," + RaceResults.TeamInfo_ID + "," 
+			        db.execSQL("INSERT INTO " + RaceResults.getTableName() + "(" + RaceResults._ID + ",RacerClubInfo_ID," + RaceResults.TeamInfo_ID + "," 
 			        			+ RaceResults.Race_ID + "," + RaceResults.StartOrder + "," + RaceResults.StartTimeOffset + "," + RaceResults.StartTime + "," 
 			        			+ RaceResults.EndTime + "," + RaceResults.ElapsedTime + "," + RaceResults.OverallPlacing + "," + RaceResults.CategoryPlacing + "," 
 			        			+ RaceResults.Points + "," + RaceResults.PrimePoints 
-			        			+ ") SELECT " + RaceResults._ID + "," + RaceResults.RacerClubInfo_ID + "," + RaceResults.TeamInfo_ID + "," 
+			        			+ ") SELECT " + RaceResults._ID + ",RacerClubInfo_ID," + RaceResults.TeamInfo_ID + "," 
 			        			+ RaceResults.Race_ID + "," + RaceResults.StartOrder + "," + RaceResults.StartTimeOffset + "," + RaceResults.StartTime + "," 
 			        			+ RaceResults.EndTime + "," + RaceResults.ElapsedTime + "," + RaceResults.OverallPlacing + "," + RaceResults.CategoryPlacing + "," 
 			        			+ RaceResults.Points + "," + RaceResults.PrimePoints 
 			        			+ " FROM tmp_" + RaceResults.getTableName() + ";");
 			        db.execSQL("DROP TABLE tmp_" +  RaceResults.getTableName() + ";");
-			        db.execSQL("UPDATE " + RacerClubInfo.getTableName() + " SET " + RacerClubInfo.Category + "='W' WHERE " + RacerClubInfo.Category + "='Women'");
+			        db.execSQL("UPDATE " + RacerClubInfo.getTableName() + " SET Category='W' WHERE Category='Women'");
 			        db.setTransactionSuccessful();
 	    		} finally{
 	    			db.endTransaction();

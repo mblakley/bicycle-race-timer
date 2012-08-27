@@ -13,6 +13,7 @@ import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewExclus
 import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewInclusive;
 import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.RaceInfoView;
 import com.gvccracing.android.tttimer.DataAccess.RaceLocationCP.RaceLocation;
+import com.gvccracing.android.tttimer.DataAccess.RaceSeriesCP.RaceSeries;
 
 public class RaceCP {
 
@@ -28,6 +29,11 @@ public class RaceCP {
         public static final String RaceStartTime = "RaceStartTime";
         public static final String StartInterval = "StartInterval";
         public static final String NumLaps = "NumLaps";
+        public static final String EventName = "EventName";
+        public static final String USACEventID = "USACEventID";
+        public static final String RaceDiscipline = "RaceDiscipline";
+        public static final String RaceSeries_ID = "RaceSeries_ID";
+        public static final String ScoringType = "ScoringType";
         
         public static String getTableName(){
         	return Race.class.getSimpleName();
@@ -41,14 +47,19 @@ public class RaceCP {
         	        + RaceType + " integer not null,"
         	        + RaceStartTime + " integer null,"
         	        + NumLaps + " integer null,"
-        	        + StartInterval + " integer null);";
+        	        + StartInterval + " integer null,"
+        	        + EventName + " text not null,"
+    	        	+ USACEventID + " integer null,"
+    	        	+ RaceDiscipline + " text not null,"
+    	        	+ RaceSeries_ID + " integer references " + RaceSeries.getTableName() + "(" + RaceSeries._ID + ") null,"
+    	        	+ ScoringType + " text not null);";
         }
         
         public static Uri[] getAllUrisToNotifyOnChange(){
         	return new Uri[]{Race.CONTENT_URI, CheckInViewInclusive.CONTENT_URI, CheckInViewExclusive.CONTENT_URI, RaceInfoView.CONTENT_URI, RaceLocation.CONTENT_URI};
         }
 
-		public static Uri Create(Context context, long raceLocation, Date raceDate, Long raceStartTime, long raceTypeID, Long startTimeOffset, long numLaps) {
+		public static Uri Create(Context context, long raceLocation, Date raceDate, Long raceStartTime, long raceTypeID, Long startTimeOffset, long numLaps, String eventName, Long USACEventID, String raceDiscipline, long raceSeries_ID, String scoringType) {
 			ContentValues content = new ContentValues();
 			content.put(Race.RaceLocation_ID, raceLocation);
 			content.put(Race.RaceDate, raceDate.getTime());
@@ -56,11 +67,16 @@ public class RaceCP {
 			content.put(Race.RaceType, raceTypeID);
 			content.put(Race.NumLaps, numLaps);
 			content.put(Race.StartInterval, startTimeOffset);
+			content.put(Race.EventName, eventName);
+			content.put(Race.USACEventID, USACEventID);
+			content.put(Race.RaceDiscipline, raceDiscipline);
+			content.put(Race.RaceSeries_ID, raceSeries_ID);
+			content.put(Race.ScoringType, scoringType);
 
 	     	return context.getContentResolver().insert(Race.CONTENT_URI, content);
 		}
 
-		public static int Update(Context context, String where, String[] selectionArgs, Long race_ID, Long raceLocation_ID, Date raceDate, Long raceStartTime, Long raceTypeID, Long startTimeOffset, Long numLaps) {
+		public static int Update(Context context, String where, String[] selectionArgs, Long race_ID, Long raceLocation_ID, Date raceDate, Long raceStartTime, Long raceTypeID, Long startTimeOffset, Long numLaps, String eventName, Long USACEventID, String raceDiscipline, Long raceSeries_ID, String scoringType) {
 			ContentValues content = new ContentValues();
 			if(raceLocation_ID != null)
 	        {
@@ -86,6 +102,26 @@ public class RaceCP {
 	        {
 	        	content.put(Race.NumLaps, numLaps);
 	        }
+	        if(numLaps != null)
+	        {
+	        	content.put(Race.EventName, eventName);
+	        }
+	        if(numLaps != null)
+	        {
+	        	content.put(Race.USACEventID, USACEventID);
+	        }
+	        if(numLaps != null)
+	        {
+	        	content.put(Race.RaceDiscipline, raceDiscipline);
+	        }
+	        if(numLaps != null)
+	        {
+	        	content.put(Race.RaceSeries_ID, raceSeries_ID);
+	        }
+	        if(numLaps != null)
+	        {
+	        	content.put(Race.ScoringType, scoringType);
+	        }
 			return context.getContentResolver().update(Race.CONTENT_URI, content, where, selectionArgs);
 		}
 
@@ -93,8 +129,8 @@ public class RaceCP {
 			return context.getContentResolver().query(Race.CONTENT_URI, fieldsToRetrieve, selection, selectionArgs, sortOrder);
 		}
 
-		public static Hashtable<String, Long> getValues(Context context, Long race_ID) {
-			Hashtable<String, Long> raceValues = new Hashtable<String, Long>();
+		public static Hashtable<String, Object> getValues(Context context, Long race_ID) {
+			Hashtable<String, Object> raceValues = new Hashtable<String, Object>();
 			
 			Cursor raceCursor = Race.Read(context, null, Race._ID + "=?", new String[]{Long.toString(race_ID)}, null);
 			if(raceCursor != null && raceCursor.getCount() > 0){
@@ -106,6 +142,11 @@ public class RaceCP {
 				raceValues.put(Race.RaceStartTime, raceCursor.getLong(raceCursor.getColumnIndex(Race.RaceStartTime)));
 				raceValues.put(Race.NumLaps, raceCursor.getLong(raceCursor.getColumnIndex(Race.NumLaps)));
 				raceValues.put(Race.StartInterval, raceCursor.getLong(raceCursor.getColumnIndex(Race.StartInterval)));
+				raceValues.put(Race.EventName, raceCursor.getString(raceCursor.getColumnIndex(Race.EventName)));
+				raceValues.put(Race.USACEventID, raceCursor.getLong(raceCursor.getColumnIndex(Race.USACEventID)));
+				raceValues.put(Race.RaceDiscipline, raceCursor.getString(raceCursor.getColumnIndex(Race.RaceDiscipline)));
+				raceValues.put(Race.RaceSeries_ID, raceCursor.getLong(raceCursor.getColumnIndex(Race.RaceSeries_ID)));
+				raceValues.put(Race.ScoringType, raceCursor.getString(raceCursor.getColumnIndex(Race.ScoringType)));
 			}
 			if( raceCursor != null){
 				raceCursor.close();
