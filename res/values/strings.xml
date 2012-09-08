@@ -52,12 +52,12 @@
 	<item>30 Seconds</item>
 	<item>1 Minute</item>
 	</string-array>
-	<string-array name="category_array">
-	<item>A</item>
-	<item>B4</item>
-	<item>B5</item>
-	<item>W</item>
-	</string-array>
+<!-- 	<string-array name="category_array"> -->
+<!-- 	<item>A</item> -->
+<!-- 	<item>B4</item> -->
+<!-- 	<item>B5</item> -->
+<!-- 	<item>W</item> -->
+<!-- 	</string-array> -->
 <!-- 	<string-array name="category_array"> -->
 <!-- 	<item>Cat123</item> -->
 <!-- 	<item>Cat4</item> -->
@@ -80,13 +80,13 @@
 	<string name="SaveNotes">Save</string>
 	<string name="StartCheckIn">Start Check In</string>
 	<string name="ChooseRace">Race Configuration</string>
-	<string-array name="race_type_array">
-		<item >Time Trial</item>
-		<item >Team Time Trial</item>
-		<item >Criterium</item>
-		<item >Circuit Race</item>
-		<item >Road Race</item>
-	</string-array>
+<!-- 	<string-array name="race_type_array"> -->
+<!-- 		<item >Time Trial</item> -->
+<!-- 		<item >Team Time Trial</item> -->
+<!-- 		<item >Criterium</item> -->
+<!-- 		<item >Circuit Race</item> -->
+<!-- 		<item >Road Race</item> -->
+<!-- 	</string-array> -->
 	<string name="RaceTypeLabel">Race Type:</string>
 	<string name="TeamName">Team Name:</string>
 	<string name="AddNewTeam">Add New Team</string>
