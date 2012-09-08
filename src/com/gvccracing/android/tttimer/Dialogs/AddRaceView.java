@@ -70,29 +70,29 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 		
 		txtLaps = (EditText) v.findViewById(R.id.txtNumLaps);
         
-        Spinner raceType = (Spinner) v.findViewById(R.id.spinnerRaceType);
-        raceType.setOnItemSelectedListener(new OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-        		LinearLayout laps = (LinearLayout) getView().findViewById(R.id.llLaps);
-            	if(id == 1){
-            		if(Long.parseLong(txtLaps.getText().toString()) <= 1){
-            			txtLaps.setText("2");
-            		}
-            		laps.setVisibility(View.VISIBLE);
-            	}else{
-            		txtLaps.setText("1");
-            		laps.setVisibility(View.GONE);
-            	}
-            }
-
-            public void onNothingSelected(AdapterView<?> parentView) {
-                // your code here
-            }
-        });
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-        		getActivity(), R.array.race_type_array, R.layout.control_simple_spinner );
-		adapter.setDropDownViewResource( R.layout.control_simple_spinner_dropdown );
-		raceType.setAdapter(adapter);
+//        Spinner raceType = (Spinner) v.findViewById(R.id.spinnerRaceType);
+//        raceType.setOnItemSelectedListener(new OnItemSelectedListener() {
+//            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+//        		LinearLayout laps = (LinearLayout) getView().findViewById(R.id.llLaps);
+//            	if(id == 1){
+//            		if(Long.parseLong(txtLaps.getText().toString()) <= 1){
+//            			txtLaps.setText("2");
+//            		}
+//            		laps.setVisibility(View.VISIBLE);
+//            	}else{
+//            		txtLaps.setText("1");
+//            		laps.setVisibility(View.GONE);
+//            	}
+//            }
+//
+//            public void onNothingSelected(AdapterView<?> parentView) {
+//                // your code here
+//            }
+//        });
+//        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+//        		getActivity(), R.array.race_type_array, R.layout.control_simple_spinner );
+//		adapter.setDropDownViewResource( R.layout.control_simple_spinner_dropdown );
+//		raceType.setAdapter(adapter);
 		
         // Intervals probably won't ever change, so I'm ok with this for now but...
         // TODO change this to use an underlying tag for how long the selected interval is
@@ -133,11 +133,11 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 			return raceStartInterval;
 	}
 	
-	protected long GetRaceTypeID(){
-		Spinner raceTypeSpinner = (Spinner) getView().findViewById(R.id.spinnerRaceType);
-		
-		return raceTypeSpinner.getSelectedItemId();
-	}
+//	protected long GetRaceTypeID(){
+//		Spinner raceTypeSpinner = (Spinner) getView().findViewById(R.id.spinnerRaceType);
+//		
+//		return raceTypeSpinner.getSelectedItemId();
+//	}
 	
 	protected long GetRaceLocationID(){
 		Spinner raceLocationSpinner = (Spinner) getView().findViewById(R.id.spinnerRaceLocation);
