@@ -3,9 +3,12 @@ package com.gvccracing.android.tttimer.Dialogs;
 import java.util.Date;
 
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
-import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
-import com.gvccracing.android.tttimer.DataAccess.RaceLocationCP.RaceLocation;
+import com.gvccracing.android.tttimer.DataAccess.AppSettings;
+import com.gvccracing.android.tttimer.DataAccess.Race;
+import com.gvccracing.android.tttimer.DataAccess.RaceCategory;
+import com.gvccracing.android.tttimer.DataAccess.RaceLocation;
+import com.gvccracing.android.tttimer.DataAccess.RaceSeries;
+import com.gvccracing.android.tttimer.DataAccess.RaceType;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -24,75 +27,70 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
 
-
 public class AddRaceView extends BaseDialog implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 	public static final String LOG_TAG = "AddRaceView";
 	
 	protected Button btnAddNewRace;
 	private SimpleCursorAdapter locationsCursorAdapter = null;
+	private SimpleCursorAdapter raceTypesCursorAdapter = null;
 	protected Spinner raceLocation = null;
+	protected Spinner raceType = null;
 	private EditText txtLaps = null;
+	private TextView lblRaceName = null;
+	private EditText txtRaceName = null;
 	/**
      * This is a special intent action that means "load your tab data".
      */
     public static final String RACE_ADDED_ACTION = "com.gvccracing.android.tttimer.RACE_ADDED";
+
+	private static final int RACE_TYPES_LOADER = 1014;
+	private long raceSeries_ID;
 	
+	public AddRaceView(long raceSeries_ID) {
+		this.raceSeries_ID = raceSeries_ID;
+	}
+
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		AppSettings.Instance().Update(getActivity(), AppSettings.AppSetting_RaceSeriesID_Name, Long.toString(raceSeries_ID), true);
 		View v = inflater.inflate(R.layout.dialog_add_race, container, false);
 
 		btnAddNewRace = (Button) v.findViewById(R.id.btnAddNewRace);
 		btnAddNewRace.setOnClickListener(this);		
 		
-		raceLocation = (Spinner) v.findViewById(R.id.spinnerRaceLocation);
-		
-		// TODO I tried to put this in the loader, but it won't show a dialog from inside the onLoadFinished, so figure out how to do this the right way		
-		String[] fieldsToRetrieve = new String[]{RaceLocation._ID, RaceLocation.CourseName};
-		String selection = null;
-		String[] selectionArgs = null;
-		String sortOrder = RaceLocation.CourseName;
-		Cursor locations = RaceLocation.Read(getActivity(), fieldsToRetrieve, selection, selectionArgs, sortOrder);
-		if(locations != null && locations.getCount() <= 0)
-        {
-        	// No locations...show another dialog to add a location
-        	AddLocationView addLocationDialog = new AddLocationView();
-			FragmentManager fm = getActivity().getSupportFragmentManager();
-			addLocationDialog.show(fm, AddLocationView.LOG_TAG);
-        }
-		locations.close();
-		locations = null;
+		raceLocation = (Spinner) v.findViewById(R.id.spinnerRaceLocation);		
 		
 		txtLaps = (EditText) v.findViewById(R.id.txtNumLaps);
+		
+		lblRaceName = (TextView) v.findViewById(R.id.lblRaceName);
+		txtRaceName = (EditText) v.findViewById(R.id.txtRaceName);
         
-//        Spinner raceType = (Spinner) v.findViewById(R.id.spinnerRaceType);
-//        raceType.setOnItemSelectedListener(new OnItemSelectedListener() {
-//            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-//        		LinearLayout laps = (LinearLayout) getView().findViewById(R.id.llLaps);
-//            	if(id == 1){
-//            		if(Long.parseLong(txtLaps.getText().toString()) <= 1){
-//            			txtLaps.setText("2");
-//            		}
-//            		laps.setVisibility(View.VISIBLE);
-//            	}else{
-//            		txtLaps.setText("1");
-//            		laps.setVisibility(View.GONE);
-//            	}
-//            }
-//
-//            public void onNothingSelected(AdapterView<?> parentView) {
-//                // your code here
-//            }
-//        });
-//        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-//        		getActivity(), R.array.race_type_array, R.layout.control_simple_spinner );
-//		adapter.setDropDownViewResource( R.layout.control_simple_spinner_dropdown );
-//		raceType.setAdapter(adapter);
+        raceType = (Spinner) v.findViewById(R.id.spinnerRaceType);
+        raceType.setOnItemSelectedListener(new OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+        		LinearLayout laps = (LinearLayout) getView().findViewById(R.id.llLaps);
+            	if(id == 1){
+            		txtLaps.setText("1");
+            		laps.setVisibility(View.GONE);
+            	}else{
+            		if(Long.parseLong(txtLaps.getText().toString()) <= 1){
+            			txtLaps.setText("2");
+            		}
+            		laps.setVisibility(View.VISIBLE);
+            	}
+            }
+
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // your code here
+            }
+        });
 		
         // Intervals probably won't ever change, so I'm ok with this for now but...
         // TODO change this to use an underlying tag for how long the selected interval is
@@ -104,7 +102,7 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 		
 		return v;
 	}
-	
+
 	@Override 
 	protected int GetTitleResourceID() {
 		return R.string.AddRace;
@@ -113,8 +111,65 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 	@Override
 	public void onResume() {
 		super.onResume();
+
+		if(!FindAnyRaceLocations()){
+			// No locations...show another dialog to add a location
+        	AddLocationView addLocationDialog = new AddLocationView();
+			FragmentManager fm = getActivity().getSupportFragmentManager();
+			addLocationDialog.show(fm, AddLocationView.LOG_TAG);
+		}
+		
+		if(raceSeries_ID == -1){
+			lblRaceName.setVisibility(View.VISIBLE);
+			txtRaceName.setVisibility(View.VISIBLE);
+		} else {
+			lblRaceName.setVisibility(View.GONE);
+			txtRaceName.setVisibility(View.GONE);
+		}
+		
 		// Initialize the cursor loader for the races list
 		this.getLoaderManager().initLoader(RACE_LOCATIONS_LOADER, null, this);
+		this.getLoaderManager().initLoader(RACE_TYPES_LOADER, null, this);
+	}
+	
+	private boolean FindAnyRaceLocations() {
+		boolean foundRaceLocations = false;
+		try{			
+			String[] fieldsToRetrieve = new String[]{RaceLocation._ID, RaceLocation.CourseName};
+			String selection = null;
+			String[] selectionArgs = null;
+			String sortOrder = RaceLocation.CourseName;
+			Cursor locations = RaceLocation.Instance().Read(getActivity(), fieldsToRetrieve, selection, selectionArgs, sortOrder);
+			if(locations != null && locations.getCount() > 0)
+	        {
+	        	foundRaceLocations = true;
+	        }
+			locations.close();
+			locations = null;
+		}catch(Exception ex){Log.e(LOG_TAG, "FindAnyRaceLocations failed", ex);}
+		
+		return foundRaceLocations;
+	}	
+
+	private boolean FindAnyRaceCategories() {
+		boolean foundRaceCategories = false;
+		try{
+			String[] projection = new String[]{RaceCategory._ID + " as _id"};
+			String selection = null;
+			String[] selectionArgs = null; 
+			String sortOrder = RaceCategory._ID;
+			
+			Cursor raceCat = RaceCategory.Instance().Read(getActivity(), projection, selection, selectionArgs, sortOrder);
+			
+			if(raceCat != null && raceCat.getCount() > 0){	
+				foundRaceCategories = true;
+			}
+			
+			raceCat.close();
+			raceCat = null;
+     	}catch(Exception ex){Log.e(LOG_TAG, "FindAnyRaceCategories failed", ex);}
+		
+		return foundRaceCategories;
 	}
 	
 	protected long GetRaceStartInterval(){
@@ -133,11 +188,11 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 			return raceStartInterval;
 	}
 	
-//	protected long GetRaceTypeID(){
-//		Spinner raceTypeSpinner = (Spinner) getView().findViewById(R.id.spinnerRaceType);
-//		
-//		return raceTypeSpinner.getSelectedItemId();
-//	}
+	protected long GetRaceTypeID(){
+		//Spinner raceTypeSpinner = (Spinner) getView().findViewById(R.id.spinnerRaceType);
+		
+		return 1;//raceTypeSpinner.getSelectedItemId();
+	}
 	
 	protected long GetRaceLocationID(){
 		Spinner raceLocationSpinner = (Spinner) getView().findViewById(R.id.spinnerRaceLocation);
@@ -153,13 +208,16 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 	public void onClick(View v) { 
 		try{
 			if (v == btnAddNewRace){
-				EditText txtLaps = (EditText) getView().findViewById(R.id.txtNumLaps);
 				String eventName = "";
 				Long eventID = 0l;
 				String discipline = "";
-				Long series = 0l;
-				String scoring = "Both";
-				Uri resultUri = Race.Create(getActivity(), GetRaceLocationID(), GetRaceDate(), null, GetRaceTypeID(), GetRaceStartInterval(), Long.parseLong(txtLaps.getText().toString()), eventName, eventID, discipline, series, scoring);
+				String scoring = "Club";
+				if(raceSeries_ID == -1){
+					Uri seriesCreated = RaceSeries.Instance().Create(getActivity(), txtRaceName.getText().toString(), GetRaceDate(), GetRaceDate(), scoring);
+					raceSeries_ID = Long.parseLong(seriesCreated.getLastPathSegment());
+				}
+				
+				Uri resultUri = Race.Instance().Create(getActivity(), GetRaceLocationID(), GetRaceDate(), null, GetRaceTypeID(), GetRaceStartInterval(), eventName, eventID, discipline, raceSeries_ID, scoring);
 	 			long race_ID = Long.parseLong(resultUri.getLastPathSegment());
 	 			
 	 			// Broadcast that a race was added
@@ -168,6 +226,12 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
     			raceAdded.putExtra(AppSettings.AppSetting_RaceID_Name, race_ID);
     			raceAdded.putExtra(AppSettings.AppSetting_StartInterval_Name, GetRaceStartInterval());
     			getActivity().sendBroadcast(raceAdded);
+    			
+    			if(!FindAnyRaceCategories()){
+    				AddRaceCategoriesView addRaceCategoriesDialog = new AddRaceCategoriesView();
+    				FragmentManager fm = getActivity().getSupportFragmentManager();
+    				addRaceCategoriesDialog.show(fm, AddRaceCategoriesView.LOG_TAG);
+    			}
 
     			// Hide the dialog
      			dismiss();
@@ -193,7 +257,14 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 				selection = null;
 				selectionArgs = null;
 				sortOrder = RaceLocation.CourseName;
-				loader = new CursorLoader(getActivity(), RaceLocation.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), RaceLocation.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				break;
+			case RACE_TYPES_LOADER:
+				projection = new String[]{RaceType._ID, RaceType.RaceTypeDescription};
+				selection = null;
+				selectionArgs = null;
+				sortOrder = RaceType._ID;
+				loader = new CursorLoader(getActivity(), RaceType.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 		}
 		Log.i(LOG_TAG, "onCreateLoader complete: id=" + Integer.toString(id));
@@ -202,20 +273,31 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 		try{
-			Log.i(LOG_TAG, "onLoadFinished start: id=" + Integer.toString(loader.getId()));			
+			Log.i(LOG_TAG, "onLoadFinished start: id=" + Integer.toString(loader.getId()));
+			String[] columns;
+            int[] to;
 			switch(loader.getId()){
 				case RACE_LOCATIONS_LOADER:
-	            	locationsCursorAdapter = null;
-					if(locationsCursorAdapter == null){
-						String[] columns = new String[] { RaceLocation.CourseName };
-			            int[] to = new int[] {android.R.id.text1 };
-			            
-						// Create the cursor adapter for the list of races
-			            locationsCursorAdapter = new SimpleCursorAdapter(getActivity(), R.layout.control_simple_spinner, cursor, columns, to, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-			            locationsCursorAdapter.setDropDownViewResource( R.layout.control_simple_spinner_dropdown );
-			        	raceLocation.setAdapter(locationsCursorAdapter);
-					}
+					columns = new String[] { RaceLocation.CourseName };
+		            to = new int[] {android.R.id.text1 };
+		            
+					// Create the cursor adapter for the list of races
+		            locationsCursorAdapter = new SimpleCursorAdapter(getActivity(), R.layout.control_simple_spinner, cursor, columns, to, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+		            locationsCursorAdapter.setDropDownViewResource( R.layout.control_simple_spinner_dropdown );
+		        	raceLocation.setAdapter(locationsCursorAdapter);
+					
 					locationsCursorAdapter.swapCursor(cursor);
+					break;
+				case RACE_TYPES_LOADER:
+					columns = new String[] { RaceType.RaceTypeDescription };
+		            to = new int[] {android.R.id.text1 };
+		            
+					// Create the cursor adapter for the list of races
+		            raceTypesCursorAdapter = new SimpleCursorAdapter(getActivity(), R.layout.control_simple_spinner, cursor, columns, to, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+		            raceTypesCursorAdapter.setDropDownViewResource( R.layout.control_simple_spinner_dropdown );
+		        	raceType.setAdapter(raceTypesCursorAdapter);
+		        	
+					raceTypesCursorAdapter.swapCursor(cursor);
 					break;
 			}
 			Log.i(LOG_TAG, "onLoadFinished complete: id=" + Integer.toString(loader.getId()));
@@ -230,6 +312,9 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 			switch(loader.getId()){
 				case RACE_LOCATIONS_LOADER:
 					locationsCursorAdapter.swapCursor(null);
+					break;
+				case RACE_TYPES_LOADER:
+					raceTypesCursorAdapter.swapCursor(null);
 					break;
 			}
 			Log.i(LOG_TAG, "onLoaderReset complete: id=" + Integer.toString(loader.getId()));

@@ -26,13 +26,19 @@ import com.gvccracing.android.tttimer.AsyncTasks.AllRacersStartedTask;
 import com.gvccracing.android.tttimer.Controls.Timer;
 import com.gvccracing.android.tttimer.CursorAdapters.StartOrderCursorAdapter;
 import com.gvccracing.android.tttimer.CursorAdapters.TeamStartOrderCursorAdapter;
-import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
-import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewExclusive;
-import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
-import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
-import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
-import com.gvccracing.android.tttimer.DataAccess.TeamCheckInViewCP.TeamCheckInViewExclusive;
-import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
+import com.gvccracing.android.tttimer.DataAccess.AppSettings;
+import com.gvccracing.android.tttimer.DataAccess.ContentProviderTable;
+import com.gvccracing.android.tttimer.DataAccess.Race;
+import com.gvccracing.android.tttimer.DataAccess.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.RaceType;
+import com.gvccracing.android.tttimer.DataAccess.RaceWave;
+import com.gvccracing.android.tttimer.DataAccess.Racer;
+import com.gvccracing.android.tttimer.DataAccess.SeriesRaceIndividualResults;
+import com.gvccracing.android.tttimer.DataAccess.SeriesRaceTeamResults;
+import com.gvccracing.android.tttimer.DataAccess.TeamInfo;
+import com.gvccracing.android.tttimer.DataAccess.Views.RaceWaveInfoView;
+import com.gvccracing.android.tttimer.DataAccess.Views.SeriesRaceIndividualResultsView;
+import com.gvccracing.android.tttimer.DataAccess.Views.SeriesRaceTeamResultsView;
 import com.gvccracing.android.tttimer.Dialogs.ResetStartedRacersConfirmation;
 import com.gvccracing.android.tttimer.Dialogs.ResetTimerConfirmation;
 import com.gvccracing.android.tttimer.Dialogs.ResetTimerConfirmation.ResetTimerDialogListener;
@@ -167,12 +173,10 @@ public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 	public void startTimerClick(View view) {
 	 	showStopButton();
 	 	
-		Long race_ID = Long.parseLong(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_RaceID_Name, "-1"));
 	 	long startTime = -1l;
 			
 		// Get the race and figure out if it's already started
-		Uri raceUri = Uri.withAppendedPath(Race.CONTENT_URI, Long.toString(race_ID));
-		Cursor race = getActivity().getContentResolver().query(raceUri, new String[]{Race.RaceStartTime}, null, null, null);
+		Cursor race = Race.Instance().Read(getActivity(), new String[]{Race.RaceStartTime}, Race._ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name), null, null);
 		if(race.getCount() > 0)
 		{
 			race.moveToFirst();
@@ -187,14 +191,12 @@ public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 			if(raceStartTime <= 0){	
 				// We're starting the race, so update the raceStartTime
 				ContentValues content = new ContentValues();
-				content.put(Race._ID, race_ID);
 				content.put(Race.RaceStartTime, startTime);
-				Uri fullUri = Uri.withAppendedPath(Race.CONTENT_URI, Long.toString(race_ID));
-				getActivity().getContentResolver().update(fullUri, content, null, null);
+				Race.Instance().Update(getActivity(), content, Race._ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name), null);
 			} 				
 		}
 		else{
-			Toast.makeText(getActivity(), "Unable to find race to start", 3000).show();
+			Toast.makeText(getActivity(), "Unable to find race to start", Toast.LENGTH_LONG).show();
 		}
 		race.close();
 		race = null;
@@ -264,43 +266,41 @@ public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 		Uri fullUri;
 		switch(id){
 			case ON_DECK_LOADER_START:
-				projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID + " as _id", Racer.LastName, Racer.FirstName, RaceResults.StartOrder, RaceResults.StartTimeOffset};
-				selection = RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.getTableName() + "." + RaceResults.StartTime + " IS NULL";
+				projection = new String[]{SeriesRaceIndividualResults.RaceResult_ID + " as _id", Racer.LastName, Racer.FirstName, RaceResults.StartOrder, RaceResults.StartTimeOffset};
+				selection = SeriesRaceIndividualResults.Race_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.StartTime + " IS NULL";
 				selectionArgs = null;
 				sortOrder = RaceResults.StartOrder;
-				fullUri = Uri.withAppendedPath(CheckInViewExclusive.CONTENT_URI, "OnDeck");
-				fullUri = Uri.withAppendedPath(fullUri, "1");
+				fullUri = SeriesRaceIndividualResultsView.Instance().CONTENT_URI.buildUpon().appendQueryParameter(ContentProviderTable.Limit, "1").build();
 				loader = new CursorLoader(getActivity(), fullUri, projection, selection, selectionArgs, sortOrder);
 				break;
 			case START_ORDER_LOADER_START:
-				projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID + " as _id", Racer.LastName, Racer.FirstName, RaceResults.StartOrder, RaceResults.StartTimeOffset};
-				selection = RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
+				projection = new String[]{SeriesRaceTeamResults.RaceResult_ID + " as _id", Racer.LastName, Racer.FirstName, RaceResults.StartOrder, RaceResults.StartTimeOffset};
+				selection = SeriesRaceTeamResults.Race_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name);
 				selectionArgs = null;
 				sortOrder = RaceResults.StartOrder;
-				loader = new CursorLoader(getActivity(), CheckInViewExclusive.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), SeriesRaceTeamResultsView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case TEAM_ON_DECK_LOADER:
-				projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID + " as _id", TeamInfo.TeamName, RaceResults.StartOrder, RaceResults.StartTimeOffset};
-				selection = RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.getTableName() + "." + RaceResults.StartTime + " IS NULL";
+				projection = new String[]{SeriesRaceIndividualResults.RaceResult_ID + " as _id", TeamInfo.TeamName, RaceResults.StartOrder, RaceResults.StartTimeOffset};
+				selection = SeriesRaceIndividualResults.Race_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.StartTime + " IS NULL";
 				selectionArgs = null;
 				sortOrder = RaceResults.StartOrder;
-				fullUri = Uri.withAppendedPath(TeamCheckInViewExclusive.CONTENT_URI, "OnDeck");
-				fullUri = Uri.withAppendedPath(fullUri, "1");
+				fullUri = SeriesRaceTeamResultsView.Instance().CONTENT_URI.buildUpon().appendQueryParameter(ContentProviderTable.Limit, "1").build();
 				loader = new CursorLoader(getActivity(), fullUri, projection, selection, selectionArgs, sortOrder);
 				break;
 			case TEAM_START_ORDER_LOADER:
-				projection = new String[]{TeamInfo.getTableName() + "." + TeamInfo._ID + " as _id", TeamInfo.TeamName, RaceResults.StartOrder, RaceResults.StartTimeOffset, "group_concat(" + Racer.FirstName + "||' '||" + Racer.LastName + ", ',\n') as RacerNames"};
-				selection = RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
+				projection = new String[]{SeriesRaceTeamResults.RaceResult_ID + " as _id", TeamInfo.TeamName, RaceResults.StartOrder, RaceResults.StartTimeOffset, "group_concat(" + Racer.FirstName + "||' '||" + Racer.LastName + ", ',\n') as RacerNames"};
+				selection = SeriesRaceTeamResults.Race_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name);
 				selectionArgs = null;
 				sortOrder = RaceResults.StartOrder;
-				loader = new CursorLoader(getActivity(), Uri.withAppendedPath(TeamCheckInViewExclusive.CONTENT_URI, "group by " + TeamInfo.getTableName() + "." + TeamInfo._ID + "," + TeamInfo.TeamName + "," + RaceResults.StartOrder + "," + RaceResults.StartTimeOffset), projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), SeriesRaceTeamResultsView.Instance().CONTENT_URI.buildUpon().appendQueryParameter(ContentProviderTable.GroupBy, "group by " + SeriesRaceTeamResults.TeamInfo_ID + "," + TeamInfo.TeamName + "," + RaceResults.StartOrder + "," + RaceResults.StartTimeOffset).build(), projection, selection, selectionArgs, sortOrder);
 				break;
 			case RACE_INFO_LOADER_START:
-				projection = new String[]{Race.getTableName() + "." + Race._ID + " as _id", Race.RaceType, Race.NumLaps};
-				selection = Race.getTableName() + "." + Race._ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
+				projection = new String[]{Race.Instance().getTableName() + "." + Race._ID + " as _id", Race.RaceType_ID, RaceType.IsTeamRace, RaceWave.NumLaps};
+				selection = Race.Instance().getTableName() + "." + Race._ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name);
 				selectionArgs = null;
-				sortOrder = Race.getTableName() + "." + Race._ID;
-				loader = new CursorLoader(getActivity(), Race.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				sortOrder = Race.Instance().getTableName() + "." + Race._ID;
+				loader = new CursorLoader(getActivity(), RaceWaveInfoView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 		}
 		Log.i(LOG_TAG(), "onCreateLoader complete: id=" + Integer.toString(id));
@@ -464,21 +464,9 @@ public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 					if(cursor!= null && cursor.getCount() > 0){
 						cursor.moveToFirst();
 						// Set up the tab based on the race information
-						raceTypeID = cursor.getLong(cursor.getColumnIndex(Race.RaceType));
+						raceTypeID = cursor.getLong(cursor.getColumnIndex(Race.RaceType_ID));
 						if(getView() != null){
 							if(raceTypeID == 1){
-								if( teamsStartOrderLoader == null){
-									teamsStartOrderLoader = getActivity().getSupportLoaderManager().initLoader(TEAM_START_ORDER_LOADER, null, this);
-								} else {
-									teamsStartOrderLoader = getActivity().getSupportLoaderManager().restartLoader(TEAM_START_ORDER_LOADER, null, this);
-								}
-								
-								if( teamOnDeckLoader == null){
-									teamOnDeckLoader = getActivity().getSupportLoaderManager().initLoader(TEAM_ON_DECK_LOADER, null, this);
-								} else {
-									teamOnDeckLoader = getActivity().getSupportLoaderManager().restartLoader(TEAM_ON_DECK_LOADER, null, this);
-								}
-							}else {
 								if(onDeckLoader == null){
 								    // Initialize the cursor loader for the on deck list
 									onDeckLoader = getActivity().getSupportLoaderManager().initLoader(ON_DECK_LOADER_START, null, this);
@@ -490,6 +478,18 @@ public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 									startOrderLoader = getActivity().getSupportLoaderManager().initLoader(START_ORDER_LOADER_START, null, this);
 								} else {
 									startOrderLoader = getActivity().getSupportLoaderManager().restartLoader(START_ORDER_LOADER_START, null, this);
+								}
+							}else {
+								if( teamsStartOrderLoader == null){
+									teamsStartOrderLoader = getActivity().getSupportLoaderManager().initLoader(TEAM_START_ORDER_LOADER, null, this);
+								} else {
+									teamsStartOrderLoader = getActivity().getSupportLoaderManager().restartLoader(TEAM_START_ORDER_LOADER, null, this);
+								}
+								
+								if( teamOnDeckLoader == null){
+									teamOnDeckLoader = getActivity().getSupportLoaderManager().initLoader(TEAM_ON_DECK_LOADER, null, this);
+								} else {
+									teamOnDeckLoader = getActivity().getSupportLoaderManager().restartLoader(TEAM_ON_DECK_LOADER, null, this);
 								}
 							}
 						}

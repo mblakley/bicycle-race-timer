@@ -7,7 +7,7 @@ import com.dropbox.client2.session.AppKeyPair;
 import com.dropbox.client2.session.Session.AccessType;
 import com.gvccracing.android.tttimer.R;
 import com.gvccracing.android.tttimer.AsyncTasks.UploadUSACNumbersToDropboxTask;
-import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
+import com.gvccracing.android.tttimer.DataAccess.AppSettings;
 import com.gvccracing.android.tttimer.Utilities.Calculations;
 
 import android.os.Bundle;
@@ -90,8 +90,8 @@ public class AdminMenuView extends BaseDialog implements View.OnClickListener {
 	public void onResume() {
 		super.onResume();
 		// If we're resuming this activity from going out and attempting to authenticate dropbox account, do extra stuff
-		if(Boolean.parseBoolean(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_AuthenticatingDropbox_Name, "false"))){
-			AppSettings.Update(getActivity(), AppSettings.AppSetting_AuthenticatingDropbox_Name, "false", true);
+		if(Boolean.parseBoolean(AppSettings.Instance().ReadValue(getActivity(), AppSettings.AppSetting_AuthenticatingDropbox_Name, "false"))){
+			AppSettings.Instance().Update(getActivity(), AppSettings.AppSetting_AuthenticatingDropbox_Name, "false", true);
     		if (mDBApi.getSession().authenticationSuccessful()) {
 	            // MANDATORY call to complete auth.
 	            // Sets the access token on the session
@@ -101,8 +101,8 @@ public class AdminMenuView extends BaseDialog implements View.OnClickListener {
 
 	            // Provide your own storeKeys to persist the access token pair
 	            // A typical way to store tokens is using SharedPreferences
-	            AppSettings.Update(getActivity(), AppSettings.AppSetting_DropBox_Key_Name, tokens.key, true);
-	            AppSettings.Update(getActivity(), AppSettings.AppSetting_DropBox_Secret_Name, tokens.secret, true);
+	            AppSettings.Instance().Update(getActivity(), AppSettings.AppSetting_DropBox_Key_Name, tokens.key, true);
+	            AppSettings.Instance().Update(getActivity(), AppSettings.AppSetting_DropBox_Secret_Name, tokens.secret, true);
     	    }else{
     	    	Log.i(LOG_TAG, "Authentication not successful");
     	    }
@@ -122,13 +122,13 @@ public class AdminMenuView extends BaseDialog implements View.OnClickListener {
 		try{
 			FragmentManager fm = getFragmentManager();
 			if (v == btnAddRace){
-				AddRaceView addRaceDialog = new AddRaceView();
+				AddRaceView addRaceDialog = new AddRaceView(-1);
 				addRaceDialog.show(fm, AddRaceView.LOG_TAG);
 			} else if (v == btnAddLocation){
 				AddLocationView addLocationDialog = new AddLocationView();
 				addLocationDialog.show(fm, AddLocationView.LOG_TAG);
 			} else if (v == btnEditRace){
-				EditRaceConfiguration editRaceDialog = new EditRaceConfiguration();
+				EditRaceConfiguration editRaceDialog = new EditRaceConfiguration(-1);
 				editRaceDialog.show(fm, EditRaceConfiguration.LOG_TAG);
 			} else if (v == btnRecalculateResults){
 				try{
@@ -149,9 +149,9 @@ public class AdminMenuView extends BaseDialog implements View.OnClickListener {
 				AppKeyPair appKeys = new AppKeyPair(APP_KEY, APP_SECRET);
 				AndroidAuthSession session = new AndroidAuthSession(appKeys, ACCESS_TYPE);
 				mDBApi = new DropboxAPI<AndroidAuthSession>(session);
-				if(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_DropBox_Key_Name, null) == null || AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_DropBox_Secret_Name, null) == null){				
-					AppSettings.Update(getActivity(), AppSettings.AppSetting_ResumePreviousState_Name, "true", true);
-					AppSettings.Update(getActivity(), AppSettings.AppSetting_AuthenticatingDropbox_Name, "true", true);
+				if(AppSettings.Instance().ReadValue(getActivity(), AppSettings.AppSetting_DropBox_Key_Name, null) == null || AppSettings.Instance().ReadValue(getActivity(), AppSettings.AppSetting_DropBox_Secret_Name, null) == null){				
+					AppSettings.Instance().Update(getActivity(), AppSettings.AppSetting_ResumePreviousState_Name, "true", true);
+					AppSettings.Instance().Update(getActivity(), AppSettings.AppSetting_AuthenticatingDropbox_Name, "true", true);
 					mDBApi.getSession().startAuthentication(getActivity());
 				}else{
 					// Create a file on the SD card for the results and roster, and upload the roster to dropbox
@@ -171,9 +171,9 @@ public class AdminMenuView extends BaseDialog implements View.OnClickListener {
 				AndroidAuthSession session = new AndroidAuthSession(appKeys, ACCESS_TYPE);
 				mDBApi = new DropboxAPI<AndroidAuthSession>(session);
 		    	
-				if(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_DropBox_Key_Name, null) == null || AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_DropBox_Secret_Name, null) == null){				
-					AppSettings.Update(getActivity(), AppSettings.AppSetting_ResumePreviousState_Name, "true", true);
-					AppSettings.Update(getActivity(), AppSettings.AppSetting_AuthenticatingDropbox_Name, "true", true);
+				if(AppSettings.Instance().ReadValue(getActivity(), AppSettings.AppSetting_DropBox_Key_Name, null) == null || AppSettings.Instance().ReadValue(getActivity(), AppSettings.AppSetting_DropBox_Secret_Name, null) == null){				
+					AppSettings.Instance().Update(getActivity(), AppSettings.AppSetting_ResumePreviousState_Name, "true", true);
+					AppSettings.Instance().Update(getActivity(), AppSettings.AppSetting_AuthenticatingDropbox_Name, "true", true);
 					mDBApi.getSession().startAuthentication(getActivity());
 				}
 	            AddLocationImages downloadNewImages = new AddLocationImages();
@@ -188,8 +188,8 @@ public class AdminMenuView extends BaseDialog implements View.OnClickListener {
 	}
 	
 	private void RecalculateResults() {
-    	Calculations.CalculateCategoryPlacings(getActivity(), Long.parseLong(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_RaceID_Name, "0")));
-    	Calculations.CalculateOverallPlacings(getActivity(), Long.parseLong(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_RaceID_Name, "0")));  
+    	Calculations.CalculateCategoryPlacings(getActivity(), Long.parseLong(AppSettings.Instance().ReadValue(getActivity(), AppSettings.AppSetting_RaceID_Name, "0")));
+    	Calculations.CalculateOverallPlacings(getActivity(), Long.parseLong(AppSettings.Instance().ReadValue(getActivity(), AppSettings.AppSetting_RaceID_Name, "0")));  
 	}
 	
 	@Override

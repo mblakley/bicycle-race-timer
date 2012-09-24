@@ -4,11 +4,11 @@ import java.util.ArrayList;
 
 import com.gvccracing.android.tttimer.R;
 import com.gvccracing.android.tttimer.AsyncTasks.TeamCheckInHandler;
-import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewInclusive;
-import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
-import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
-import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
-import com.gvccracing.android.tttimer.DataAccess.TeamMembersCP.TeamMembers;
+import com.gvccracing.android.tttimer.DataAccess.Racer;
+import com.gvccracing.android.tttimer.DataAccess.RacerSeriesInfo;
+import com.gvccracing.android.tttimer.DataAccess.TeamInfo;
+import com.gvccracing.android.tttimer.DataAccess.TeamMembers;
+import com.gvccracing.android.tttimer.DataAccess.Views.SeriesRaceTeamResultsView;
 import com.gvccracing.android.tttimer.Dialogs.ChooseTeamRacer.ChooseRacerDialogListener;
 
 import android.database.Cursor;
@@ -102,17 +102,17 @@ public class AddTeamView extends BaseDialog implements View.OnClickListener, Cho
 	    			Toast.makeText(getActivity(), "Please enter a team name", Toast.LENGTH_LONG).show();
 	    		} else {
 		    		// TODO: Add TeamCategory
-		    		Uri resultUri = TeamInfo.Create(getActivity(), teamName, "");
+		    		Uri resultUri = TeamInfo.Instance().Create(getActivity(), teamName, "", 0);
 		    		// Get the teamID from the uri
 	    			long teamInfo_ID = Long.parseLong(resultUri.getLastPathSegment());
 	    			
 	    			// Add all of the team members to the newly created team
 	    			for(int teamMemberCount = 0; teamMemberCount < teamRacerIDs.size(); teamMemberCount++){
 	    				if(teamRacerIDs.get(teamMemberCount) >= 0){
-	    					TeamMembers.Update(getActivity(), teamInfo_ID, teamRacerIDs.get(teamMemberCount), teamMemberCount, true);
+	    					TeamMembers.Instance().Update(getActivity(), teamInfo_ID, teamRacerIDs.get(teamMemberCount), teamMemberCount, true);
 	    				}else{
 	    					// If the ID is negative, delete this team member
-	    					TeamMembers.Delete(getActivity(), teamInfo_ID, teamMemberCount);
+	    					TeamMembers.Instance().Delete(getActivity(), teamInfo_ID, teamMemberCount);
 	    				}
 	    			}	    			
 
@@ -163,10 +163,10 @@ public class AddTeamView extends BaseDialog implements View.OnClickListener, Cho
 		String sortOrder;
 		switch(id){
 			case TEAM_MEMBERS_LOADER:
-				projection = new String[]{RacerClubInfo.getTableName() + "." + RacerClubInfo._ID + " as _id", Racer.LastName, Racer.FirstName};
-				selection = RacerClubInfo.getTableName() + "." + RacerClubInfo._ID + " in " + getTeamRacerList();
+				projection = new String[]{RacerSeriesInfo.Instance().getTableName() + "." + RacerSeriesInfo._ID + " as _id", Racer.LastName, Racer.FirstName};
+				selection = RacerSeriesInfo.Instance().getTableName() + "." + RacerSeriesInfo._ID + " in " + getTeamRacerList();
 				sortOrder = null;
-				loader = new CursorLoader(getActivity(), CheckInViewInclusive.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), SeriesRaceTeamResultsView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 		}
 		Log.i(LOG_TAG, "onCreateLoader complete: id=" + Integer.toString(id));
@@ -197,7 +197,7 @@ public class AddTeamView extends BaseDialog implements View.OnClickListener, Cho
 						cursor.moveToFirst();
 						
 						do{
-							Long cursorRacerClubInfoID = cursor.getLong(cursor.getColumnIndex(RacerClubInfo._ID));
+							Long cursorRacerClubInfoID = cursor.getLong(cursor.getColumnIndex(RacerSeriesInfo._ID));
 							int arrayPosition = 0;
 							for(int i = 0; i < teamRacerIDs.size(); i++){
 								if(teamRacerIDs.get(i).equals(cursorRacerClubInfoID)){

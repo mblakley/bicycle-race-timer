@@ -1,7 +1,6 @@
 package com.gvccracing.android.tttimer.Tabs;
 
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
@@ -22,14 +21,20 @@ import android.widget.TextView;
 import com.gvccracing.android.tttimer.R;
 import com.gvccracing.android.tttimer.CursorAdapters.ResultsCursorAdapter;
 import com.gvccracing.android.tttimer.CursorAdapters.TeamResultsCursorAdapter;
-import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
-import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewExclusive;
-import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
-import com.gvccracing.android.tttimer.DataAccess.RaceCategoryCP.RaceCategory;
-import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
-import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
-import com.gvccracing.android.tttimer.DataAccess.TeamCheckInViewCP.TeamCheckInViewExclusive;
-import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
+import com.gvccracing.android.tttimer.DataAccess.AppSettings;
+import com.gvccracing.android.tttimer.DataAccess.ContentProviderTable;
+import com.gvccracing.android.tttimer.DataAccess.Race;
+import com.gvccracing.android.tttimer.DataAccess.RaceCategory;
+import com.gvccracing.android.tttimer.DataAccess.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.RaceType;
+import com.gvccracing.android.tttimer.DataAccess.RaceWave;
+import com.gvccracing.android.tttimer.DataAccess.Racer;
+import com.gvccracing.android.tttimer.DataAccess.SeriesRaceIndividualResults;
+import com.gvccracing.android.tttimer.DataAccess.SeriesRaceTeamResults;
+import com.gvccracing.android.tttimer.DataAccess.TeamInfo;
+import com.gvccracing.android.tttimer.DataAccess.Views.RaceWaveInfoView;
+import com.gvccracing.android.tttimer.DataAccess.Views.SeriesRaceIndividualResultsView;
+import com.gvccracing.android.tttimer.DataAccess.Views.SeriesRaceTeamResultsView;
 import com.gvccracing.android.tttimer.Dialogs.AdminAuthView;
 import com.gvccracing.android.tttimer.Dialogs.EditRaceResultView;
 import com.gvccracing.android.tttimer.Dialogs.RacerPreviousResults;
@@ -154,7 +159,7 @@ public class ResultsTab extends BaseTab implements LoaderManager.LoaderCallbacks
 								int position, long id) {
 							FragmentManager fm = getActivity().getSupportFragmentManager();
 							EditRaceResultView editRaceResultDialog = new EditRaceResultView(id);
-							if(Boolean.parseBoolean(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_AdminMode_Name, "false"))){
+							if(Boolean.parseBoolean(AppSettings.Instance().ReadValue(getActivity(), AppSettings.AppSetting_AdminMode_Name, "false"))){
 								editRaceResultDialog.show(fm, EditRaceResultView.LOG_TAG);
 							}else{
 								AdminAuthView adminAuthDialog = new AdminAuthView(editRaceResultDialog);
@@ -164,11 +169,11 @@ public class ResultsTab extends BaseTab implements LoaderManager.LoaderCallbacks
 						}
 		    		});
 				}
-				projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID + " as _id", Racer.LastName, Racer.FirstName, RaceResults.ElapsedTime, RaceCategory.FullCategoryName, RaceResults.OverallPlacing, RaceResults.Points};
-				selection = RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.ElapsedTime + " IS NOT NULL AND " + RaceCategory.FullCategoryName + "!=?";
+				projection = new String[]{SeriesRaceIndividualResults.RaceResult_ID + " as _id", Racer.LastName, Racer.FirstName, RaceResults.ElapsedTime, RaceCategory.FullCategoryName, RaceResults.OverallPlacing, RaceResults.Points};
+				selection = SeriesRaceIndividualResults.Race_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.ElapsedTime + " IS NOT NULL AND " + RaceCategory.FullCategoryName + "!=?";
 				selectionArgs = new String[]{"G"};
 				sortOrder = RaceResults.ElapsedTime + "," + Racer.LastName;
-				loader = new CursorLoader(getActivity(), CheckInViewExclusive.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), SeriesRaceIndividualResultsView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case TEAM_OVERALL_RESULTS_LOADER:
 				// Create the cursor adapter for the list of unassigned times
@@ -191,7 +196,7 @@ public class ResultsTab extends BaseTab implements LoaderManager.LoaderCallbacks
 								int position, long id) {
 							//FragmentManager fm = getActivity().getSupportFragmentManager();
 							//EditLappedRaceResultView editRaceResultDialog = new EditLappedRaceResultView(id);
-							if(Boolean.parseBoolean(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_AdminMode_Name, "false"))){
+							if(Boolean.parseBoolean(AppSettings.Instance().ReadValue(getActivity(), AppSettings.AppSetting_AdminMode_Name, "false"))){
 //								EditLappedRaceResultView editRaceResultDialog = new EditLappedRaceResultView(id);
 //								FragmentManager fm = getActivity().getSupportFragmentManager();
 //								editRaceResultDialog.show(fm, EditLappedRaceResultView.LOG_TAG);
@@ -203,25 +208,25 @@ public class ResultsTab extends BaseTab implements LoaderManager.LoaderCallbacks
 						}
 		    		});
 				}
-				projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID + " as _id", TeamInfo.TeamName, RaceResults.getTableName() + "." + RaceResults.ElapsedTime + " as " + RaceResults.ElapsedTime, RaceResults.OverallPlacing, "group_concat(" + Racer.LastName + ", ', ') as RacerNames"};
-				selection = RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.getTableName() + "." + RaceResults.ElapsedTime + " IS NOT NULL AND " + TeamInfo.TeamCategory + "!=?";
+				projection = new String[]{SeriesRaceTeamResults.RaceResult_ID + " as _id", TeamInfo.TeamName, RaceResults.ElapsedTime + " as " + RaceResults.ElapsedTime, RaceResults.OverallPlacing, "group_concat(" + Racer.LastName + ", ', ') as RacerNames"};
+				selection = SeriesRaceTeamResults.Race_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.ElapsedTime + " IS NOT NULL AND " + TeamInfo.TeamCategory + "!=?";
 				selectionArgs = new String[]{"G"};
 				sortOrder = RaceResults.ElapsedTime + "," + TeamInfo.TeamName;
-				loader = new CursorLoader(getActivity(), Uri.withAppendedPath(TeamCheckInViewExclusive.CONTENT_URI, "group by " + RaceResults.getTableName() + "." + RaceResults._ID + "," + TeamInfo.TeamName + "," + RaceResults.getTableName() + "." + RaceResults.ElapsedTime + "," + RaceResults.OverallPlacing), projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), SeriesRaceTeamResultsView.Instance().CONTENT_URI.buildUpon().appendQueryParameter(ContentProviderTable.GroupBy, "group by " + SeriesRaceIndividualResults.RaceResult_ID + "," + TeamInfo.TeamName + "," + RaceResults.ElapsedTime + "," + RaceResults.OverallPlacing).build(), projection, selection, selectionArgs, sortOrder);
 				break;
 			case CATEGORY_RESULTS_LOADER_RESULTS:
-				projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID + " as _id", Racer.LastName, Racer.FirstName, RaceResults.ElapsedTime, RaceCategory.FullCategoryName, RaceResults.CategoryPlacing, RaceResults.Points};
-				selection = RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.ElapsedTime + " IS NOT NULL AND " + RaceCategory.FullCategoryName + "!=?";
+				projection = new String[]{SeriesRaceIndividualResults.RaceResult_ID + " as _id", Racer.LastName, Racer.FirstName, RaceResults.ElapsedTime, RaceCategory.FullCategoryName, RaceResults.CategoryPlacing, RaceResults.Points};
+				selection = SeriesRaceIndividualResults.Race_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.ElapsedTime + " IS NOT NULL AND " + RaceCategory.FullCategoryName + "!=?";
 				selectionArgs = new String[]{"G"};
 				sortOrder = RaceCategory.FullCategoryName + "," + RaceResults.ElapsedTime + "," + Racer.LastName;
-				loader = new CursorLoader(getActivity(), CheckInViewExclusive.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), SeriesRaceIndividualResults.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case RACE_INFO_LOADER_RESULTS:
-				projection = new String[]{Race.getTableName() + "." + Race._ID + " as _id", Race.RaceType, Race.NumLaps};
-				selection = Race.getTableName() + "." + Race._ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
+				projection = new String[]{Race.Instance().getTableName() + "." + Race._ID + " as _id", Race.RaceType_ID, RaceType.IsTeamRace, RaceWave.NumLaps};
+				selection = Race.Instance().getTableName() + "." + Race._ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name);
 				selectionArgs = null;
-				sortOrder = Race.getTableName() + "." + Race._ID;
-				loader = new CursorLoader(getActivity(), Race.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				sortOrder = Race.Instance().getTableName() + "." + Race._ID;
+				loader = new CursorLoader(getActivity(), RaceWaveInfoView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 		}
 		Log.i(LOG_TAG(), "onCreateLoader complete: id=" + Integer.toString(id));
@@ -247,22 +252,9 @@ public class ResultsTab extends BaseTab implements LoaderManager.LoaderCallbacks
 					if(cursor!= null && cursor.getCount() > 0){
 						cursor.moveToFirst();
 						// Set up the tab based on the race information
-						raceTypeID = cursor.getLong(cursor.getColumnIndex(Race.RaceType));
+						raceTypeID = cursor.getLong(cursor.getColumnIndex(Race.RaceType_ID));
 						if(getView() != null){
 							if(raceTypeID == 1){								
-								if(categoryResultsList != null) {
-						        	categoryResultsList.setVisibility(View.GONE);
-						        	lblCategoryResults.setVisibility(View.GONE);
-						        	llCategoryHeader.setVisibility(View.GONE);
-						        	llOverallHeader.setVisibility(View.GONE);
-						        }
-								
-								if( teamOverallResultsLoader == null){
-									teamOverallResultsLoader = getActivity().getSupportLoaderManager().initLoader(TEAM_OVERALL_RESULTS_LOADER, null, this);
-								} else {
-									teamOverallResultsLoader = getActivity().getSupportLoaderManager().restartLoader(TEAM_OVERALL_RESULTS_LOADER, null, this);
-								}
-							}else {	
 								if( overallResultsLoader == null){
 									overallResultsLoader = getActivity().getSupportLoaderManager().initLoader(OVERALL_RESULTS_LOADER_RESULTS, null, this);
 								} else {
@@ -285,6 +277,19 @@ public class ResultsTab extends BaseTab implements LoaderManager.LoaderCallbacks
 								} else {
 									categoryResultsLoader = getActivity().getSupportLoaderManager().restartLoader(CATEGORY_RESULTS_LOADER_RESULTS, null, this);
 								}						        
+							}else {								
+								if(categoryResultsList != null) {
+						        	categoryResultsList.setVisibility(View.GONE);
+						        	lblCategoryResults.setVisibility(View.GONE);
+						        	llCategoryHeader.setVisibility(View.GONE);
+						        	llOverallHeader.setVisibility(View.GONE);
+						        }
+								
+								if( teamOverallResultsLoader == null){
+									teamOverallResultsLoader = getActivity().getSupportLoaderManager().initLoader(TEAM_OVERALL_RESULTS_LOADER, null, this);
+								} else {
+									teamOverallResultsLoader = getActivity().getSupportLoaderManager().restartLoader(TEAM_OVERALL_RESULTS_LOADER, null, this);
+								}
 							}
 						}
 					}

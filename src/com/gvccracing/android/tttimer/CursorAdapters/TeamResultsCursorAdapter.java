@@ -1,9 +1,9 @@
 package com.gvccracing.android.tttimer.CursorAdapters;
 
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.DataAccess.RaceLapsCP.RaceLaps;
-import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
-import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
+import com.gvccracing.android.tttimer.DataAccess.RaceLaps;
+import com.gvccracing.android.tttimer.DataAccess.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.TeamInfo;
 import com.gvccracing.android.tttimer.Utilities.TimeFormatter;
 
 import android.content.Context;
@@ -92,11 +92,11 @@ public class TeamResultsCursorAdapter extends BaseCursorAdapter {
 	        	lblRacerNames.setText("(" + racerNames + ")");
 	        }
 	        // Set up laps
-	        String[] projection = new String[]{RaceLaps.getTableName() + "." + RaceLaps._ID + " as _id", RaceLaps.LapNumber, RaceLaps.ElapsedTime};
+	        String[] projection = new String[]{RaceLaps.Instance().getTableName() + "." + RaceLaps._ID + " as _id", RaceLaps.LapNumber, RaceLaps.LapElapsedTime};
 			String selection = RaceLaps.RaceResult_ID + "=?";
 			String[] selectionArgs = new String[]{Long.toString(raceResult_ID)};
 			String sortOrder = RaceLaps.LapNumber;
-			Cursor laps = context.getContentResolver().query(RaceLaps.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+			Cursor laps = context.getContentResolver().query(RaceLaps.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 
 			LinearLayout lapContainer = (LinearLayout) v.findViewById(R.id.llLapContainer);
         	lapContainer.removeAllViews();
@@ -105,7 +105,7 @@ public class TeamResultsCursorAdapter extends BaseCursorAdapter {
 				do{
 					// Get the lap info
 					Long lapNumber = laps.getLong(laps.getColumnIndex(RaceLaps.LapNumber));
-					Long lapElapsedTime = laps.getLong(laps.getColumnIndex(RaceLaps.ElapsedTime));
+					Long lapElapsedTime = laps.getLong(laps.getColumnIndex(RaceLaps.LapElapsedTime));
 					
 					// Inflate a lap row
 			        View lapView = inflater.inflate(R.layout.row_lap_time, lapContainer, false);

@@ -1,9 +1,9 @@
 package com.gvccracing.android.tttimer.CursorAdapters;
 
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
-import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
-import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
+import com.gvccracing.android.tttimer.DataAccess.RaceCategory;
+import com.gvccracing.android.tttimer.DataAccess.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.Racer;
 import com.gvccracing.android.tttimer.Utilities.TimeFormatter;
 
 import android.content.Context;
@@ -57,7 +57,7 @@ public class ResultsCursorAdapter extends BaseCursorAdapter {
         int elapsedTimeCol = c.getColumnIndex(RaceResults.ElapsedTime);
         int firstNameCol = c.getColumnIndex(Racer.FirstName);
         int lastNameCol = c.getColumnIndex(Racer.LastName);
-        int categoryCol = c.getColumnIndex(RacerClubInfo.Category);
+        int categoryCol = c.getColumnIndex(RaceCategory.FullCategoryName);
     	int pointsCol = c.getColumnIndex(RaceResults.Points);
         
         Integer placing = c.getInt(placingCol);

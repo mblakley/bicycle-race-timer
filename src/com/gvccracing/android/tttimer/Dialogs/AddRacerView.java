@@ -1,28 +1,34 @@
 package com.gvccracing.android.tttimer.Dialogs;
 
-import java.util.Calendar;
 import com.gvccracing.android.tttimer.R;
 import com.gvccracing.android.tttimer.AsyncTasks.CheckInHandler;
-import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
-import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
+import com.gvccracing.android.tttimer.DataAccess.AppSettings;
+import com.gvccracing.android.tttimer.DataAccess.RaceCategory;
+import com.gvccracing.android.tttimer.DataAccess.Racer;
+import com.gvccracing.android.tttimer.DataAccess.RacerSeriesInfo;
+import com.gvccracing.android.tttimer.DataAccess.RacerUSACInfo;
 
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.support.v4.widget.CursorAdapter;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 
-public class AddRacerView extends BaseDialog implements View.OnClickListener {
+public class AddRacerView extends BaseDialog implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 	public static final String LOG_TAG = "AddRacerView";
 	
 	/**
@@ -31,6 +37,8 @@ public class AddRacerView extends BaseDialog implements View.OnClickListener {
     public static final String RACER_ADDED_ACTION = "com.gvccracing.android.tttimer.RACER_ADDED";
 
 	public static final String CHECKIN_RACER_ACTION = "com.gvccracing.android.tttimer.CHECKIN_RACER";
+
+	private static final int RACE_CATEGORY_LOADER = 1122;
 	
 	protected Button btnAddRacer;
 	
@@ -38,6 +46,8 @@ public class AddRacerView extends BaseDialog implements View.OnClickListener {
 	protected EditText txtLastName;
 	protected EditText txtUSACNumber;
 	protected Spinner spinCategory;
+
+	private SimpleCursorAdapter raceCategoryCA;
 	
 	private boolean checkin = false;
 	
@@ -63,12 +73,20 @@ public class AddRacerView extends BaseDialog implements View.OnClickListener {
 		        }
 		    }
 		});
-		
-//        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-//        		getActivity(), R.array.category_array, R.layout.control_simple_spinner );
-// 		adapter.setDropDownViewResource( R.layout.control_simple_spinner_dropdown );
-// 		spinCategory.setAdapter(adapter);
 		return v;
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		String[] columns = new String[] { RaceCategory.FullCategoryName };
+		int[] to = new int[] {android.R.id.text1 };
+        
+		raceCategoryCA = new SimpleCursorAdapter(getActivity(), R.layout.control_simple_spinner, null, columns, to, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+		raceCategoryCA.setDropDownViewResource( R.layout.control_simple_spinner_dropdown );
+    	spinCategory.setAdapter(raceCategoryCA);
+
+		this.getLoaderManager().initLoader(RACE_CATEGORY_LOADER, null, this);
 	}
 	
 	@Override 
@@ -79,48 +97,69 @@ public class AddRacerView extends BaseDialog implements View.OnClickListener {
  	/*
  	 * Add a new racer that can be checked in
  	 */
- 	private boolean AddNewRacer(String firstName, String lastName, String usacNumber, String category) 
+ 	private boolean AddNewRacer(String firstName, String lastName, String usacNumber, long categoryID) 
  	{
- 		long categoryID = 0;
  		boolean success = false;
+ 		long raceSeries_ID = Long.parseLong(AppSettings.Instance().ReadValue(getActivity(), AppSettings.AppSetting_RaceSeriesID_Name, "-1"));
  		// If none of the fields are blank, we're ok to add the record
  		if(firstName.trim().length() != 0 && lastName.trim().length() != 0 && usacNumber.trim().length() != 0){
  			String selection = "UPPER(" + Racer.FirstName + ")=? AND UPPER(" + Racer.LastName + ")=?";
  			String[] selectionArgs = new String[]{firstName.trim().toUpperCase(), lastName.trim().toUpperCase()};
  			long racer_ID = 0;
+ 			long racerUSACInfo_ID = 0;
  			Uri resultUri;
- 			Cursor previousRacers = Racer.Read(getActivity(), new String[]{Racer._ID}, selection, selectionArgs, null);
+ 			Cursor previousRacers = Racer.Instance().Read(getActivity(), new String[]{Racer._ID}, selection, selectionArgs, null);
  			if(previousRacers != null && previousRacers.getCount() > 0){
  				previousRacers.moveToFirst();
  				// Found at least one other racer with the same name.
  				racer_ID = previousRacers.getLong(previousRacers.getColumnIndex(Racer._ID));
  				
- 				selection = RacerClubInfo.RacerUSACInfo_ID + "=? and " + RacerClubInfo.Upgraded + "=?";
- 	 			selectionArgs = new String[]{Long.toString(racer_ID), Long.toString(0l)}; 
+ 				selection = RacerUSACInfo.Racer_ID + "=? AND " + RacerUSACInfo.LicenseType + "='Road'";
+ 	 			selectionArgs = new String[]{Long.toString(racer_ID)}; 
  				
- 	 			// Get the current category of this racer
- 				Cursor racerCategory = RacerClubInfo.Read(getActivity(), new String[]{RacerClubInfo._ID, RacerClubInfo.Category}, selection, selectionArgs, null);
-				// Found a racer category
- 				if(racerCategory != null && racerCategory.getCount() > 0){
- 					racerCategory.moveToFirst();
+ 				// Get the RacerUSACInfo record attached to this racer
+ 				Cursor racerUSACInfo = RacerUSACInfo.Instance().Read(getActivity(), new String[]{RacerUSACInfo._ID}, selection, selectionArgs, null);
+ 				if(racerUSACInfo != null && racerUSACInfo.getCount() > 0){
+ 					racerUSACInfo.moveToFirst();
+ 					racerUSACInfo_ID = racerUSACInfo.getLong(racerUSACInfo.getColumnIndex(RacerUSACInfo._ID));
  					
- 					int catCol = racerCategory.getColumnIndex(RacerClubInfo._ID);
-	 				Long racerClubInfo_ID = racerCategory.getLong(catCol);
-	 				String racerCat = racerCategory.getString(racerCategory.getColumnIndex(RacerClubInfo.Category));
-	 				// If the new category doesn't equal the old category, do an upgrade
-	 				if(!racerCat.equals(category)){
-	 					Toast.makeText(getActivity(), R.string.IdenticalRacerUpgrade, Toast.LENGTH_LONG).show();
-	 					RacerClubInfo.Update(getActivity(), racerClubInfo_ID, null, null, null, null, null, null, null, null, null, true);
+	 				selection = RacerSeriesInfo.RacerUSACInfo_ID + "=? AND " + RacerSeriesInfo.RaceSeries_ID + "=" + Long.toString(raceSeries_ID);
+	 	 			selectionArgs = new String[]{Long.toString(racerUSACInfo_ID)}; 
+	 				
+	 	 			// Get the current category of this racer
+	 				Cursor racerCategory = RacerSeriesInfo.Instance().Read(getActivity(), new String[]{RacerSeriesInfo._ID, RacerSeriesInfo.CurrentRaceCategory_ID}, selection, selectionArgs, null);
+					// Found a racer category
+	 				if(racerCategory != null && racerCategory.getCount() > 0){
+	 					racerCategory.moveToFirst();
+	 					
+		 				Long racerSeriesInfo_ID = racerCategory.getLong(racerCategory.getColumnIndex(RacerSeriesInfo._ID));
+		 				Long currentRacerCat = racerCategory.getLong(racerCategory.getColumnIndex(RacerSeriesInfo.CurrentRaceCategory_ID));
+		 				// If the new category doesn't equal the old category, do an upgrade
+		 				if(!currentRacerCat.equals(categoryID)){
+		 					Toast.makeText(getActivity(), R.string.IdenticalRacerUpgrade, Toast.LENGTH_LONG).show();
+		 					RacerSeriesInfo.Instance().Update(getActivity(), racerSeriesInfo_ID, null, null, null, categoryID, null, null, null, true, null);
+		 				}
 	 				}
+	 				
+	 				if(racerCategory != null){
+	 					racerCategory.close();
+	 					racerCategory = null;
+	 	 			}
+ 				} else{
+ 					// Create a racerUSACInfo record  					
+ 					Uri resultUSACUri = RacerUSACInfo.Instance().Create(getActivity(), racer_ID, "", usacNumber, "5", "Road", true, System.currentTimeMillis());
+ 					racerUSACInfo_ID = Long.parseLong(resultUSACUri.getLastPathSegment());
  				}
- 				
- 				if(racerCategory != null){
- 					racerCategory.close();
- 					racerCategory = null;
+ 				if(racerUSACInfo != null){
+ 					racerUSACInfo.close();
+ 					racerUSACInfo = null;
  	 			}
  			}else{
-	 			resultUri = Racer.Create(getActivity(), firstName, lastName, Integer.parseInt(usacNumber), 0, 0, "None", 0);
+	 			resultUri = Racer.Instance().Create(getActivity(), firstName, lastName, Integer.parseInt(usacNumber), 0, 0, "None", 0);
 	 			racer_ID = Long.parseLong(resultUri.getLastPathSegment());
+	 			
+	 			Uri resultUSACUri = RacerUSACInfo.Instance().Create(getActivity(), racer_ID, "", usacNumber, "5", "Road", true, System.currentTimeMillis());
+				racerUSACInfo_ID = Long.parseLong(resultUSACUri.getLastPathSegment());
  			}
  			if(previousRacers != null){
 	 			previousRacers.close();
@@ -128,12 +167,10 @@ public class AddRacerView extends BaseDialog implements View.OnClickListener {
  			}
  			
  			long racerInfo_ID = -1;
- 			int year = Calendar.getInstance().get(Calendar.YEAR);
  			
- 			// Create the RacerClubInfo record
- 			int age = 0;
- 			Long gvccID = null;
-	     	resultUri = RacerClubInfo.Create(getActivity(), racer_ID, "0", year, categoryID, 0, 0, 0, age, gvccID, false);
+ 			// Create the RacerSeriesInfo record
+ 			Long onlineRecordID = null;
+	     	resultUri = RacerSeriesInfo.Instance().Create(getActivity(), racerUSACInfo_ID, "0", raceSeries_ID, categoryID, 0, 0, 0, onlineRecordID);
 	     	racerInfo_ID = Long.parseLong(resultUri.getLastPathSegment());
  			Log.i(LOG_TAG, "AddNewRacer racerInfo_ID: " + Long.toString(racerInfo_ID));
  			if(checkin){
@@ -183,7 +220,7 @@ public class AddRacerView extends BaseDialog implements View.OnClickListener {
 				// Last name
 				String lastName = txtLastName.getText().toString();
 				// Category
-				String category = spinCategory.getSelectedItem().toString();	
+				long category = spinCategory.getSelectedItemId();	
 				// USACNumber
 				String usacNumber = txtUSACNumber.getText().toString();
 		
@@ -218,5 +255,52 @@ public class AddRacerView extends BaseDialog implements View.OnClickListener {
 	@Override
 	protected String LOG_TAG() {
 		return LOG_TAG;
+	}
+
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {	
+		Log.i(LOG_TAG(), "onCreateLoader start: id=" + Integer.toString(id));
+		CursorLoader loader = null;
+		String[] projection;
+		String selection;
+		String[] selectionArgs = null;
+		String sortOrder;
+		switch(id){
+			case RACE_CATEGORY_LOADER:
+				projection = new String[]{RaceCategory.Instance().getTableName() + "." + RaceCategory._ID + " as _id", RaceCategory.FullCategoryName};
+				selection = RaceCategory.Instance().getTableName() + "." + RaceCategory.RaceSeries_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceSeriesID_Name);
+				selectionArgs = null;
+				sortOrder = RaceCategory.Instance().getTableName() + "." + RaceCategory._ID;
+				loader = new CursorLoader(getActivity(), RaceCategory.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				break;
+		}
+		Log.i(LOG_TAG(), "onCreateLoader complete: id=" + Integer.toString(id));
+		return loader;
+	}
+
+	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+		try{
+			Log.i(LOG_TAG(), "onLoadFinished start: id=" + Integer.toString(loader.getId()));			
+			switch(loader.getId()){
+				case RACE_CATEGORY_LOADER:
+					raceCategoryCA.swapCursor(cursor);
+					break;
+			}
+			Log.i(LOG_TAG(), "onLoadFinished complete: id=" + Integer.toString(loader.getId()));
+		}catch(Exception ex){
+			Log.e(LOG_TAG(), "onLoadFinished error", ex); 
+		}
+	}
+	
+	public void onLoaderReset(Loader<Cursor> loader) {
+		try{
+			Log.i(LOG_TAG(), "onLoaderReset start: id=" + Integer.toString(loader.getId()));
+			switch(loader.getId()){
+				case RACE_CATEGORY_LOADER:
+					break;
+			}
+			Log.i(LOG_TAG(), "onLoaderReset complete: id=" + Integer.toString(loader.getId()));
+		}catch(Exception ex){
+			Log.e(LOG_TAG(), "onLoaderReset error", ex); 
+		}
 	}
 }

@@ -1,7 +1,7 @@
 package com.gvccracing.android.tttimer.Dialogs;
 
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
+import com.gvccracing.android.tttimer.DataAccess.AppSettings;
 
 import android.database.Cursor;
 import android.os.Bundle;
@@ -82,17 +82,17 @@ public class AppSettingsView extends BaseDialog implements LoaderManager.LoaderC
 			if (v == btnSaveSettings)
 			{
 				Integer distanceUnitID = distanceUnits.getSelectedItemPosition();
-				AppSettings.Update(getActivity(), AppSettings.AppSetting_DistanceUnits_Name, Integer.toString(distanceUnitID), true);
+				AppSettings.Instance().Update(getActivity(), AppSettings.AppSetting_DistanceUnits_Name, Integer.toString(distanceUnitID), true);
 				
 				// Set the race type from the selection
 				Integer temperatureUnitID = temperatureUnits.getSelectedItemPosition();
-				AppSettings.Update(getActivity(), AppSettings.AppSetting_TemperatureUnits_Name, Integer.toString(temperatureUnitID), true);
+				AppSettings.Instance().Update(getActivity(), AppSettings.AppSetting_TemperatureUnits_Name, Integer.toString(temperatureUnitID), true);
 				
 				boolean autoCheckInVal = autoCheckIn.isChecked();
-				AppSettings.Update(getActivity(), AppSettings.AppSettings_AutoCheckIn_Name, Boolean.toString(autoCheckInVal), true);
+				AppSettings.Instance().Update(getActivity(), AppSettings.AppSettings_AutoCheckIn_Name, Boolean.toString(autoCheckInVal), true);
 				
 				boolean autoStartAppVal = autoStartApp.isChecked();
-				AppSettings.Update(getActivity(), AppSettings.AppSettings_AutoStartApp_Name, Boolean.toString(autoStartAppVal), true);
+				AppSettings.Instance().Update(getActivity(), AppSettings.AppSettings_AutoStartApp_Name, Boolean.toString(autoStartAppVal), true);
 				
 				// Hide the dialog
 		    	dismiss();
@@ -120,25 +120,25 @@ public class AppSettingsView extends BaseDialog implements LoaderManager.LoaderC
 				projection = new String[]{AppSettings._ID, AppSettings.AppSettingValue};
 				selection = AppSettings.AppSettingName + "=?";
 				selectionArgs = new String[]{AppSettings.AppSetting_TemperatureUnits_Name};
-				loader = new CursorLoader(getActivity(), AppSettings.CONTENT_URI, projection, selection, selectionArgs, null);
+				loader = new CursorLoader(getActivity(), AppSettings.Instance().CONTENT_URI, projection, selection, selectionArgs, null);
 				break;
 			case DISTANCE_UNITS_LOADER:
 				projection = new String[]{AppSettings._ID, AppSettings.AppSettingValue};
 				selection = AppSettings.AppSettingName + "=?";
 				selectionArgs = new String[]{AppSettings.AppSetting_DistanceUnits_Name};
-				loader = new CursorLoader(getActivity(), AppSettings.CONTENT_URI, projection, selection, selectionArgs, null);
+				loader = new CursorLoader(getActivity(), AppSettings.Instance().CONTENT_URI, projection, selection, selectionArgs, null);
 				break;
 			case AUTO_CHECKIN_LOADER:
 				projection = new String[]{AppSettings._ID, AppSettings.AppSettingValue};
 				selection = AppSettings.AppSettingName + "=?";
 				selectionArgs = new String[]{AppSettings.AppSettings_AutoCheckIn_Name};
-				loader = new CursorLoader(getActivity(), AppSettings.CONTENT_URI, projection, selection, selectionArgs, null);
+				loader = new CursorLoader(getActivity(), AppSettings.Instance().CONTENT_URI, projection, selection, selectionArgs, null);
 				break;
 			case AUTO_START_APP_LOADER:
 				projection = new String[]{AppSettings._ID, AppSettings.AppSettingValue};
 				selection = AppSettings.AppSettingName + "=?";
 				selectionArgs = new String[]{AppSettings.AppSettings_AutoStartApp_Name};
-				loader = new CursorLoader(getActivity(), AppSettings.CONTENT_URI, projection, selection, selectionArgs, null);
+				loader = new CursorLoader(getActivity(), AppSettings.Instance().CONTENT_URI, projection, selection, selectionArgs, null);
 				break;
 		}
 		Log.i(LOG_TAG, "onCreateLoader complete: id=" + Integer.toString(id));

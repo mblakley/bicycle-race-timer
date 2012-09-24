@@ -17,15 +17,22 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
-import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
-import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.RaceInfoView;
-import com.gvccracing.android.tttimer.DataAccess.RaceLocationCP.RaceLocation;
-import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
-import com.gvccracing.android.tttimer.Utilities.Enums.RaceType;
+import com.gvccracing.android.tttimer.DataAccess.AppSettings;
+import com.gvccracing.android.tttimer.DataAccess.Race;
+import com.gvccracing.android.tttimer.DataAccess.RaceLocation;
+import com.gvccracing.android.tttimer.DataAccess.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.RaceWave;
+import com.gvccracing.android.tttimer.DataAccess.SeriesRaceIndividualResults;
+import com.gvccracing.android.tttimer.DataAccess.Views.RaceInfoView;
+import com.gvccracing.android.tttimer.DataAccess.Views.SeriesRaceIndividualResultsView;
 import com.gvccracing.android.tttimer.Utilities.Enums.StartInterval;
 
 public class EditRaceConfiguration extends AddRaceView implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
+	
+	public EditRaceConfiguration(long raceSeries_ID) {
+		super(raceSeries_ID);
+	}
+
 	public static final String LOG_TAG = "EditRaceConfiguration";
 	
 	private static final int RACE_INFO_LOADER = 0x06;
@@ -62,11 +69,11 @@ public class EditRaceConfiguration extends AddRaceView implements View.OnClickLi
 				String discipline = "";
 				Long series = 0l;
 				String scoring = "Both";
-				Race.Update(getActivity(), Race._ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name), null, null, GetRaceLocationID(), GetRaceDate(), null, GetRaceTypeID(), startInterval, numLaps, eventName, eventID, discipline, series, scoring);	 			
-				AppSettings.Update(getActivity(), AppSettings.AppSetting_StartInterval_Name, Long.toString(startInterval), true);
+				Race.Instance().Update(getActivity(), Race._ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name), null, null, GetRaceLocationID(), GetRaceDate(), GetRaceTypeID(), startInterval, numLaps, eventName, eventID, discipline, series, scoring);	 			
+				AppSettings.Instance().Update(getActivity(), AppSettings.AppSetting_StartInterval_Name, Long.toString(startInterval), true);
 				
 				// Figure out if checkin has already started.  If checkin has started, and start interval has changed, update the start intervals of everyone.
-				Cursor checkins = RaceResults.Read(getActivity(), new String[]{RaceResults._ID, RaceResults.StartOrder}, RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name), null, RaceResults.StartOrder);
+				Cursor checkins = SeriesRaceIndividualResultsView.Instance().Read(getActivity(), new String[]{RaceResults._ID, RaceResults.StartOrder}, SeriesRaceIndividualResults.Race_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name), null, RaceResults.StartOrder);
 				if(checkins.getCount() > 0){
 					checkins.moveToFirst();
 					// Checkin was already started, so update all startIntervals
@@ -76,7 +83,7 @@ public class EditRaceConfiguration extends AddRaceView implements View.OnClickLi
 						Long startTimeOffset = (startInterval * startOrder) * 1000l;
 						ContentValues content = new ContentValues();
 						content.put(RaceResults.StartTimeOffset, startTimeOffset);
-						RaceResults.Update(getActivity(), content,  RaceResults._ID + "=?", new String[]{Long.toString(raceResultID)});
+						RaceResults.Instance().Update(getActivity(), content,  RaceResults._ID + "=?", new String[]{Long.toString(raceResultID)});
 					} while(checkins.moveToNext());
 				}
 				if(checkins != null){
@@ -105,11 +112,11 @@ public class EditRaceConfiguration extends AddRaceView implements View.OnClickLi
 		String sortOrder;
 		switch(id){
 			case RACE_INFO_LOADER:
-				projection = new String[]{Race.getTableName() + "." + Race._ID, Race.RaceDate, Race.RaceType, Race.RaceLocation_ID, RaceLocation.CourseName, Race.StartInterval, Race.NumLaps};
-				selection = Race.getTableName() + "." + Race._ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
+				projection = new String[]{Race.Instance().getTableName() + "." + Race._ID, Race.RaceDate, Race.RaceType_ID, Race.RaceLocation_ID, RaceLocation.CourseName, Race.StartInterval, RaceWave.NumLaps};
+				selection = Race.Instance().getTableName() + "." + Race._ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name);
 				selectionArgs = null;
 				sortOrder = null;
-				loader = new CursorLoader(getActivity(), RaceInfoView.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), RaceInfoView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			default:
 		    	loader = (CursorLoader) super.onCreateLoader(id, args);
@@ -127,7 +134,7 @@ public class EditRaceConfiguration extends AddRaceView implements View.OnClickLi
 				case RACE_INFO_LOADER:
 					cursor.moveToFirst();
 					// Race Type from ID
-					int cursorIndex = cursor.getColumnIndex(Race.RaceType);
+					int cursorIndex = cursor.getColumnIndex(Race.RaceType_ID);
 					Long raceTypeValue = cursor.getLong(cursorIndex);
 					Spinner raceType = (Spinner) getView().findViewById(R.id.spinnerRaceType);
 					SetRaceTypeSelectionByValue(raceType, raceTypeValue);
@@ -143,7 +150,7 @@ public class EditRaceConfiguration extends AddRaceView implements View.OnClickLi
 					Long raceDateValue = cursor.getLong(cursor.getColumnIndex(Race.RaceDate));
 					Date tempDate = new Date(raceDateValue);
 					date.updateDate(tempDate.getYear(), tempDate.getMonth(), tempDate.getDate());
-					Long numLaps = cursor.getLong(cursor.getColumnIndex(Race.NumLaps));
+					Long numLaps = cursor.getLong(cursor.getColumnIndex(RaceWave.NumLaps));
 					EditText txtNumLaps = (EditText)getView().findViewById(R.id.txtNumLaps);
 					txtNumLaps.setText(numLaps.toString());
 					break;
@@ -159,10 +166,9 @@ public class EditRaceConfiguration extends AddRaceView implements View.OnClickLi
 	}
     
     private void SetRaceTypeSelectionByValue(Spinner raceType, Long raceTypeID) {
-    	String dbDesc = RaceType.DescriptionFromRaceTypeID(raceTypeID);
 		for (int i = 0; i < raceType.getCount(); i++) {
-		    String desc = raceType.getItemAtPosition(i).toString();
-		    if (desc.equalsIgnoreCase(dbDesc)) {
+		    long id = raceType.getItemIdAtPosition(i);
+		    if (id == raceTypeID) {
 		    	raceType.setSelection(i);
 		    	break;
 		    }

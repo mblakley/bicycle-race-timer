@@ -36,9 +36,9 @@ import com.dropbox.client2.session.AccessTokenPair;
 import com.dropbox.client2.session.AppKeyPair;
 import com.dropbox.client2.session.Session.AccessType;
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
-import com.gvccracing.android.tttimer.DataAccess.LocationImagesCP.LocationImages;
-import com.gvccracing.android.tttimer.DataAccess.RaceLocationCP.RaceLocation;
+import com.gvccracing.android.tttimer.DataAccess.AppSettings;
+import com.gvccracing.android.tttimer.DataAccess.LocationImages;
+import com.gvccracing.android.tttimer.DataAccess.RaceLocation;
 import com.gvccracing.android.tttimer.Utilities.ImageFormatter;
 
 public class AddLocationImages extends BaseDialog implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
@@ -208,7 +208,7 @@ public class AddLocationImages extends BaseDialog implements View.OnClickListene
 					if(image.keepImage){
 						byte[] imageBytes = ImageFormatter.GetByteArrayFromImage(image.image);
 						if(image.updated){
-							LocationImages.Update(getActivity(), image.locationImages_ID, imageBytes, image.notes, image.raceLocation_ID, image.filename, image.revision);
+							LocationImages.Instance().Update(getActivity(), image.locationImages_ID, imageBytes, image.notes, image.raceLocation_ID, image.filename, image.revision);
 						} else {
 							String notes = image.notes;
 							Long id = image.raceLocation_ID;
@@ -226,7 +226,7 @@ public class AddLocationImages extends BaseDialog implements View.OnClickListene
 							if(rev == null){
 								Log.e("Loop", "rev is null");
 							}
-							LocationImages.Create(getActivity(), imageBytes, image.notes, image.raceLocation_ID, image.filename, image.revision);
+							LocationImages.Instance().Create(getActivity(), imageBytes, image.notes, image.raceLocation_ID, image.filename, image.revision);
 //							String id = create.getLastPathSegment();
 //							Cursor afterInsert = LocationImages.Read(getActivity(), new String[]{LocationImages.Image}, LocationImages._ID + "=" + id, null, null);
 //							afterInsert.moveToFirst();
@@ -412,7 +412,7 @@ public class AddLocationImages extends BaseDialog implements View.OnClickListene
 			AndroidAuthSession session = new AndroidAuthSession(appKeys, ACCESS_TYPE);
 			mDBApi = new DropboxAPI<AndroidAuthSession>(session);
 			
-			AccessTokenPair access = new AccessTokenPair(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_DropBox_Key_Name, null), AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_DropBox_Secret_Name, null));
+			AccessTokenPair access = new AccessTokenPair(AppSettings.Instance().ReadValue(getActivity(), AppSettings.AppSetting_DropBox_Key_Name, null), AppSettings.Instance().ReadValue(getActivity(), AppSettings.AppSetting_DropBox_Secret_Name, null));
 			mDBApi.getSession().setAccessTokenPair(access);
 
 		    int progress = 0;
@@ -443,7 +443,7 @@ public class AddLocationImages extends BaseDialog implements View.OnClickListene
 			
 			String[] fieldsToRetrieve = new String[]{LocationImages._ID, LocationImages.DropboxFilename, LocationImages.DropboxRevision, LocationImages.Notes, LocationImages.RaceLocation_ID};
 			
-		    Cursor allImagesInDB = LocationImages.Read(getActivity(), fieldsToRetrieve, null, null, null);
+		    Cursor allImagesInDB = LocationImages.Instance().Read(getActivity(), fieldsToRetrieve, null, null, null);
 		    progress = 0;
 		    progressMax = allImagesInDB.getCount();
 			allImagesInDB.moveToFirst();
@@ -519,7 +519,7 @@ public class AddLocationImages extends BaseDialog implements View.OnClickListene
 				selection = null;
 				selectionArgs = null;
 				sortOrder = RaceLocation.CourseName;
-				loader = new CursorLoader(getActivity(), RaceLocation.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), RaceLocation.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 		}
 		Log.i(LOG_TAG, "onCreateLoader complete: id=" + Integer.toString(id));

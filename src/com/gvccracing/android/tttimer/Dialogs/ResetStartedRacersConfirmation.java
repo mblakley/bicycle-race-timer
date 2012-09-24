@@ -2,7 +2,7 @@ package com.gvccracing.android.tttimer.Dialogs;
 
 import com.gvccracing.android.tttimer.R;
 import com.gvccracing.android.tttimer.AsyncTasks.ResetAllRacersStartTime;
-import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
+import com.gvccracing.android.tttimer.DataAccess.AppSettings;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -34,7 +34,7 @@ public class ResetStartedRacersConfirmation extends BaseDialog implements View.O
 		switch (v.getId())
 		{
 			case R.id.btnYesReset:
-				long race_ID = Long.parseLong(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_RaceID_Name, "-1"));
+				long race_ID = Long.parseLong(AppSettings.Instance().ReadValue(getActivity(), AppSettings.AppSetting_RaceID_Name, "-1"));
 				
 				if(race_ID > 0){
 					// Reset all racers in this race

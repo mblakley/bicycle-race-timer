@@ -1,8 +1,12 @@
 package com.gvccracing.android.tttimer.CursorAdapters;
 
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
-import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.AppSettings;
+import com.gvccracing.android.tttimer.DataAccess.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.Racer;
+import com.gvccracing.android.tttimer.DataAccess.RacerSeriesInfo;
+import com.gvccracing.android.tttimer.DataAccess.SeriesRaceIndividualResults;
+import com.gvccracing.android.tttimer.DataAccess.Views.SeriesRaceIndividualResultsView;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -37,15 +41,14 @@ public class CheckInCursorAdapter extends BaseCursorAdapter {
 
     	try{
     		Log.i("CheckInCursorAdapter", "bindView start");
-	    	int firstNameCol = c.getColumnIndex("FirstName");
-	        int lastNameCol = c.getColumnIndex("LastName");
+	    	int firstNameCol = c.getColumnIndex(Racer.FirstName);
+	        int lastNameCol = c.getColumnIndex(Racer.LastName);
 	
 	        String firstName = c.getString(firstNameCol);
 	        String lastName = c.getString(lastNameCol);
-	        Long racerInfo_ID = c.getLong(0);
-	        v.setTag(racerInfo_ID);
+	        Long racerSeriesInfo_ID = c.getLong(0);
 
-	        Cursor raceResult = RaceResults.Read(context, new String[]{RaceResults._ID}, RaceResults.RacerRegistration_ID + "=? AND " + RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name), new String[]{Long.toString(racerInfo_ID)}, null);
+	        Cursor raceResult = SeriesRaceIndividualResultsView.Instance().Read(context, new String[]{RaceResults.Instance().getTableName() + "." + RaceResults._ID}, RacerSeriesInfo.Instance().getTableName() + "." + RacerSeriesInfo._ID + "=? AND " + SeriesRaceIndividualResults.Race_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name), new String[]{Long.toString(racerSeriesInfo_ID)}, null);
 	        /**
 	         * Next set the name of the entry.
 	         */     
@@ -61,7 +64,7 @@ public class CheckInCursorAdapter extends BaseCursorAdapter {
 
 	        Button btnCheckIn = (Button) v.findViewById(R.id.btnCheckIn);
 	        if(btnCheckIn != null){
-	        	btnCheckIn.setTag(racerInfo_ID);
+	        	btnCheckIn.setTag(racerSeriesInfo_ID);
 	        	
 	        	// Check if the racer has previously checked in
 	        	if(raceResult != null && raceResult.getCount() > 0){

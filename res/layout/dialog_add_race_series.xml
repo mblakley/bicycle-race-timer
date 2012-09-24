@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialogContainer"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" 
+    android:background="#FFFF"
+    style="@style/Padded" >
+
+    <TextView
+        android:id="@+id/lblRaceSeriesName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/RaceSeriesName"
+        style="@style/Medium"
+        android:layout_marginLeft="10sp" />
+
+    <EditText
+        android:id="@+id/txtRaceSeriesName"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        style="@style/Medium.Padded"
+        android:inputType="textCapWords" >
+    </EditText>
+    
+    <TextView
+        android:id="@+id/lblRaceSeriesStartDate"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/RaceSeriesStartDate"
+        style="@style/Medium"
+        android:layout_marginLeft="10sp" />
+
+    <DatePicker
+        android:id="@+id/dateRaceSeriesStartDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    
+    <TextView
+        android:id="@+id/lblRaceSeriesEndDate"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/RaceSeriesEndDate"
+        style="@style/Medium"
+        android:layout_marginLeft="10sp" />
+
+    <DatePicker
+        android:id="@+id/dateRaceSeriesEndDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/btnAddRaceSeries"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/AddRaceSeries"
+        style="@style/Medium" />
+
+</LinearLayout>

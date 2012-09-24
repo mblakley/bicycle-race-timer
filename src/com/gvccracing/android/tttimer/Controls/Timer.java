@@ -2,14 +2,17 @@ package com.gvccracing.android.tttimer.Controls;
 
 import com.gvccracing.android.tttimer.R;
 import com.gvccracing.android.tttimer.AsyncTasks.RacerStartedTask;
-import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
-import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
-import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.RaceInfoResultsView;
-import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.RaceLapsInfoView;
-import com.gvccracing.android.tttimer.DataAccess.RaceLapsCP.RaceLaps;
-import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
-import com.gvccracing.android.tttimer.DataAccess.UnassignedTimesCP.UnassignedTimes;
-import com.gvccracing.android.tttimer.Utilities.Enums.RaceType;
+import com.gvccracing.android.tttimer.DataAccess.AppSettings;
+import com.gvccracing.android.tttimer.DataAccess.Race;
+import com.gvccracing.android.tttimer.DataAccess.RaceLaps;
+import com.gvccracing.android.tttimer.DataAccess.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.RaceWave;
+import com.gvccracing.android.tttimer.DataAccess.SeriesRaceIndividualResults;
+import com.gvccracing.android.tttimer.DataAccess.UnassignedTimes;
+import com.gvccracing.android.tttimer.DataAccess.Views.RaceInfoResultsView;
+import com.gvccracing.android.tttimer.DataAccess.Views.RaceLapsInfoView;
+import com.gvccracing.android.tttimer.DataAccess.Views.RaceWaveInfoView;
+import com.gvccracing.android.tttimer.DataAccess.Views.SeriesRaceIndividualResultsView;
 import com.gvccracing.android.tttimer.Utilities.TimeFormatter;
 
 import android.content.BroadcastReceiver;
@@ -192,10 +195,6 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
 	 * The current number of race laps
 	 */
 	private long currentLaps = 1l;
-	/**
-	 * The loader for the current number of laps
-	 */
-	private Loader<Cursor> currentLapsLoader = null;
 	
 	private Handler messageTimerHandler = new Handler();
     private Runnable hideMessage = new Runnable() {
@@ -268,7 +267,7 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
 
 		llToast = (LinearLayout) findViewById(R.id.llToast); 
 		
-		startTimeInterval = Long.parseLong(AppSettings.ReadValue(getContext(), AppSettings.AppSetting_StartInterval_Name, "60"));
+		startTimeInterval = Long.parseLong(AppSettings.Instance().ReadValue(getContext(), AppSettings.AppSetting_StartInterval_Name, "60"));
 
         ((FragmentActivity) getContext()).getSupportLoaderManager().initLoader(ON_DECK_LOADER_TIMER, null, this);
         ((FragmentActivity) getContext()).getSupportLoaderManager().initLoader(UNFINISHED_RACERS_LOADER, null, this);
@@ -330,10 +329,10 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
     private void resetStartTime (){     	
  		// Reset the start time value in the database
  		ContentValues content = new ContentValues();
- 		Long race_ID = Long.parseLong(AppSettings.ReadValue(getContext(), AppSettings.AppSetting_RaceID_Name, "-1"));
+ 		Long race_ID = Long.parseLong(AppSettings.Instance().ReadValue(getContext(), AppSettings.AppSetting_RaceID_Name, "-1"));
 		content.put(Race._ID, race_ID);
 		content.putNull(Race.RaceStartTime);
-		Uri fullUri = Uri.withAppendedPath(Race.CONTENT_URI, Long.toString(race_ID));
+		Uri fullUri = Uri.withAppendedPath(Race.Instance().CONTENT_URI, Long.toString(race_ID));
 		getContext().getContentResolver().update(fullUri, content, null, null);
 		
 		resetTimer();
@@ -416,7 +415,7 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
 	};	
 
 	public void CleanUpExtraUnassignedTimes(){
-		getContext().getContentResolver().delete(UnassignedTimes.CONTENT_URI, UnassignedTimes.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name), null);
+		getContext().getContentResolver().delete(UnassignedTimes.Instance().CONTENT_URI, UnassignedTimes.Race_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name), null);
 	}
 
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -428,39 +427,39 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
 		String sortOrder;
 		switch(id){
 			case ON_DECK_LOADER_TIMER:
-				projection = new String[]{RaceResults._ID, RaceResults.StartOrder, RaceResults.StartTimeOffset};
-				selection = RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.StartTime + " IS NULL";
+				projection = new String[]{SeriesRaceIndividualResults.RaceResult_ID, RaceResults.StartOrder, RaceResults.StartTimeOffset};
+				selection = SeriesRaceIndividualResults.Race_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.StartTime + " IS NULL";
 				selectionArgs = null;
 				sortOrder = RaceResults.StartOrder;
-				loader = new CursorLoader(getContext(), RaceResults.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getContext(), SeriesRaceIndividualResultsView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case START_INTERVAL_LOADER:
 				projection = new String[]{AppSettings.AppSettingName, AppSettings.AppSettingValue};
 				selection = AppSettings.AppSettingName + "=?";
 				sortOrder = null;
 				selectionArgs = new String[]{AppSettings.AppSetting_StartInterval_Name};
-				loader = new CursorLoader(getContext(), AppSettings.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getContext(), AppSettings.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case RACE_INFO_LOADER_TIMER:
-				projection = new String[]{Race.RaceType, Race.NumLaps};
-				selection = Race.getTableName() + "." + Race._ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
+				projection = new String[]{Race.RaceType_ID, RaceWave.NumLaps};
+				selection = Race.Instance().getTableName() + "." + Race._ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name);
 				selectionArgs = null;
-				sortOrder = Race.getTableName() + "." + Race._ID;
-				loader = new CursorLoader(getContext(), Race.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				sortOrder = Race.Instance().getTableName() + "." + Race._ID;
+				loader = new CursorLoader(getContext(), RaceWaveInfoView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case CURRENT_LAPS_LOADER:
 				projection = new String[]{"MAX(" + RaceLaps.LapNumber + ") as " + RaceLaps.LapNumber};
-				selection = Race.getTableName() + "." + Race._ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
+				selection = Race.Instance().getTableName() + "." + Race._ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name);
 				selectionArgs = null;
 				sortOrder = null;
-				loader = new CursorLoader(getContext(), RaceLapsInfoView.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getContext(), RaceLapsInfoView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case APP_SETTINGS_LOADER:
 				projection = new String[]{AppSettings.AppSettingName, AppSettings.AppSettingValue};
 				selection = null;
 				sortOrder = null;
 				selectionArgs = null;
-				loader = new CursorLoader(getContext(), AppSettings.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getContext(), AppSettings.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 		}
 		Log.i("Timer", "onCreateLoader complete: id=" + Integer.toString(id));
@@ -485,23 +484,19 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
 				    }
 					break;
 				case START_INTERVAL_LOADER:
-					startTimeInterval = Long.parseLong(AppSettings.ReadValue(getContext(), AppSettings.AppSetting_StartInterval_Name, "60"));
+					startTimeInterval = Long.parseLong(AppSettings.Instance().ReadValue(getContext(), AppSettings.AppSetting_StartInterval_Name, "60"));
 					break;
 				case RACE_INFO_LOADER_TIMER:
 					if(cursor != null && cursor.getCount() > 0){
 						cursor.moveToFirst();
-						raceTypeID = cursor.getLong(cursor.getColumnIndex(Race.RaceType));
-						totalRaceLaps = cursor.getLong(cursor.getColumnIndex(Race.NumLaps));
+						raceTypeID = cursor.getLong(cursor.getColumnIndex(Race.RaceType_ID));
+						totalRaceLaps = cursor.getLong(cursor.getColumnIndex(RaceWave.NumLaps));
 						
-						if(raceTypeID == RaceType.TeamTimeTrial.ID()){
-							lblLaps.setVisibility(View.VISIBLE);
-							if( currentLapsLoader == null){
-								currentLapsLoader = ((FragmentActivity) getContext()).getSupportLoaderManager().initLoader(CURRENT_LAPS_LOADER, null, this);
-							} else {
-								currentLapsLoader = ((FragmentActivity) getContext()).getSupportLoaderManager().restartLoader(CURRENT_LAPS_LOADER, null, this);
-							}
-						}else{
+						if(raceTypeID == 1){
 							lblLaps.setVisibility(View.INVISIBLE);
+						}else{
+							lblLaps.setVisibility(View.VISIBLE);
+							((FragmentActivity) getContext()).getSupportLoaderManager().restartLoader(CURRENT_LAPS_LOADER, null, this);
 						}
 					}
 					break;
@@ -550,12 +545,12 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
 		Cursor currentRace = null;
 		
 		try{
-			String[] projection = new String[]{Race.getTableName() + "." + Race._ID, Race.RaceStartTime};
-			String selection = Race.RaceStartTime + " > 0 and " + RaceResults.EndTime + " IS NULL AND " + Race.getTableName() + "." + Race._ID + "=?";
+			String[] projection = new String[]{Race.Instance().getTableName() + "." + Race._ID, Race.RaceStartTime};
+			String selection = Race.RaceStartTime + " > 0 and " + RaceResults.EndTime + " IS NULL AND " + Race.Instance().getTableName() + "." + Race._ID + "=?";
 			String[] selectionArgs = new String[]{Long.toString(race_ID)}; 
-			String sortOrder = Race.getTableName() + "." + Race._ID;
+			String sortOrder = Race.Instance().getTableName() + "." + Race._ID;
 			
-			currentRace = getContext().getContentResolver().query(RaceInfoResultsView.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+			currentRace = getContext().getContentResolver().query(RaceInfoResultsView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
      	}catch(Exception ex){Log.e(LOG_TAG, "GetCurrentRace failed:", ex);}
 	
 		return currentRace;
@@ -567,7 +562,7 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
 		if(startTime > 0){
 			return startTime;
 		}else{
-			Long race_ID = Long.parseLong(AppSettings.ReadValue(getContext(), AppSettings.AppSetting_RaceID_Name, "-1"));
+			Long race_ID = Long.parseLong(AppSettings.Instance().ReadValue(getContext(), AppSettings.AppSetting_RaceID_Name, "-1"));
 
 			Cursor currentRace = GetCurrentRace(race_ID);
 			

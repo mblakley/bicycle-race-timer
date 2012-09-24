@@ -1,6 +1,7 @@
 package com.gvccracing.android.tttimer.Dialogs;
 
 import com.gvccracing.android.tttimer.R;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,7 +46,7 @@ public class ChooseViewingMode extends BaseDialog implements View.OnClickListene
 	public void onClick(View v) { 
 		try{
 			if (v == btnAddNewRace){
-				AddRaceView addRaceDialog = new AddRaceView();
+				AddRaceView addRaceDialog = new AddRaceView(-1);
 				FragmentManager fm = getFragmentManager();
 				addRaceDialog.show(fm, AddRaceView.LOG_TAG);
 				// Hide the dialog

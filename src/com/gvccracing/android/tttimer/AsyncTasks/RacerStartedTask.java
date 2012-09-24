@@ -4,7 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.RaceResults;
 
 public class RacerStartedTask extends AsyncTask<Long, Void, Void> {
 	
@@ -26,7 +26,7 @@ public class RacerStartedTask extends AsyncTask<Long, Void, Void> {
 		
 		ContentValues content = new ContentValues();
 		content.put(RaceResults.StartTime, startTime + startTimeOffsetOnDeck);
-		context.getContentResolver().update(RaceResults.CONTENT_URI, content, RaceResults._ID + "=?", new String[]{Long.toString(raceResult_IDOnDeck)});
+		RaceResults.Instance().Update(context, content, RaceResults._ID + "=?", new String[]{Long.toString(raceResult_IDOnDeck)});
 		
 		return null;
 	}

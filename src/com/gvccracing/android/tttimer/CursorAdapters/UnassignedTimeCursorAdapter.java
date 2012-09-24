@@ -1,7 +1,7 @@
 package com.gvccracing.android.tttimer.CursorAdapters;
 
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.DataAccess.UnassignedTimesCP.UnassignedTimes;
+import com.gvccracing.android.tttimer.DataAccess.UnassignedTimes;
 import com.gvccracing.android.tttimer.Utilities.TimeFormatter;
 
 import android.content.Context;
@@ -108,7 +108,7 @@ public class UnassignedTimeCursorAdapter extends BaseCursorAdapter {
 	        }
 	        
 //	        String[] projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID + " as _id", RaceResults.StartOrder, Racer.FirstName, Racer.LastName};
-//			String selection = RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.StartTime + " IS NOT NULL" + " AND " + RaceResults.EndTime + " IS NULL";
+//			String selection = RaceResults.Race_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.StartTime + " IS NOT NULL" + " AND " + RaceResults.EndTime + " IS NULL";
 //			String[] selectionArgs = null;
 //			String sortOrder = RaceResults.StartOrder;
 //			Cursor unfinished = context.getContentResolver().query(CheckInViewExclusive.CONTENT_URI, projection, selection, selectionArgs, sortOrder);

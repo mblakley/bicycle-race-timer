@@ -1,9 +1,11 @@
 package com.gvccracing.android.tttimer.CursorAdapters;
 
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
-import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
-import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.AppSettings;
+import com.gvccracing.android.tttimer.DataAccess.SeriesRaceTeamResults;
+import com.gvccracing.android.tttimer.DataAccess.TeamInfo;
+import com.gvccracing.android.tttimer.DataAccess.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.Views.SeriesRaceTeamResultsView;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -48,7 +50,7 @@ public class TeamCheckInCursorAdapter extends BaseCursorAdapter {
 	        String teamMemberNames = c.getString(teamMemberNamesCol);
 	        Integer teamInfo_ID = c.getInt(0);
 
-	        Cursor raceResult = RaceResults.Read(context, new String[]{RaceResults._ID}, RaceResults.TeamInfo_ID + "=? AND " + RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name), new String[]{Integer.toString(teamInfo_ID)}, null);
+	        Cursor raceResult = SeriesRaceTeamResultsView.Instance().Read(context, new String[]{RaceResults._ID}, SeriesRaceTeamResults.TeamInfo_ID + "=? AND " + SeriesRaceTeamResults.Race_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name), new String[]{Integer.toString(teamInfo_ID)}, null);
 	        /**
 	         * Next set the name of the entry.
 	         */     

@@ -1,7 +1,7 @@
 package com.gvccracing.android.tttimer.Dialogs;
 
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
+import com.gvccracing.android.tttimer.DataAccess.AppSettings;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -50,7 +50,7 @@ public class AdminAuthView extends BaseDialog implements View.OnClickListener {
 	@Override
 	public void onResume() {
 		super.onResume();
-		if(Boolean.parseBoolean(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_AdminMode_Name, "false"))){
+		if(Boolean.parseBoolean(AppSettings.Instance().ReadValue(getActivity(), AppSettings.AppSetting_AdminMode_Name, "false"))){
 			if(navigateAfterAuth == null){
 				GoToAdminMenu();
 			}else{

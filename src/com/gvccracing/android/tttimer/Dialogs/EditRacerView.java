@@ -1,9 +1,11 @@
 package com.gvccracing.android.tttimer.Dialogs;
 
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewInclusive;
-import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
-import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
+import com.gvccracing.android.tttimer.DataAccess.RaceCategory;
+import com.gvccracing.android.tttimer.DataAccess.Racer;
+import com.gvccracing.android.tttimer.DataAccess.RacerSeriesInfo;
+import com.gvccracing.android.tttimer.DataAccess.Views.CheckInViewInclusive;
+import com.gvccracing.android.tttimer.DataAccess.Views.SeriesRaceIndividualResultsView;
 
 import android.database.Cursor;
 import android.os.Bundle;
@@ -22,7 +24,7 @@ public class EditRacerView extends AddRacerView implements View.OnClickListener,
 	private static final int RACER_INFO_LOADER = 0x88;
 	private Long racerClubInfo_ID;
 	private Long racer_ID;
-	private String initCategory;
+	private long initCategory;
 	public EditRacerView(long racerClubInfo_ID) {
 		super(false);
 		
@@ -61,26 +63,26 @@ public class EditRacerView extends AddRacerView implements View.OnClickListener,
 				// Last name
 				String lastName = txtLastName.getText().toString();
 				// Category
-				String category = spinCategory.getSelectedItem().toString();	
+				long category = spinCategory.getSelectedItemId();	
 				// USACNumber
 				String usacNumber = txtUSACNumber.getText().toString();
 		
 				if(firstName.trim().equals("")){
-					Toast.makeText(getActivity(), "Please enter a first name", 3000).show();
+					Toast.makeText(getActivity(), "Please enter a first name", Toast.LENGTH_LONG).show();
 					return;
 				}
 				
 				if(lastName.trim().equals("")){
-					Toast.makeText(getActivity(), "Please enter a last name", 3000).show();
+					Toast.makeText(getActivity(), "Please enter a last name", Toast.LENGTH_LONG).show();
 					return;
 				}
 
 				if(usacNumber.trim().equals("")){
-					Toast.makeText(getActivity(), "Please enter a USAC license number", 3000).show();
+					Toast.makeText(getActivity(), "Please enter a USAC license number", Toast.LENGTH_LONG).show();
 					return;
 				}
 				
-				if(UpdateRacer(firstName, lastName, usacNumber, category)){
+				if(UpdateRacer(firstName, lastName, category)){
 					// Hide the dialog
 			    	dismiss();
 					
@@ -98,9 +100,8 @@ public class EditRacerView extends AddRacerView implements View.OnClickListener,
 		}
 	}
 
-	private boolean UpdateRacer(String firstName, String lastName, String usacNumber, final String category) {
-		
-		Racer.Update(getActivity(), racer_ID, firstName, lastName, Integer.parseInt(usacNumber), null, null, null, null);
+	private boolean UpdateRacer(String firstName, String lastName, long category) {		
+		Racer.Instance().Update(getActivity(), racer_ID, firstName, lastName, null, null, null, null);
 		
 		// The category has changed.  Figure out if the racer upgraded, or if the initial value was incorrect
 		if(category != initCategory){
@@ -121,10 +122,10 @@ public class EditRacerView extends AddRacerView implements View.OnClickListener,
 		String sortOrder = null;
 		switch(id){
 			case RACER_INFO_LOADER:
-				projection = new String[]{RacerClubInfo.RacerUSACInfo_ID, Racer.LastName, Racer.FirstName, Racer.USACNumber, RacerClubInfo.Category};
-				selection = RacerClubInfo.getTableName() + "." + RacerClubInfo._ID + "=? AND " + RacerClubInfo.Upgraded + "=?";;
-				selectionArgs = new String[]{Long.toString(racerClubInfo_ID), Long.toString(0l)};
-				loader = new CursorLoader(getActivity(), CheckInViewInclusive.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				projection = new String[]{RacerSeriesInfo.RacerUSACInfo_ID, Racer.LastName, Racer.FirstName, RacerSeriesInfo.CurrentRaceCategory_ID};
+				selection = RacerSeriesInfo.Instance().getTableName() + "." + RacerSeriesInfo._ID + "=?";
+				selectionArgs = new String[]{Long.toString(racerClubInfo_ID)};
+				loader = new CursorLoader(getActivity(), SeriesRaceIndividualResultsView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 		}
 		Log.i(LOG_TAG, "onCreateLoader complete: id=" + Integer.toString(id));
@@ -137,12 +138,11 @@ public class EditRacerView extends AddRacerView implements View.OnClickListener,
 			switch(loader.getId()){
 				case RACER_INFO_LOADER:	
 					cursor.moveToFirst();
-					racer_ID = cursor.getLong(cursor.getColumnIndex(RacerClubInfo.RacerUSACInfo_ID)); 
+					racer_ID = cursor.getLong(cursor.getColumnIndex(RacerSeriesInfo.RacerUSACInfo_ID)); 
 					
 					txtFirstName.setText(cursor.getString(cursor.getColumnIndex(Racer.FirstName)));
 					txtLastName.setText(cursor.getString(cursor.getColumnIndex(Racer.LastName)));
-					txtUSACNumber.setText(cursor.getString(cursor.getColumnIndex(Racer.USACNumber)));
-					SetCategorySelectionByValue(cursor.getString(cursor.getColumnIndex(RacerClubInfo.Category)));
+					SetCategorySelectionByValue(cursor.getLong(cursor.getColumnIndex(RacerSeriesInfo.CurrentRaceCategory_ID)));
 					break;
 			}
 			Log.i(LOG_TAG, "onLoadFinished complete: id=" + Integer.toString(loader.getId()));
@@ -151,11 +151,12 @@ public class EditRacerView extends AddRacerView implements View.OnClickListener,
 		}
 	}
 
-	private void SetCategorySelectionByValue(String racerCategory) {		
+	private void SetCategorySelectionByValue(long racerCategory) {
 		initCategory = racerCategory;
+		
 		for (int i = 0; i < spinCategory.getCount(); i++) {
-		    String desc = spinCategory.getItemAtPosition(i).toString();
-		    if (desc.equalsIgnoreCase(racerCategory)) {
+		    long catID = spinCategory.getItemIdAtPosition(i);
+		    if (racerCategory == catID) {
 		    	spinCategory.setSelection(i);
 		    	break;
 		    }

@@ -1,9 +1,9 @@
 package com.gvccracing.android.tttimer.Dialogs;
 
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
-import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
-import com.gvccracing.android.tttimer.DataAccess.RaceLocationCP.RaceLocation;
+import com.gvccracing.android.tttimer.DataAccess.AppSettings;
+import com.gvccracing.android.tttimer.DataAccess.Race;
+import com.gvccracing.android.tttimer.DataAccess.RaceLocation;
 
 import android.database.Cursor;
 import android.os.Bundle;
@@ -58,7 +58,7 @@ public class EditLocation extends BaseDialog implements View.OnClickListener, Lo
 			public void onNothingSelected(AdapterView<?> arg0) {}
 		});
 		
-		Integer distanceUnitID = Integer.parseInt(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_DistanceUnits_Name, "1"));
+		Integer distanceUnitID = Integer.parseInt(AppSettings.Instance().ReadValue(getActivity(), AppSettings.AppSetting_DistanceUnits_Name, "1"));
 		String distanceUnitText = "mi";
 		switch(distanceUnitID){
 			case 1:
@@ -108,7 +108,7 @@ public class EditLocation extends BaseDialog implements View.OnClickListener, Lo
 				Spinner mLocationID = (Spinner) getView().findViewById(R.id.spinnerRaceLocation);
 				long raceLocation_ID = mLocationID.getSelectedItemId();
 		
-				RaceLocation.Update(getActivity(), raceLocation_ID, courseName, distance);
+				RaceLocation.Instance().Update(getActivity(), raceLocation_ID, courseName, distance);
 					    			
 				// Hide the dialog
 				dismiss();
@@ -139,21 +139,21 @@ public class EditLocation extends BaseDialog implements View.OnClickListener, Lo
 				selection = null;
 				selectionArgs = null;
 				sortOrder = RaceLocation.CourseName;
-				loader = new CursorLoader(getActivity(), RaceLocation.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), RaceLocation.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case SELECTED_RACE_LOCATION_LOADER:
 				projection = new String[]{RaceLocation._ID, RaceLocation.CourseName, RaceLocation.Distance};
 				selection = RaceLocation._ID + "=?";
 				selectionArgs = new String[]{Long.toString(selectedRaceLocationID)};
 				sortOrder = RaceLocation.CourseName;
-				loader = new CursorLoader(getActivity(), RaceLocation.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), RaceLocation.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case CURRENT_RACE_LOCATION_LOADER:
-				projection = new String[]{Race.getTableName() + "." + Race._ID, Race.RaceLocation_ID};
-				selection = Race.getTableName() + "." + Race._ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
+				projection = new String[]{Race.Instance().getTableName() + "." + Race._ID, Race.RaceLocation_ID};
+				selection = Race.Instance().getTableName() + "." + Race._ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name);
 				selectionArgs = null;
 				sortOrder = null;
-				loader = new CursorLoader(getActivity(), Race.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), Race.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 		}
 		Log.i(LOG_TAG, "onCreateLoader complete: id=" + Integer.toString(id));

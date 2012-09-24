@@ -1,8 +1,10 @@
 package com.gvccracing.android.tttimer.Dialogs;
 
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
-import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.AppSettings;
+import com.gvccracing.android.tttimer.DataAccess.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.SeriesRaceIndividualResults;
+import com.gvccracing.android.tttimer.DataAccess.Views.SeriesRaceIndividualResultsView;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -49,12 +51,12 @@ public class StartOrderActions extends BaseDialog implements View.OnClickListene
 			{
 				Log.v(LOG_TAG, "btnRemoveRacerClickHandler");
 
-				RaceResults.Delete(getActivity(), RaceResults._ID + "=?", new String[]{Long.toString(raceResultID)});
+				RaceResults.Instance().Delete(getActivity(), RaceResults._ID + "=?", new String[]{Long.toString(raceResultID)});
 				
 				// Update all race results that have higher start order than the racer to delete.  Change the start order and start time offset
-				Cursor checkins = RaceResults.Read(getActivity(), new String[]{RaceResults._ID}, RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name), null, RaceResults.StartOrder);
+				Cursor checkins = SeriesRaceIndividualResultsView.Instance().Read(getActivity(), new String[]{RaceResults._ID}, SeriesRaceIndividualResults.Race_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name), null, RaceResults.StartOrder);
 				if(checkins.getCount() > 0){
-					Long startInterval = Long.parseLong(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_StartInterval_Name, "60"));
+					Long startInterval = Long.parseLong(AppSettings.Instance().ReadValue(getActivity(), AppSettings.AppSetting_StartInterval_Name, "60"));
 					long startOrder = 1;
 					checkins.moveToFirst();
 					do{
@@ -63,7 +65,7 @@ public class StartOrderActions extends BaseDialog implements View.OnClickListene
 						ContentValues content = new ContentValues();
 						content.put(RaceResults.StartOrder, startOrder);
 						content.put(RaceResults.StartTimeOffset, startTimeOffset);
-						RaceResults.Update(getActivity(), content, RaceResults._ID + "=?", new String[]{Long.toString(checkins.getLong(checkins.getColumnIndex(RaceResults._ID)))});
+						RaceResults.Instance().Update(getActivity(), content, RaceResults._ID + "=?", new String[]{Long.toString(checkins.getLong(checkins.getColumnIndex(RaceResults._ID)))});
 						startOrder++;
 					}while(checkins.moveToNext());
 				}

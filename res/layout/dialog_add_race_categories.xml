@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialogContainer"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" 
+    android:background="#FFFF"
+    style="@style/Padded" >
+
+    <TextView
+        android:id="@+id/lblRaceCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/RaceCategoryName"
+        style="@style/Medium"
+        android:layout_marginLeft="10sp" />
+
+    <EditText
+        android:id="@+id/txtRaceCategory"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        style="@style/Medium.Padded"
+        android:inputType="textCapWords" >
+    </EditText>
+
+    <Button
+        android:id="@+id/btnAddRaceCategory"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/AddRaceCategory"
+        style="@style/Medium" />
+
+    <TextView
+        android:id="@+id/lblCurrentRaceCategories"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/CurrentRaceCategories"
+        style="@style/Medium"
+        android:layout_marginLeft="10sp" />
+    
+    <ListView
+        android:id="@+id/lvRaceCategories"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+    </ListView>
+
+</LinearLayout>

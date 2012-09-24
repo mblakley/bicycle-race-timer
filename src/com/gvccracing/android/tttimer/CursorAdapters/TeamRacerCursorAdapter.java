@@ -1,8 +1,8 @@
 package com.gvccracing.android.tttimer.CursorAdapters;
 
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
-import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
+import com.gvccracing.android.tttimer.DataAccess.RaceCategory;
+import com.gvccracing.android.tttimer.DataAccess.Racer;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -45,7 +45,7 @@ public class TeamRacerCursorAdapter extends BaseCursorAdapter {
     private View fillData(Cursor c, View v, boolean fillCategory) {
     	int firstNameCol = c.getColumnIndex(Racer.FirstName);
         int lastNameCol = c.getColumnIndex(Racer.LastName);
-        int categoryCol = c.getColumnIndex(RacerClubInfo.Category);
+        int categoryCol = c.getColumnIndex(RaceCategory.FullCategoryName);
 
         String firstName = c.getString(firstNameCol);
         String lastName = c.getString(lastNameCol);

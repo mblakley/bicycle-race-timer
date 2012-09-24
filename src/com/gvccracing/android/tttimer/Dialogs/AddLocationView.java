@@ -1,14 +1,15 @@
 package com.gvccracing.android.tttimer.Dialogs;
 
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
-import com.gvccracing.android.tttimer.DataAccess.RaceLocationCP.RaceLocation;
+import com.gvccracing.android.tttimer.DataAccess.AppSettings;
+import com.gvccracing.android.tttimer.DataAccess.RaceLocation;
 
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -28,7 +29,7 @@ public class AddLocationView extends BaseDialog implements View.OnClickListener 
 		
 		TextView lblDistanceUnit = (TextView) v.findViewById(R.id.lblDistanceUnit);
 		
-		Integer distanceUnitID = Integer.parseInt(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_DistanceUnits_Name, "1"));
+		Integer distanceUnitID = Integer.parseInt(AppSettings.Instance().ReadValue(getActivity(), AppSettings.AppSetting_DistanceUnits_Name, "1"));
 		String distanceUnitText = "mi";
 		switch(distanceUnitID){
 			case 1:
@@ -42,6 +43,15 @@ public class AddLocationView extends BaseDialog implements View.OnClickListener 
 				break;
 		}
 		lblDistanceUnit.setText(distanceUnitText);
+		
+		EditText mCourseName = (EditText) v.findViewById(R.id.txtCourseName);
+		mCourseName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+		    public void onFocusChange(View v, boolean hasFocus) {
+		        if (hasFocus) {
+		            getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+		        }
+		    }
+		});
 		
 		return v;
 	}
@@ -61,7 +71,7 @@ public class AddLocationView extends BaseDialog implements View.OnClickListener 
 				EditText mDistance = (EditText) getView().findViewById(R.id.txtDistance);
 				String distance = mDistance.getText().toString();
 		
-				RaceLocation.Create(getActivity(), courseName, distance);
+				RaceLocation.Instance().Create(getActivity(), courseName, distance);
 					    			
 				// Hide the dialog
 				dismiss();

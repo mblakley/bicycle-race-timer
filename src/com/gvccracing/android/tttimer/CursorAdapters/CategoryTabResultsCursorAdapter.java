@@ -4,9 +4,9 @@ import java.sql.Time;
 import java.text.SimpleDateFormat;
 
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
-import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
-import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
+import com.gvccracing.android.tttimer.DataAccess.RaceCategory;
+import com.gvccracing.android.tttimer.DataAccess.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.Racer;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -28,7 +28,7 @@ public class CategoryTabResultsCursorAdapter extends BaseCursorAdapter {
     public View newView(Context context, Cursor c, ViewGroup parent) {
     	View v = null;
     	try{	
-    		if(c.getLong(c.getColumnIndex(RacerClubInfo.Category)) == categoryToFilter){
+    		if(c.getLong(c.getColumnIndex(RaceCategory.FullCategoryName)) == categoryToFilter){
 		        final LayoutInflater inflater = LayoutInflater.from(context);
 		        v = inflater.inflate(R.layout.row_result, parent, false);
     		}
@@ -43,12 +43,12 @@ public class CategoryTabResultsCursorAdapter extends BaseCursorAdapter {
     public void bindView(View v, Context context, Cursor c) {
 
     	try{
-    		if(c.getLong(c.getColumnIndex(RacerClubInfo.Category)) == categoryToFilter){
+    		if(c.getLong(c.getColumnIndex(RaceCategory.FullCategoryName)) == categoryToFilter){
 	    		int placingCol = 0;
 		        int elapsedTimeCol = c.getColumnIndex(RaceResults.ElapsedTime);
 		        int firstNameCol = c.getColumnIndex(Racer.FirstName);
 		        int lastNameCol = c.getColumnIndex(Racer.LastName);
-		        int categoryCol = c.getColumnIndex(RacerClubInfo.Category);
+		        int categoryCol = c.getColumnIndex(RaceCategory.FullCategoryName);
 	        	int pointsCol = c.getColumnIndex(RaceResults.Points);
 		        
 		        Integer placing = c.getInt(placingCol);

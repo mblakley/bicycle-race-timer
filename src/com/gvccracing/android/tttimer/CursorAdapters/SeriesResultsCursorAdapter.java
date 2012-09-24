@@ -3,9 +3,9 @@ package com.gvccracing.android.tttimer.CursorAdapters;
 import java.util.HashMap;
 
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
-import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
-import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
+import com.gvccracing.android.tttimer.DataAccess.RaceCategory;
+import com.gvccracing.android.tttimer.DataAccess.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.Racer;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -51,7 +51,7 @@ public class SeriesResultsCursorAdapter extends BaseCursorAdapter {
 	public View setupView(View v, Cursor c) {
         int firstNameCol = c.getColumnIndex(Racer.FirstName);
         int lastNameCol = c.getColumnIndex(Racer.LastName);
-        int categoryCol = c.getColumnIndex(RacerClubInfo.Category);
+        int categoryCol = c.getColumnIndex(RaceCategory.FullCategoryName);
     	int pointsCol = c.getColumnIndex(RaceResults.Points);
         
         String firstName = c.getString(firstNameCol);

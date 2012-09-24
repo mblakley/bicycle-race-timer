@@ -1,6 +1,7 @@
 package com.gvccracing.android.tttimer.Dialogs;
 
 import com.gvccracing.android.tttimer.R;
+import com.gvccracing.android.tttimer.DataAccess.AppSettings;
 
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -47,6 +48,8 @@ public abstract class BaseDialog extends DialogFragment implements View.OnClickL
 	@Override
 	public void onResume() {
 		super.onResume();
+		
+		AppSettings.Instance().Update(getActivity(), AppSettings.AppSetting_ResumePreviousState_Name, "true", true);
 
 		if(btnBack == null){
 			View title = LayoutInflater.from(getActivity()).inflate(R.layout.title_with_back, (ViewGroup)getView(), false);
@@ -65,10 +68,22 @@ public abstract class BaseDialog extends DialogFragment implements View.OnClickL
 
 		((TextView)(getView().findViewById(R.id.title))).setText(GetTitleResourceID());
 	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		dismiss();
+	}
 
 	public void onClick(View v) {
 		if (v == btnBack){
 			dismiss();
 		}
+	}
+	
+	@Override
+	public void dismiss() {
+		AppSettings.Instance().Update(getActivity(), AppSettings.AppSetting_ResumePreviousState_Name, "false", true);
+		super.dismiss();
 	}
 }

@@ -3,13 +3,39 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
-
+
+    <LinearLayout
+        android:id="@+id/llRaceSeriesName"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:weightSum="1">
+
+        <TextView
+            android:id="@+id/lblRaceSeriesName"
+            android:layout_width="0dip"
+            android:layout_weight="0.5"
+            android:layout_height="wrap_content"
+            android:text="@string/RaceSeriesName"
+            style="@style/Medium"
+            android:paddingRight="10sp"
+            android:textStyle="bold" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/raceSeriesName"
+            android:layout_width="0dip"
+            android:layout_weight="0.5"
+            android:layout_height="wrap_content"
+            style="@style/Medium" >
+        </TextView>
+
+    </LinearLayout>    
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_marginTop="20dp"
         android:weightSum="1">
 
         <TextView
@@ -29,7 +55,6 @@
             android:layout_width="0dip"
             android:layout_weight="0.5"
             android:layout_height="wrap_content"
-            android:text="@string/Date"
             android:textAppearance="@style/Medium"
             android:textColor="@color/normal_fg" >
         </TextView>

@@ -4,12 +4,13 @@ import java.sql.Time;
 import java.text.SimpleDateFormat;
 
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
-import com.gvccracing.android.tttimer.DataAccess.RaceLapsCP.RaceLaps;
-import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
-import com.gvccracing.android.tttimer.DataAccess.TeamCheckInViewCP.TeamLapResultsView;
-import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
-import com.gvccracing.android.tttimer.DataAccess.UnassignedTimesCP.UnassignedTimes;
+import com.gvccracing.android.tttimer.DataAccess.AppSettings;
+import com.gvccracing.android.tttimer.DataAccess.Race;
+import com.gvccracing.android.tttimer.DataAccess.RaceLaps;
+import com.gvccracing.android.tttimer.DataAccess.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.TeamInfo;
+import com.gvccracing.android.tttimer.DataAccess.UnassignedTimes;
+import com.gvccracing.android.tttimer.DataAccess.Views.TeamLapResultsView;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -66,11 +67,11 @@ public class TeamUnassignedTimeCursorAdapter extends UnassignedTimeCursorAdapter
 	        	lblFinishTime.setText(formatter.format(startTimeOffset).toString());
 	        }
 	        
-	        String[] projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID + " as _id", RaceResults.StartOrder, TeamInfo.TeamName, "COUNT(" + RaceLaps.getTableName() + "." + RaceLaps._ID + ") as LapsCompleted"};
-			String selection = RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.getTableName() + "." + RaceResults.StartTime + " IS NOT NULL" + " AND " + RaceResults.EndTime + " IS NULL";
+	        String[] projection = new String[]{RaceResults.Instance().getTableName() + "." + RaceResults._ID + " as _id", RaceResults.StartOrder, TeamInfo.TeamName, "COUNT(" + RaceLaps.Instance().getTableName() + "." + RaceLaps._ID + ") as LapsCompleted"};
+			String selection = Race.Instance().getTableName() + "=" + Race._ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.Instance().getTableName() + "." + RaceResults.StartTime + " IS NOT NULL" + " AND " + RaceResults.EndTime + " IS NULL";
 			String[] selectionArgs = null;
 			String sortOrder = "LapsCompleted, " + RaceResults.StartOrder;
-			Cursor unfinished = context.getContentResolver().query(Uri.withAppendedPath(TeamLapResultsView.CONTENT_URI, "group by " + RaceResults.getTableName() + "." + RaceResults._ID + "," + RaceResults.StartOrder + "," + TeamInfo.TeamName), projection, selection, selectionArgs, sortOrder);
+			Cursor unfinished = context.getContentResolver().query(Uri.withAppendedPath(TeamLapResultsView.Instance().CONTENT_URI, "group by " + RaceResults.Instance().getTableName() + "." + RaceResults._ID + "," + RaceResults.StartOrder + "," + TeamInfo.TeamName), projection, selection, selectionArgs, sortOrder);
 			getParentActivity().startManagingCursor(unfinished);  // OK, this is ugly and deprecated, but I'm being tricky here!
 			
 			Spinner spinAssignNumber = (Spinner) v.findViewById(R.id.spinnerAssignNumber);

@@ -1,9 +1,9 @@
 package com.gvccracing.android.tttimer.Dialogs;
 
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
-import com.gvccracing.android.tttimer.DataAccess.LocationImagesCP.LocationImages;
-import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
+import com.gvccracing.android.tttimer.DataAccess.AppSettings;
+import com.gvccracing.android.tttimer.DataAccess.LocationImages;
+import com.gvccracing.android.tttimer.DataAccess.Race;
 import com.gvccracing.android.tttimer.Utilities.ImageFormatter;
 
 import android.database.Cursor;
@@ -121,17 +121,17 @@ public class MarshalLocations extends BaseDialog implements View.OnClickListener
 		switch(id){
 			case RACE_INFO_LOADER:
 				projection = new String[]{Race._ID, Race.RaceLocation_ID};
-				selection = Race._ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
+				selection = Race._ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name);
 				selectionArgs = null;
 				sortOrder = Race._ID;
-				loader = new CursorLoader(getActivity(), Race.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), Race.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case RACE_LOCATION_IMAGES_LOADER:
 				projection = new String[]{LocationImages._ID, LocationImages.Notes, LocationImages.Image, LocationImages.RaceLocation_ID};
 				selection = LocationImages.RaceLocation_ID + "=?" ;
 				selectionArgs = new String[]{Long.toString(raceLocation_ID)};
 				sortOrder = LocationImages.Notes + " DESC";
-				loader = new CursorLoader(getActivity(), LocationImages.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), LocationImages.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 		}
 		Log.i(LOG_TAG, "onCreateLoader complete: id=" + Integer.toString(id));

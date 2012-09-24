@@ -16,12 +16,12 @@ import android.widget.TextView;
 import com.gvccracing.android.tttimer.R;
 import com.gvccracing.android.tttimer.CursorAdapters.RacerPreviousResultsCursorAdapter;
 import com.gvccracing.android.tttimer.CursorAdapters.ResultsCursorAdapter;
-import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
-import com.gvccracing.android.tttimer.DataAccess.RaceLocationCP.RaceLocation;
-import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
-import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
-import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
-import com.gvccracing.android.tttimer.DataAccess.RacerPreviousResultsViewCP.RacerPreviousResultsView;
+import com.gvccracing.android.tttimer.DataAccess.Race;
+import com.gvccracing.android.tttimer.DataAccess.RaceCategory;
+import com.gvccracing.android.tttimer.DataAccess.RaceLocation;
+import com.gvccracing.android.tttimer.DataAccess.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.Racer;
+import com.gvccracing.android.tttimer.DataAccess.Views.RacerPreviousResultsView;
 import com.gvccracing.android.tttimer.Utilities.TimeFormatter;
 
 public class RacerPreviousResults extends BaseDialog implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
@@ -96,13 +96,13 @@ public class RacerPreviousResults extends BaseDialog implements View.OnClickList
 		String sortOrder;
 		switch(id){			
 			case ALL_RACE_RESULTS_LOADER:
-				projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID + " as _id", Race.RaceDate, Racer.FirstName, Racer.LastName, Race.RaceLocation_ID, RaceLocation.CourseName, RaceResults.ElapsedTime, RacerClubInfo.Category, RaceResults.CategoryPlacing, RaceResults.OverallPlacing, RaceResults.Points};
-				selection = Racer.getTableName() + "." + Racer._ID + " in (" + 
-							SQLiteQueryBuilder.buildQueryString(true, RacerPreviousResultsView.getTableName(), new String[]{Racer.getTableName() + "." + Racer._ID}, 
-																RaceResults.getTableName() + "." + RaceResults._ID + "=" + raceResultID, null, null, RaceResults.getTableName() + "." + RaceResults._ID, "1") + ")";
+				projection = new String[]{RaceResults.Instance().getTableName() + "." + RaceResults._ID + " as _id", Race.RaceDate, Racer.FirstName, Racer.LastName, Race.RaceLocation_ID, RaceLocation.CourseName, RaceResults.ElapsedTime, RaceCategory.FullCategoryName, RaceResults.CategoryPlacing, RaceResults.OverallPlacing, RaceResults.Points};
+				selection = Racer.Instance().getTableName() + "." + Racer._ID + " in (" + 
+							SQLiteQueryBuilder.buildQueryString(true, RacerPreviousResultsView.Instance().getTableName(), new String[]{Racer.Instance().getTableName() + "." + Racer._ID}, 
+																RaceResults.Instance().getTableName() + "." + RaceResults._ID + "=" + raceResultID, null, null, RaceResults.Instance().getTableName() + "." + RaceResults._ID, "1") + ")";
 				selectionArgs = null;
-				sortOrder = RaceResults.getTableName() + "." + RaceResults._ID;
-				loader = new CursorLoader(getActivity(), RacerPreviousResultsView.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				sortOrder = RaceResults.Instance().getTableName() + "." + RaceResults._ID;
+				loader = new CursorLoader(getActivity(), RacerPreviousResultsView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 		}
 		Log.i(LOG_TAG, "onCreateLoader complete: id=" + Integer.toString(id));
@@ -133,7 +133,7 @@ public class RacerPreviousResults extends BaseDialog implements View.OnClickList
 								int lastNameCol = cursor.getColumnIndex(Racer.LastName);
 								racerName.setText(cursor.getString(firstNameCol) + " " + cursor.getString(lastNameCol));
 								
-								raceCategory = cursor.getString(cursor.getColumnIndex(RacerClubInfo.Category));
+								raceCategory = cursor.getString(cursor.getColumnIndex(RaceCategory.FullCategoryName));
 								racerCategory.setText(raceCategory);
 								break;
 							}

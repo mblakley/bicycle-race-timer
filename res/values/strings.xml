@@ -231,5 +231,18 @@
 	<string name="ComparingImageLists"><b>Comparing to Stored Image List</b>\nProgress:</string>
 	<string name="NoNewImagesFound">No New Images Found</string>
 	<string name="Retry">Retry</string>
+	<string name="DefaultNumLaps">1</string>
 	<string name="NoMarshalLocationImages">No marshal location images found for the current location!</string>
+	<string name="AddRaceCategory">Add Race Category</string>
+	<string name="RaceCategoryName">Race Category Name</string>
+	<string name="CurrentRaceCategories">Current Race Categories</string>
+	<string name="RaceSeriesName">Race Series Name:</string>
+	<string name="AddRaceSeries">Add Race Series</string>
+	<string name="RaceSeriesStartDate">Series Start Date</string>
+	<string name="RaceSeriesEndDate">Series End Date</string>
+	<string name="ChooseRaceSeriesType">Race Series</string>		
+	<string name="lblNoRaceSeries">No race series are configured.  Would you like to add a new race series, or add an individual race (no series)?</string>
+	<string name="btnAddNewRaceSeries">Add New Race Series</string>			
+	<string name="btnAddIndividualRace">Add Individual Race</string>
+	<string name="lblRaceName">Race Name:</string>
 </resources>

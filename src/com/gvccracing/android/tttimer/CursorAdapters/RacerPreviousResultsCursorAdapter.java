@@ -4,8 +4,8 @@ import java.sql.Time;
 import java.text.SimpleDateFormat;
 
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
-import com.gvccracing.android.tttimer.DataAccess.RaceLocationCP.RaceLocation;
+import com.gvccracing.android.tttimer.DataAccess.Race;
+import com.gvccracing.android.tttimer.DataAccess.RaceLocation;
 
 import android.content.Context;
 import android.database.Cursor;

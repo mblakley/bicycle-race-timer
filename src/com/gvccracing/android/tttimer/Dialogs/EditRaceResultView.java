@@ -3,8 +3,10 @@ package com.gvccracing.android.tttimer.Dialogs;
 import com.gvccracing.android.tttimer.R;
 import com.gvccracing.android.tttimer.TTTimerTabsActivity;
 import com.gvccracing.android.tttimer.Controls.TimePicker;
-import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
-import com.gvccracing.android.tttimer.DataAccess.UnassignedTimesCP.UnassignedTimes;
+import com.gvccracing.android.tttimer.DataAccess.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.SeriesRaceIndividualResults;
+import com.gvccracing.android.tttimer.DataAccess.UnassignedTimes;
+import com.gvccracing.android.tttimer.DataAccess.Views.SeriesRaceIndividualResultsView;
 import com.gvccracing.android.tttimer.Tabs.FinishTab;
 import com.gvccracing.android.tttimer.Utilities.Calculations;
 
@@ -22,7 +24,6 @@ import android.widget.TextView;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-
 
 public class EditRaceResultView extends BaseDialog implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 	public static final String LOG_TAG = "EditRaceResult";
@@ -92,7 +93,7 @@ public class EditRaceResultView extends BaseDialog implements View.OnClickListen
 					}
 				
 					// Update the race results elapsed time
-					RaceResults.Update(getActivity(), content, RaceResults._ID + "= ?", new String[]{Long.toString(raceResultID)});
+					RaceResults.Instance().Update(getActivity(), content, RaceResults._ID + "= ?", new String[]{Long.toString(raceResultID)});
 
 					// Recalculate placings and points
 			    	Calculations.CalculateCategoryPlacings(getActivity(), raceID);
@@ -104,7 +105,7 @@ public class EditRaceResultView extends BaseDialog implements View.OnClickListen
 					content.put(RaceResults.Points, txtPoints.getText().toString());
 					
 			    	// Update the points - we changed this for a reason!
-					RaceResults.Update(getActivity(), content, RaceResults._ID + "= ?", new String[]{Long.toString(raceResultID)});
+					RaceResults.Instance().Update(getActivity(), content, RaceResults._ID + "= ?", new String[]{Long.toString(raceResultID)});
 		    	}
 				
 	 			// Hide the dialog
@@ -121,13 +122,13 @@ public class EditRaceResultView extends BaseDialog implements View.OnClickListen
 				content.putNull(UnassignedTimes.RaceResult_ID);
 				
 				// Update the unassigned time's raceResult_ID to null, which will place that unassigned time into the list again
-				UnassignedTimes.Update(getActivity(), content, UnassignedTimes.Race_ID + "=? AND " + UnassignedTimes.RaceResult_ID + "=?", new String[]{Long.toString(raceID), Long.toString(raceResultID)});
+				UnassignedTimes.Instance().Update(getActivity(), content, UnassignedTimes.Race_ID + "=? AND " + UnassignedTimes.RaceResult_ID + "=?", new String[]{Long.toString(raceID), Long.toString(raceResultID)});
 
 				ContentValues result = new ContentValues();
 				result.putNull(RaceResults.EndTime);
 				result.putNull(RaceResults.ElapsedTime);
 				
-				RaceResults.Update(getActivity(), result, RaceResults._ID + "=?", new String[]{Long.toString(raceResultID)});
+				RaceResults.Instance().Update(getActivity(), result, RaceResults._ID + "=?", new String[]{Long.toString(raceResultID)});
 				
 				dismiss();
 				
@@ -176,11 +177,11 @@ public class EditRaceResultView extends BaseDialog implements View.OnClickListen
 		String sortOrder;
 		switch(id){
 			case RACE_RESULT_LOADER:
-				projection = new String[]{RaceResults._ID, RaceResults.Race_ID, RaceResults.ElapsedTime, RaceResults.Points};
+				projection = new String[]{RaceResults._ID, SeriesRaceIndividualResults.Race_ID, RaceResults.ElapsedTime, RaceResults.Points};
 				selection = RaceResults._ID + "=?";
 				selectionArgs = new String[]{Long.toString(raceResultID)};
 				sortOrder = RaceResults._ID;
-				loader = new CursorLoader(getActivity(), RaceResults.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), SeriesRaceIndividualResultsView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 		}
 		Log.i(LOG_TAG, "onCreateLoader complete: id=" + Integer.toString(id));
@@ -201,7 +202,7 @@ public class EditRaceResultView extends BaseDialog implements View.OnClickListen
 							showTime();
 							tpElapsed.SetTime(initialTime);
 						}
-						raceID = cursor.getLong(cursor.getColumnIndex(RaceResults.Race_ID));
+						raceID = cursor.getLong(cursor.getColumnIndex(SeriesRaceIndividualResults.Race_ID));
 						initialPoints = cursor.getLong(cursor.getColumnIndex(RaceResults.Points));
 						txtPoints.setText(Long.toString(initialPoints));
 					}
