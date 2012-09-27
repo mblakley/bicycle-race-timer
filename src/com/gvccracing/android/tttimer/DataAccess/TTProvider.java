@@ -50,7 +50,7 @@ public class TTProvider extends ContentProvider {
     private static final String TAG = "DBAdapter";
     
     private static final String DATABASE_NAME = "GVCCRaces";
-    private static final int DATABASE_VERSION = 6;
+    private static final int DATABASE_VERSION = 7;
 	
 	private DatabaseHelper mDB;
 
@@ -705,6 +705,79 @@ public class TTProvider extends ContentProvider {
     		db.execSQL("INSERT INTO " + LookupGroups.getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Category + "', 'B4');");
     		db.execSQL("INSERT INTO " + LookupGroups.getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Category + "', 'B5');");
     		db.execSQL(LocationImages.getCreate());
+    		// Arcadia
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Arcadia - Boys', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Arcadia - Girls', 'All', 2012)");
+			// Athena
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Athena - Boys', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Athena - Girls', 'All', 2012)");
+			// Batavia
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Batavia - Boys', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Batavia - Girls', 'All', 2012)");
+			// Brighton
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Brighton - Boys', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Brighton - Girls', 'All', 2012)");
+			// Brockport
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Brockport - Boys', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Brockport - Girls', 'All', 2012)");
+			// Canandaigua
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Canandaigua - Boys', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Canandaigua - Girls', 'All', 2012)");
+			// Churchville Chili
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Churchville Chili - Boys', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Churchville Chili - Girls', 'All', 2012)");
+			// East Irondequoit
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('East Irondequoit - Boys', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('East Irondequoit - Girls', 'All', 2012)");
+			// East Rochester
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('East Rochester - Boys', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('East Rochester - Girls', 'All', 2012)");
+			// Fairport
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Fairport - Boys', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Fairport - Girls', 'All', 2012)");
+			// Gates Chili
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Gates Chili - Boys', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Gates Chili - Girls', 'All', 2012)");
+			// Hilton
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Hilton - Boys', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Hilton - Girls', 'All', 2012)");
+			// Honeoye Falls Lima
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Honeoye Falls Lima - Boys', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Honeoye Falls Lima - Girls', 'All', 2012)");
+			// Irondequoit
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Irondequoit - Boys', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Irondequoit - Girls', 'All', 2012)");
+			// Mendon
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Mendon - Boys', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Mendon - Girls', 'All', 2012)");
+			// Odyssey
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Odyssey - Boys', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Odyssey - Girls', 'All', 2012)");
+			// Olympia
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Olympia - Boys', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Olympia - Girls', 'All', 2012)");
+			// Penfield
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Penfield - Boys', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Penfield - Girls', 'All', 2012)");
+			// Rush Henrietta
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Rush Henrietta - Boys', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Rush Henrietta - Girls', 'All', 2012)");
+			// Schroeder
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Schroeder - Boys', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Schroeder - Girls', 'All', 2012)");
+			// Spencerport
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Spencerport - Boys', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Spencerport - Girls', 'All', 2012)");
+			// Sutherland
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Sutherland - Boys', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Sutherland - Girls', 'All', 2012)");
+			// Thomas
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Thomas - Boys', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Thomas - Girls', 'All', 2012)");
+			// Victor
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Victor - Boys', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Victor - Girls', 'All', 2012)");
+			
 	    }
 
 	    @Override
@@ -790,6 +863,86 @@ public class TTProvider extends ContentProvider {
 	    			db.endTransaction();
 	    		}
 	    	} 
+	    	if(oldVersion < 7 && newVersion >= 7){
+	    		db.beginTransaction();
+	    		try{
+	    			// Arcadia
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Arcadia - Boys', 'All', 2012)");
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Arcadia - Girls', 'All', 2012)");
+	    			// Athena
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Athena - Boys', 'All', 2012)");
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Athena - Girls', 'All', 2012)");
+	    			// Batavia
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Batavia - Boys', 'All', 2012)");
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Batavia - Girls', 'All', 2012)");
+	    			// Brighton
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Brighton - Boys', 'All', 2012)");
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Brighton - Girls', 'All', 2012)");
+	    			// Brockport
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Brockport - Boys', 'All', 2012)");
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Brockport - Girls', 'All', 2012)");
+	    			// Canandaigua
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Canandaigua - Boys', 'All', 2012)");
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Canandaigua - Girls', 'All', 2012)");
+	    			// Churchville Chili
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Churchville Chili - Boys', 'All', 2012)");
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Churchville Chili - Girls', 'All', 2012)");
+	    			// East Irondequoit
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('East Irondequoit - Boys', 'All', 2012)");
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('East Irondequoit - Girls', 'All', 2012)");
+	    			// East Rochester
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('East Rochester - Boys', 'All', 2012)");
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('East Rochester - Girls', 'All', 2012)");
+	    			// Fairport
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Fairport - Boys', 'All', 2012)");
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Fairport - Girls', 'All', 2012)");
+	    			// Gates Chili
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Gates Chili - Boys', 'All', 2012)");
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Gates Chili - Girls', 'All', 2012)");
+	    			// Hilton
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Hilton - Boys', 'All', 2012)");
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Hilton - Girls', 'All', 2012)");
+	    			// Honeoye Falls Lima
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Honeoye Falls Lima - Boys', 'All', 2012)");
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Honeoye Falls Lima - Girls', 'All', 2012)");
+	    			// Irondequoit
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Irondequoit - Boys', 'All', 2012)");
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Irondequoit - Girls', 'All', 2012)");
+	    			// Mendon
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Mendon - Boys', 'All', 2012)");
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Mendon - Girls', 'All', 2012)");
+	    			// Odyssey
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Odyssey - Boys', 'All', 2012)");
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Odyssey - Girls', 'All', 2012)");
+	    			// Olympia
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Olympia - Boys', 'All', 2012)");
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Olympia - Girls', 'All', 2012)");
+	    			// Penfield
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Penfield - Boys', 'All', 2012)");
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Penfield - Girls', 'All', 2012)");
+	    			// Rush Henrietta
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Rush Henrietta - Boys', 'All', 2012)");
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Rush Henrietta - Girls', 'All', 2012)");
+	    			// Schroeder
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Schroeder - Boys', 'All', 2012)");
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Schroeder - Girls', 'All', 2012)");
+	    			// Spencerport
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Spencerport - Boys', 'All', 2012)");
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Spencerport - Girls', 'All', 2012)");
+	    			// Sutherland
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Sutherland - Boys', 'All', 2012)");
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Sutherland - Girls', 'All', 2012)");
+	    			// Thomas
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Thomas - Boys', 'All', 2012)");
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Thomas - Girls', 'All', 2012)");
+	    			// Victor
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Victor - Boys', 'All', 2012)");
+	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Victor - Girls', 'All', 2012)");
+	    			db.setTransactionSuccessful();
+	    		} finally{
+	    			db.endTransaction();
+	    		}
+	    	}
 	    }
 	}
 }

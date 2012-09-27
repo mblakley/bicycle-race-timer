@@ -3,6 +3,7 @@ package com.gvccracing.android.tttimer.CursorAdapters;
 import com.gvccracing.android.tttimer.R;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
+import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -43,11 +44,13 @@ public class RacersToFinishCursorAdapter extends BaseCursorAdapter {
     private void fillData(Cursor c, View v) {
     	int firstNameCol = c.getColumnIndex(Racer.FirstName);
         int lastNameCol = c.getColumnIndex(Racer.LastName);
-        int startOrderCol = c.getColumnIndex(RaceResults.StartOrder);
+        int teamNameCol = c.getColumnIndex(TeamInfo.TeamName);
+//        int startOrderCol = c.getColumnIndex(RaceResults.StartOrder);
 
         String firstName = c.getString(firstNameCol);
         String lastName = c.getString(lastNameCol);
-        int startOrder = c.getInt(startOrderCol);
+        String teamName = c.getString(teamNameCol);
+//        int startOrder = c.getInt(startOrderCol);
 
         /**
          * Next set the name of the entry.
@@ -58,9 +61,14 @@ public class RacersToFinishCursorAdapter extends BaseCursorAdapter {
         	lblName.setText(name);
         }
         
-        TextView lblStartOrder = (TextView) v.findViewById(R.id.lblStartOrder);
-        if (lblStartOrder != null) {
-        	lblStartOrder.setText(Integer.toString(startOrder));
+        TextView lblTeam = (TextView) v.findViewById(R.id.lblTeam);
+        if (lblTeam != null) {
+        	lblTeam.setText(" - " + teamName);
         }
+        
+//        TextView lblStartOrder = (TextView) v.findViewById(R.id.lblStartOrder);
+//        if (lblStartOrder != null) {
+//        	lblStartOrder.setText(Integer.toString(startOrder));
+//        }
     }
 }

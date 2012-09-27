@@ -118,25 +118,25 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 	}
 	
 	protected long GetRaceStartInterval(){
-			Spinner startIntervalSpinner = (Spinner) getView().findViewById(R.id.spinnerStartInterval);
-			int raceStartIntervalID = (int)startIntervalSpinner.getSelectedItemId();
-			long raceStartInterval = 30l;
-			switch(raceStartIntervalID){
-				case 0:
-					raceStartInterval = 30l;
-					break;
-				case 1:
-					raceStartInterval = 60l;
-					break;
-			}
-			
-			return raceStartInterval;
+//			Spinner startIntervalSpinner = (Spinner) getView().findViewById(R.id.spinnerStartInterval);
+//			int raceStartIntervalID = (int)startIntervalSpinner.getSelectedItemId();
+//			long raceStartInterval = 30l;
+//			switch(raceStartIntervalID){
+//				case 0:
+//					raceStartInterval = 30l;
+//					break;
+//				case 1:
+//					raceStartInterval = 60l;
+//					break;
+//			}
+		
+		return 0l;//raceStartInterval;
 	}
 	
 	protected long GetRaceTypeID(){
-		Spinner raceTypeSpinner = (Spinner) getView().findViewById(R.id.spinnerRaceType);
+		//Spinner raceTypeSpinner = (Spinner) getView().findViewById(R.id.spinnerRaceType);
 		
-		return raceTypeSpinner.getSelectedItemId();
+		return 0l;//raceTypeSpinner.getSelectedItemId();
 	}
 	
 	protected long GetRaceLocationID(){
@@ -154,7 +154,7 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 		try{
 			if (v == btnAddNewRace){
 				EditText txtLaps = (EditText) getView().findViewById(R.id.txtNumLaps);
-				Uri resultUri = Race.Create(getActivity(), GetRaceLocationID(), GetRaceDate(), null, GetRaceTypeID(), GetRaceStartInterval(), Long.parseLong(txtLaps.getText().toString()));
+				Uri resultUri = Race.Create(getActivity(), GetRaceLocationID(), GetRaceDate(), null, GetRaceTypeID(), GetRaceStartInterval(), 1l);
 	 			long race_ID = Long.parseLong(resultUri.getLastPathSegment());
 	 			
 	 			// Broadcast that a race was added

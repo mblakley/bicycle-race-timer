@@ -29,7 +29,7 @@
             android:layout_width="0dip"
             android:layout_weight="0.5"
             android:layout_height="wrap_content"
-            android:text="@string/Date"
+            android:text=""
             android:textAppearance="@style/Medium"
             android:textColor="@color/normal_fg" >
         </TextView>
@@ -71,7 +71,8 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:weightSum="1" >
+        android:weightSum="1"
+        android:visibility="gone" >
         
         <TextView
             android:id="@+id/lblRaceType"
@@ -100,7 +101,8 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:weightSum="1">
+        android:weightSum="1"
+        android:visibility="gone">
        
        <TextView
             android:id="@+id/lblStartInterval"
@@ -212,7 +214,8 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         style="@style/Medium"
-        android:text="@string/MarshalLocations" /> 
+        android:text="@string/MarshalLocations"
+        android:visibility="gone" /> 
         
 
     <LinearLayout

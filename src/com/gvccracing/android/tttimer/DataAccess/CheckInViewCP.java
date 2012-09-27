@@ -4,6 +4,7 @@ import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
 import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
+import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -46,7 +47,9 @@ public class CheckInViewCP {
         			" JOIN " + RaceResults.getTableName() + 
     				" ON (" + RaceResults.getTableName() + "." + RaceResults.RacerClubInfo_ID + " = " + RacerClubInfo.getTableName() + "." + RacerClubInfo._ID + ")" +
     				" JOIN " + Race.getTableName() + 
-    				" ON (" + Race.getTableName() + "." + Race._ID + " = " + RaceResults.getTableName() + "." + RaceResults.Race_ID + ")";
+    				" ON (" + Race.getTableName() + "." + Race._ID + " = " + RaceResults.getTableName() + "." + RaceResults.Race_ID + ")" + 
+    				" JOIN " + TeamInfo.getTableName() + 
+    				" ON (" + TeamInfo.getTableName() + "." + TeamInfo._ID + " = " + RacerClubInfo.getTableName() + "." + RacerClubInfo.GVCCID + ")";
         }
         
         public static String getCreate(){

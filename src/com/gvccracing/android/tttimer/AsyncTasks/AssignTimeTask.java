@@ -119,8 +119,8 @@ public class AssignTimeTask extends AsyncTask<Long, Void, AssignResult> {
 			numStarted = null;
 			
 	    	// Calculate Category Placing, Overall Placing, Points
-	    	Calculations.CalculateCategoryPlacings(context, race_ID);
-	    	Calculations.CalculateOverallPlacings(context, race_ID);  
+	    	Calculations.CalculateOverallPlacings(context, race_ID); // Do this first, since "category" placings are really team placings based on the sum of the top 5 overall placings
+	    	Calculations.CalculateCategoryPlacings(context, race_ID); 
 		}catch(Exception ex){Log.e("AssignTime", "onClick failed:", ex);}
 		return result;
 	}

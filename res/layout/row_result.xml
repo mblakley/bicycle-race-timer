@@ -29,15 +29,18 @@
 	
 	<TextView
 		android:id="@+id/lblCategory"
-		android:layout_weight=".15"
+		android:layout_weight=".25"
 		android:layout_width="0dip"
 		android:layout_height="wrap_content"
-		style="@style/Small.Padded" />
+		style="@style/Small"
+		android:singleLine="true"/>
 	
 	<TextView
 		android:id="@+id/lblPoints"
 		android:layout_weight=".1"
 		android:layout_width="0dip"
 		android:layout_height="wrap_content"
-		style="@style/Small.Padded" /> 
+		style="@style/Small.Padded"
+		android:gravity="right"
+		android:visibility="gone" /> 
 </LinearLayout>

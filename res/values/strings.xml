@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">GVCC TT Timer</string>
+    <string name="app_name">XC Race Timer</string>
     <string name="CheckIns">Check In</string>
     <string name="RacerID">ID</string>
     <string name="AddNewRacer">Add New Racer</string>
     <string name="VerifyRacers">Verify Racers</string>
-    <string name="StartOrder"><u>Start Order</u></string>
+    <string name="StartOrder"><u>Start List</u></string>
 	<string name="btnNewRacer">Add New Racer</string>
 	<string name="btnNewRacerClickHandler">btnNewRacerClickHandler</string>
 	<string name="btnAddNewRacer">Submit New Racer</string>
@@ -29,7 +29,7 @@
 	<string name="Name">Name</string>
 	<string name="Points">Points</string>
 	<string name="OverallResults"><u>Overall Results</u></string>
-	<string name="CategoryResults"><u>Category Results</u></string>
+	<string name="CategoryResults"><u>Team Results</u></string>
 	<string name="ARiders">A Riders</string>
 	<string name="B4Riders">B4 Riders</string>
 	<string name="B5Riders">B5 Riders</string>
@@ -177,8 +177,8 @@
 	<string name="StartOrderActionsExplanation">Please choose an action to perform on this racer:</string>
 	<string name="StartOrderActions">Start Order Actions</string>
 	<string name="HeaderTime"><u>Time</u></string>
-	<string name="HeaderRacerName"><u>Racer Name</u></string>
-	<string name="HeaderCat"><u>Cat</u></string>
+	<string name="HeaderRacerName"><u>Racer</u></string>
+	<string name="HeaderCat"><u>Team</u></string>
 	<string name="HeaderPoints"><u>Pts</u></string>
 	<string name="Cancel">Cancel</string>
 	<string name="Select">Select</string>
@@ -230,4 +230,5 @@
 	<string name="NoNewImagesFound">No New Images Found</string>
 	<string name="Retry">Retry</string>
 	<string name="NoMarshalLocationImages">No marshal location images found for the current location!</string>
+	<string name="Team">Team</string>
 </resources>

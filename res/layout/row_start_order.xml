@@ -10,20 +10,29 @@
 		android:layout_weight=".1"
 		android:layout_width="0dip"
 		android:layout_height="wrap_content"
-		style="@style/Small.Padded" />
+		style="@style/Small.Padded"
+		android:visibility="gone" />
 	
 	<TextView
 		android:id="@+id/lblStartTime"
 		android:layout_weight=".2"
 		android:layout_width="0dip"
 		android:layout_height="wrap_content"
-		style="@style/Small.Padded"/>
+		style="@style/Small.Padded"
+		android:visibility="gone"/>
 	
 	<TextView
 		android:id="@+id/lblName"
-		android:layout_weight=".7"
+		android:layout_weight=".5"
 		android:layout_width="0dip"
 		android:layout_height="wrap_content"
 		android:singleLine="true"
 		style="@style/Small.Padded" />
+	
+	<TextView
+		android:id="@+id/lblTeam"
+		android:layout_weight=".5"
+		android:layout_width="0dip"
+		android:layout_height="wrap_content"
+		style="@style/Small.Padded"/>
 </LinearLayout>

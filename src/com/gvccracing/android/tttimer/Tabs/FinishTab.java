@@ -196,10 +196,10 @@ public class FinishTab extends BaseTab implements View.OnClickListener,	LoaderMa
 						}
 					});
 		        }
-				projection = new String[] {	RaceResults.getTableName() + "." + RaceResults._ID + " as _id", Racer.LastName, Racer.FirstName, RaceResults.StartOrder };
+				projection = new String[] {	RaceResults.getTableName() + "." + RaceResults._ID + " as _id", Racer.LastName, Racer.FirstName, TeamInfo.TeamName };
 				selection = RaceResults.Race_ID	+ "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.StartTime + " IS NOT NULL" + " AND " + RaceResults.EndTime + " IS NULL AND " + RacerClubInfo.Category + "!=?";
 				selectionArgs = new String[]{"G"};
-				sortOrder = RaceResults.StartOrder;
+				sortOrder = TeamInfo.TeamName + "," + Racer.LastName;
 				loader = new CursorLoader(getActivity(), CheckInViewExclusive.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case TEAM_FINISH_ORDER_LOADER:

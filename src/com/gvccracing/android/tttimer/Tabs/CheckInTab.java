@@ -228,10 +228,10 @@ public class CheckInTab extends BaseTab implements LoaderManager.LoaderCallbacks
 						return false;
 					}
 	    		});
-				projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID + " as _id", Racer.LastName, Racer.FirstName, RaceResults.StartOrder, RaceResults.StartTimeOffset};
+				projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID + " as _id", Racer.LastName, Racer.FirstName, TeamInfo.TeamName};
 				selection = RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
 				selectionArgs = null;
-				sortOrder = RaceResults.StartOrder;
+				sortOrder = TeamInfo.TeamName + "," + Racer.LastName;
 				loader = new CursorLoader(getActivity(), CheckInViewExclusive.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case TEAM_START_ORDER_LOADER:

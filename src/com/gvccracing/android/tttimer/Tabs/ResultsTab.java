@@ -164,7 +164,7 @@ public class ResultsTab extends BaseTab implements LoaderManager.LoaderCallbacks
 						}
 		    		});
 				}
-				projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID + " as _id", Racer.LastName, Racer.FirstName, RaceResults.ElapsedTime, RacerClubInfo.Category, RaceResults.OverallPlacing, RaceResults.Points};
+				projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID + " as _id", Racer.LastName, Racer.FirstName, RaceResults.ElapsedTime, TeamInfo.TeamName, RaceResults.OverallPlacing, RaceResults.Points};
 				selection = RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.ElapsedTime + " IS NOT NULL AND " + RacerClubInfo.Category + "!=?";
 				selectionArgs = new String[]{"G"};
 				sortOrder = RaceResults.ElapsedTime + "," + Racer.LastName;
@@ -210,11 +210,11 @@ public class ResultsTab extends BaseTab implements LoaderManager.LoaderCallbacks
 				loader = new CursorLoader(getActivity(), Uri.withAppendedPath(TeamCheckInViewExclusive.CONTENT_URI, "group by " + RaceResults.getTableName() + "." + RaceResults._ID + "," + TeamInfo.TeamName + "," + RaceResults.getTableName() + "." + RaceResults.ElapsedTime + "," + RaceResults.OverallPlacing), projection, selection, selectionArgs, sortOrder);
 				break;
 			case CATEGORY_RESULTS_LOADER_RESULTS:
-				projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID + " as _id", Racer.LastName, Racer.FirstName, RaceResults.ElapsedTime, RacerClubInfo.Category, RaceResults.CategoryPlacing, RaceResults.Points};
-				selection = RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.ElapsedTime + " IS NOT NULL AND " + RacerClubInfo.Category + "!=?";
+				projection = new String[]{RacerClubInfo.getTableName() + "." + RacerClubInfo.GVCCID + " as _id", TeamInfo.TeamName, "Sum(" + RaceResults.Points + ") as " + RaceResults.Points};
+				selection = RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.ElapsedTime + " IS NOT NULL AND " + RacerClubInfo.Category + "!=? AND " + RaceResults.Points + " IS NOT NULL AND " + RaceResults.Points + "!=0";
 				selectionArgs = new String[]{"G"};
-				sortOrder = RacerClubInfo.Category + "," + RaceResults.ElapsedTime + "," + Racer.LastName;
-				loader = new CursorLoader(getActivity(), CheckInViewExclusive.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				sortOrder = RaceResults.Points;				
+				loader = new CursorLoader(getActivity(), Uri.withAppendedPath(CheckInViewExclusive.CONTENT_URI, "group by _id, " + TeamInfo.TeamName), projection, selection, selectionArgs, sortOrder);
 				break;
 			case RACE_INFO_LOADER_RESULTS:
 				projection = new String[]{Race.getTableName() + "." + Race._ID + " as _id", Race.RaceType, Race.NumLaps};

@@ -75,7 +75,7 @@ public class RacerPreviousResults extends BaseDialog implements View.OnClickList
 	public void onResume(){
 		super.onResume();
 
-		getLoaderManager().restartLoader(ALL_RACE_RESULTS_LOADER, null, this);
+		//getLoaderManager().restartLoader(ALL_RACE_RESULTS_LOADER, null, this);
 	}
 	
 	public void onClick(View v) { 
