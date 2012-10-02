@@ -4,6 +4,7 @@ import com.gvccracing.android.tttimer.R;
 import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
 import com.gvccracing.android.tttimer.DataAccess.LocationImagesCP.LocationImages;
 import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
+import com.gvccracing.android.tttimer.DataAccess.RaceMeetCP.RaceMeet;
 import com.gvccracing.android.tttimer.Utilities.ImageFormatter;
 
 import android.database.Cursor;
@@ -120,11 +121,11 @@ public class MarshalLocations extends BaseDialog implements View.OnClickListener
 		String sortOrder;
 		switch(id){
 			case RACE_INFO_LOADER:
-				projection = new String[]{Race._ID, Race.RaceLocation_ID};
+				projection = new String[]{RaceMeet._ID, RaceMeet.RaceLocation_ID};
 				selection = Race._ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
 				selectionArgs = null;
 				sortOrder = Race._ID;
-				loader = new CursorLoader(getActivity(), Race.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), RaceMeet.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case RACE_LOCATION_IMAGES_LOADER:
 				projection = new String[]{LocationImages._ID, LocationImages.Notes, LocationImages.Image, LocationImages.RaceLocation_ID};
@@ -144,7 +145,7 @@ public class MarshalLocations extends BaseDialog implements View.OnClickListener
 			switch(loader.getId()){
 				case RACE_INFO_LOADER:
 					cursor.moveToFirst();
-					raceLocation_ID = cursor.getLong(cursor.getColumnIndex(Race.RaceLocation_ID));
+					raceLocation_ID = cursor.getLong(cursor.getColumnIndex(RaceMeet.RaceLocation_ID));
 					this.getLoaderManager().restartLoader(RACE_LOCATION_IMAGES_LOADER, null, this);
 					break;
 				case RACE_LOCATION_IMAGES_LOADER:					

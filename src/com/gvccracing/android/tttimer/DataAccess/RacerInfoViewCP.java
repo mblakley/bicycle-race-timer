@@ -41,22 +41,13 @@ public class RacerInfoViewCP {
 				racerCursor.moveToFirst();
 				racerValues.put(RacerClubInfo._ID, racerClubInfo_ID);
 				racerValues.put(RacerClubInfo.Racer_ID, racerCursor.getLong(racerCursor.getColumnIndex(RacerClubInfo.Racer_ID)));
-				racerValues.put(RacerClubInfo.CheckInID, racerCursor.getString(racerCursor.getColumnIndex(RacerClubInfo.Racer_ID)));
-				racerValues.put(RacerClubInfo.Year, racerCursor.getLong(racerCursor.getColumnIndex(RacerClubInfo.Racer_ID)));
 				racerValues.put(RacerClubInfo.Category, racerCursor.getString(racerCursor.getColumnIndex(RacerClubInfo.Racer_ID)));
-				racerValues.put(RacerClubInfo.TTPoints, racerCursor.getLong(racerCursor.getColumnIndex(RacerClubInfo.Racer_ID)));
-				racerValues.put(RacerClubInfo.RRPoints, racerCursor.getLong(racerCursor.getColumnIndex(RacerClubInfo.Racer_ID)));
-				racerValues.put(RacerClubInfo.PrimePoints, racerCursor.getLong(racerCursor.getColumnIndex(RacerClubInfo.Racer_ID)));
-				racerValues.put(RacerClubInfo.RacerAge, racerCursor.getLong(racerCursor.getColumnIndex(RacerClubInfo.Racer_ID)));
-				racerValues.put(RacerClubInfo.GVCCID, racerCursor.getLong(racerCursor.getColumnIndex(RacerClubInfo.Racer_ID)));
-				racerValues.put(RacerClubInfo.Upgraded, racerCursor.getLong(racerCursor.getColumnIndex(RacerClubInfo.Racer_ID)));
 				racerValues.put(Racer.FirstName, racerCursor.getString(racerCursor.getColumnIndex(Racer.FirstName)));
 				racerValues.put(Racer.LastName, racerCursor.getString(racerCursor.getColumnIndex(Racer.LastName)));
-				racerValues.put(Racer.USACNumber, racerCursor.getLong(racerCursor.getColumnIndex(Racer.USACNumber)));
 				racerValues.put(Racer.BirthDate, racerCursor.getLong(racerCursor.getColumnIndex(Racer.BirthDate)));
 				racerValues.put(Racer.PhoneNumber, racerCursor.getLong(racerCursor.getColumnIndex(Racer.PhoneNumber)));
-				racerValues.put(Racer.EmergencyContactName, racerCursor.getString(racerCursor.getColumnIndex(Racer.EmergencyContactName)));
-				racerValues.put(Racer.EmergencyContactPhoneNumber, racerCursor.getLong(racerCursor.getColumnIndex(Racer.EmergencyContactPhoneNumber)));
+				//racerValues.put(Racer.EmergencyContactName, racerCursor.getString(racerCursor.getColumnIndex(Racer.EmergencyContactName)));
+				//racerValues.put(Racer.EmergencyContactPhoneNumber, racerCursor.getLong(racerCursor.getColumnIndex(Racer.EmergencyContactPhoneNumber)));
 			}
 			if( racerCursor != null){
 				racerCursor.close();

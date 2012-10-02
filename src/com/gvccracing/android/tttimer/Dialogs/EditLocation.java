@@ -4,6 +4,7 @@ import com.gvccracing.android.tttimer.R;
 import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
 import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
 import com.gvccracing.android.tttimer.DataAccess.RaceLocationCP.RaceLocation;
+import com.gvccracing.android.tttimer.DataAccess.RaceMeetCP.RaceMeet;
 
 import android.database.Cursor;
 import android.os.Bundle;
@@ -108,7 +109,7 @@ public class EditLocation extends BaseDialog implements View.OnClickListener, Lo
 				Spinner mLocationID = (Spinner) getView().findViewById(R.id.spinnerRaceLocation);
 				long raceLocation_ID = mLocationID.getSelectedItemId();
 		
-				RaceLocation.Update(getActivity(), raceLocation_ID, courseName, distance);
+				RaceLocation.Update(getActivity(), raceLocation_ID, courseName);
 					    			
 				// Hide the dialog
 				dismiss();
@@ -142,14 +143,14 @@ public class EditLocation extends BaseDialog implements View.OnClickListener, Lo
 				loader = new CursorLoader(getActivity(), RaceLocation.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case SELECTED_RACE_LOCATION_LOADER:
-				projection = new String[]{RaceLocation._ID, RaceLocation.CourseName, RaceLocation.Distance};
+				projection = new String[]{RaceLocation._ID, RaceLocation.CourseName};
 				selection = RaceLocation._ID + "=?";
 				selectionArgs = new String[]{Long.toString(selectedRaceLocationID)};
 				sortOrder = RaceLocation.CourseName;
 				loader = new CursorLoader(getActivity(), RaceLocation.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case CURRENT_RACE_LOCATION_LOADER:
-				projection = new String[]{Race.getTableName() + "." + Race._ID, Race.RaceLocation_ID};
+				projection = new String[]{Race.getTableName() + "." + Race._ID, RaceMeet.RaceLocation_ID};
 				selection = Race.getTableName() + "." + Race._ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
 				selectionArgs = null;
 				sortOrder = null;
@@ -178,17 +179,12 @@ public class EditLocation extends BaseDialog implements View.OnClickListener, Lo
 					String selectedCourseName = cursor.getString(cursor.getColumnIndex(RaceLocation.CourseName));
 					EditText mCourseName = (EditText) getView().findViewById(R.id.txtCourseName);
 					mCourseName.setText(selectedCourseName);
-					
-					// Distance
-					double selectedDistance = cursor.getDouble(cursor.getColumnIndex(RaceLocation.Distance));
-					EditText mDistance = (EditText) getView().findViewById(R.id.txtDistance);
-					mDistance.setText(Double.toString(selectedDistance));
 					break;
 				case CURRENT_RACE_LOCATION_LOADER:
 					try{
 						cursor.moveToFirst();
 						// Race Location from RaceLocation_ID
-						Long raceLocationID = cursor.getLong(cursor.getColumnIndex(Race.RaceLocation_ID));
+						Long raceLocationID = cursor.getLong(cursor.getColumnIndex(RaceMeet.RaceLocation_ID));
 						SetRaceLocationSelectionByID(raceLocationSpinner, raceLocationID);
 					}catch(Exception ex){
 						Log.e(LOG_TAG, "Unexpected error loading current race", ex);

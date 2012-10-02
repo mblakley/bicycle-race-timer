@@ -35,35 +35,17 @@
         android:layout_width="fill_parent" 
         style="@style/Medium.Padded" 
         android:inputType="textCapWords"/>
-    
-    <TextView 
-        android:layout_height="wrap_content" 
-        android:id="@+id/lblUSACNumber" 
-        android:layout_width="wrap_content" 
-        android:layout_gravity="top" 
-        android:text="@string/lblUSACNumber" 
-        style="@style/Medium"
-        android:visibility="gone" />
-    
-    <EditText 
-        android:layout_height="wrap_content" 
-        android:id="@+id/txtUSACNumber" 
-        android:layout_gravity="fill_vertical" 
-        android:layout_width="fill_parent" 
-        style="@style/Medium.Padded" 
-        android:inputType="number"
-        android:visibility="gone" />
 
     <TextView
-        android:id="@+id/lblCategory"
+        android:id="@+id/lblGrade"
         style="@style/Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
-        android:text="@string/Team" />
+        android:text="@string/Grade" />
     
     <Spinner
-        android:id="@+id/spinnerCategory"
+        android:id="@+id/spinnerGrade"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="fill_vertical"

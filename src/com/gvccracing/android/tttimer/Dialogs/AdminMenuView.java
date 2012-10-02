@@ -122,13 +122,19 @@ public class AdminMenuView extends BaseDialog implements View.OnClickListener {
 		try{
 			FragmentManager fm = getFragmentManager();
 			if (v == btnAddRace){
-				AddRaceView addRaceDialog = new AddRaceView();
+				long raceMeet_ID = 1l;
+				String gender = "M";
+				String category = "Varsity";
+				AddRaceView addRaceDialog = new AddRaceView(raceMeet_ID, gender, category);
 				addRaceDialog.show(fm, AddRaceView.LOG_TAG);
 			} else if (v == btnAddLocation){
 				AddLocationView addLocationDialog = new AddLocationView();
 				addLocationDialog.show(fm, AddLocationView.LOG_TAG);
 			} else if (v == btnEditRace){
-				EditRaceConfiguration editRaceDialog = new EditRaceConfiguration();
+				long raceMeet_ID = 1l;
+				String gender = "M";
+				String category = "Varsity";
+				EditRaceConfiguration editRaceDialog = new EditRaceConfiguration(raceMeet_ID, gender, category);
 				editRaceDialog.show(fm, EditRaceConfiguration.LOG_TAG);
 			} else if (v == btnRecalculateResults){
 				try{

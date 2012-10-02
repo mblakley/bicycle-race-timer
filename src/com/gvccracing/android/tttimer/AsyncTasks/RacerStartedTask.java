@@ -22,11 +22,11 @@ public class RacerStartedTask extends AsyncTask<Long, Void, Void> {
 	@Override
 	protected Void doInBackground(Long... params) {			
 		long startTime = params[0];
-		long startTimeOffsetOnDeck = params[1];
-		long race_ID = Long.parseLong(AppSettings.ReadValue(context, AppSettings.AppSetting_RaceID_Name, "1"));
+		long race_ID = Long.parseLong(AppSettings.ReadValue(context, AppSettings.AppSetting_RaceID_Name, "-1"));//Long.parseLong(AppSettings.ReadValue(context, AppSettings.AppSetting_RaceID_Name, "1"));
 		
 		ContentValues content = new ContentValues();
 		content.put(RaceResults.StartTime, startTime);
+		
 		context.getContentResolver().update(RaceResults.CONTENT_URI, content, RaceResults.Race_ID + "=?", new String[]{Long.toString(race_ID)});
 		
 		return null;

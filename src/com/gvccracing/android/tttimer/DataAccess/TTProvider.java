@@ -1,7 +1,5 @@
 package com.gvccracing.android.tttimer.DataAccess;
 
-import java.util.Calendar;
-
 import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
 import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewExclusive;
 import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewInclusive;
@@ -9,12 +7,16 @@ import com.gvccracing.android.tttimer.DataAccess.LocationImagesCP.LocationImages
 import com.gvccracing.android.tttimer.DataAccess.LookupGroupsCP.LookupGroups;
 import com.gvccracing.android.tttimer.DataAccess.PrimesCP.Primes;
 import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
+import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.MeetTeamsView;
 import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.RaceInfoResultsView;
 import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.RaceInfoView;
 import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.RaceLapsInfoView;
+import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.UnassignedTimesView;
 import com.gvccracing.android.tttimer.DataAccess.RaceLapsCP.RaceLaps;
 import com.gvccracing.android.tttimer.DataAccess.RaceLapsCP.TeamLaps;
 import com.gvccracing.android.tttimer.DataAccess.RaceLocationCP.RaceLocation;
+import com.gvccracing.android.tttimer.DataAccess.RaceMeetCP.RaceMeet;
+import com.gvccracing.android.tttimer.DataAccess.RaceMeetTeamsCP.RaceMeetTeams;
 import com.gvccracing.android.tttimer.DataAccess.RaceNotesCP.RaceNotes;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsTeamOrRacerViewCP.RaceResultsTeamOrRacerView;
@@ -22,11 +24,7 @@ import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
 import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
 import com.gvccracing.android.tttimer.DataAccess.RacerInfoViewCP.RacerInfoView;
 import com.gvccracing.android.tttimer.DataAccess.RacerPreviousResultsViewCP.RacerPreviousResultsView;
-import com.gvccracing.android.tttimer.DataAccess.TeamCheckInViewCP.TeamCheckInViewExclusive;
-import com.gvccracing.android.tttimer.DataAccess.TeamCheckInViewCP.TeamCheckInViewInclusive;
-import com.gvccracing.android.tttimer.DataAccess.TeamCheckInViewCP.TeamLapResultsView;
 import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
-import com.gvccracing.android.tttimer.DataAccess.TeamMembersCP.TeamMembers;
 import com.gvccracing.android.tttimer.DataAccess.TeamRacesCP.TeamRaces;
 import com.gvccracing.android.tttimer.DataAccess.UnassignedTimesCP.UnassignedTimes;
 
@@ -127,12 +125,12 @@ public class TTProvider extends ContentProvider {
 			resultUri = Uri.withAppendedPath(resultUri, Long.toString(teamInfo_ID));
 			
 			notifyUris = TeamInfo.getAllUrisToNotifyOnChange();
-		} else if(uri.toString().contains(TeamMembers.CONTENT_URI.toString())){
-			long teamMember_ID = mDB.getWritableDatabase().insert(TeamMembers.getTableName(), null, content);
+		} else if(uri.toString().contains(RaceMeetTeams.CONTENT_URI.toString())){
+			long teamMember_ID = mDB.getWritableDatabase().insert(RaceMeetTeams.getTableName(), null, content);
 			
 			resultUri = Uri.withAppendedPath(resultUri, Long.toString(teamMember_ID));
 			
-			notifyUris = TeamMembers.getAllUrisToNotifyOnChange();
+			notifyUris = RaceMeetTeams.getAllUrisToNotifyOnChange();
 		} else if(uri.toString().contains(RaceLaps.CONTENT_URI.toString())){
 			long raceLap_ID = mDB.getWritableDatabase().insert(RaceLaps.getTableName(), null, content);
 			
@@ -365,9 +363,9 @@ public class TTProvider extends ContentProvider {
 			teamInfoResultsCursor.setNotificationUri(getContext().getContentResolver(), uri);	
 			Log.i("TTProvider", "query complete: uri=" + uri.toString() + " selection=" + selection);
 			return teamInfoResultsCursor;
-		} else if(uri.toString().contains(TeamMembers.CONTENT_URI.toString())){
-			// TeamMembers
-			qBuilder.setTables(TeamMembers.getTableName());		
+		} else if(uri.toString().contains(RaceMeetTeams.CONTENT_URI.toString())){
+			// RaceMeetTeams
+			qBuilder.setTables(RaceMeetTeams.getTableName());		
 			
 			Cursor teamMemberResultsCursor = qBuilder.query(mDB.getReadableDatabase(),
 													projection, 
@@ -378,49 +376,6 @@ public class TTProvider extends ContentProvider {
 			teamMemberResultsCursor.setNotificationUri(getContext().getContentResolver(), uri);	
 			Log.i("TTProvider", "query complete: uri=" + uri.toString() + " selection=" + selection);
 			return teamMemberResultsCursor;
-		} else if(uri.toString().contains(TeamCheckInViewInclusive.CONTENT_URI.toString())){
-			// TeamCheckInViewInclusive
-			qBuilder.setTables(TeamCheckInViewInclusive.getTableName());	
-			String groupBy = null;
-			if(!uri.getLastPathSegment().contains("~")){
-				if(uri.getLastPathSegment().contains("group by")){
-					groupBy = uri.getLastPathSegment().replace("group by", "");
-				}
-			}
-			
-			Cursor teamInfoMemberResultsCursor = qBuilder.query(mDB.getReadableDatabase(),
-													projection, 
-													selection, 
-													selectionArgs, groupBy, null, sortOrder,
-													null);	
-			
-			teamInfoMemberResultsCursor.setNotificationUri(getContext().getContentResolver(), TeamCheckInViewInclusive.CONTENT_URI);	
-			Log.i("TTProvider", "query complete: uri=" + uri.toString() + " selection=" + selection);
-			return teamInfoMemberResultsCursor;
-		} else if(uri.toString().contains(TeamCheckInViewExclusive.CONTENT_URI.toString())){
-			// TeamCheckInViewExclusive
-			qBuilder.setTables(TeamCheckInViewExclusive.getTableName());
-			String groupBy = null;
-			if(!uri.getLastPathSegment().contains("~")){
-				if(uri.getLastPathSegment().contains("group by")){
-					groupBy = uri.getLastPathSegment().replace("group by", "");
-				}
-			}
-			
-			String limit = null;
-			if(uri.toString().contains("OnDeck")){
-				limit = uri.getLastPathSegment();
-			}
-			
-			Cursor teamCheckInResultsCursor = qBuilder.query(mDB.getReadableDatabase(),
-													projection, 
-													selection, 
-													selectionArgs, groupBy, null, sortOrder,
-													limit);	
-			
-			teamCheckInResultsCursor.setNotificationUri(getContext().getContentResolver(), TeamCheckInViewExclusive.CONTENT_URI);	
-			Log.i("TTProvider", "query complete: uri=" + uri.toString() + " selection=" + selection);
-			return teamCheckInResultsCursor;
 		} else if(uri.toString().contains(RaceLaps.CONTENT_URI.toString())){
 			// RaceLaps
 			qBuilder.setTables(RaceLaps.getTableName());		
@@ -447,25 +402,6 @@ public class TTProvider extends ContentProvider {
 			raceLapsResultsCursor.setNotificationUri(getContext().getContentResolver(), uri);	
 			Log.i("TTProvider", "query complete: uri=" + uri.toString() + " selection=" + selection);
 			return raceLapsResultsCursor;
-		} else if(uri.toString().contains(TeamLapResultsView.CONTENT_URI.toString())){
-			// TeamLapResultsView
-			qBuilder.setTables(TeamLapResultsView.getTableName());
-			String groupBy = null;
-			if(!uri.getLastPathSegment().contains("~")){
-				if(uri.getLastPathSegment().contains("group by")){
-					groupBy = uri.getLastPathSegment().replace("group by", "");
-				}
-			}
-			
-			Cursor teamLapResultsCursor = qBuilder.query(mDB.getReadableDatabase(),
-													projection, 
-													selection, 
-													selectionArgs, groupBy, null, sortOrder,
-													null);	
-			
-			teamLapResultsCursor.setNotificationUri(getContext().getContentResolver(), TeamLapResultsView.CONTENT_URI);	
-			Log.i("TTProvider", "query complete: uri=" + uri.toString() + " selection=" + selection);
-			return teamLapResultsCursor;
 		} else if(uri.toString().contains(TeamLaps.CONTENT_URI.toString())){
 			// TeamLaps
 			qBuilder.setTables(TeamLaps.getTableName());
@@ -543,6 +479,52 @@ public class TTProvider extends ContentProvider {
 			locationImagesCursor.setNotificationUri(getContext().getContentResolver(), uri);	
 			Log.i("TTProvider", "query complete: uri=" + uri.toString() + " selection=" + selection);
 			return locationImagesCursor;
+		} else if(uri.toString().contains(RaceMeet.CONTENT_URI.toString())){
+			// RaceMeet
+			qBuilder.setTables(RaceMeet.getTableName());		
+			
+			Cursor raceMeetCursor = qBuilder.query(mDB.getReadableDatabase(),
+													projection, 
+													selection, 
+													selectionArgs, null, null, sortOrder,
+													null);	
+			
+			raceMeetCursor.setNotificationUri(getContext().getContentResolver(), uri);	
+			Log.i("TTProvider", "query complete: uri=" + uri.toString() + " selection=" + selection);
+			return raceMeetCursor;
+		} else if(uri.toString().contains(MeetTeamsView.CONTENT_URI.toString())){
+			// MeetTeamsView
+			qBuilder.setTables(MeetTeamsView.getTableName());		
+			
+			Cursor raceMeetCursor = qBuilder.query(mDB.getReadableDatabase(),
+													projection, 
+													selection, 
+													selectionArgs, null, null, sortOrder,
+													null);	
+			
+			raceMeetCursor.setNotificationUri(getContext().getContentResolver(), uri);	
+			Log.i("TTProvider", "query complete: uri=" + uri.toString() + " selection=" + selection);
+			return raceMeetCursor;
+		} else if(uri.toString().contains(UnassignedTimesView.CONTENT_URI.toString())){
+			// UnassignedTimesView
+			qBuilder.setTables(UnassignedTimesView.getTableName());		
+			String groupBy = null;
+			if(!uri.getLastPathSegment().contains("~")){
+				if(uri.getLastPathSegment().contains("group by")){
+					groupBy = uri.getLastPathSegment().replace("group by", "");
+				}
+			}
+			
+			String limit = null;
+		
+			Cursor checkInCursor = qBuilder.query(mDB.getReadableDatabase(),
+													projection, 
+													selection, 
+													selectionArgs, groupBy, null, sortOrder,
+													limit);
+			checkInCursor.setNotificationUri(getContext().getContentResolver(), UnassignedTimesView.CONTENT_URI);	
+			Log.i("TTProvider", "query complete: uri=" + uri.toString() + " selection=" + selection);
+			return checkInCursor;
 		} else{
 			throw new UnsupportedOperationException("You're an idiot...add the uri " + uri.toString() + " to the TTProvider.query if/else statement");
 		}		
@@ -582,10 +564,10 @@ public class TTProvider extends ContentProvider {
 			numChanged = mDB.getWritableDatabase().update(TeamInfo.getTableName(), content, selection, selectionArgs);
 
 			notifyUris = TeamInfo.getAllUrisToNotifyOnChange();
-		} else if(uri.toString().contains(TeamMembers.CONTENT_URI.toString())){
-			numChanged = mDB.getWritableDatabase().update(TeamMembers.getTableName(), content, selection, selectionArgs);
+		} else if(uri.toString().contains(RaceMeetTeams.CONTENT_URI.toString())){
+			numChanged = mDB.getWritableDatabase().update(RaceMeetTeams.getTableName(), content, selection, selectionArgs);
 
-			notifyUris = TeamMembers.getAllUrisToNotifyOnChange();
+			notifyUris = RaceMeetTeams.getAllUrisToNotifyOnChange();
 		} else if(uri.toString().contains(RaceLaps.CONTENT_URI.toString())){
 			numChanged = mDB.getWritableDatabase().update(RaceLaps.getTableName(), content, selection, selectionArgs);
 
@@ -634,10 +616,10 @@ public class TTProvider extends ContentProvider {
 			numChanged = mDB.getWritableDatabase().delete(RaceResults.getTableName(), selection, selectionArgs);
 
 			notifyUris = RaceResults.getAllUrisToNotifyOnChange();
-		} else if(uri.toString().contains(TeamMembers.CONTENT_URI.toString())){
-			numChanged = mDB.getWritableDatabase().delete(TeamMembers.getTableName(), selection, selectionArgs);
+		} else if(uri.toString().contains(RaceMeetTeams.CONTENT_URI.toString())){
+			numChanged = mDB.getWritableDatabase().delete(RaceMeetTeams.getTableName(), selection, selectionArgs);
 
-			notifyUris = TeamMembers.getAllUrisToNotifyOnChange();
+			notifyUris = RaceMeetTeams.getAllUrisToNotifyOnChange();
 		} else if(uri.toString().contains(TeamInfo.CONTENT_URI.toString())){
 			numChanged = mDB.getWritableDatabase().delete(TeamInfo.getTableName(), selection, selectionArgs);
 
@@ -681,17 +663,18 @@ public class TTProvider extends ContentProvider {
 	    public void onCreate(SQLiteDatabase db) 
 	    {
 	    	Log.w(TAG, "Creating " + DATABASE_NAME );
-	    	
+
+	        db.execSQL(RaceLocation.getCreate());
+	    	db.execSQL(RaceMeet.getCreate());
 	    	db.execSQL(Racer.getCreate());
 	        db.execSQL(RacerClubInfo.getCreate());
 	        db.execSQL(Race.getCreate());
-	        db.execSQL(RaceLocation.getCreate());
 	        db.execSQL(RaceResults.getCreate());
 	        db.execSQL(Primes.getCreate());
 	        db.execSQL(UnassignedTimes.getCreate());
 	        db.execSQL(RaceNotes.getCreate());
 	        db.execSQL(TeamInfo.getCreate());
-	        db.execSQL(TeamMembers.getCreate());
+	        db.execSQL(RaceMeetTeams.getCreate());
 	        db.execSQL(TeamRaces.getCreate());
 	        db.execSQL(AppSettings.getCreate());
 	        db.execSQL(RaceLaps.getCreate());
@@ -701,83 +684,91 @@ public class TTProvider extends ContentProvider {
     		db.execSQL("INSERT INTO " + LookupGroups.getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Humidity + "', 'Moderate');");
     		db.execSQL("INSERT INTO " + LookupGroups.getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Humidity + "', 'Humid');");
     		db.execSQL("INSERT INTO " + LookupGroups.getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Humidity + "', 'Raining');");
-    		db.execSQL("INSERT INTO " + LookupGroups.getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Category + "', 'A');");
-    		db.execSQL("INSERT INTO " + LookupGroups.getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Category + "', 'B4');");
-    		db.execSQL("INSERT INTO " + LookupGroups.getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Category + "', 'B5');");
-    		db.execSQL(LocationImages.getCreate());
+    		db.execSQL("INSERT INTO " + LookupGroups.getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Category + "', 'Varsity');");
+    		db.execSQL("INSERT INTO " + LookupGroups.getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Category + "', 'JV');");
+    		db.execSQL("INSERT INTO " + LookupGroups.getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Category + "', 'Modified');");
+    		db.execSQL(LocationImages.getCreate());		
+    	
+    		// Create all teams
     		// Arcadia
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Arcadia - Boys', 'All', 2012)");
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Arcadia - Girls', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.Year + "," + TeamInfo.Division + "," + TeamInfo.DivisionWins + "," + TeamInfo.DivisionLosses + "," + TeamInfo.OverallWins + "," + TeamInfo.OverallLosses + ") VALUES ('Arcadia', 2012, 4, 0, 0, 0, 0)");
 			// Athena
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Athena - Boys', 'All', 2012)");
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Athena - Girls', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.Year + "," + TeamInfo.Division + "," + TeamInfo.DivisionWins + "," + TeamInfo.DivisionLosses + "," + TeamInfo.OverallWins + "," + TeamInfo.OverallLosses + ") VALUES ('Athena', 2012, 3, 0, 0, 0, 0)");
 			// Batavia
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Batavia - Boys', 'All', 2012)");
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Batavia - Girls', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.Year + "," + TeamInfo.Division + "," + TeamInfo.DivisionWins + "," + TeamInfo.DivisionLosses + "," + TeamInfo.OverallWins + "," + TeamInfo.OverallLosses + ") VALUES ('Batavia', 2012, 4, 0, 0, 0, 0)");
 			// Brighton
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Brighton - Boys', 'All', 2012)");
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Brighton - Girls', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.Year + "," + TeamInfo.Division + "," + TeamInfo.DivisionWins + "," + TeamInfo.DivisionLosses + "," + TeamInfo.OverallWins + "," + TeamInfo.OverallLosses + ") VALUES ('Brighton', 2012, 2, 0, 0, 0, 0)");
 			// Brockport
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Brockport - Boys', 'All', 2012)");
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Brockport - Girls', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.Year + "," + TeamInfo.Division + "," + TeamInfo.DivisionWins + "," + TeamInfo.DivisionLosses + "," + TeamInfo.OverallWins + "," + TeamInfo.OverallLosses + ") VALUES ('Brockport', 2012, 3, 0, 0, 0, 0)");
 			// Canandaigua
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Canandaigua - Boys', 'All', 2012)");
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Canandaigua - Girls', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.Year + "," + TeamInfo.Division + "," + TeamInfo.DivisionWins + "," + TeamInfo.DivisionLosses + "," + TeamInfo.OverallWins + "," + TeamInfo.OverallLosses + ") VALUES ('Canandaigua', 2012, 2, 0, 0, 0, 0)");
 			// Churchville Chili
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Churchville Chili - Boys', 'All', 2012)");
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Churchville Chili - Girls', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.Year + "," + TeamInfo.Division + "," + TeamInfo.DivisionWins + "," + TeamInfo.DivisionLosses + "," + TeamInfo.OverallWins + "," + TeamInfo.OverallLosses + ") VALUES ('Churchville Chili', 2012, 3, 0, 0, 0, 0)");
 			// East Irondequoit
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('East Irondequoit - Boys', 'All', 2012)");
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('East Irondequoit - Girls', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.Year + "," + TeamInfo.Division + "," + TeamInfo.DivisionWins + "," + TeamInfo.DivisionLosses + "," + TeamInfo.OverallWins + "," + TeamInfo.OverallLosses + ") VALUES ('East Irondequoit', 2012, 4, 0, 0, 0, 0)");
 			// East Rochester
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('East Rochester - Boys', 'All', 2012)");
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('East Rochester - Girls', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.Year + "," + TeamInfo.Division + "," + TeamInfo.DivisionWins + "," + TeamInfo.DivisionLosses + "," + TeamInfo.OverallWins + "," + TeamInfo.OverallLosses + ") VALUES ('East Rochester', 2012, 4, 0, 0, 0, 0)");
 			// Fairport
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Fairport - Boys', 'All', 2012)");
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Fairport - Girls', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.Year + "," + TeamInfo.Division + "," + TeamInfo.DivisionWins + "," + TeamInfo.DivisionLosses + "," + TeamInfo.OverallWins + "," + TeamInfo.OverallLosses + ") VALUES ('Fairport', 2012, 1, 0, 0, 0, 0)");
 			// Gates Chili
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Gates Chili - Boys', 'All', 2012)");
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Gates Chili - Girls', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.Year + "," + TeamInfo.Division + "," + TeamInfo.DivisionWins + "," + TeamInfo.DivisionLosses + "," + TeamInfo.OverallWins + "," + TeamInfo.OverallLosses + ") VALUES ('Gates Chili', 2012, 3, 0, 0, 0, 0)");
 			// Hilton
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Hilton - Boys', 'All', 2012)");
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Hilton - Girls', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.Year + "," + TeamInfo.Division + "," + TeamInfo.DivisionWins + "," + TeamInfo.DivisionLosses + "," + TeamInfo.OverallWins + "," + TeamInfo.OverallLosses + ") VALUES ('Hilton', 2012, 3, 0, 0, 0, 0)");
 			// Honeoye Falls Lima
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Honeoye Falls Lima - Boys', 'All', 2012)");
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Honeoye Falls Lima - Girls', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.Year + "," + TeamInfo.Division + "," + TeamInfo.DivisionWins + "," + TeamInfo.DivisionLosses + "," + TeamInfo.OverallWins + "," + TeamInfo.OverallLosses + ") VALUES ('Honeoye Falls Lima', 2012, 2, 0, 0, 0, 0)");
 			// Irondequoit
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Irondequoit - Boys', 'All', 2012)");
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Irondequoit - Girls', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.Year + "," + TeamInfo.Division + "," + TeamInfo.DivisionWins + "," + TeamInfo.DivisionLosses + "," + TeamInfo.OverallWins + "," + TeamInfo.OverallLosses + ") VALUES ('Irondequoit', 2012, 4, 0, 0, 0, 0)");
 			// Mendon
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Mendon - Boys', 'All', 2012)");
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Mendon - Girls', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.Year + "," + TeamInfo.Division + "," + TeamInfo.DivisionWins + "," + TeamInfo.DivisionLosses + "," + TeamInfo.OverallWins + "," + TeamInfo.OverallLosses + ") VALUES ('Mendon', 2012, 2, 0, 0, 0, 0)");
 			// Odyssey
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Odyssey - Boys', 'All', 2012)");
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Odyssey - Girls', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.Year + "," + TeamInfo.Division + "," + TeamInfo.DivisionWins + "," + TeamInfo.DivisionLosses + "," + TeamInfo.OverallWins + "," + TeamInfo.OverallLosses + ") VALUES ('Odyssey', 2012, 4, 0, 0, 0, 0)");
 			// Olympia
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Olympia - Boys', 'All', 2012)");
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Olympia - Girls', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.Year + "," + TeamInfo.Division + "," + TeamInfo.DivisionWins + "," + TeamInfo.DivisionLosses + "," + TeamInfo.OverallWins + "," + TeamInfo.OverallLosses + ") VALUES ('Olympia', 2012, 4, 0, 0, 0, 0)");
 			// Penfield
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Penfield - Boys', 'All', 2012)");
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Penfield - Girls', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.Year + "," + TeamInfo.Division + "," + TeamInfo.DivisionWins + "," + TeamInfo.DivisionLosses + "," + TeamInfo.OverallWins + "," + TeamInfo.OverallLosses + ") VALUES ('Penfield', 2012, 1, 0, 0, 0, 0)");
 			// Rush Henrietta
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Rush Henrietta - Boys', 'All', 2012)");
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Rush Henrietta - Girls', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.Year + "," + TeamInfo.Division + "," + TeamInfo.DivisionWins + "," + TeamInfo.DivisionLosses + "," + TeamInfo.OverallWins + "," + TeamInfo.OverallLosses + ") VALUES ('Rush Henrietta', 2012, 1, 0, 0, 0, 0)");
 			// Schroeder
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Schroeder - Boys', 'All', 2012)");
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Schroeder - Girls', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.Year + "," + TeamInfo.Division + "," + TeamInfo.DivisionWins + "," + TeamInfo.DivisionLosses + "," + TeamInfo.OverallWins + "," + TeamInfo.OverallLosses + ") VALUES ('Schroeder', 2012, 1, 0, 0, 0, 0)");
 			// Spencerport
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Spencerport - Boys', 'All', 2012)");
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Spencerport - Girls', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.Year + "," + TeamInfo.Division + "," + TeamInfo.DivisionWins + "," + TeamInfo.DivisionLosses + "," + TeamInfo.OverallWins + "," + TeamInfo.OverallLosses + ") VALUES ('Spencerport', 2012, 3, 0, 0, 0, 0)");
 			// Sutherland
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Sutherland - Boys', 'All', 2012)");
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Sutherland - Girls', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.Year + "," + TeamInfo.Division + "," + TeamInfo.DivisionWins + "," + TeamInfo.DivisionLosses + "," + TeamInfo.OverallWins + "," + TeamInfo.OverallLosses + ") VALUES ('Sutherland', 2012, 2, 0, 0, 0, 0)");
 			// Thomas
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Thomas - Boys', 'All', 2012)");
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Thomas - Girls', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.Year + "," + TeamInfo.Division + "," + TeamInfo.DivisionWins + "," + TeamInfo.DivisionLosses + "," + TeamInfo.OverallWins + "," + TeamInfo.OverallLosses + ") VALUES ('Thomas', 2012, 1, 0, 0, 0, 0)");
 			// Victor
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Victor - Boys', 'All', 2012)");
-			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Victor - Girls', 'All', 2012)");
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.Year + "," + TeamInfo.Division + "," + TeamInfo.DivisionWins + "," + TeamInfo.DivisionLosses + "," + TeamInfo.OverallWins + "," + TeamInfo.OverallLosses + ") VALUES ('Victor', 2012, 1, 0, 0, 0, 0)");
+			// W. Irondequoit
+			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.Year + "," + TeamInfo.Division + "," + TeamInfo.DivisionWins + "," + TeamInfo.DivisionLosses + "," + TeamInfo.OverallWins + "," + TeamInfo.OverallLosses + ") VALUES ('W. Irondequoit', 2012, 2, 0, 0, 0, 0)");
+						
+			// Create a location for the meet
+			db.execSQL("INSERT INTO " + RaceLocation.getTableName() + "(" + RaceLocation.CourseName + ") VALUES ('Parma Park')");
 			
+			// Create a single meet for testing
+			db.execSQL("INSERT INTO " + RaceMeet.getTableName() + "(" + RaceMeet.RaceLocation_ID + "," + RaceMeet.RaceMeetDate + ") VALUES (1, 1349166600)");
+			
+			// Add teams to the meet
+			db.execSQL("INSERT INTO " + RaceMeetTeams.getTableName() + "(" + RaceMeetTeams.RaceMeet_ID + "," + RaceMeetTeams.TeamInfo_ID + ") VALUES (1, 1)");
+			db.execSQL("INSERT INTO " + RaceMeetTeams.getTableName() + "(" + RaceMeetTeams.RaceMeet_ID + "," + RaceMeetTeams.TeamInfo_ID + ") VALUES (1, 2)");
+			db.execSQL("INSERT INTO " + RaceMeetTeams.getTableName() + "(" + RaceMeetTeams.RaceMeet_ID + "," + RaceMeetTeams.TeamInfo_ID + ") VALUES (1, 3)");
+			db.execSQL("INSERT INTO " + RaceMeetTeams.getTableName() + "(" + RaceMeetTeams.RaceMeet_ID + "," + RaceMeetTeams.TeamInfo_ID + ") VALUES (1, 4)");
+			db.execSQL("INSERT INTO " + RaceMeetTeams.getTableName() + "(" + RaceMeetTeams.RaceMeet_ID + "," + RaceMeetTeams.TeamInfo_ID + ") VALUES (1, 5)");
+			
+			// Add races to the meet
+			db.execSQL("INSERT INTO " + Race.getTableName() + "(" + Race.Category + "," + Race.Distance + "," + Race.Gender + "," + Race.NumSplits + "," + Race.RaceMeet_ID + "," + Race.RaceStartTime + ") VALUES ('Varsity', 3.1, 'Boys', 3, 1, 1349166600)");
+			db.execSQL("INSERT INTO " + Race.getTableName() + "(" + Race.Category + "," + Race.Distance + "," + Race.Gender + "," + Race.NumSplits + "," + Race.RaceMeet_ID + "," + Race.RaceStartTime + ") VALUES ('Varsity', 3.1, 'Girls', 3, 1, 1349166600)");
+			db.execSQL("INSERT INTO " + Race.getTableName() + "(" + Race.Category + "," + Race.Distance + "," + Race.Gender + "," + Race.NumSplits + "," + Race.RaceMeet_ID + "," + Race.RaceStartTime + ") VALUES ('Modified', 2, 'Boys', 2, 1, 1349166600)");
+			db.execSQL("INSERT INTO " + Race.getTableName() + "(" + Race.Category + "," + Race.Distance + "," + Race.Gender + "," + Race.NumSplits + "," + Race.RaceMeet_ID + "," + Race.RaceStartTime + ") VALUES ('Modified', 2, 'Girls', 2, 1, 1349166600)");
+			
+			// Add a couple of racers
+			db.execSQL("INSERT INTO " + Racer.getTableName() + "(" + Racer.FirstName + "," + Racer.LastName + "," + Racer.Gender + ") VALUES ('Mark', 'Blakley', 'Boys')");
+			db.execSQL("INSERT INTO " + Racer.getTableName() + "(" + Racer.FirstName + "," + Racer.LastName + "," + Racer.Gender + ") VALUES ('Greg', 'Gray', 'Boys')");
+			db.execSQL("INSERT INTO " + Racer.getTableName() + "(" + Racer.FirstName + "," + Racer.LastName + "," + Racer.Gender + ") VALUES ('Perry', 'Pellerino', 'Boys')");
+			
+			// Add their racer club info
+			db.execSQL("INSERT INTO " + RacerClubInfo.getTableName() + "(" + RacerClubInfo.Racer_ID + "," + RacerClubInfo.TeamInfo_ID + "," + RacerClubInfo.Category + "," + RacerClubInfo.Grade + "," + RacerClubInfo.SpeedLevel + ") VALUES (1, 1, 'Varsity', 12, 6)");
+			db.execSQL("INSERT INTO " + RacerClubInfo.getTableName() + "(" + RacerClubInfo.Racer_ID + "," + RacerClubInfo.TeamInfo_ID + "," + RacerClubInfo.Category + "," + RacerClubInfo.Grade + "," + RacerClubInfo.SpeedLevel + ") VALUES (2, 1, 'Varsity', 11, 8)");
+			db.execSQL("INSERT INTO " + RacerClubInfo.getTableName() + "(" + RacerClubInfo.Racer_ID + "," + RacerClubInfo.TeamInfo_ID + "," + RacerClubInfo.Category + "," + RacerClubInfo.Grade + "," + RacerClubInfo.SpeedLevel + ") VALUES (3, 1, 'Varsity', 10, 4)");
 	    }
 
 	    @Override
@@ -786,163 +777,7 @@ public class TTProvider extends ContentProvider {
 	    {
 	        Log.w(TAG, "Upgrading database from version " + oldVersion 
 	                + " to "
-	                + newVersion + ", all data will be preserved");
-	    	if(oldVersion < 2 && newVersion >= 2){
-	    		db.beginTransaction();
-	    		try{
-		    		db.execSQL("ALTER TABLE " + Race.getTableName() + " ADD COLUMN " + Race.NumLaps + " integer not null DEFAULT 1");
-		    		db.execSQL("UPDATE " + Race.getTableName() + " SET " + Race.NumLaps + "=1");
-		    		db.execSQL("ALTER TABLE " + RacerClubInfo.getTableName() + " ADD COLUMN " + RacerClubInfo.Upgraded + " integer not null DEFAULT 0");
-		    		db.execSQL("UPDATE " + RacerClubInfo.getTableName() + " SET " + RacerClubInfo.Upgraded + "=0");    db.setTransactionSuccessful();
-	    		} finally{
-	    			db.endTransaction();
-	    		}
-	    	} 
-	    	if(oldVersion < 3 && newVersion >= 3){
-	    		db.beginTransaction();
-	    		try{
-		    		db.execSQL("ALTER TABLE " + TeamMembers.getTableName() + " ADD COLUMN " + TeamMembers.TeamRacerNumber + " integer not null DEFAULT 0");
-		    		db.execSQL("ALTER TABLE " + RaceResults.getTableName() + " ADD COLUMN " + RaceResults.TeamInfo_ID + " integer references " + TeamInfo.getTableName() + "(" + TeamInfo._ID + ") null");
-		    		db.execSQL(RaceLaps.getCreate());
-		    		db.execSQL("ALTER TABLE " + Racer.getTableName() + " ADD COLUMN " + Racer.USACNumber + " integer not null DEFAULT 0");
-			        String year = Integer.toString(Calendar.getInstance().get(Calendar.YEAR));
-			        db.execSQL("ALTER TABLE " + TeamInfo.getTableName() + " ADD COLUMN " + TeamInfo.Year + " integer not null DEFAULT " + year);
-			        // Need to change the RacerClubInfo_ID column to allow nulls.  Unfortunately, sqlite does not allow alter column statements, 
-			        // so we need to copy the data into a tmp table, create the table again using the new schema, then copy the data back in
-			        // and drop the tmp table
-			        db.execSQL("ALTER TABLE " + RaceResults.getTableName() + " RENAME TO tmp_" + RaceResults.getTableName() + ";");
-			        db.execSQL(RaceResults.getCreate());
-			        db.execSQL("INSERT INTO " + RaceResults.getTableName() + "(" + RaceResults._ID + "," + RaceResults.RacerClubInfo_ID + "," + RaceResults.TeamInfo_ID + "," 
-			        			+ RaceResults.Race_ID + "," + RaceResults.StartOrder + "," + RaceResults.StartTimeOffset + "," + RaceResults.StartTime + "," 
-			        			+ RaceResults.EndTime + "," + RaceResults.ElapsedTime + "," + RaceResults.OverallPlacing + "," + RaceResults.CategoryPlacing + "," 
-			        			+ RaceResults.Points + "," + RaceResults.PrimePoints 
-			        			+ ") SELECT " + RaceResults._ID + "," + RaceResults.RacerClubInfo_ID + "," + RaceResults.TeamInfo_ID + "," 
-			        			+ RaceResults.Race_ID + "," + RaceResults.StartOrder + "," + RaceResults.StartTimeOffset + "," + RaceResults.StartTime + "," 
-			        			+ RaceResults.EndTime + "," + RaceResults.ElapsedTime + "," + RaceResults.OverallPlacing + "," + RaceResults.CategoryPlacing + "," 
-			        			+ RaceResults.Points + "," + RaceResults.PrimePoints 
-			        			+ " FROM tmp_" + RaceResults.getTableName() + ";");
-			        db.execSQL("DROP TABLE tmp_" +  RaceResults.getTableName() + ";");
-			        db.execSQL("UPDATE " + RacerClubInfo.getTableName() + " SET " + RacerClubInfo.Category + "='W' WHERE " + RacerClubInfo.Category + "='Women'");
-			        db.setTransactionSuccessful();
-	    		} finally{
-	    			db.endTransaction();
-	    		}
-	    	} 
-	    	if(oldVersion < 4 && newVersion >= 4){
-	    		db.beginTransaction();
-	    		try{
-		    		db.execSQL("ALTER TABLE " + UnassignedTimes.getTableName() + " ADD COLUMN " + UnassignedTimes.RaceResult_ID + " integer null");
-			        db.setTransactionSuccessful();
-	    		} finally{
-	    			db.endTransaction();
-	    		}
-	    	} 
-	    	if(oldVersion < 5 && newVersion >= 5){
-	    		db.beginTransaction();
-	    		try{
-	    			db.execSQL(LookupGroups.getCreate());
-		    		db.execSQL("INSERT INTO " + LookupGroups.getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Humidity + "', 'Dry');");
-		    		db.execSQL("INSERT INTO " + LookupGroups.getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Humidity + "', 'Moderate');");
-		    		db.execSQL("INSERT INTO " + LookupGroups.getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Humidity + "', 'Humid');");
-		    		db.execSQL("INSERT INTO " + LookupGroups.getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Humidity + "', 'Raining');");
-		    		db.execSQL("INSERT INTO " + LookupGroups.getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Category + "', 'A');");
-		    		db.execSQL("INSERT INTO " + LookupGroups.getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Category + "', 'B4');");
-		    		db.execSQL("INSERT INTO " + LookupGroups.getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Category + "', 'B5');");
-		    		// Still need to do a bunch of updates to be able to use the category group, so we'll leave that until the next database upgrade
-			        db.setTransactionSuccessful();
-	    		} finally{
-	    			db.endTransaction();
-	    		}
-	    	} 
-	    	if(oldVersion < 6 && newVersion >= 6){
-	    		db.beginTransaction();
-	    		try{
-	    			db.execSQL(LocationImages.getCreate());
-			        db.setTransactionSuccessful();
-	    		} finally{
-	    			db.endTransaction();
-	    		}
-	    	} 
-	    	if(oldVersion < 7 && newVersion >= 7){
-	    		db.beginTransaction();
-	    		try{
-	    			// Arcadia
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Arcadia - Boys', 'All', 2012)");
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Arcadia - Girls', 'All', 2012)");
-	    			// Athena
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Athena - Boys', 'All', 2012)");
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Athena - Girls', 'All', 2012)");
-	    			// Batavia
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Batavia - Boys', 'All', 2012)");
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Batavia - Girls', 'All', 2012)");
-	    			// Brighton
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Brighton - Boys', 'All', 2012)");
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Brighton - Girls', 'All', 2012)");
-	    			// Brockport
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Brockport - Boys', 'All', 2012)");
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Brockport - Girls', 'All', 2012)");
-	    			// Canandaigua
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Canandaigua - Boys', 'All', 2012)");
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Canandaigua - Girls', 'All', 2012)");
-	    			// Churchville Chili
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Churchville Chili - Boys', 'All', 2012)");
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Churchville Chili - Girls', 'All', 2012)");
-	    			// East Irondequoit
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('East Irondequoit - Boys', 'All', 2012)");
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('East Irondequoit - Girls', 'All', 2012)");
-	    			// East Rochester
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('East Rochester - Boys', 'All', 2012)");
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('East Rochester - Girls', 'All', 2012)");
-	    			// Fairport
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Fairport - Boys', 'All', 2012)");
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Fairport - Girls', 'All', 2012)");
-	    			// Gates Chili
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Gates Chili - Boys', 'All', 2012)");
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Gates Chili - Girls', 'All', 2012)");
-	    			// Hilton
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Hilton - Boys', 'All', 2012)");
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Hilton - Girls', 'All', 2012)");
-	    			// Honeoye Falls Lima
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Honeoye Falls Lima - Boys', 'All', 2012)");
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Honeoye Falls Lima - Girls', 'All', 2012)");
-	    			// Irondequoit
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Irondequoit - Boys', 'All', 2012)");
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Irondequoit - Girls', 'All', 2012)");
-	    			// Mendon
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Mendon - Boys', 'All', 2012)");
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Mendon - Girls', 'All', 2012)");
-	    			// Odyssey
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Odyssey - Boys', 'All', 2012)");
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Odyssey - Girls', 'All', 2012)");
-	    			// Olympia
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Olympia - Boys', 'All', 2012)");
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Olympia - Girls', 'All', 2012)");
-	    			// Penfield
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Penfield - Boys', 'All', 2012)");
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Penfield - Girls', 'All', 2012)");
-	    			// Rush Henrietta
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Rush Henrietta - Boys', 'All', 2012)");
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Rush Henrietta - Girls', 'All', 2012)");
-	    			// Schroeder
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Schroeder - Boys', 'All', 2012)");
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Schroeder - Girls', 'All', 2012)");
-	    			// Spencerport
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Spencerport - Boys', 'All', 2012)");
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Spencerport - Girls', 'All', 2012)");
-	    			// Sutherland
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Sutherland - Boys', 'All', 2012)");
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Sutherland - Girls', 'All', 2012)");
-	    			// Thomas
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Thomas - Boys', 'All', 2012)");
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Thomas - Girls', 'All', 2012)");
-	    			// Victor
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Victor - Boys', 'All', 2012)");
-	    			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.TeamCategory + "," + TeamInfo.Year + ") VALUES ('Victor - Girls', 'All', 2012)");
-	    			db.setTransactionSuccessful();
-	    		} finally{
-	    			db.endTransaction();
-	    		}
-	    	}
+	                + newVersion);
 	    }
 	}
 }

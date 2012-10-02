@@ -3,10 +3,7 @@ package com.gvccracing.android.tttimer.AsyncTasks;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import android.content.Context;
 import android.content.Intent;
@@ -25,11 +22,6 @@ import com.dropbox.client2.session.AccessTokenPair;
 import com.dropbox.client2.session.AppKeyPair;
 import com.dropbox.client2.session.Session.AccessType;
 import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
-import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewExclusive;
-import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
-import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
-import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
-import com.gvccracing.android.tttimer.DataAccess.TeamCheckInViewCP.TeamCheckInViewExclusive;
 
 public class UploadUSACNumbersToDropboxTask extends AsyncTask<Void, Void, Void> {
 	private Context context;
@@ -61,29 +53,29 @@ public class UploadUSACNumbersToDropboxTask extends AsyncTask<Void, Void, Void> 
 	
 	@Override
 	protected Void doInBackground(Void... params) {					
-		raceTypeID = Race.getValues(context, Long.parseLong(AppSettings.ReadValue(context, AppSettings.AppSetting_RaceID_Name, "-1"))).get(Race.RaceType);
+		//raceTypeID = Race.getValues(context, Long.parseLong(AppSettings.ReadValue(context, AppSettings.AppSetting_RaceID_Name, "-1"))).get(Race.RaceType);
 		
         try {
-        	String[] projection;
-    		String selection;
-    		String[] selectionArgs = null;
-    		String sortOrder;
-        	projection = new String[]{Racer.USACNumber};
-			selection = RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
-			selectionArgs = null;
-			sortOrder = Racer.USACNumber;
-			Cursor usacNumbersCursor;
-			if(raceTypeID == 1){
-				usacNumbersCursor = TeamCheckInViewExclusive.Read(context, projection, selection, selectionArgs, sortOrder);
-			}else{
-				usacNumbersCursor = CheckInViewExclusive.Read(context, projection, selection, selectionArgs, sortOrder);
-			}
-			if(usacNumbersCursor != null && usacNumbersCursor.getCount() > 0){
-				String filename = WriteRosterToFile(usacNumbersCursor);
-				UploadFileToDropBox(filename);
-				usacNumbersCursor.close();
-			}
-			usacNumbersCursor = null;
+//        	String[] projection;
+//    		String selection;
+//    		String[] selectionArgs = null;
+//    		String sortOrder;
+//        	projection = new String[]{Racer.USACNumber};
+//			selection = RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
+//			selectionArgs = null;
+//			sortOrder = Racer.USACNumber;
+//			Cursor usacNumbersCursor;
+//			if(raceTypeID == 1){
+//				usacNumbersCursor = TeamCheckInViewExclusive.Read(context, projection, selection, selectionArgs, sortOrder);
+//			}else{
+//				usacNumbersCursor = CheckInViewExclusive.Read(context, projection, selection, selectionArgs, sortOrder);
+//			}
+//			if(usacNumbersCursor != null && usacNumbersCursor.getCount() > 0){
+//				String filename = WriteRosterToFile(usacNumbersCursor);
+//				UploadFileToDropBox(filename);
+//				usacNumbersCursor.close();
+//			}
+//			usacNumbersCursor = null;
         } catch (IllegalStateException e) {
             Log.i(LOG_TAG, "Error authenticating", e);
         }
@@ -160,49 +152,49 @@ public class UploadUSACNumbersToDropboxTask extends AsyncTask<Void, Void, Void> 
         }
         
         if( mExternalStorageAvailable && mExternalStorageWriteable){
-        	Long raceDateMS = Race.getValues(context, Long.parseLong(AppSettings.ReadValue(context, AppSettings.AppSetting_RaceID_Name, "-1"))).get(Race.RaceDate);
-    		Date raceDateTemp = new Date(raceDateMS);
-    		SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yy");
-    		filename = dateFormat.format(raceDateTemp) + "_GTourRoster.csv";
-			// Create a path where we will place our private file on external
-			// storage.
-        	File rootDir = Environment.getExternalStorageDirectory();
-        	File rostersDirectory = new File(rootDir.toString() + "/gvcc_rosters/");
-        	// have the object build the directory structure, if needed.
-        	if( !rostersDirectory.exists()){
-        		rostersDirectory.mkdirs();
-        	}
-			File file = new File(rostersDirectory, filename);
-			if( !file.exists()){
-            	try {
-					file.createNewFile();
-				} catch (IOException e) {
-					Toast.makeText(context, "Error creating file: " + e.toString(), Toast.LENGTH_LONG).show();
-					
-					Intent resultData = new Intent();
-					resultData.putExtra("Error", "Error creating file: " + e.toString());
-				}
-			}
-			// try to write the content
-			try {
-				// Note that if external storage is
-			    // not currently mounted this will silently fail.
-				FileWriter os = new FileWriter(file, true);
-				cursor.moveToFirst();
-				while(!cursor.isAfterLast()){
-				    os.write(Long.toString(cursor.getLong(cursor.getColumnIndex(Racer.USACNumber))) + "\n");
-				    cursor.moveToNext();
-				}
-			    os.close();
-			    os = null;
-			} catch (IOException e) {
-			    // Unable to create file, likely because external storage is
-			    // not currently mounted.
-				Toast.makeText(context, "Error saving to file: " + e.toString(), Toast.LENGTH_LONG).show();
-				
-				Intent resultData = new Intent();
-				resultData.putExtra("Error", "Error saving to file: " + e.toString());
-			}
+//        	Long raceDateMS = Race.getValues(context, Long.parseLong(AppSettings.ReadValue(context, AppSettings.AppSetting_RaceID_Name, "-1"))).get(Race.RaceDate);
+//    		Date raceDateTemp = new Date(raceDateMS);
+//    		SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yy");
+//    		filename = dateFormat.format(raceDateTemp) + "_GTourRoster.csv";
+//			// Create a path where we will place our private file on external
+//			// storage.
+//        	File rootDir = Environment.getExternalStorageDirectory();
+//        	File rostersDirectory = new File(rootDir.toString() + "/gvcc_rosters/");
+//        	// have the object build the directory structure, if needed.
+//        	if( !rostersDirectory.exists()){
+//        		rostersDirectory.mkdirs();
+//        	}
+//			File file = new File(rostersDirectory, filename);
+//			if( !file.exists()){
+//            	try {
+//					file.createNewFile();
+//				} catch (IOException e) {
+//					Toast.makeText(context, "Error creating file: " + e.toString(), Toast.LENGTH_LONG).show();
+//					
+//					Intent resultData = new Intent();
+//					resultData.putExtra("Error", "Error creating file: " + e.toString());
+//				}
+//			}
+//			// try to write the content
+//			try {
+//				// Note that if external storage is
+//			    // not currently mounted this will silently fail.
+//				FileWriter os = new FileWriter(file, true);
+//				cursor.moveToFirst();
+//				while(!cursor.isAfterLast()){
+//				    os.write(Long.toString(cursor.getLong(cursor.getColumnIndex(Racer.USACNumber))) + "\n");
+//				    cursor.moveToNext();
+//				}
+//			    os.close();
+//			    os = null;
+//			} catch (IOException e) {
+//			    // Unable to create file, likely because external storage is
+//			    // not currently mounted.
+//				Toast.makeText(context, "Error saving to file: " + e.toString(), Toast.LENGTH_LONG).show();
+//				
+//				Intent resultData = new Intent();
+//				resultData.putExtra("Error", "Error saving to file: " + e.toString());
+//			}
         }else{
         	Toast.makeText(context, "Unable to save usac numbers to file.", Toast.LENGTH_LONG).show();
         	

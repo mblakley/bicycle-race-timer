@@ -3,36 +3,32 @@
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
 	android:orientation="horizontal"
-	android:weightSum="1.0"
+	android:weightSum="4"
 	android:padding="1dp">  
-	<TextView
-		android:id="@+id/lblStartOrder"
-		android:layout_weight=".1"
-		android:layout_width="0dip"
-		android:layout_height="wrap_content"
-		style="@style/Small.Padded"
-		android:visibility="gone" />
-	
-	<TextView
-		android:id="@+id/lblStartTime"
-		android:layout_weight=".2"
-		android:layout_width="0dip"
-		android:layout_height="wrap_content"
-		style="@style/Small.Padded"
-		android:visibility="gone"/>
 	
 	<TextView
 		android:id="@+id/lblName"
-		android:layout_weight=".5"
+		android:layout_weight="2"
 		android:layout_width="0dip"
 		android:layout_height="wrap_content"
 		android:singleLine="true"
-		style="@style/Small.Padded" />
+		style="@style/Medium" />
 	
 	<TextView
 		android:id="@+id/lblTeam"
-		android:layout_weight=".5"
+		android:layout_weight="1"
 		android:layout_width="0dip"
 		android:layout_height="wrap_content"
 		style="@style/Small.Padded"/>
+	
+	<com.gvccracing.android.tttimer.Controls.ButtonCheckIn
+		android:id="@+id/btnCheckIn"
+		android:text="@string/Remove"
+		android:paddingLeft="0sp"
+		android:paddingRight="0sp"
+		android:layout_width="0dip"
+		android:layout_height="wrap_content"
+		android:layout_weight="1"
+		android:width="0dp"
+		style="@style/Medium" />  
 </LinearLayout>

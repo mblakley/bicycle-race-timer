@@ -10,7 +10,7 @@ import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
 import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewExclusive;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
-import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
+import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
 
 public class CheckInHandler extends AsyncTask<Long, Void, String> {
 	
@@ -22,20 +22,9 @@ public class CheckInHandler extends AsyncTask<Long, Void, String> {
 	
 	@Override
 	protected String doInBackground(Long... params) {			
-		long racerClubInfo_ID = params[0];
-
-		String[] projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID, Racer.LastName, Racer.FirstName, RaceResults.StartOrder, RaceResults.StartTimeOffset};
-		String selection = RacerClubInfo.getTableName() + "." + RacerClubInfo.Year + "= ? AND " + RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
-		String[] selectionArgs = new String[]{ Integer.toString(Calendar.getInstance().get(Calendar.YEAR))};
-		String sortOrder = RaceResults.StartOrder;
+		long raceResult_ID = params[0];
 		
-     	// StartOrder (count of current check-ins + 1)
-     	int startOrder = CheckInViewExclusive.ReadCount(context, projection, selection, selectionArgs, sortOrder) + 1;
-
-     	long race_ID = Long.parseLong(AppSettings.ReadValue(context, AppSettings.AppSetting_RaceID_Name, "-1"));
-     	long startInterval = 0l;//Long.parseLong(AppSettings.ReadValue(context, AppSettings.AppSetting_StartInterval_Name, "60"));
-     	// Do the check in
-     	Uri result = CheckInRacer(racerClubInfo_ID, null, startOrder, startInterval, race_ID); 
+		Integer result = RaceResults.Delete(context, RaceResults._ID + "=?", new String[]{Long.toString(raceResult_ID)});		
      			
 		return result.toString();
 	}

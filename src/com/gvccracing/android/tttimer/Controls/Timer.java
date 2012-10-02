@@ -9,7 +9,6 @@ import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.RaceLapsInfoView
 import com.gvccracing.android.tttimer.DataAccess.RaceLapsCP.RaceLaps;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 import com.gvccracing.android.tttimer.DataAccess.UnassignedTimesCP.UnassignedTimes;
-import com.gvccracing.android.tttimer.Utilities.Enums.RaceType;
 import com.gvccracing.android.tttimer.Utilities.TimeFormatter;
 
 import android.content.BroadcastReceiver;
@@ -185,17 +184,9 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
 	 */
 	private long totalRaceLaps = 1l;
 	/**
-	 * The race type ID of this race
-	 */
-	private long raceTypeID = 0l;
-	/**
 	 * The current number of race laps
 	 */
 	private long currentLaps = 1l;
-	/**
-	 * The loader for the current number of laps
-	 */
-	private Loader<Cursor> currentLapsLoader = null;
 	
 	private Handler messageTimerHandler = new Handler();
     private Runnable hideMessage = new Runnable() {
@@ -268,7 +259,7 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
 
 		llToast = (LinearLayout) findViewById(R.id.llToast); 
 		
-		startTimeInterval = Long.parseLong(AppSettings.ReadValue(getContext(), AppSettings.AppSetting_StartInterval_Name, "60"));
+		startTimeInterval = 0l;
 
         ((FragmentActivity) getContext()).getSupportLoaderManager().initLoader(ON_DECK_LOADER_TIMER, null, this);
         ((FragmentActivity) getContext()).getSupportLoaderManager().initLoader(UNFINISHED_RACERS_LOADER, null, this);
@@ -434,15 +425,8 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
 				sortOrder = RaceResults.StartOrder;
 				loader = new CursorLoader(getContext(), RaceResults.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
-			case START_INTERVAL_LOADER:
-				projection = new String[]{AppSettings.AppSettingName, AppSettings.AppSettingValue};
-				selection = AppSettings.AppSettingName + "=?";
-				sortOrder = null;
-				selectionArgs = new String[]{AppSettings.AppSetting_StartInterval_Name};
-				loader = new CursorLoader(getContext(), AppSettings.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
-				break;
 			case RACE_INFO_LOADER_TIMER:
-				projection = new String[]{Race.RaceType, Race.NumLaps};
+				projection = new String[]{Race.NumSplits};
 				selection = Race.getTableName() + "." + Race._ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
 				selectionArgs = null;
 				sortOrder = Race.getTableName() + "." + Race._ID;
@@ -484,25 +468,21 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
 					    setNewRacerOnDeck(raceResult_ID, startTimeOffset);
 				    }
 					break;
-				case START_INTERVAL_LOADER:
-					startTimeInterval = Long.parseLong(AppSettings.ReadValue(getContext(), AppSettings.AppSetting_StartInterval_Name, "60"));
-					break;
 				case RACE_INFO_LOADER_TIMER:
 					if(cursor != null && cursor.getCount() > 0){
 						cursor.moveToFirst();
-						raceTypeID = cursor.getLong(cursor.getColumnIndex(Race.RaceType));
-						totalRaceLaps = cursor.getLong(cursor.getColumnIndex(Race.NumLaps));
+						totalRaceLaps = cursor.getLong(cursor.getColumnIndex(Race.NumSplits));
 						
-						if(raceTypeID == RaceType.TeamTimeTrial.ID()){
-							lblLaps.setVisibility(View.VISIBLE);
-							if( currentLapsLoader == null){
-								currentLapsLoader = ((FragmentActivity) getContext()).getSupportLoaderManager().initLoader(CURRENT_LAPS_LOADER, null, this);
-							} else {
-								currentLapsLoader = ((FragmentActivity) getContext()).getSupportLoaderManager().restartLoader(CURRENT_LAPS_LOADER, null, this);
-							}
-						}else{
+//						if(raceTypeID == RaceType.TeamTimeTrial.ID()){
+//							lblLaps.setVisibility(View.VISIBLE);
+//							if( currentLapsLoader == null){
+//								currentLapsLoader = ((FragmentActivity) getContext()).getSupportLoaderManager().initLoader(CURRENT_LAPS_LOADER, null, this);
+//							} else {
+//								currentLapsLoader = ((FragmentActivity) getContext()).getSupportLoaderManager().restartLoader(CURRENT_LAPS_LOADER, null, this);
+//							}
+//						}else{
 							lblLaps.setVisibility(View.INVISIBLE);
-						}
+//						}
 					}
 					break;
 				case CURRENT_LAPS_LOADER:

@@ -22,7 +22,7 @@ public class RacerCP {
         // Table column
         public static final String FirstName = "FirstName";
         public static final String LastName = "LastName";
-        public static final String USACNumber = "USACNumber";
+        public static final String Gender = "Gender";
         public static final String BirthDate = "BirthDate";
         public static final String PhoneNumber = "PhoneNumber";
         public static final String EmergencyContactName = "EmergencyContactName";
@@ -37,7 +37,7 @@ public class RacerCP {
             + " (" + _ID + " integer primary key autoincrement, "
             + FirstName + " text not null, " 
             + LastName + " text not null,"
-            + USACNumber + " integer not null,"
+            + Gender + " text not null,"
             + BirthDate + " integer null,"
             + PhoneNumber + " integer null,"
             + EmergencyContactName + " text null,"
@@ -49,12 +49,12 @@ public class RacerCP {
         	return new Uri[]{Racer.CONTENT_URI, CheckInViewInclusive.CONTENT_URI, CheckInViewExclusive.CONTENT_URI};
         }
 
-		public static Uri Create(Context context, String firstName, String lastName, int usacNumber, 
+		public static Uri Create(Context context, String firstName, String lastName, String gender, 
 								long birthDate, int phoneNumber, String emergencyContactName, int emergencyContactPhoneNumber) {
 			ContentValues content = new ContentValues();
 	     	content.put(Racer.FirstName, firstName);
 	     	content.put(Racer.LastName, lastName);
-	     	content.put(Racer.USACNumber, usacNumber);
+	     	content.put(Racer.Gender, gender);
 	     	content.put(Racer.BirthDate, birthDate);
 	     	content.put(Racer.PhoneNumber, phoneNumber);
 	     	content.put(Racer.EmergencyContactName, emergencyContactName);
@@ -75,7 +75,7 @@ public class RacerCP {
 				racerValues.put(Racer._ID, racer_ID);
 				racerValues.put(Racer.FirstName, racerCursor.getString(racerCursor.getColumnIndex(Racer.FirstName)));
 				racerValues.put(Racer.LastName, racerCursor.getString(racerCursor.getColumnIndex(Racer.LastName)));
-				racerValues.put(Racer.USACNumber, racerCursor.getLong(racerCursor.getColumnIndex(Racer.USACNumber)));
+				racerValues.put(Racer.Gender, racerCursor.getLong(racerCursor.getColumnIndex(Racer.Gender)));
 				racerValues.put(Racer.BirthDate, racerCursor.getLong(racerCursor.getColumnIndex(Racer.BirthDate)));
 				racerValues.put(Racer.PhoneNumber, racerCursor.getLong(racerCursor.getColumnIndex(Racer.PhoneNumber)));
 				racerValues.put(Racer.EmergencyContactName, racerCursor.getString(racerCursor.getColumnIndex(Racer.EmergencyContactName)));
@@ -89,7 +89,7 @@ public class RacerCP {
 			return racerValues;
 		}
 		
-		public static int Update(Context context, long racer_ID, String firstName, String lastName, Integer usacNumber, Long birthDate, 
+		public static int Update(Context context, long racer_ID, String firstName, String lastName, String gender, Long birthDate, 
 								 String phoneNumber, String emergencyContactName, String emergencyContactPhoneNumber) {
 			ContentValues content = new ContentValues();
 	        if(firstName != null)
@@ -100,9 +100,9 @@ public class RacerCP {
 	        {
 	        	content.put(Racer.LastName, lastName);
 	        }
-	        if(usacNumber != null)
+	        if(gender != null)
 	        {
-	        	content.put(Racer.USACNumber, usacNumber);
+	        	content.put(Racer.Gender, gender);
 	        }
 	        if(birthDate != null)
 	        {

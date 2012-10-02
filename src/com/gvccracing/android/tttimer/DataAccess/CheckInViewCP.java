@@ -1,6 +1,7 @@
 package com.gvccracing.android.tttimer.DataAccess;
 
 import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
+import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.UnassignedTimesView;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
 import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
@@ -49,7 +50,7 @@ public class CheckInViewCP {
     				" JOIN " + Race.getTableName() + 
     				" ON (" + Race.getTableName() + "." + Race._ID + " = " + RaceResults.getTableName() + "." + RaceResults.Race_ID + ")" + 
     				" JOIN " + TeamInfo.getTableName() + 
-    				" ON (" + TeamInfo.getTableName() + "." + TeamInfo._ID + " = " + RacerClubInfo.getTableName() + "." + RacerClubInfo.GVCCID + ")";
+    				" ON (" + TeamInfo.getTableName() + "." + TeamInfo._ID + " = " + RacerClubInfo.getTableName() + "." + RacerClubInfo.TeamInfo_ID + ")";
         }
         
         public static String getCreate(){
@@ -57,7 +58,7 @@ public class CheckInViewCP {
         }
         
         public static Uri[] getAllUrisToNotifyOnChange(){
-        	return new Uri[]{CheckInViewExclusive.CONTENT_URI, CheckInViewInclusive.CONTENT_URI};
+        	return new Uri[]{CheckInViewExclusive.CONTENT_URI, CheckInViewInclusive.CONTENT_URI, UnassignedTimesView.CONTENT_URI};
         }
 
         public static Cursor Read(Context context, String[] fieldsToRetrieve, String selection, String[] selectionArgs, String sortOrder) {

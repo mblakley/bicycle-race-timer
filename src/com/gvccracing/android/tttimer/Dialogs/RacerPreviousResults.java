@@ -18,6 +18,7 @@ import com.gvccracing.android.tttimer.CursorAdapters.RacerPreviousResultsCursorA
 import com.gvccracing.android.tttimer.CursorAdapters.ResultsCursorAdapter;
 import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
 import com.gvccracing.android.tttimer.DataAccess.RaceLocationCP.RaceLocation;
+import com.gvccracing.android.tttimer.DataAccess.RaceMeetCP.RaceMeet;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
 import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
@@ -96,7 +97,7 @@ public class RacerPreviousResults extends BaseDialog implements View.OnClickList
 		String sortOrder;
 		switch(id){			
 			case ALL_RACE_RESULTS_LOADER:
-				projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID + " as _id", Race.RaceDate, Racer.FirstName, Racer.LastName, Race.RaceLocation_ID, RaceLocation.CourseName, RaceResults.ElapsedTime, RacerClubInfo.Category, RaceResults.CategoryPlacing, RaceResults.OverallPlacing, RaceResults.Points};
+				projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID + " as _id", RaceMeet.RaceMeetDate, Racer.FirstName, Racer.LastName, RaceMeet.RaceLocation_ID, RaceLocation.CourseName, RaceResults.ElapsedTime, RacerClubInfo.Category, RaceResults.CategoryPlacing, RaceResults.OverallPlacing, RaceResults.Points};
 				selection = Racer.getTableName() + "." + Racer._ID + " in (" + 
 							SQLiteQueryBuilder.buildQueryString(true, RacerPreviousResultsView.getTableName(), new String[]{Racer.getTableName() + "." + Racer._ID}, 
 																RaceResults.getTableName() + "." + RaceResults._ID + "=" + raceResultID, null, null, RaceResults.getTableName() + "." + RaceResults._ID, "1") + ")";
@@ -127,7 +128,7 @@ public class RacerPreviousResults extends BaseDialog implements View.OnClickList
 								if (currentRaceResult != null) {
 						        	currentRaceResult.setText(TimeFormatter.Format(elapsedTime, true, true, true, true, true, false, false, false));
 						        }
-								currentCourseID = cursor.getLong(cursor.getColumnIndex(Race.RaceLocation_ID));
+								currentCourseID = cursor.getLong(cursor.getColumnIndex(RaceMeet.RaceLocation_ID));
 								
 								int firstNameCol = cursor.getColumnIndex(Racer.FirstName);
 								int lastNameCol = cursor.getColumnIndex(Racer.LastName);
@@ -143,7 +144,7 @@ public class RacerPreviousResults extends BaseDialog implements View.OnClickList
 						cursor.moveToFirst();
 						do{
 							long elapsedTime = cursor.getLong(cursor.getColumnIndex(RaceResults.ElapsedTime));
-							long courseID = cursor.getLong(cursor.getColumnIndex(Race.RaceLocation_ID));
+							long courseID = cursor.getLong(cursor.getColumnIndex(RaceMeet.RaceLocation_ID));
 							if(courseID == currentCourseID && elapsedTime < coursePR){
 								coursePR = elapsedTime;
 							}				

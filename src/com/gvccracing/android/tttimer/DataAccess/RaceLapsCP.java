@@ -14,10 +14,7 @@ import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.RaceInfoView;
 import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.RaceLapsInfoView;
 import com.gvccracing.android.tttimer.DataAccess.RaceLocationCP.RaceLocation;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
-import com.gvccracing.android.tttimer.DataAccess.TeamCheckInViewCP.TeamCheckInViewExclusive;
-import com.gvccracing.android.tttimer.DataAccess.TeamCheckInViewCP.TeamCheckInViewInclusive;
 import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
-import com.gvccracing.android.tttimer.DataAccess.TeamMembersCP.TeamMembers;
 
 public class RaceLapsCP {
 
@@ -48,7 +45,7 @@ public class RaceLapsCP {
         }
         
         public static Uri[] getAllUrisToNotifyOnChange(){
-        	return new Uri[]{RaceLaps.CONTENT_URI, RaceLapsInfoView.CONTENT_URI, CheckInViewInclusive.CONTENT_URI, CheckInViewExclusive.CONTENT_URI, RaceInfoView.CONTENT_URI, RaceLocation.CONTENT_URI, TeamLaps.CONTENT_URI, TeamCheckInViewInclusive.CONTENT_URI, TeamCheckInViewExclusive.CONTENT_URI};
+        	return new Uri[]{RaceLaps.CONTENT_URI, RaceLapsInfoView.CONTENT_URI, CheckInViewInclusive.CONTENT_URI, CheckInViewExclusive.CONTENT_URI, RaceInfoView.CONTENT_URI, RaceLocation.CONTENT_URI, TeamLaps.CONTENT_URI};
         }
 
 		public static Uri Create(Context context, long raceResult_ID, long lapNumber, long raceStartTime, long raceFinishTime, long elapsedTime) {
@@ -133,7 +130,7 @@ public class RaceLapsCP {
         }
         
         public static Uri[] getAllUrisToNotifyOnChange(){
-        	return new Uri[]{TeamLaps.CONTENT_URI, TeamCheckInViewExclusive.CONTENT_URI, TeamCheckInViewInclusive.CONTENT_URI, TeamInfo.CONTENT_URI, TeamMembers.CONTENT_URI};
+        	return new Uri[]{TeamLaps.CONTENT_URI, TeamInfo.CONTENT_URI};
         }
         
         public static Cursor Read(Context context, String[] fieldsToRetrieve, String selection, String[] selectionArgs, String sortOrder) {

@@ -2,6 +2,7 @@ package com.gvccracing.android.tttimer.DataAccess;
 
 import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -20,6 +21,10 @@ public class UnassignedTimesCP {
         public static final String Race_ID = "Race_ID";
         public static final String FinishTime = "FinishTime";
         public static final String RaceResult_ID = "RaceResult_ID";
+        public static final String TeamInfo_ID = "TeamInfo_ID";
+        public static final String ElapsedTime = "ElapsedTime";
+        public static final String OverallPlacing = "OverallPlacing";
+        public static final String Points = "Points";
         
         public static String getTableName(){
         	return UnassignedTimes.class.getSimpleName();
@@ -30,7 +35,11 @@ public class UnassignedTimesCP {
                     + " (" + _ID + " integer primary key autoincrement, "
                     + Race_ID + " integer references " + Race.getTableName() + "(" + Race._ID + ") not null," 
                     + FinishTime + " integer not null,"
-                    + RaceResult_ID + " integer references " + RaceResults.getTableName() + "(" + RaceResults._ID + ") null"
+                    + RaceResult_ID + " integer references " + RaceResults.getTableName() + "(" + RaceResults._ID + ") null,"
+                    + TeamInfo_ID + " integer references " + TeamInfo.getTableName() + "(" + TeamInfo._ID + ") not null,"
+                    + ElapsedTime + " integer not null,"
+                    + OverallPlacing + " integer null,"
+                    + Points + " integer null"
                     + ");";
         }
 
@@ -38,11 +47,23 @@ public class UnassignedTimesCP {
 			return new Uri[]{UnassignedTimes.CONTENT_URI};
 		}
 		
-		public static Uri Create(Context context, long race_ID, long finishTime, Long raceResult_ID) {
+		/*
+		 * UnassignedTimes.Create
+		 * 
+		 * @param context
+		 * @param race_ID
+		 * @param finishTIme
+		 * @param raceResult_ID
+		 * @param teamInfo_ID 
+		 */
+		public static Uri Create(Context context, long race_ID, long finishTime, Long raceResult_ID, long teamInfo_ID, long elapsedTime, long points) {
 			ContentValues content = new ContentValues();
 			content.put(UnassignedTimes.Race_ID, race_ID);
 			content.put(UnassignedTimes.FinishTime, finishTime);
 			content.put(UnassignedTimes.RaceResult_ID, raceResult_ID);
+			content.put(UnassignedTimes.TeamInfo_ID, teamInfo_ID);
+			content.put(UnassignedTimes.ElapsedTime, elapsedTime);
+			content.put(UnassignedTimes.Points, points);
 
 	     	return context.getContentResolver().insert(UnassignedTimes.CONTENT_URI, content);
 		}
@@ -51,7 +72,7 @@ public class UnassignedTimesCP {
 			return context.getContentResolver().query(UnassignedTimes.CONTENT_URI, fieldsToRetrieve, selection, selectionArgs, sortOrder);
 		}		
 		
-		public static int Update(Context context, long unassignedTime_ID, Long race_ID, Long finishTime, Long raceResult_ID) {
+		public static int Update(Context context, long unassignedTime_ID, Long race_ID, Long finishTime, Long raceResult_ID, Long teamInfo_ID) {
 			ContentValues content = new ContentValues();
 			if(race_ID != null)
 	        {
@@ -64,6 +85,10 @@ public class UnassignedTimesCP {
 	        if(raceResult_ID != null)
 	        {
         		content.put(UnassignedTimes.RaceResult_ID, raceResult_ID);
+	        }
+	        if(teamInfo_ID != null)
+	        {
+        		content.put(UnassignedTimes.TeamInfo_ID, teamInfo_ID);
 	        }
 			
 			return UnassignedTimes.Update(context, content, UnassignedTimes._ID + "=?", new String[]{Long.toString(unassignedTime_ID)});

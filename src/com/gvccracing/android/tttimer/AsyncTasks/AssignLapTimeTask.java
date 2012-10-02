@@ -41,6 +41,7 @@ public class AssignLapTimeTask extends AsyncTask<Long, Void, AssignResult> {
 		try{	
 			Long unassignedTime_ID = params[0];
 			Long raceResult_ID = params[1];
+			Long teamInfo_ID = params[2];
 
     		Long race_ID = Long.parseLong(AppSettings.ReadValue(context, AppSettings.AppSetting_RaceID_Name, "-1"));	    	
 	    	
@@ -55,16 +56,16 @@ public class AssignLapTimeTask extends AsyncTask<Long, Void, AssignResult> {
 				
 				unassignedTime.close();
 				unassignedTime = null;
-				
-				UnassignedTimes.Update(context, unassignedTime_ID, null, null, raceResult_ID);
+							
+				UnassignedTimes.Update(context, unassignedTime_ID, null, null, raceResult_ID, teamInfo_ID);
 				
 				// Get the race result record based on the raceResult_ID
 				Cursor raceResultToAssignTo = RaceResults.Read(context, new String[]{RaceResults._ID, RaceResults.StartTime, RaceResults.TeamInfo_ID}, RaceResults._ID + " = ?", 
 											  new String[]{raceResult_ID.toString()}, null);
 				raceResultToAssignTo.moveToFirst();
 				
-				Hashtable<String, Long> raceValues = Race.getValues(context, race_ID);
-				Long totalRaceLaps = raceValues.get(Race.NumLaps); 
+				Hashtable<String, Object> raceValues = Race.getValues(context, race_ID);
+				Long totalRaceLaps = (Long) raceValues.get(Race.NumSplits); 
 				
 				// Find any other laps associated with this raceResultID
 				Cursor raceLaps = RaceLaps.Read(context , new String[]{RaceLaps._ID, RaceLaps.RaceResult_ID, RaceLaps.LapNumber, RaceLaps.StartTime, RaceLaps.FinishTime, RaceLaps.ElapsedTime}, RaceLaps.RaceResult_ID + " = ?", new String[]{raceResult_ID.toString()}, RaceLaps.LapNumber + " desc");
@@ -134,7 +135,7 @@ public class AssignLapTimeTask extends AsyncTask<Long, Void, AssignResult> {
 				// context.getContentResolver().delete(UnassignedTimes.CONTENT_URI, UnassignedTimes._ID + "=?", new String[]{Long.toString(unassignedTime_ID)});
 				
 				// Figure out if he's the last finisher, and if so, stop the timer, hide it, and transition to the results screen
-				Cursor numUnfinished = RaceResultsTeamOrRacerView.Read(context, new String[]{RaceResults.getTableName() + "." + RaceResults._ID}, RaceResults.Race_ID + "=? AND " + RaceResults.ElapsedTime + " IS NULL AND (" + RacerClubInfo.Category + "!=? OR " + TeamInfo.TeamCategory + "!=?)", new String[]{Long.toString(race_ID), "G", "G"}, null);
+				Cursor numUnfinished = RaceResultsTeamOrRacerView.Read(context, new String[]{RaceResults.getTableName() + "." + RaceResults._ID}, RaceResults.Race_ID + "=? AND " + RaceResults.ElapsedTime + " IS NULL AND (" + RacerClubInfo.Category + "!=?)", new String[]{Long.toString(race_ID), "G", "G"}, null);
 				result.numUnfinishedRacers = numUnfinished.getCount();
 				numUnfinished.close();
 				numUnfinished = null;

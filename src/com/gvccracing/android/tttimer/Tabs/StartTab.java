@@ -15,60 +15,43 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemLongClickListener;
 
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.AsyncTasks.AllRacersStartedTask;
 import com.gvccracing.android.tttimer.AsyncTasks.RacerStartedTask;
 import com.gvccracing.android.tttimer.Controls.Timer;
 import com.gvccracing.android.tttimer.CursorAdapters.StartOrderCursorAdapter;
-import com.gvccracing.android.tttimer.CursorAdapters.TeamStartOrderCursorAdapter;
 import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
 import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewExclusive;
 import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
-import com.gvccracing.android.tttimer.DataAccess.TeamCheckInViewCP.TeamCheckInViewExclusive;
 import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
 import com.gvccracing.android.tttimer.Dialogs.ResetStartedRacersConfirmation;
 import com.gvccracing.android.tttimer.Dialogs.ResetTimerConfirmation;
+import com.gvccracing.android.tttimer.Dialogs.StartOrderActions;
 import com.gvccracing.android.tttimer.Dialogs.ResetTimerConfirmation.ResetTimerDialogListener;
 
 public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener, ResetTimerDialogListener {
 
 	public static final String StartTabSpecName =  "StartActivity";
 
-	private static final int TEAM_ON_DECK_LOADER = 0x77;
-
-	private static final int TEAM_START_ORDER_LOADER = 0x78;
-
 	private static final int RACE_INFO_LOADER_START = 0x79;
 
 	private static final int START_ORDER_LOADER_START = 0x99;
-
-	private static final int ON_DECK_LOADER_START = 0x112;
 	
 	private CursorAdapter startOrderCA;
 	private CursorAdapter onDeckCA;
 	
 	private ListView startOrderList;
-	private TextView lblStartPosition;
-	private TextView lblName;
-	//private ListView onDeckRacer;
 	private LinearLayout timerControls;
 
 	private Loader<Cursor> startOrderLoader = null;
-	//private Loader<Cursor> onDeckLoader = null;
-	private Loader<Cursor> teamsStartOrderLoader = null;
-	private Loader<Cursor> teamOnDeckLoader = null;
-	
-	private boolean initialLoad = false;
-	
-	private Long raceTypeID = 0l;
 	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -89,8 +72,6 @@ public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 	public void onResume() { 
 		super.onResume(); 
 		
-		lblStartPosition = (TextView) getView().findViewById(R.id.lblStartPosition);
-		lblName = (TextView) getView().findViewById(R.id.lblName);
         startOrderList = (ListView) getView().findViewById(R.id.svStartOrder);
         
         if(getParentActivity().timer.getVisibility() == View.VISIBLE)
@@ -108,11 +89,10 @@ public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
         	// The timer isn't visible, so no reason to show the controls
         	timerControls.setVisibility(View.GONE);
         }
-
-        initialLoad = true;
 		
 		// Initialize the cursor loader for the race info
         getActivity().getSupportLoaderManager().restartLoader(RACE_INFO_LOADER_START, null, this);
+        getActivity().getSupportLoaderManager().restartLoader(START_ORDER_LOADER_START, null, this);
 	}
 	
 	@Override
@@ -121,17 +101,8 @@ public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 		if(getActivity().getSupportLoaderManager().getLoader(RACE_INFO_LOADER_START) != null){
 			getActivity().getSupportLoaderManager().destroyLoader(RACE_INFO_LOADER_START);
 		}
-		if(getActivity().getSupportLoaderManager().getLoader(ON_DECK_LOADER_START) != null){
-			getActivity().getSupportLoaderManager().destroyLoader(ON_DECK_LOADER_START);
-		}
 		if(getActivity().getSupportLoaderManager().getLoader(START_ORDER_LOADER_START) != null){
 			getActivity().getSupportLoaderManager().destroyLoader(START_ORDER_LOADER_START);
-		}
-		if(getActivity().getSupportLoaderManager().getLoader(TEAM_ON_DECK_LOADER) != null){
-			getActivity().getSupportLoaderManager().destroyLoader(TEAM_ON_DECK_LOADER);
-		}
-		if(getActivity().getSupportLoaderManager().getLoader(TEAM_START_ORDER_LOADER) != null){
-			getActivity().getSupportLoaderManager().destroyLoader(TEAM_START_ORDER_LOADER);		
 		}
 	}
 
@@ -184,8 +155,8 @@ public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 			else{
 				startTime = System.currentTimeMillis();
 			}
-			Long raceStartTime = race.getLong(race.getColumnIndex(Race.RaceStartTime));
-			if(raceStartTime <= 0){	
+			//Long raceStartTime = race.getLong(race.getColumnIndex(Race.RaceStartTime));
+			//if(raceStartTime <= 0){	
 				// We're starting the race, so update the raceStartTime
 				ContentValues content = new ContentValues();
 				content.put(Race._ID, race_ID);
@@ -197,7 +168,7 @@ public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 				RacerStartedTask task = new RacerStartedTask(getActivity());
 	 			task.execute(new Long[]{startTime, 0l, 1l});
 	 			
-			} 				
+			//} 				
 		}
 		else{
 			Toast.makeText(getActivity(), "Unable to find race to start", Toast.LENGTH_LONG).show();
@@ -267,101 +238,56 @@ public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 		String selection;
 		String[] selectionArgs;
 		String sortOrder;
-		Uri fullUri;
 		switch(id){
-			case ON_DECK_LOADER_START:
-				projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID + " as _id", Racer.LastName, Racer.FirstName, RaceResults.StartOrder, RaceResults.StartTimeOffset};
-				selection = RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.getTableName() + "." + RaceResults.StartTime + " IS NULL";
-				selectionArgs = null;
-				sortOrder = RaceResults.StartOrder;
-				fullUri = Uri.withAppendedPath(CheckInViewExclusive.CONTENT_URI, "OnDeck");
-				fullUri = Uri.withAppendedPath(fullUri, "1");
-				loader = new CursorLoader(getActivity(), fullUri, projection, selection, selectionArgs, sortOrder);
-				break;
-			case START_ORDER_LOADER_START:
-				projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID + " as _id", Racer.LastName, Racer.FirstName, TeamInfo.TeamName};
-				selection = RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
-				selectionArgs = null;
-				sortOrder = TeamInfo.TeamName + "," + Racer.LastName;
-				loader = new CursorLoader(getActivity(), CheckInViewExclusive.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
-				break;
-			case TEAM_ON_DECK_LOADER:
-				projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID + " as _id", TeamInfo.TeamName, RaceResults.StartOrder, RaceResults.StartTimeOffset};
-				selection = RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.getTableName() + "." + RaceResults.StartTime + " IS NULL";
-				selectionArgs = null;
-				sortOrder = RaceResults.StartOrder;
-				fullUri = Uri.withAppendedPath(TeamCheckInViewExclusive.CONTENT_URI, "OnDeck");
-				fullUri = Uri.withAppendedPath(fullUri, "1");
-				loader = new CursorLoader(getActivity(), fullUri, projection, selection, selectionArgs, sortOrder);
-				break;
-			case TEAM_START_ORDER_LOADER:
-				projection = new String[]{TeamInfo.getTableName() + "." + TeamInfo._ID + " as _id", TeamInfo.TeamName, RaceResults.StartOrder, RaceResults.StartTimeOffset, "group_concat(" + Racer.FirstName + "||' '||" + Racer.LastName + ", ',\n') as RacerNames"};
-				selection = RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
-				selectionArgs = null;
-				sortOrder = RaceResults.StartOrder;
-				loader = new CursorLoader(getActivity(), Uri.withAppendedPath(TeamCheckInViewExclusive.CONTENT_URI, "group by " + TeamInfo.getTableName() + "." + TeamInfo._ID + "," + TeamInfo.TeamName + "," + RaceResults.StartOrder + "," + RaceResults.StartTimeOffset), projection, selection, selectionArgs, sortOrder);
-				break;
 			case RACE_INFO_LOADER_START:
-				projection = new String[]{Race.getTableName() + "." + Race._ID + " as _id", Race.RaceType, Race.NumLaps};
+				projection = new String[]{Race.getTableName() + "." + Race._ID + " as _id", Race.Gender, Race.Category, Race.NumSplits};
 				selection = Race.getTableName() + "." + Race._ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
 				selectionArgs = null;
 				sortOrder = Race.getTableName() + "." + Race._ID;
 				loader = new CursorLoader(getActivity(), Race.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
+			case START_ORDER_LOADER_START:
+				// Create the cursor adapter for the start order list
+				startOrderCA = new StartOrderCursorAdapter(getActivity(), null);
+
+				SetupList(startOrderList, startOrderCA, new OnItemLongClickListener(){
+					public boolean onItemLongClick(AdapterView<?> arg0, View v,
+							int pos, long id) {
+						StartOrderActions startOrderActionsDialog = new StartOrderActions(id);
+						FragmentManager fm = getActivity().getSupportFragmentManager();
+						startOrderActionsDialog.show(fm, StartOrderActions.LOG_TAG);
+						return false;
+					}
+	    		});
+				projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID + " as _id", Racer.LastName, Racer.FirstName, TeamInfo.TeamName};
+				selection = RaceResults.getTableName() + "." + RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.getTableName() + "." + RaceResults.TeamInfo_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_TeamID_Name) + " AND " + Race.getTableName() + "." + Race.Category + "='Varsity' AND " + Race.getTableName() + "." + Race.Gender + "='Boys'" ;// + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
+				selectionArgs = null;
+				sortOrder = TeamInfo.TeamName + "," + Racer.LastName;
+				loader = new CursorLoader(getActivity(), CheckInViewExclusive.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				break;
 		}
 		Log.i(LOG_TAG(), "onCreateLoader complete: id=" + Integer.toString(id));
 		return loader;
+	}
+	
+	private void SetupList(ListView list, CursorAdapter ca, OnItemLongClickListener listener) {	
+		if(getView() != null){
+	        if( list != null){
+	        	list.setAdapter(ca);
+	        	
+	        	list.setFocusable(true);
+	        	list.setClickable(true);
+	        	list.setItemsCanFocus(true);
+				
+	        	list.setOnItemLongClickListener( listener );
+	        }
+		}
 	}
 
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 		try{
 			Log.i(LOG_TAG(), "onLoadFinished start: id=" + Integer.toString(loader.getId()));			
 			switch(loader.getId()){
-				case ON_DECK_LOADER_START:
-					if(getView() != null){
-						if(cursor != null && cursor.getCount() > 0){
-							cursor.moveToFirst();
-							lblName.setText(cursor.getString(cursor.getColumnIndex(Racer.FirstName)) + " " + cursor.getString(cursor.getColumnIndex(Racer.LastName)));
-							lblStartPosition.setText(Long.toString(cursor.getLong(cursor.getColumnIndex(RaceResults.StartOrder))));
-						}
-						
-				    	LinearLayout llOnDeck = (LinearLayout) getView().findViewById(R.id.llOnDeckRacer);
-				    	TextView lblOnDeck = (TextView) getView().findViewById(R.id.lblOnDeck);
-					    if( cursor.getCount() > 0) {
-					    	cursor.moveToFirst();		    	
-					    	
-					    	if( llOnDeck != null) {
-					    		llOnDeck.setVisibility(View.VISIBLE);
-					    	}
-					    	if( lblOnDeck != null) {
-					    		lblOnDeck.setVisibility(View.VISIBLE);
-					    	}
-					    	
-					    	((Button)getView().findViewById(R.id.btnStartTimer)).setEnabled(true);
-						    ((Button)getView().findViewById(R.id.resetButton)).setEnabled(true);
-					    }else{					    	
-							// Nobody on deck!
-				        	if(llOnDeck != null){
-				        		llOnDeck.setVisibility(View.GONE);
-				        	}
-				        	if(lblOnDeck != null){
-				        		lblOnDeck.setVisibility(View.GONE);
-				        	}
-				        	
-				        	// Move to the finish tab (if the race is actually running), since there are no more racers to start
-				        	if(getParentActivity().timer.racerStarted){
-				        		if(!initialLoad){
-					        		// request move to finish tab (if possible) using an async task
-					        		AllRacersStartedTask task = new AllRacersStartedTask(getActivity());
-					        		task.execute();
-				        		}
-				        	}
-				        }
-					}
-					// Reset initialLoad to false, since we've obviously gone through this case once.  
-					// This will prevent the start tab from always trying to switch to the finish tab while the race is running, or after
-					initialLoad = false;
-					break;
 				case START_ORDER_LOADER_START:
 					startOrderCA = new StartOrderCursorAdapter(getActivity(), null);
 					
@@ -392,111 +318,15 @@ public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 					    ((Button)getView().findViewById(R.id.resetButton)).setEnabled(false);
 					}
 					break;
-				case TEAM_ON_DECK_LOADER:
-					if(getView() != null){
-						if(cursor != null && cursor.getCount() > 0){
-							cursor.moveToFirst();
-							lblName.setText(cursor.getString(cursor.getColumnIndex(TeamInfo.TeamName)));
-							lblStartPosition.setText(Long.toString(cursor.getLong(cursor.getColumnIndex(RaceResults.StartOrder))));
-						}
-						
-				    	LinearLayout llOnDeck = (LinearLayout) getView().findViewById(R.id.llOnDeckRacer);
-				    	TextView lblOnDeck = (TextView) getView().findViewById(R.id.lblOnDeck);
-					    if( cursor.getCount() > 0) {
-					    	cursor.moveToFirst();		    	
-					    	
-					    	if( llOnDeck != null) {
-					    		llOnDeck.setVisibility(View.VISIBLE);
-					    	}
-					    	if( lblOnDeck != null) {
-					    		lblOnDeck.setVisibility(View.VISIBLE);
-					    	}
-					    	
-					    	((Button)getView().findViewById(R.id.btnStartTimer)).setEnabled(true);
-						    ((Button)getView().findViewById(R.id.resetButton)).setEnabled(true);
-					    }else{					    	
-							// Nobody on deck!
-				        	if(llOnDeck != null){
-				        		llOnDeck.setVisibility(View.GONE);
-				        	}
-				        	if(lblOnDeck != null){
-				        		lblOnDeck.setVisibility(View.GONE);
-				        	}
-				        	
-				        	// Move to the finish tab (if the race is actually running), since there are no more racers to start
-				        	if(getParentActivity().timer.racerStarted){
-				        		if(!initialLoad){
-					        		// request move to finish tab (if possible) using an async task
-					        		AllRacersStartedTask task = new AllRacersStartedTask(getActivity());
-					        		task.execute();
-				        		}
-				        	}
-				        }
-					}
-					// Reset initialLoad to false, since we've obviously gone through this case once.  
-					// This will prevent the start tab from always trying to switch to the finish tab while the race is running, or after
-					initialLoad = false;
-					break;
-				case TEAM_START_ORDER_LOADER:
-					startOrderCA = new TeamStartOrderCursorAdapter(getActivity(), null);
-					
-			        if( startOrderList != null){
-			        	startOrderList.setAdapter(startOrderCA);
-			        }
-					startOrderCA.swapCursor(cursor);
-					
-					if(getParentActivity().timer.getVisibility() == View.VISIBLE)
-			        {
-				        if(!getParentActivity().timer.paused){
-				        	// The timer is running, so set up the buttons
-				        	showStopButton();
-				        }else{
-				        	// The timer is not running, so show the start button
-				        	hideStopButton();
-				        }
-			        }else{
-			        	// The timer isn't visible, so no reason to show the controls
-			        	timerControls.setVisibility(View.GONE);
-			        }
-					
-					// If there are no racers to start, show the start and reset buttons as disabled
-					if(cursor == null || cursor.getCount() <=0){
-						hideStopButton();
-						((Button)getView().findViewById(R.id.btnStartTimer)).setEnabled(false);
-					    ((Button)getView().findViewById(R.id.resetButton)).setEnabled(false);
-					}
-					break;
 				case RACE_INFO_LOADER_START:	
 					if(cursor!= null && cursor.getCount() > 0){
 						cursor.moveToFirst();
 						// Set up the tab based on the race information
-						raceTypeID = cursor.getLong(cursor.getColumnIndex(Race.RaceType));
 						if(getView() != null){
-							if(raceTypeID == 1){
-								if( teamsStartOrderLoader == null){
-									teamsStartOrderLoader = getActivity().getSupportLoaderManager().initLoader(TEAM_START_ORDER_LOADER, null, this);
-								} else {
-									teamsStartOrderLoader = getActivity().getSupportLoaderManager().restartLoader(TEAM_START_ORDER_LOADER, null, this);
-								}
-								
-								if( teamOnDeckLoader == null){
-									teamOnDeckLoader = getActivity().getSupportLoaderManager().initLoader(TEAM_ON_DECK_LOADER, null, this);
-								} else {
-									teamOnDeckLoader = getActivity().getSupportLoaderManager().restartLoader(TEAM_ON_DECK_LOADER, null, this);
-								}
-							}else {
-//								if(onDeckLoader == null){
-//								    // Initialize the cursor loader for the on deck list
-//									onDeckLoader = getActivity().getSupportLoaderManager().initLoader(ON_DECK_LOADER_START, null, this);
-//								} else {
-//									onDeckLoader = getActivity().getSupportLoaderManager().restartLoader(ON_DECK_LOADER_START, null, this);
-//								}
-								
-								if(startOrderLoader == null){
-									startOrderLoader = getActivity().getSupportLoaderManager().initLoader(START_ORDER_LOADER_START, null, this);
-								} else {
-									startOrderLoader = getActivity().getSupportLoaderManager().restartLoader(START_ORDER_LOADER_START, null, this);
-								}
+							if(startOrderLoader == null){
+								startOrderLoader = getActivity().getSupportLoaderManager().initLoader(START_ORDER_LOADER_START, null, this);
+							} else {
+								startOrderLoader = getActivity().getSupportLoaderManager().restartLoader(START_ORDER_LOADER_START, null, this);
 							}
 						}
 					}
@@ -512,11 +342,6 @@ public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 		try{
 			Log.i(LOG_TAG(), "onLoaderReset start: id=" + Integer.toString(loader.getId()));
 			switch(loader.getId()){
-				case ON_DECK_LOADER_START:
-					if(onDeckCA != null){
-						onDeckCA.swapCursor(null);
-					}
-					break;
 				case START_ORDER_LOADER_START:
 					if(onDeckCA != null){
 						startOrderCA.swapCursor(null);

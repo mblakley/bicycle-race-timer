@@ -7,6 +7,7 @@ import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewExclus
 import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewInclusive;
 import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
 import com.gvccracing.android.tttimer.DataAccess.RaceLocationCP.RaceLocation;
+import com.gvccracing.android.tttimer.DataAccess.RaceMeetCP.RaceMeet;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
 import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
@@ -24,9 +25,11 @@ public class RacerPreviousResultsViewCP {
         			" JOIN " + RaceResults.getTableName() + 
     				" ON (" + RacerClubInfo.getTableName() + "." + RacerClubInfo._ID + " = " + RaceResults.getTableName() + "." + RaceResults.RacerClubInfo_ID + ")" +
 		        	" JOIN " + Race.getTableName() + 
-					" ON (" + RaceResults.getTableName() + "." + RaceResults.Race_ID + " = " + Race.getTableName() + "." + Race._ID + ")" + 
-					" JOIN " + RaceLocation.getTableName() + 
-					" ON (" + RaceLocation.getTableName() + "." + RaceLocation._ID + " = " + Race.getTableName() + "." + Race.RaceLocation_ID + ")";			
+					" ON (" + RaceResults.getTableName() + "." + RaceResults.Race_ID + " = " + Race.getTableName() + "." + Race._ID + ")" +
+					" JOIN " + RaceMeet.getTableName() + 
+					" ON (" + Race.getTableName() + "." + Race.RaceMeet_ID + " = " + RaceMeet.getTableName() + "." + Race._ID + ")" +
+					" JOIN " + RaceLocation.getTableName() +
+					" ON (" + RaceLocation.getTableName() + "." + RaceLocation._ID + " = " + RaceMeet.getTableName() + "." + RaceMeet.RaceLocation_ID + ")";			
         }
         
         public static String getCreate(){

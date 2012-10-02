@@ -38,11 +38,20 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 	private SimpleCursorAdapter locationsCursorAdapter = null;
 	protected Spinner raceLocation = null;
 	private EditText txtLaps = null;
+	protected String gender = "M";
+	protected String category = "Varsity";
+	protected Long raceMeet_ID;
 	/**
      * This is a special intent action that means "load your tab data".
      */
-    public static final String RACE_ADDED_ACTION = "com.gvccracing.android.tttimer.RACE_ADDED";
-	
+    public static final String RACE_ADDED_ACTION = "com.gvccracing.android.tttimer.RACE_ADDED";	
+    
+    public AddRaceView(long raceMeet_ID, String gender, String category){
+    	this.raceMeet_ID = raceMeet_ID;
+    	this.gender = gender;
+    	this.category = category;
+    }
+    
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.dialog_add_race, container, false);
@@ -117,32 +126,10 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 		this.getLoaderManager().initLoader(RACE_LOCATIONS_LOADER, null, this);
 	}
 	
-	protected long GetRaceStartInterval(){
-//			Spinner startIntervalSpinner = (Spinner) getView().findViewById(R.id.spinnerStartInterval);
-//			int raceStartIntervalID = (int)startIntervalSpinner.getSelectedItemId();
-//			long raceStartInterval = 30l;
-//			switch(raceStartIntervalID){
-//				case 0:
-//					raceStartInterval = 30l;
-//					break;
-//				case 1:
-//					raceStartInterval = 60l;
-//					break;
-//			}
-		
-		return 0l;//raceStartInterval;
-	}
-	
 	protected long GetRaceTypeID(){
 		//Spinner raceTypeSpinner = (Spinner) getView().findViewById(R.id.spinnerRaceType);
 		
 		return 0l;//raceTypeSpinner.getSelectedItemId();
-	}
-	
-	protected long GetRaceLocationID(){
-		Spinner raceLocationSpinner = (Spinner) getView().findViewById(R.id.spinnerRaceLocation);
-		
-		return raceLocationSpinner.getSelectedItemId();
 	}
 	
 	protected Date GetRaceDate(){
@@ -153,15 +140,13 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 	public void onClick(View v) { 
 		try{
 			if (v == btnAddNewRace){
-				EditText txtLaps = (EditText) getView().findViewById(R.id.txtNumLaps);
-				Uri resultUri = Race.Create(getActivity(), GetRaceLocationID(), GetRaceDate(), null, GetRaceTypeID(), GetRaceStartInterval(), 1l);
+				Uri resultUri = Race.Create(getActivity(), raceMeet_ID, GetRaceDate(), gender, category, 3.1f, 3l);
 	 			long race_ID = Long.parseLong(resultUri.getLastPathSegment());
 	 			
 	 			// Broadcast that a race was added
     			Intent raceAdded = new Intent();
     			raceAdded.setAction(RACE_ADDED_ACTION);
     			raceAdded.putExtra(AppSettings.AppSetting_RaceID_Name, race_ID);
-    			raceAdded.putExtra(AppSettings.AppSetting_StartInterval_Name, GetRaceStartInterval());
     			getActivity().sendBroadcast(raceAdded);
 
     			// Hide the dialog

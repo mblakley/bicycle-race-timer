@@ -24,11 +24,11 @@ import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
 import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
 import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.RaceInfoView;
 import com.gvccracing.android.tttimer.DataAccess.RaceLocationCP.RaceLocation;
+import com.gvccracing.android.tttimer.DataAccess.RaceMeetCP.RaceMeet;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 
 public class OtherRaceResults extends BaseDialog implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
 	public static final String LOG_TAG = "PreviousRaceResults";
-	private static final int RACE_INFO_LOADER = 0x56;
 	private static final int SELECTED_RACE_INFO_LOADER = 0x57;
 	private static final int ALL_RACES_LOADER = 0x58;
 	
@@ -49,7 +49,6 @@ public class OtherRaceResults extends BaseDialog implements LoaderManager.Loader
 			public void onItemSelected(AdapterView<?> arg0, View v, int position, long id) {
 				selectedRaceID = id;
 				getActivity().getSupportLoaderManager().restartLoader(SELECTED_RACE_INFO_LOADER, null, OtherRaceResults.this);
-				getActivity().getSupportLoaderManager().restartLoader(RACE_INFO_LOADER, null, OtherRaceResults.this);
 			}
 
 			public void onNothingSelected(AdapterView<?> arg0) {}
@@ -103,17 +102,10 @@ public class OtherRaceResults extends BaseDialog implements LoaderManager.Loader
 		String sortOrder;
 		switch(id){
 			case ALL_RACES_LOADER:
-				projection = new String[]{Race.getTableName() + "." + Race._ID + " as _id", Race.RaceDate, RaceLocation.CourseName};
+				projection = new String[]{RaceMeet.getTableName() + "." + RaceMeet._ID + " as _id", RaceMeet.RaceMeetDate, RaceLocation.CourseName};
 				selection = null;
 				selectionArgs = null;
-				sortOrder = Race.RaceDate;
-				loader = new CursorLoader(getActivity(), RaceInfoView.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
-				break;
-			case RACE_INFO_LOADER:
-				projection = new String[]{Race.getTableName() + "." + Race._ID + " as _id", Race.RaceDate, RaceLocation.CourseName, Race.RaceType, Race.StartInterval, RaceLocation.Distance, Race.NumLaps};
-				selection = Race.getTableName() + "." + Race._ID + "=?";
-				selectionArgs = new String[]{Long.toString(selectedRaceID)};
-				sortOrder = Race.RaceDate;
+				sortOrder = RaceMeet.RaceMeetDate;
 				loader = new CursorLoader(getActivity(), RaceInfoView.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case SELECTED_RACE_INFO_LOADER:
@@ -140,17 +132,6 @@ public class OtherRaceResults extends BaseDialog implements LoaderManager.Loader
 			        	spinnerRaceToView.setAdapter(raceInfoCursorAdapter);
 					}
 					break;
-				case RACE_INFO_LOADER:
-					cursor.moveToFirst();
-					if(cursor.getCount() > 0){	
-						double raceDistance = cursor.getDouble(cursor.getColumnIndex(RaceLocation.Distance));
-						long numLaps = cursor.getLong(cursor.getColumnIndex(Race.NumLaps));
-						double totalDistance = raceDistance * (double)numLaps;
-						if( getView() != null){
-							((TextView) getView().findViewById(R.id.txtRaceDistance)).setText(Double.toString(totalDistance));
-						}
-					}
-					break;
 				case SELECTED_RACE_INFO_LOADER:
 					cursor.moveToFirst();
 					int racerCount = cursor.getCount();	
@@ -174,9 +155,6 @@ public class OtherRaceResults extends BaseDialog implements LoaderManager.Loader
 			switch(loader.getId()){
 				case ALL_RACES_LOADER:
 					raceInfoCursorAdapter.swapCursor(null);
-					break;
-				case RACE_INFO_LOADER:
-					// Do nothing
 					break;
 				case SELECTED_RACE_INFO_LOADER:
 					// Do nothing

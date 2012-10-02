@@ -3,32 +3,19 @@
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
 	android:orientation="horizontal"
-	android:weightSum="1.0"
-	android:padding="1dp"> 
-	
-    <TextView
-        android:id="@+id/lblStartOrder"
-        android:layout_weight=".2"
-		android:layout_width="0dip"
-		android:layout_height="wrap_content"
-		android:paddingLeft="3sp"
-        style="@style/Medium" />
+	android:padding="1dp"> 	
 
-    <LinearLayout
-        android:id="@+id/teamContainer"
-		android:layout_weight=".8"
-		android:layout_width="0dip"
-		android:layout_height="wrap_content"
-        android:orientation="vertical" >
-        <TextView
-        	android:layout_width="fill_parent"
-        	android:layout_height="wrap_content"
-	        android:id="@+id/lblTeamName"
-	        style="@style/Medium" />
-        <TextView
-        	android:layout_width="fill_parent"
-        	android:layout_height="wrap_content"
-	        android:id="@+id/lblRacerNames"
-	        style="@style/Small" />
-    </LinearLayout>
+    <TextView
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+     	android:id="@+id/lblName"
+     	style="@style/Medium"
+     	android:paddingTop="12dp"
+     	android:paddingBottom="12dp" />
+    <TextView
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+     	android:id="@+id/lblRacerNames"
+     	style="@style/Small"
+     	android:visibility="gone" />
 </LinearLayout>

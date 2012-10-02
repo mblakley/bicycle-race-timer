@@ -5,31 +5,31 @@
     android:orientation="vertical"
     android:weightSum="1.0"    
     android:id="@+id/llFinishTab" >
-
+
     <LinearLayout
         android:id="@+id/llFinishLists"
         android:layout_width="fill_parent"
         android:layout_height="0dip"
+        android:layout_weight="0.7"
         android:orientation="horizontal"
-        android:layout_weight="0.9"
         android:weightSum="1.0" >
         
 	    <LinearLayout
-            android:id="@+id/llFinishTimes"
+            android:id="@+id/llTeams"
 	        android:layout_width="0dip"
 	        android:layout_height="fill_parent"
 	        android:orientation="vertical"
 	        android:layout_weight="0.5" >
 	
 	        <TextView
-	            android:id="@+id/lblFinishTimes"
+	            android:id="@+id/lblTeams"
 	            style="@style/Medium"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
-	            android:text="@string/FinishTimes" />
+	            android:text="@string/Teams" />
 	
 	        <ListView
-	            android:id="@+id/svUnassignedTimes"
+	            android:id="@+id/lvTeams"
 	            android:layout_width="fill_parent"
 	            android:layout_height="fill_parent"
 	            android:choiceMode="singleChoice" >
@@ -38,34 +38,76 @@
 	    </LinearLayout>
 	    
 	    <LinearLayout
-            android:id="@+id/llRacersToFinish"
+            android:id="@+id/llMyRacers"
 	        android:layout_width="0dip"
 	        android:layout_height="fill_parent"
 	        android:orientation="vertical"
 	        android:layout_weight="0.5" >
         
 		    <TextView
-		        android:id="@+id/lblRacersToFinish"
+		        android:id="@+id/lblMyRacer"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-		        android:text="@string/RacersToFinish"
+		        android:text="@string/MyRacers"
 		        style="@style/Medium" />
 		
 		    <ListView
-		        android:id="@+id/svRacersToFinish"
+		        android:id="@+id/lvMyRacers"
 		        android:layout_width="fill_parent"
 		        android:layout_height="fill_parent"
 	            android:choiceMode="singleChoice" >
 		    </ListView>
 	    </LinearLayout>
-    </LinearLayout>    
-
-    <Button
-        android:id="@+id/btnRacerFinished"
+    </LinearLayout>
+    
+    <LinearLayout
+        android:id="@+id/llSplits"
         android:layout_width="fill_parent"
         android:layout_height="0dip"
-        android:state_enabled="false"
-        android:text="@string/RacerFinished"
-        style="@style/Medium.Padded"
-        android:layout_weight="0.1" />
+        android:orientation="vertical"
+        android:layout_weight="0.3" >
+    
+	    <TextView
+	        android:id="@+id/lblFinishOrder"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="@string/FinishOrder"
+	        android:gravity="center_horizontal"
+	        style="@style/Medium"
+	        android:visibility="gone" />   
+	    
+	    <TextView
+	        android:id="@+id/lblSplits"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="@string/Splits"
+	        android:gravity="center_horizontal"
+	        style="@style/Medium" /> 
+	        
+	    <ListView
+	        android:id="@+id/lvFinishOrder"
+	        android:layout_width="fill_parent"
+	        android:layout_height="50dp"
+	        android:gravity="center_horizontal" />
+	    
+	    <GridView  
+		    android:id="@+id/gvSplitButtons"
+		    android:layout_width="wrap_content" 
+		    android:layout_height="100dp"
+		    android:columnWidth="90dp"
+		    android:numColumns="3"
+		    android:verticalSpacing="0dp"
+		    android:horizontalSpacing="10dp"
+		    android:stretchMode="columnWidth"
+		    android:gravity="center"
+		    android:visibility="gone"/>
+	    
+	    <Button
+	        android:id="@+id/btnRacerFinished"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:state_enabled="false"
+	        android:text="@string/AllRacersFinished"
+	        style="@style/Medium.Padded" />
+    </LinearLayout>
 </LinearLayout>

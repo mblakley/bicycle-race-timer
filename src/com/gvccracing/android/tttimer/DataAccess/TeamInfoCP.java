@@ -2,9 +2,6 @@ package com.gvccracing.android.tttimer.DataAccess;
 
 import java.util.Hashtable;
 
-import com.gvccracing.android.tttimer.DataAccess.TeamCheckInViewCP.TeamCheckInViewExclusive;
-import com.gvccracing.android.tttimer.DataAccess.TeamCheckInViewCP.TeamCheckInViewInclusive;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -20,8 +17,12 @@ public class TeamInfoCP {
 
         // Table column
         public static final String TeamName = "TeamName";
-        public static final String TeamCategory = "TeamCategory";
         public static final String Year = "Year";
+        public static final String Division = "Division";
+        public static final String DivisionWins = "DivisionWins";
+        public static final String DivisionLosses = "DivisionLosses";
+        public static final String OverallWins = "OverallWins";
+        public static final String OverallLosses = "OverallLosses";
         
         public static String getTableName(){
         	return TeamInfo.class.getSimpleName();
@@ -31,18 +32,27 @@ public class TeamInfoCP {
         	return "create table " + TeamInfo.getTableName()
         	        + " (" + _ID + " integer primary key autoincrement, "
         	        + TeamName + " text not null, " 
-        	        + TeamCategory + " text not null, " 
-        	        + Year + " integer not null);";
+        	        + Year + " integer not null, " 
+        	        + Division + " integer not null, "
+        	        + DivisionWins + " integer not null, "
+        	        + DivisionLosses + " integer not null, "
+        	        + OverallWins + " integer not null, "
+        	        + OverallLosses + " integer not null);";
         }
         
         public static Uri[] getAllUrisToNotifyOnChange(){
-        	return new Uri[]{TeamInfo.CONTENT_URI, TeamCheckInViewInclusive.CONTENT_URI, TeamCheckInViewExclusive.CONTENT_URI};
+        	return new Uri[]{TeamInfo.CONTENT_URI};
         }
 
-		public static Uri Create(Context context, String teamName, String teamCategory) {
+		public static Uri Create(Context context, String teamName, Long year, Long division, Long divisionWins, Long divisionLosses, Long overallWins, Long overallLosses) {
 			ContentValues content = new ContentValues();
 	     	content.put(TeamInfo.TeamName, teamName);
-	     	content.put(TeamInfo.TeamCategory, teamCategory);
+	     	content.put(TeamInfo.Year, year);
+	     	content.put(TeamInfo.Division, division);
+	     	content.put(TeamInfo.DivisionWins, divisionWins);
+	     	content.put(TeamInfo.DivisionLosses, divisionLosses);
+	     	content.put(TeamInfo.OverallWins, overallWins);
+	     	content.put(TeamInfo.OverallLosses, overallLosses);
 
 	     	return context.getContentResolver().insert(TeamInfo.CONTENT_URI, content);
 		}
@@ -59,8 +69,12 @@ public class TeamInfoCP {
 				teamCursor.moveToFirst();
 				teamInfoValues.put(TeamInfo._ID, teamInfo_ID);
 				teamInfoValues.put(TeamInfo.TeamName, teamCursor.getString(teamCursor.getColumnIndex(TeamInfo.TeamName)));
-				teamInfoValues.put(TeamInfo.TeamCategory, teamCursor.getString(teamCursor.getColumnIndex(TeamInfo.TeamCategory)));
 				teamInfoValues.put(TeamInfo.Year, teamCursor.getLong(teamCursor.getColumnIndex(TeamInfo.Year)));
+				teamInfoValues.put(TeamInfo.Division, teamCursor.getLong(teamCursor.getColumnIndex(TeamInfo.Division)));
+				teamInfoValues.put(TeamInfo.DivisionWins, teamCursor.getLong(teamCursor.getColumnIndex(TeamInfo.DivisionWins)));
+				teamInfoValues.put(TeamInfo.DivisionLosses, teamCursor.getLong(teamCursor.getColumnIndex(TeamInfo.DivisionLosses)));
+				teamInfoValues.put(TeamInfo.OverallWins, teamCursor.getLong(teamCursor.getColumnIndex(TeamInfo.OverallWins)));
+				teamInfoValues.put(TeamInfo.OverallLosses, teamCursor.getLong(teamCursor.getColumnIndex(TeamInfo.OverallLosses)));
 			}
 			if( teamCursor != null){
 				teamCursor.close();

@@ -67,6 +67,11 @@ public class ResultsCursorAdapter extends BaseCursorAdapter {
 	        String firstName = c.getString(firstNameCol);
 	        String lastName = c.getString(lastNameCol);
 	        
+	        if(firstName == null || lastName == null){
+	        	firstName = "Unknown";
+	        	lastName = "";
+	        }
+	        
         	placingCol = c.getColumnIndex(RaceResults.OverallPlacing);
         
 	        //int categoryCol = c.getColumnIndex(RacerClubInfo.Category);

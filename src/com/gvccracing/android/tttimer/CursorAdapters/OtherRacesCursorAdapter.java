@@ -45,7 +45,7 @@ public class OtherRacesCursorAdapter extends BaseCursorAdapter {
     
     private void fillData(Cursor c, View v) {
     	int raceLocationCol = c.getColumnIndex(RaceLocation.CourseName);
-        int raceDateCol = c.getColumnIndex(Race.RaceDate);
+        int raceDateCol = c.getColumnIndex(Race.RaceStartTime);
 
         String raceLocation = c.getString(raceLocationCol);
         Long raceDate = c.getLong(raceDateCol);

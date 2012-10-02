@@ -26,19 +26,18 @@ public class ButtonCheckIn extends Button implements View.OnClickListener{
 		try{
 			Log.v(LOG_TAG, "btnCheckInClick");
 			// Create a RaceResults record with the selected RacerInfo_ID,
-        	long racerInfo_ID = (Long)v.getTag();	// Fill in from selected checkin button
-        	CheckInRacer(racerInfo_ID);
+        	long raceResult_ID = (Long)v.getTag();	// Fill in from selected checkin button
+        	CheckInRacer(raceResult_ID);
         	
         	// Change text on Check-in button for this record to "Done" and disable the button
-        	((Button)v).setText("Ready!");
-        	((Button)v).setEnabled(false);
+        	((Button)v).setText("Check In");        	
     	}catch(Exception ex){
     		Log.e(LOG_TAG, "Error in btnCheckIn.onClick", ex);
     	}
 	}
 
-	private void CheckInRacer(long racerInfo_ID) {
+	private void CheckInRacer(long raceResult_ID) {
 		CheckInHandler task = new CheckInHandler(context);
-		task.execute(new Long[] { racerInfo_ID });		
+		task.execute(new Long[] { raceResult_ID });		
     }
 }

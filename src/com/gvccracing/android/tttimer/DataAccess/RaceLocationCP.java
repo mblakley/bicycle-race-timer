@@ -15,9 +15,6 @@ public class RaceLocationCP {
 
         // Table column
         public static final String CourseName = "CourseName";
-        public static final String Distance = "Distance";
-        public static final String TurnAroundInfo = "TurnAroundInfo";
-        public static final String TurnAroundPic = "TurnAroundPic";
         
         public static String getTableName(){
         	return RaceLocation.class.getSimpleName();
@@ -26,10 +23,7 @@ public class RaceLocationCP {
         public static String getCreate(){
         	return "create table " + RaceLocation.getTableName()
         	        + " (" + _ID + " integer primary key autoincrement, "
-        	        + CourseName + " text not null, " 
-        	        + Distance + " real not null, "
-        	        + TurnAroundInfo + " text null,"
-        	        + TurnAroundPic + " blob null"
+        	        + CourseName + " text not null" 
         	        + ");";
         }
 
@@ -37,7 +31,6 @@ public class RaceLocationCP {
 				String distance2) {
 			ContentValues content = new ContentValues();
 	     	content.put(RaceLocation.CourseName, courseName2);
-	     	content.put(RaceLocation.Distance, distance2);
 
 	     	return context.getContentResolver().insert(RaceLocation.CONTENT_URI, content);
 		}
@@ -46,15 +39,11 @@ public class RaceLocationCP {
 			return context.getContentResolver().query(RaceLocation.CONTENT_URI, fieldsToRetrieve, selection, selectionArgs, sortOrder);
 		}
 		
-		public static int Update(Context context, long raceLocation_ID, String courseName, String distance) {
+		public static int Update(Context context, long raceLocation_ID, String courseName) {
 			ContentValues content = new ContentValues();
 			if(courseName != null)
 	        {
 				content.put(RaceLocation.CourseName, courseName);
-	        }
-			if(distance != null)
-	        {
-				content.put(RaceLocation.Distance, distance);
 	        }
 			return context.getContentResolver().update(RaceLocation.CONTENT_URI, content, RaceLocation._ID + "=?", new String[]{Long.toString(raceLocation_ID)});
 		}

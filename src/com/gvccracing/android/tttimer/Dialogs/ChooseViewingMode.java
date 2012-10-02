@@ -45,11 +45,11 @@ public class ChooseViewingMode extends BaseDialog implements View.OnClickListene
 	public void onClick(View v) { 
 		try{
 			if (v == btnAddNewRace){
-				AddRaceView addRaceDialog = new AddRaceView();
-				FragmentManager fm = getFragmentManager();
-				addRaceDialog.show(fm, AddRaceView.LOG_TAG);
-				// Hide the dialog
-		    	dismiss();
+//				AddRaceView addRaceDialog = new AddRaceView();
+//				FragmentManager fm = getFragmentManager();
+//				addRaceDialog.show(fm, AddRaceView.LOG_TAG);
+//				// Hide the dialog
+//		    	dismiss();
 			} else if (v == btnPreviousRaces) {
 				OtherRaceResults previousRaceResultsView = new OtherRaceResults();
 				FragmentManager fm = getFragmentManager();

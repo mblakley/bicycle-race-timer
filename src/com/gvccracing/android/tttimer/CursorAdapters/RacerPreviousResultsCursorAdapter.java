@@ -40,7 +40,7 @@ public class RacerPreviousResultsCursorAdapter extends ResultsCursorAdapter {
 
     	v = super.setupView(v, c);
     	try{
-	        int raceDateCol = c.getColumnIndex(Race.RaceDate);
+	        int raceDateCol = c.getColumnIndex(Race.RaceStartTime);
 	        int courseNameCol = c.getColumnIndex(RaceLocation.CourseName);
 	        
 	        Long raceDate = c.getLong(raceDateCol);

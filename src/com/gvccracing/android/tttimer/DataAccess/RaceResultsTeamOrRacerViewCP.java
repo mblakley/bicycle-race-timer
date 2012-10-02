@@ -9,8 +9,6 @@ import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewExclus
 import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewInclusive;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
-import com.gvccracing.android.tttimer.DataAccess.TeamCheckInViewCP.TeamCheckInViewExclusive;
-import com.gvccracing.android.tttimer.DataAccess.TeamCheckInViewCP.TeamCheckInViewInclusive;
 import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
 
 public class RaceResultsTeamOrRacerViewCP {
@@ -30,7 +28,7 @@ public class RaceResultsTeamOrRacerViewCP {
         }
         
         public static Uri[] getAllUrisToNotifyOnChange(){
-        	return new Uri[]{RaceResultsTeamOrRacerView.CONTENT_URI, RaceResults.CONTENT_URI, CheckInViewInclusive.CONTENT_URI, CheckInViewExclusive.CONTENT_URI, TeamCheckInViewInclusive.CONTENT_URI, TeamCheckInViewExclusive.CONTENT_URI};
+        	return new Uri[]{RaceResultsTeamOrRacerView.CONTENT_URI, RaceResults.CONTENT_URI, CheckInViewInclusive.CONTENT_URI, CheckInViewExclusive.CONTENT_URI};
         }
         
         public static Cursor Read(Context context, String[] fieldsToRetrieve, String selection, String[] selectionArgs, String sortOrder) {

@@ -30,6 +30,11 @@ public class EditRaceConfiguration extends AddRaceView implements View.OnClickLi
 	
 	private static final int RACE_INFO_LOADER = 0x06;
 
+	public EditRaceConfiguration(long raceMeet_ID, String gender,
+			String category) {
+		super(raceMeet_ID, gender, category);
+	}
+	
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     	View v = super.onCreateView(inflater, container, savedInstanceState);
@@ -55,10 +60,7 @@ public class EditRaceConfiguration extends AddRaceView implements View.OnClickLi
     public void onClick(View v) { 
 		try{
 			if (v == btnAddNewRace){
-				long startInterval = GetRaceStartInterval();
-				long numLaps = Long.parseLong(((EditText)getView().findViewById(R.id.txtNumLaps)).getText().toString());
-				Race.Update(getActivity(), Race._ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name), null, null, GetRaceLocationID(), GetRaceDate(), null, GetRaceTypeID(), startInterval, numLaps);	 			
-				AppSettings.Update(getActivity(), AppSettings.AppSetting_StartInterval_Name, Long.toString(startInterval), true);
+				Race.Update(getActivity(), Race._ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name), null, raceMeet_ID, GetRaceDate(), gender, category, null, null);	 			
 				
 				// Figure out if checkin has already started.  If checkin has started, and start interval has changed, update the start intervals of everyone.
 				Cursor checkins = RaceResults.Read(getActivity(), new String[]{RaceResults._ID, RaceResults.StartOrder}, RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name), null, RaceResults.StartOrder);
@@ -68,7 +70,7 @@ public class EditRaceConfiguration extends AddRaceView implements View.OnClickLi
 					do{
 						long raceResultID = checkins.getLong(checkins.getColumnIndex(RaceResults._ID));
 						long startOrder = checkins.getLong(checkins.getColumnIndex(RaceResults.StartOrder));
-						Long startTimeOffset = (startInterval * startOrder) * 1000l;
+						Long startTimeOffset = 0l;
 						ContentValues content = new ContentValues();
 						content.put(RaceResults.StartTimeOffset, startTimeOffset);
 						RaceResults.Update(getActivity(), content,  RaceResults._ID + "=?", new String[]{Long.toString(raceResultID)});
@@ -100,7 +102,7 @@ public class EditRaceConfiguration extends AddRaceView implements View.OnClickLi
 		String sortOrder;
 		switch(id){
 			case RACE_INFO_LOADER:
-				projection = new String[]{Race.getTableName() + "." + Race._ID, Race.RaceDate, Race.RaceType, Race.RaceLocation_ID, RaceLocation.CourseName, Race.StartInterval, Race.NumLaps};
+				projection = new String[]{Race.getTableName() + "." + Race._ID, Race.Gender, Race.Category, RaceLocation.CourseName, Race.RaceStartTime};
 				selection = Race.getTableName() + "." + Race._ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
 				selectionArgs = null;
 				sortOrder = null;
@@ -122,25 +124,18 @@ public class EditRaceConfiguration extends AddRaceView implements View.OnClickLi
 				case RACE_INFO_LOADER:
 					cursor.moveToFirst();
 					// Race Type from ID
-					int cursorIndex = cursor.getColumnIndex(Race.RaceType);
+					int cursorIndex = cursor.getColumnIndex(Race.Gender);
 					Long raceTypeValue = cursor.getLong(cursorIndex);
 					Spinner raceType = (Spinner) getView().findViewById(R.id.spinnerRaceType);
-					SetRaceTypeSelectionByValue(raceType, raceTypeValue);
-					// Race Start Interval from number of seconds
-					Long startIntervalValue = cursor.getLong(cursor.getColumnIndex(Race.StartInterval));
-					Spinner startInterval = (Spinner) getView().findViewById(R.id.spinnerStartInterval);
-					SetStartIntervalSelectionByValue(startInterval, startIntervalValue);
+					SetRaceTypeSelectionByValue(raceType, raceTypeValue);					
 					// Race Location from RaceLocation_ID
 					String raceCourseName = cursor.getString(cursor.getColumnIndex(RaceLocation.CourseName));
 					SetRaceLocationSelectionByValue(raceLocation, raceCourseName);
 					// Date from RaceDate
 					DatePicker date = (DatePicker) getView().findViewById(R.id.dateRaceDate);
-					Long raceDateValue = cursor.getLong(cursor.getColumnIndex(Race.RaceDate));
+					Long raceDateValue = cursor.getLong(cursor.getColumnIndex(Race.RaceStartTime));
 					Date tempDate = new Date(raceDateValue);
-					date.updateDate(tempDate.getYear(), tempDate.getMonth(), tempDate.getDate());
-					Long numLaps = cursor.getLong(cursor.getColumnIndex(Race.NumLaps));
-					EditText txtNumLaps = (EditText)getView().findViewById(R.id.txtNumLaps);
-					txtNumLaps.setText(numLaps.toString());
+					date.updateDate(tempDate.getYear(), tempDate.getMonth(), tempDate.getDate());					
 					break;
 				default:
 					super.onLoadFinished(loader, cursor);

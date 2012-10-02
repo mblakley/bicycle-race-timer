@@ -54,20 +54,20 @@ public class RacerUpgraded extends BaseDialog implements OnClickListener {
 	}
 	
 	public void UpgradeRacerCategory(){
-		RacerClubInfo.Update(getActivity(), racerClubInfo_ID, null, null, null, null, null, null, null, null, null, true);
+		RacerClubInfo.Update(getActivity(), racerClubInfo_ID, null, null, null, null, null);
 		
 		Cursor prevRecord = RacerClubInfo.Read(getActivity(), null, RacerClubInfo._ID + "=?", new String[]{Long.toString(racerClubInfo_ID)}, null);
 		prevRecord.moveToFirst();
-		RacerClubInfo.Create(getActivity(), racer_ID, prevRecord.getString(prevRecord.getColumnIndex(RacerClubInfo.CheckInID)), prevRecord.getLong(prevRecord.getColumnIndex(RacerClubInfo.Year)), 
-							 category, prevRecord.getLong(prevRecord.getColumnIndex(RacerClubInfo.TTPoints)), 
-							 prevRecord.getLong(prevRecord.getColumnIndex(RacerClubInfo.RRPoints)), prevRecord.getLong(prevRecord.getColumnIndex(RacerClubInfo.PrimePoints)), 
-							 prevRecord.getLong(prevRecord.getColumnIndex(RacerClubInfo.RacerAge)), prevRecord.getLong(prevRecord.getColumnIndex(RacerClubInfo.GVCCID)), false);
+		long grade = 12l;
+		float speedLevel = 1.0f;
+		RacerClubInfo.Create(getActivity(), racer_ID, prevRecord.getLong(prevRecord.getColumnIndex(RacerClubInfo.TeamInfo_ID)), prevRecord.getString(prevRecord.getColumnIndex(RacerClubInfo.Category)), 
+							 grade, speedLevel);
 		prevRecord.close();
 		prevRecord = null;
 	}
 	
 	public void UpdateRacerCategory(){
-		RacerClubInfo.Update(getActivity(), racerClubInfo_ID, null, null, null, category, null, null, null, null, null, null);
+		RacerClubInfo.Update(getActivity(), racerClubInfo_ID, null, null, null, null, null);
 	}
 	
 	public void onClick(View v) {

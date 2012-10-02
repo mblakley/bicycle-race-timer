@@ -3,13 +3,94 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
-
+
+    <LinearLayout
+        android:id="@+id/linearLayout11"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:weightSum="1">
+
+        <TextView
+            android:id="@+id/lblMeet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Meet"
+            android:textAppearance="@style/Medium"
+            android:textColor="@color/normal_fg"
+            android:paddingRight="10sp"
+            android:textStyle="bold" >
+        </TextView>
+
+        <Spinner
+            android:id="@+id/spinMeet"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/Medium"
+            android:textColor="@color/normal_fg" >
+        </Spinner>
+
+    </LinearLayout>
+    
+    <LinearLayout
+        android:id="@+id/linearLayout12"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/lblMyTeam"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/MyTeam"
+            android:textAppearance="@style/Medium"
+            android:textColor="@color/normal_fg"
+            android:paddingRight="10sp"
+            android:textStyle="bold" >
+        </TextView>
+
+        <Spinner
+            android:id="@+id/spinMyTeam"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/Medium"
+            android:textColor="@color/normal_fg" >
+        </Spinner>
+
+    </LinearLayout>
+
+        <LinearLayout
+        android:id="@+id/linearLayout13"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/lblCurrentRace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/currentRace"
+            android:textAppearance="@style/Medium"
+            android:textColor="@color/normal_fg"
+            android:paddingRight="10sp"
+            android:textStyle="bold" >
+        </TextView>
+
+        <Spinner
+            android:id="@+id/spinCurrentRace"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/Medium"
+            android:textColor="@color/normal_fg" >
+        </Spinner>
+
+    </LinearLayout>
+    
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_marginTop="20dp"
         android:weightSum="1">
 
         <TextView
@@ -64,68 +145,8 @@
             android:textColor="@color/normal_fg" >
         </TextView>
  
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayout4"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:weightSum="1"
-        android:visibility="gone" >
-        
-        <TextView
-            android:id="@+id/lblRaceType"
-            android:layout_width="0dip"
-            android:layout_weight="0.5"
-            android:layout_height="wrap_content"
-            android:text="@string/lblRaceType"
-            android:textAppearance="@style/Medium"
-            android:textColor="@color/normal_fg"
-            android:paddingRight="10sp"
-            android:textStyle="bold" >
-        </TextView>
-        
-       <TextView
-            android:id="@+id/raceType"
-            android:layout_width="0dip"
-            android:layout_weight="0.5"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/Medium"
-            android:textColor="@color/normal_fg" >
-        </TextView>
-    </LinearLayout>
+    </LinearLayout>    
     
-    <LinearLayout
-        android:id="@+id/linearLayout5"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:weightSum="1"
-        android:visibility="gone">
-       
-       <TextView
-            android:id="@+id/lblStartInterval"
-            android:layout_width="0dip"
-            android:layout_weight="0.5"
-            android:layout_height="wrap_content"
-            android:text="@string/lblStartInterval"
-            android:textAppearance="@style/Medium"
-            android:textColor="@color/normal_fg"
-            android:paddingRight="10sp"
-            android:textStyle="bold" >
-        </TextView>
-
-        <TextView
-            android:id="@+id/raceStartInterval"
-            android:layout_width="0dip"
-            android:layout_weight="0.5"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/Medium"
-            android:textColor="@color/normal_fg" >
-        </TextView>
-    </LinearLayout>
-
     <LinearLayout
         android:id="@+id/linearLayout3"
         android:layout_width="fill_parent"
@@ -153,76 +174,32 @@
             android:textColor="@color/normal_fg" >
         </TextView>        
         
-    </LinearLayout>
-    
-    <LinearLayout
-        android:id="@+id/linearLayout6"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:weightSum="1">
-		
-		<TextView
-            android:id="@+id/lblCourseRecord"
-            android:layout_width="0dip"
-            android:layout_weight="0.5"
-            android:layout_height="wrap_content"
-            android:text="@string/lblCourseRecord"
-            android:textAppearance="@style/Medium"
-            android:textColor="@color/normal_fg"
-            android:paddingRight="10sp"
-            android:textStyle="bold" >
-        </TextView>        
-        
-		<TextView
-            android:id="@+id/courseRecord"
-            android:layout_width="0dip"
-            android:layout_weight="0.5"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/Medium"
-            android:textColor="@color/normal_fg" >
-        </TextView>        
     </LinearLayout>
-    
-    <LinearLayout
-        android:id="@+id/llRaceLaps"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:weightSum="1"
-        android:visibility="gone">
-        
-        <TextView
-            android:id="@+id/lblLaps"
-            style="@style/Medium"
-            android:layout_width="0dip"
-            android:layout_weight="0.5"
-            android:layout_height="wrap_content"
-            android:paddingRight="10sp"
-            android:text="@string/lblLaps" />
 
-        <TextView
-            android:id="@+id/raceLaps"
-            android:layout_width="0dip"
-            android:layout_weight="0.5"
-            android:layout_height="wrap_content"
-            style="@style/Medium.Padded" />
-    </LinearLayout> 
-    
-    <Button
-        android:id="@+id/btnMarshalLocations"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        style="@style/Medium"
-        android:text="@string/MarshalLocations"
-        android:visibility="gone" /> 
-        
+	<TextView
+	    android:id="@+id/txtTeams"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    style="@style/Medium"
+	    android:text="@string/Teams"
+	    android:textAppearance="@style/Medium"
+        android:textColor="@color/normal_fg"
+        android:paddingRight="10sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+	<ListView
+	    android:id="@+id/lvTeams"
+	    android:layout_width="fill_parent"
+	    android:layout_height="200dp"
+        android:visibility="gone" >
 
+	</ListView>
+    
     <LinearLayout
         android:id="@+id/linearLayoutButtons"
         android:layout_width="fill_parent"
         android:layout_height="110sp"
-        android:layout_marginTop="40dp"
         android:layout_gravity="bottom"
         android:weightSum="3">
 

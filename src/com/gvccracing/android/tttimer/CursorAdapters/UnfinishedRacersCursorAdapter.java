@@ -1,7 +1,9 @@
 package com.gvccracing.android.tttimer.CursorAdapters;
 
+import com.gvccracing.android.tttimer.R;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
+import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -25,7 +27,7 @@ public class UnfinishedRacersCursorAdapter extends BaseCursorAdapter  {
     	View v = null;
     	try{	
 	        final LayoutInflater inflater = LayoutInflater.from(context);
-	        v = inflater.inflate(android.R.layout.simple_spinner_item, parent, false);
+	        v = inflater.inflate(R.layout.row_team_to_finish, parent, false);
 
     	}catch(Exception ex){
     		Log.e("UnfinishedRacersCursorAdapter", ex.toString());
@@ -38,13 +40,13 @@ public class UnfinishedRacersCursorAdapter extends BaseCursorAdapter  {
     public void bindView(View v, Context context, Cursor c) {
 
     	try{
-	        int startOrderCol = c.getColumnIndex(RaceResults.StartOrder);
+	        int nameCol = c.getColumnIndex("Name");
 	        
-	        Integer startOrder = c.getInt(startOrderCol);	   
+	        String name = c.getString(nameCol);	   
 	        
-	        TextView lblStartOrder = (TextView) v.findViewById(android.R.id.text1);
-	        if (lblStartOrder != null) {
-	        	lblStartOrder.setText(startOrder.toString());
+	        TextView lblName = (TextView) v.findViewById(R.id.lblName);
+	        if (lblName != null) {
+	        	lblName.setText(name);
 	        }
 		}catch(Exception ex){
 			Log.e("UnfinishedRacersCursorAdapter", ex.toString());

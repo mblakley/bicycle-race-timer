@@ -48,7 +48,7 @@ public class RemoveUnassignedTime extends BaseDialog implements View.OnClickList
 				// Update all race results that have higher start order than the racer to delete.  Change the start order and start time offset
 				Cursor checkins = RaceResults.Read(getActivity(), new String[]{RaceResults._ID}, RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name), null, RaceResults.StartOrder);
 				if(checkins.getCount() > 0){
-					Long startInterval = Long.parseLong(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_StartInterval_Name, "60"));
+					Long startInterval = 0l;
 					long startOrder = 1;
 					checkins.moveToFirst();
 					do{

@@ -24,7 +24,7 @@ public class EditRacerView extends AddRacerView implements View.OnClickListener,
 	private Long racer_ID;
 	private String initCategory;
 	public EditRacerView(long racerClubInfo_ID) {
-		super(false);
+		super(false, 0l, "M", "Varsity");
 		
 		this.racerClubInfo_ID = racerClubInfo_ID;
 	}
@@ -61,7 +61,7 @@ public class EditRacerView extends AddRacerView implements View.OnClickListener,
 				// Last name
 				String lastName = txtLastName.getText().toString();
 				// Category
-				String category = spinCategory.getSelectedItem().toString();	
+				String category = spinGrade.getSelectedItem().toString();	
 				// USACNumber
 				String usacNumber = txtUSACNumber.getText().toString();
 		
@@ -100,7 +100,7 @@ public class EditRacerView extends AddRacerView implements View.OnClickListener,
 
 	private boolean UpdateRacer(String firstName, String lastName, String usacNumber, final String category) {
 		
-		Racer.Update(getActivity(), racer_ID, firstName, lastName, Integer.parseInt(usacNumber), null, null, null, null);
+		Racer.Update(getActivity(), racer_ID, firstName, lastName, null, null, null, null, null);
 		
 		// The category has changed.  Figure out if the racer upgraded, or if the initial value was incorrect
 		if(category != initCategory){
@@ -121,8 +121,8 @@ public class EditRacerView extends AddRacerView implements View.OnClickListener,
 		String sortOrder = null;
 		switch(id){
 			case RACER_INFO_LOADER:
-				projection = new String[]{RacerClubInfo.Racer_ID, Racer.LastName, Racer.FirstName, Racer.USACNumber, RacerClubInfo.Category};
-				selection = RacerClubInfo.getTableName() + "." + RacerClubInfo._ID + "=? AND " + RacerClubInfo.Upgraded + "=?";;
+				projection = new String[]{RacerClubInfo.Racer_ID, Racer.LastName, Racer.FirstName, RacerClubInfo.Category};
+				selection = RacerClubInfo.getTableName() + "." + RacerClubInfo._ID + "=?";
 				selectionArgs = new String[]{Long.toString(racerClubInfo_ID), Long.toString(0l)};
 				loader = new CursorLoader(getActivity(), CheckInViewInclusive.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
@@ -141,7 +141,6 @@ public class EditRacerView extends AddRacerView implements View.OnClickListener,
 					
 					txtFirstName.setText(cursor.getString(cursor.getColumnIndex(Racer.FirstName)));
 					txtLastName.setText(cursor.getString(cursor.getColumnIndex(Racer.LastName)));
-					txtUSACNumber.setText(cursor.getString(cursor.getColumnIndex(Racer.USACNumber)));
 					SetCategorySelectionByValue(cursor.getString(cursor.getColumnIndex(RacerClubInfo.Category)));
 					break;
 			}
@@ -153,10 +152,10 @@ public class EditRacerView extends AddRacerView implements View.OnClickListener,
 
 	private void SetCategorySelectionByValue(String racerCategory) {		
 		initCategory = racerCategory;
-		for (int i = 0; i < spinCategory.getCount(); i++) {
-		    String desc = spinCategory.getItemAtPosition(i).toString();
+		for (int i = 0; i < spinGrade.getCount(); i++) {
+		    String desc = spinGrade.getItemAtPosition(i).toString();
 		    if (desc.equalsIgnoreCase(racerCategory)) {
-		    	spinCategory.setSelection(i);
+		    	spinGrade.setSelection(i);
 		    	break;
 		    }
 		}

@@ -14,5 +14,7 @@
         android:layout_height="wrap_content"
         android:textColor="@drawable/tab_text_selector"
         android:textStyle="bold"
+        android:ellipsize="marquee"
+        android:singleLine="true"
 		style="@style/SmallHeader" />
 </LinearLayout>

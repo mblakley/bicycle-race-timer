@@ -231,4 +231,22 @@
 	<string name="Retry">Retry</string>
 	<string name="NoMarshalLocationImages">No marshal location images found for the current location!</string>
 	<string name="Team">Team</string>
+	<string name="Grade">Grade:</string>
+	<string name="Meet">Meet:</string>
+	<string name="MyTeam">My Team:</string>
+	<string name="Teams">Teams:</string>
+	<string name="currentRace">Current Race:</string>
+	<string name="MyRacers">My Racers:</string>
+	<string name="FinishOrder">Finish Order:</string>
+	<string name="Splits">Splits:</string>
+	<string name="AllRacersFinished">All Racers Finished</string>
+	<string name="Remove">Remove</string>
+	<string-array name="grades_array">
+		<item >7</item>
+		<item >8</item>
+		<item >9</item>
+		<item >10</item>
+		<item >11</item>
+		<item >12</item>
+	</string-array>
 </resources>

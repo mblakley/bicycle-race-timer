@@ -4,8 +4,8 @@
 package com.gvccracing.android.tttimer.Tabs;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
@@ -23,16 +23,17 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.AsyncTasks.AssignLapTimeTask;
 import com.gvccracing.android.tttimer.AsyncTasks.AssignTimeTask;
+import com.gvccracing.android.tttimer.Controls.Timer;
 import com.gvccracing.android.tttimer.CursorAdapters.RacersToFinishCursorAdapter;
-import com.gvccracing.android.tttimer.CursorAdapters.TeamsToFinishCursorAdapter;
 import com.gvccracing.android.tttimer.CursorAdapters.UnassignedTimeCursorAdapter;
+import com.gvccracing.android.tttimer.CursorAdapters.UnfinishedRacersCursorAdapter;
 import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
 import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewExclusive;
 import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
-import com.gvccracing.android.tttimer.DataAccess.RaceLapsCP.RaceLaps;
-import com.gvccracing.android.tttimer.DataAccess.RaceLapsCP.TeamLaps;
+import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.MeetTeamsView;
+import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.UnassignedTimesView;
+import com.gvccracing.android.tttimer.DataAccess.RaceMeetTeamsCP.RaceMeetTeams;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
 import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
@@ -48,30 +49,23 @@ public class FinishTab extends BaseTab implements View.OnClickListener,	LoaderMa
 
 	public static final String FinishTabSpecName = "Finish";
 
-	private static final int TEAM_FINISH_ORDER_LOADER = 0x34;
-
-	private static final int TEAM_UNASSIGNED_TIMES_LOADER = 0x36;
-
 	private static final int RACE_INFO_LOADER_FINISH = 0x177;
 
-	private static final int UNASSIGNED_TIMES_LOADER_FINISH = 0x115;
+	private static final int TEAMS_LOADER_FINISH = 0x115;
 
 	private static final int FINISH_ORDER_LOADER_FINISH = 0x116;
+
+	private static final int SPLITS_LOADER_FINISH = 8958480;
 	
-	private Long raceTypeID = 0l;
 	private Long numRaceLaps = 1l;
 
-	private CursorAdapter finishersCA;
-	private CursorAdapter unassignedCA;
-	
-	private Loader<Cursor> finishOrderLoader = null;
-	private Loader<Cursor> teamFinishOrderLoader = null;
-	private Loader<Cursor> unassignedTimesLoader = null;
-	private Loader<Cursor> teamUnassignedTimesLoader = null;
+	private CursorAdapter myRacersCA;
+	private CursorAdapter teamsCA;
+	private CursorAdapter splitsCA;	
 
-	private Button btnRacerFinished;
-	private ListView finishOrderList;
-	private ListView unassignedTimes;
+	private ListView teams;
+	private ListView myRacers;
+	private ListView splits;
 	
 	/**
 	 * 
@@ -85,12 +79,7 @@ public class FinishTab extends BaseTab implements View.OnClickListener,	LoaderMa
 			Bundle savedInstanceState) {
 		// Inflate the layout for this fragment
 		View view = inflater.inflate(R.layout.tab_finish, container, false);
-
-		btnRacerFinished = (Button) view.findViewById(R.id.btnRacerFinished);
-		btnRacerFinished.setOnClickListener(this);
-		
-		btnRacerFinished.setEnabled(false);
-
+	
 		view.setKeepScreenOn(true);
 
 		return view;
@@ -100,21 +89,24 @@ public class FinishTab extends BaseTab implements View.OnClickListener,	LoaderMa
 	public void onResume() {
 		super.onResume();
 
-		unassignedTimes = (ListView) getView().findViewById(R.id.svUnassignedTimes);		
-		finishOrderList = (ListView) getView().findViewById(R.id.svRacersToFinish);
+		teams = (ListView) getView().findViewById(R.id.lvTeams);		
+		myRacers = (ListView) getView().findViewById(R.id.lvMyRacers);
+		splits = (ListView) getView().findViewById(R.id.lvFinishOrder);
 
 		// Initialize the cursor loader for the unassigned times list
 		getActivity().getSupportLoaderManager().restartLoader(RACE_INFO_LOADER_FINISH, null, this);
+		getActivity().getSupportLoaderManager().restartLoader(TEAMS_LOADER_FINISH, null, this);
+		getActivity().getSupportLoaderManager().restartLoader(FINISH_ORDER_LOADER_FINISH, null, this);
+		getActivity().getSupportLoaderManager().restartLoader(SPLITS_LOADER_FINISH, null, this);
 	}
 	
 	@Override
 	public void onPause() {
 		super.onPause();
-		getActivity().getSupportLoaderManager().destroyLoader(UNASSIGNED_TIMES_LOADER_FINISH);
+		getActivity().getSupportLoaderManager().destroyLoader(TEAMS_LOADER_FINISH);
 		getActivity().getSupportLoaderManager().destroyLoader(RACE_INFO_LOADER_FINISH);
-		getActivity().getSupportLoaderManager().destroyLoader(TEAM_UNASSIGNED_TIMES_LOADER);
 		getActivity().getSupportLoaderManager().destroyLoader(FINISH_ORDER_LOADER_FINISH);
-		getActivity().getSupportLoaderManager().destroyLoader(TEAM_FINISH_ORDER_LOADER);	
+		getActivity().getSupportLoaderManager().destroyLoader(SPLITS_LOADER_FINISH);
 	}
 
 	@Override
@@ -153,83 +145,61 @@ public class FinishTab extends BaseTab implements View.OnClickListener,	LoaderMa
 		String selection;
 		String[] selectionArgs;
 		String sortOrder;
-		switch (id) {
-			case TEAM_UNASSIGNED_TIMES_LOADER:			
-			case UNASSIGNED_TIMES_LOADER_FINISH:
+		switch (id) {			
+			case TEAMS_LOADER_FINISH:
 				// Create the cursor adapter for the list of unassigned times
-				unassignedCA = new UnassignedTimeCursorAdapter(getActivity(), null, getParentActivity().timer.GetStartTime(), numRaceLaps);
+				teamsCA = new UnfinishedRacersCursorAdapter(getActivity(), null);//, getParentActivity().timer.GetStartTime(), numRaceLaps);
 
-				if (unassignedTimes != null) {
+				if (teams != null) {
 		        	
-					unassignedTimes.setAdapter(unassignedCA);
+					teams.setAdapter(teamsCA);
 
-					unassignedTimes.setOnItemLongClickListener(new OnItemLongClickListener() {
-							public boolean onItemLongClick(AdapterView<?> arg0,	View v, int pos, long id) {
-								RemoveUnassignedTime removeUnassignedTimeDialog = new RemoveUnassignedTime(id);
-								FragmentManager fm = getActivity().getSupportFragmentManager();
-								removeUnassignedTimeDialog.show(fm,	RemoveUnassignedTime.LOG_TAG);
-								return false;
+					teams.setOnItemClickListener(new OnItemClickListener() {
+							public void onItemClick(AdapterView<?> arg0, View v, int pos, long teamInfo_ID) {
+								AssignTimeTask task = new AssignTimeTask(FinishTab.this.getActivity());
+								task.execute(new Long[] { System.currentTimeMillis(), null, teamInfo_ID, raceStartTime });	
 							}
 						});
 				}
-				projection = new String[] { UnassignedTimes._ID, UnassignedTimes.FinishTime };
-				selection = UnassignedTimes.Race_ID	+ "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + UnassignedTimes.RaceResult_ID + " IS NULL";
+				projection = new String[] { TeamInfo.getTableName() + "." + TeamInfo._ID + " as _id", TeamInfo.TeamName + " as Name" };
+				selection = RaceMeetTeams.RaceMeet_ID	+ "=1";// + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + UnassignedTimes.RaceResult_ID + " IS NULL";
 				selectionArgs = null;
-				sortOrder = UnassignedTimes.FinishTime;
-				loader = new CursorLoader(getActivity(), UnassignedTimes.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				sortOrder = TeamInfo.TeamName;
+				loader = new CursorLoader(getActivity(), MeetTeamsView.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case FINISH_ORDER_LOADER_FINISH:
-				finishersCA = new RacersToFinishCursorAdapter(getActivity(), null);
+				myRacersCA = new UnfinishedRacersCursorAdapter(getActivity(), null);
 				
-		        if( finishOrderList != null){
-		        	finishOrderList.setAdapter(finishersCA);
+		        if( myRacers != null){
+		        	myRacers.setAdapter(myRacersCA);
 		        	
-		        	finishOrderList.setOnItemClickListener(new OnItemClickListener() {
+		        	myRacers.setOnItemClickListener(new OnItemClickListener() {
 						public void onItemClick(AdapterView<?> arg0, View v, int pos, long raceResult_ID) {
-							Cursor unassignedCursor = unassignedCA.getCursor();
-							if(unassignedCursor != null && unassignedCursor.getCount() > 0){
-								unassignedCursor.moveToPosition(unassignedTimes.getCheckedItemPosition());
-								long unassignedID = unassignedCursor.getLong(unassignedCursor.getColumnIndex(UnassignedTimes._ID));
-								AssignTimeTask task = new AssignTimeTask(FinishTab.this.getActivity());
-								task.execute(new Long[] { unassignedID, raceResult_ID });	
-							}
+							AssignTimeTask task = new AssignTimeTask(FinishTab.this.getActivity());
+							task.execute(new Long[] { System.currentTimeMillis(), raceResult_ID, null, raceStartTime });	
 						}
 					});
 		        }
-				projection = new String[] {	RaceResults.getTableName() + "." + RaceResults._ID + " as _id", Racer.LastName, Racer.FirstName, TeamInfo.TeamName };
-				selection = RaceResults.Race_ID	+ "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.StartTime + " IS NOT NULL" + " AND " + RaceResults.EndTime + " IS NULL AND " + RacerClubInfo.Category + "!=?";
-				selectionArgs = new String[]{"G"};
-				sortOrder = TeamInfo.TeamName + "," + Racer.LastName;
+				projection = new String[] {	RaceResults.getTableName() + "." + RaceResults._ID + " as _id", Racer.FirstName + "||' '||" + Racer.LastName + " as Name" };
+				selection = RaceResults.Race_ID	+ "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.StartTime + " IS NOT NULL AND " + RaceResults.EndTime + " IS NULL";
+				selectionArgs = null;
+				sortOrder = RacerClubInfo.SpeedLevel + " DESC," + Racer.LastName;
 				loader = new CursorLoader(getActivity(), CheckInViewExclusive.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
-			case TEAM_FINISH_ORDER_LOADER:
-				finishersCA = new TeamsToFinishCursorAdapter(getActivity(), null);
+			case SPLITS_LOADER_FINISH:
+				splitsCA = new UnfinishedRacersCursorAdapter(getActivity(), null);
 				
-		        if( finishOrderList != null){
-		        	finishOrderList.setAdapter(finishersCA);
-		        	
-		        	finishOrderList.setOnItemClickListener(new OnItemClickListener() {
-						public void onItemClick(AdapterView<?> arg0, View v, int pos, long raceResult_ID) {
-							try{
-								Cursor unassignedCursor = unassignedCA.getCursor();
-								unassignedCursor.moveToPosition(unassignedTimes.getCheckedItemPosition());
-								long unassignedID = unassignedCursor.getLong(unassignedCursor.getColumnIndex(UnassignedTimes._ID));
-								AssignLapTimeTask task = new AssignLapTimeTask(FinishTab.this.getActivity());
-								task.execute(new Long[] { unassignedID, raceResult_ID });
-							}catch(Exception ex){
-								Log.e(LOG_TAG(), "Error assigning time", ex);
-							}
-						}
-					});
+		        if( splits != null){
+		        	splits.setAdapter(splitsCA);
 		        }
-				projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID + " as _id", TeamInfo.TeamName, RaceResults.StartOrder, "count(" + RaceLaps.getTableName() + "." + RaceLaps._ID + ") as NumLaps"};
-				selection = RaceResults.Race_ID	+ "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.getTableName() + "." + RaceResults.StartTime + " IS NOT NULL" + " AND " + RaceResults.EndTime + " IS NULL AND " + TeamInfo.TeamCategory + "!=?";
-				selectionArgs = new String[]{"G"};
-				sortOrder = "NumLaps ASC," + RaceResults.StartOrder + " ASC";
-				loader = new CursorLoader(getActivity(), Uri.withAppendedPath(TeamLaps.CONTENT_URI, "group by " + RaceResults.getTableName() + "." + RaceResults._ID + "," + TeamInfo.TeamName + "," + RaceResults.StartOrder + "&having count(" + RaceLaps.getTableName() + "." + RaceLaps._ID + ") < " + Long.toString(numRaceLaps)), projection, selection, selectionArgs, sortOrder);
+				projection = new String[] {	UnassignedTimes.getTableName() + "." + UnassignedTimes._ID + " as _id", TeamInfo.TeamName + " as Name" };
+				selection = UnassignedTimes.getTableName() + "." + UnassignedTimes.Race_ID	+ "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.StartTime + " IS NOT NULL";// + " AND " + RaceResults.EndTime + " IS NULL";
+				selectionArgs = null;
+				sortOrder = UnassignedTimes.getTableName() + "." + UnassignedTimes._ID + " DESC";//RacerClubInfo.SpeedLevel + "," + Racer.LastName;
+				loader = new CursorLoader(getActivity(), UnassignedTimesView.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case RACE_INFO_LOADER_FINISH:
-				projection = new String[]{Race.getTableName() + "." + Race._ID + " as _id", Race.RaceType, Race.NumLaps};
+				projection = new String[]{Race.getTableName() + "." + Race._ID + " as _id", Race.Gender, Race.Category, Race.NumSplits, Race.RaceStartTime};
 				selection = Race.getTableName() + "." + Race._ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
 				selectionArgs = null;
 				sortOrder = Race.getTableName() + "." + Race._ID;
@@ -239,71 +209,33 @@ public class FinishTab extends BaseTab implements View.OnClickListener,	LoaderMa
 		Log.i(LOG_TAG(), "onCreateLoader complete: id=" + Integer.toString(id));
 		return loader;
 	}
+	
+	private long raceStartTime;
 
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 		try {
 			Log.i(LOG_TAG(),
 					"onLoadFinished start: id="	+ Integer.toString(loader.getId()));
 			switch (loader.getId()) {
-				case TEAM_UNASSIGNED_TIMES_LOADER:
-				case UNASSIGNED_TIMES_LOADER_FINISH:
-					if(cursor.getCount() >= 1){
-						unassignedTimes.setItemChecked(0, true);
-					}
-					cursor.moveToFirst();
-					unassignedCA.swapCursor(cursor);
+				case TEAMS_LOADER_FINISH:					
+					teamsCA.swapCursor(cursor);	
 					break;
-				case TEAM_FINISH_ORDER_LOADER:
 				case FINISH_ORDER_LOADER_FINISH:					
-					finishersCA.swapCursor(cursor);
-	
-					if (getView() != null) {
-						if (finishersCA.getCount() > 0) {
-							((Button) getView().findViewById(R.id.btnRacerFinished)).setEnabled(true);
-						} else {
-							((Button) getView().findViewById(R.id.btnRacerFinished)).setEnabled(false);
-						}
-					}
+					myRacersCA.swapCursor(cursor);	
+					break;
+				case SPLITS_LOADER_FINISH:					
+					splitsCA.swapCursor(cursor);	
 					break;
 				case RACE_INFO_LOADER_FINISH:	
 					if(cursor!= null && cursor.getCount() > 0){
 						cursor.moveToFirst();
 						// Set up the tab based on the race information
-						raceTypeID = cursor.getLong(cursor.getColumnIndex(Race.RaceType));
-						int numLapsCol = cursor.getColumnIndex(Race.NumLaps);
+						int numLapsCol = cursor.getColumnIndex(Race.NumSplits);
 						numRaceLaps = cursor.getLong(numLapsCol);
-						if(getView() != null){
-							if(raceTypeID == 1){
-								btnRacerFinished.setText(R.string.LapCompleted);
-								
-								if( teamFinishOrderLoader == null){
-									teamFinishOrderLoader = getActivity().getSupportLoaderManager().initLoader(TEAM_FINISH_ORDER_LOADER, null, this);
-								} else {
-									teamFinishOrderLoader = getActivity().getSupportLoaderManager().restartLoader(TEAM_FINISH_ORDER_LOADER, null, this);
-								}
-								
-								if( teamUnassignedTimesLoader == null){
-									teamUnassignedTimesLoader = getActivity().getSupportLoaderManager().initLoader(TEAM_UNASSIGNED_TIMES_LOADER, null, this);
-								} else {
-									teamUnassignedTimesLoader = getActivity().getSupportLoaderManager().restartLoader(TEAM_UNASSIGNED_TIMES_LOADER, null, this);
-								}
-							}else {
-								btnRacerFinished.setText(R.string.RacerFinished);
-								
-								if(finishOrderLoader == null){
-								    // Initialize the cursor loader for the finish order list
-									finishOrderLoader = getActivity().getSupportLoaderManager().initLoader(FINISH_ORDER_LOADER_FINISH, null, this);
-								} else {
-									finishOrderLoader = getActivity().getSupportLoaderManager().restartLoader(FINISH_ORDER_LOADER_FINISH, null, this);
-								}
-								
-								if( unassignedTimesLoader == null){
-									unassignedTimesLoader = getActivity().getSupportLoaderManager().initLoader(UNASSIGNED_TIMES_LOADER_FINISH, null, this);
-								} else {
-									unassignedTimesLoader = getActivity().getSupportLoaderManager().restartLoader(UNASSIGNED_TIMES_LOADER_FINISH, null, this);
-								}
-							}
-						}
+						
+						raceStartTime = cursor.getLong(cursor.getColumnIndex(Race.RaceStartTime));
+						
+						// Add buttons for each split
 					}
 					break;
 			}
@@ -319,12 +251,14 @@ public class FinishTab extends BaseTab implements View.OnClickListener,	LoaderMa
 					"onLoaderReset start: id="
 							+ Integer.toString(loader.getId()));
 			switch (loader.getId()) {
-				case UNASSIGNED_TIMES_LOADER_FINISH:
-					unassignedCA.swapCursor(null);
+				case TEAMS_LOADER_FINISH:
+					teamsCA.swapCursor(null);
 					break;
 				case FINISH_ORDER_LOADER_FINISH:
-				case TEAM_FINISH_ORDER_LOADER:
-					finishersCA.swapCursor(null);
+					myRacersCA.swapCursor(null);
+					break;
+				case SPLITS_LOADER_FINISH:
+					splitsCA.swapCursor(null);
 					break;
 				case RACE_INFO_LOADER_FINISH:
 					// Do Nothing
@@ -340,9 +274,17 @@ public class FinishTab extends BaseTab implements View.OnClickListener,	LoaderMa
 
 	public void onClick(View v) {
 		try {
-			if (v == btnRacerFinished) {
-				RacerFinished();
-			}
+			// Stop and hide the timer
+			Intent stopAndHideTimer = new Intent();
+			stopAndHideTimer.setAction(Timer.STOP_AND_HIDE_TIMER_ACTION);
+			getActivity().sendBroadcast(stopAndHideTimer);
+			
+			Intent raceIsFinished = new Intent();
+    		raceIsFinished.setAction(Timer.RACE_IS_FINISHED_ACTION);
+    		getActivity().sendBroadcast(raceIsFinished);
+//			if (Long.parseLong(v.getTag().toString()) == 1) {
+//				RacerFinished();
+//			}
 		} catch (Exception ex) {
 			Log.e(LOG_TAG(), "btnNewRacerClick failed", ex);
 		}

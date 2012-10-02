@@ -25,7 +25,6 @@ public class AppSettingsCP {
         public static final String AppSetting_DistanceUnits_Name = "DistanceUnits";
         public static final String AppSetting_TemperatureUnits_Name = "TemperatureUnits";
         public static final String AppSetting_RaceID_Name = "Race_ID";
-		public static final String AppSetting_StartInterval_Name = "StartInterval";
 		public static final String AppSetting_AdminMode_Name = "AdminMode";
 		public static final String AppSetting_DropBox_Key_Name = "DropBoxKey";
 		public static final String AppSetting_DropBox_Secret_Name = "DropBoxSecret";
@@ -33,6 +32,7 @@ public class AppSettingsCP {
 		public static final String AppSettings_AutoStartApp_Name = "AutoStartApp";
 		public static final String AppSetting_AuthenticatingDropbox_Name = "AuthenticatingDropbox";
 		public static final String AppSetting_ResumePreviousState_Name = "ResumePreviousState";
+		public static final String AppSetting_TeamID_Name = "Team_ID";
         
         public static String getTableName(){
         	return AppSettings.class.getSimpleName();
