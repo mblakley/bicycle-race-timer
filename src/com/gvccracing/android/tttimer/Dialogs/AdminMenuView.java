@@ -6,6 +6,7 @@ import com.dropbox.client2.session.AccessTokenPair;
 import com.dropbox.client2.session.AppKeyPair;
 import com.dropbox.client2.session.Session.AccessType;
 import com.gvccracing.android.tttimer.R;
+import com.gvccracing.android.tttimer.AsyncTasks.ImportRacersTask;
 import com.gvccracing.android.tttimer.AsyncTasks.UploadUSACNumbersToDropboxTask;
 import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
 import com.gvccracing.android.tttimer.Utilities.Calculations;
@@ -182,8 +183,10 @@ public class AdminMenuView extends BaseDialog implements View.OnClickListener {
 					AppSettings.Update(getActivity(), AppSettings.AppSetting_AuthenticatingDropbox_Name, "true", true);
 					mDBApi.getSession().startAuthentication(getActivity());
 				}
-	            AddLocationImages downloadNewImages = new AddLocationImages();
-		    	downloadNewImages.show(fm, AddLocationImages.LOG_TAG);
+				ImportRacersTask irTask = new ImportRacersTask(getActivity());
+				irTask.execute(new Void[]{});
+	            //AddLocationImages downloadNewImages = new AddLocationImages();
+		    	//downloadNewImages.show(fm, AddLocationImages.LOG_TAG);
 			} else {
 				super.onClick(v);
 			}

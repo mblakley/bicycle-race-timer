@@ -6,6 +6,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import android.content.ContentProviderOperation;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.OperationApplicationException;
 import android.database.Cursor;
@@ -14,6 +15,8 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import com.gvccracing.android.tttimer.DataAccess.TTProvider;
+import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
+import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.RaceInfoResultsView;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
 
@@ -64,21 +67,23 @@ public class CreateRaceResultsTask  extends AsyncTask<Long, Void, Void> {
 			     	// PrimePoints (default 0)
 			     	Integer primePoints = 0;
 			     	
+			     	ContentValues content = new ContentValues();
+			     	content.put(RaceResults.StartTimeOffset, startTimeOffset);
+			     	content.putNull(RaceResults.StartTime);
+			     	content.putNull(RaceResults.EndTime);
+			     	content.putNull(RaceResults.ElapsedTime);
+			     	content.putNull(RaceResults.OverallPlacing);
+			     	content.putNull(RaceResults.CategoryPlacing);
+			     	content.put(RaceResults.RacerClubInfo_ID, racerClubInfo.getLong(racerClubInfo.getColumnIndex(RacerClubInfo._ID)));
+				    content.put(RaceResults.Race_ID, race_ID);
+				    content.put(RaceResults.StartOrder, 0);
+				    content.put(RaceResults.StartTimeOffset, startTimeOffset);
+				    content.put(RaceResults.Points, points);
+				    content.put(RaceResults.PrimePoints, primePoints);
+				    content.put(RaceResults.TeamInfo_ID, teamInfo_ID);
+			     	
 			        // Create a new raceResult				
-					operations.add(ContentProviderOperation.newInsert(RaceResults.CONTENT_URI)
-						    .withValue(RaceResults.RacerClubInfo_ID, racerClubInfo.getLong(racerClubInfo.getColumnIndex(RacerClubInfo._ID)))
-						    .withValue(RaceResults.Race_ID, race_ID)
-						    .withValue(RaceResults.StartOrder, 0)
-						    .withValue(RaceResults.StartTimeOffset, startTimeOffset)
-						    .withValue(RaceResults.StartTime, startTime)
-						    .withValue(RaceResults.EndTime, endTime)
-						    .withValue(RaceResults.ElapsedTime, elapsedTime)
-						    .withValue(RaceResults.OverallPlacing, overallPlacing)
-						    .withValue(RaceResults.CategoryPlacing, categoryPlacing)
-						    .withValue(RaceResults.Points, points)
-						    .withValue(RaceResults.PrimePoints, primePoints)
-						    .withValue(RaceResults.TeamInfo_ID, teamInfo_ID)
-						    .build());
+					operations.add(ContentProviderOperation.newInsert(RaceResults.CONTENT_URI).withValues(content).build());
 			     	
 			     	//RaceResults.Create(context, racerClubInfo.getLong(racerClubInfo.getColumnIndex(RacerClubInfo._ID)), race_ID, 0, startTimeOffset, startTime, endTime, elapsedTime, overallPlacing, categoryPlacing, points, primePoints, teamInfo_ID);
 	

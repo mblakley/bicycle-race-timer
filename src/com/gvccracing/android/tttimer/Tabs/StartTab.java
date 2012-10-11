@@ -260,7 +260,7 @@ public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 					}
 	    		});
 				projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID + " as _id", Racer.LastName, Racer.FirstName, TeamInfo.TeamName};
-				selection = RaceResults.getTableName() + "." + RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.getTableName() + "." + RaceResults.TeamInfo_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_TeamID_Name) + " AND " + Race.getTableName() + "." + Race.Category + "='Varsity' AND " + Race.getTableName() + "." + Race.Gender + "='Boys'" ;// + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
+				selection = RaceResults.getTableName() + "." + RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.getTableName() + "." + RaceResults.TeamInfo_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_TeamID_Name) + " AND " + Race.getTableName() + "." + Race.Category + "='Varsity' AND " + Race.getTableName() + "." + Race.Gender + "='Girls'" ;// + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
 				selectionArgs = null;
 				sortOrder = TeamInfo.TeamName + "," + Racer.LastName;
 				loader = new CursorLoader(getActivity(), CheckInViewExclusive.CONTENT_URI, projection, selection, selectionArgs, sortOrder);

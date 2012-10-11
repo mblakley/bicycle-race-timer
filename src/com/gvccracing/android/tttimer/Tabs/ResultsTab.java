@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -34,8 +35,9 @@ import com.gvccracing.android.tttimer.DataAccess.UnassignedTimesCP.UnassignedTim
 import com.gvccracing.android.tttimer.Dialogs.AdminAuthView;
 import com.gvccracing.android.tttimer.Dialogs.EditRaceResultView;
 import com.gvccracing.android.tttimer.Dialogs.RacerPreviousResults;
+import com.gvccracing.android.tttimer.Utilities.Calculations;
 
-public class ResultsTab extends BaseTab implements LoaderManager.LoaderCallbacks<Cursor> {
+public class ResultsTab extends BaseTab implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 
 	public static final String ResultsTabSpecName =  "ResultsActivity";
 
@@ -95,6 +97,9 @@ public class ResultsTab extends BaseTab implements LoaderManager.LoaderCallbacks
 		lblCategoryResults = (TextView) getView().findViewById(R.id.lblCategoryResults);
 		llCategoryHeader = (LinearLayout) getView().findViewById(R.id.llCategoryHeader);
 		llOverallHeader = (LinearLayout) getView().findViewById(R.id.llOverallHeader);
+		
+
+        ((Button) getView().findViewById(R.id.btnCalcResults)).setOnClickListener(this);
         
         // Initialize the cursor loader for the overall results list
         getActivity().getSupportLoaderManager().restartLoader(RACE_INFO_LOADER_RESULTS, null, this);
@@ -171,7 +176,7 @@ public class ResultsTab extends BaseTab implements LoaderManager.LoaderCallbacks
 				projection = new String[]{UnassignedTimes.getTableName() + "." + UnassignedTimes.TeamInfo_ID + " as _id", TeamInfo.TeamName, "Sum(" + UnassignedTimes.getTableName() + "." + UnassignedTimes.Points + ") as " + UnassignedTimes.Points};
 				selection = UnassignedTimes.getTableName() + "." + UnassignedTimes.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + UnassignedTimes.getTableName() + "." + UnassignedTimes.ElapsedTime + " IS NOT NULL" /* AND " + RacerClubInfo.getTableName() + "." + RacerClubInfo.Category + "!=?*/ + " AND " + UnassignedTimes.getTableName() + "." + UnassignedTimes.Points + " IS NOT NULL AND " + UnassignedTimes.getTableName() + "." + UnassignedTimes.Points + "!=0";
 				selectionArgs = null;//ew String[]{"G"};
-				sortOrder = UnassignedTimes.getTableName() + "." + UnassignedTimes.Points;				
+				sortOrder = UnassignedTimes.Points;				
 				loader = new CursorLoader(getActivity(), Uri.withAppendedPath(UnassignedTimesView.CONTENT_URI, "group by _id, " + TeamInfo.TeamName), projection, selection, selectionArgs, sortOrder);
 				break;
 			case RACE_INFO_LOADER_RESULTS:
@@ -247,5 +252,11 @@ public class ResultsTab extends BaseTab implements LoaderManager.LoaderCallbacks
 		}catch(Exception ex){
 			Log.e(LOG_TAG(), "onLoaderReset error", ex); 
 		}
+	}
+
+	public void onClick(View v) {
+		// Calculate Category Placing, Overall Placing, Points
+    	Calculations.CalculateOverallPlacings(getActivity(), Long.parseLong(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_RaceID_Name, "-1"))); // Do this first, since "category" placings are really team placings based on the sum of the top 5 overall placings
+    	Calculations.CalculateCategoryPlacings(getActivity(), Long.parseLong(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_RaceID_Name, "-1")));
 	}
 }

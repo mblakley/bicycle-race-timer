@@ -745,30 +745,30 @@ public class TTProvider extends ContentProvider {
 			db.execSQL("INSERT INTO " + RaceLocation.getTableName() + "(" + RaceLocation.CourseName + ") VALUES ('Parma Park')");
 			
 			// Create a single meet for testing
-			db.execSQL("INSERT INTO " + RaceMeet.getTableName() + "(" + RaceMeet.RaceLocation_ID + "," + RaceMeet.RaceMeetDate + ") VALUES (1, 1349166600)");
+			db.execSQL("INSERT INTO " + RaceMeet.getTableName() + "(" + RaceMeet.RaceLocation_ID + "," + RaceMeet.RaceMeetDate + ") VALUES (1, 1349209800000)");
 			
 			// Add teams to the meet
-			db.execSQL("INSERT INTO " + RaceMeetTeams.getTableName() + "(" + RaceMeetTeams.RaceMeet_ID + "," + RaceMeetTeams.TeamInfo_ID + ") VALUES (1, 1)");
-			db.execSQL("INSERT INTO " + RaceMeetTeams.getTableName() + "(" + RaceMeetTeams.RaceMeet_ID + "," + RaceMeetTeams.TeamInfo_ID + ") VALUES (1, 2)");
 			db.execSQL("INSERT INTO " + RaceMeetTeams.getTableName() + "(" + RaceMeetTeams.RaceMeet_ID + "," + RaceMeetTeams.TeamInfo_ID + ") VALUES (1, 3)");
 			db.execSQL("INSERT INTO " + RaceMeetTeams.getTableName() + "(" + RaceMeetTeams.RaceMeet_ID + "," + RaceMeetTeams.TeamInfo_ID + ") VALUES (1, 4)");
-			db.execSQL("INSERT INTO " + RaceMeetTeams.getTableName() + "(" + RaceMeetTeams.RaceMeet_ID + "," + RaceMeetTeams.TeamInfo_ID + ") VALUES (1, 5)");
+			db.execSQL("INSERT INTO " + RaceMeetTeams.getTableName() + "(" + RaceMeetTeams.RaceMeet_ID + "," + RaceMeetTeams.TeamInfo_ID + ") VALUES (1, 12)");
+			db.execSQL("INSERT INTO " + RaceMeetTeams.getTableName() + "(" + RaceMeetTeams.RaceMeet_ID + "," + RaceMeetTeams.TeamInfo_ID + ") VALUES (1, 15)");
+			db.execSQL("INSERT INTO " + RaceMeetTeams.getTableName() + "(" + RaceMeetTeams.RaceMeet_ID + "," + RaceMeetTeams.TeamInfo_ID + ") VALUES (1, 23)");
+			
 			
 			// Add races to the meet
-			db.execSQL("INSERT INTO " + Race.getTableName() + "(" + Race.Category + "," + Race.Distance + "," + Race.Gender + "," + Race.NumSplits + "," + Race.RaceMeet_ID + "," + Race.RaceStartTime + ") VALUES ('Varsity', 3.1, 'Boys', 3, 1, 1349166600)");
-			db.execSQL("INSERT INTO " + Race.getTableName() + "(" + Race.Category + "," + Race.Distance + "," + Race.Gender + "," + Race.NumSplits + "," + Race.RaceMeet_ID + "," + Race.RaceStartTime + ") VALUES ('Varsity', 3.1, 'Girls', 3, 1, 1349166600)");
-			db.execSQL("INSERT INTO " + Race.getTableName() + "(" + Race.Category + "," + Race.Distance + "," + Race.Gender + "," + Race.NumSplits + "," + Race.RaceMeet_ID + "," + Race.RaceStartTime + ") VALUES ('Modified', 2, 'Boys', 2, 1, 1349166600)");
-			db.execSQL("INSERT INTO " + Race.getTableName() + "(" + Race.Category + "," + Race.Distance + "," + Race.Gender + "," + Race.NumSplits + "," + Race.RaceMeet_ID + "," + Race.RaceStartTime + ") VALUES ('Modified', 2, 'Girls', 2, 1, 1349166600)");
+			//db.execSQL("INSERT INTO " + Race.getTableName() + "(" + Race.Category + "," + Race.Distance + "," + Race.Gender + "," + Race.NumSplits + "," + Race.RaceMeet_ID + "," + Race.RaceStartTime + ") VALUES ('Varsity', 3.1, 'Boys', 3, 1, 1349209800000)");
+			db.execSQL("INSERT INTO " + Race.getTableName() + "(" + Race.Category + "," + Race.Distance + "," + Race.Gender + "," + Race.NumSplits + "," + Race.RaceMeet_ID + "," + Race.RaceStartTime + ") VALUES ('Modified', 2, 'Both', 2, 1, 1349209800000)");
+			db.execSQL("INSERT INTO " + Race.getTableName() + "(" + Race.Category + "," + Race.Distance + "," + Race.Gender + "," + Race.NumSplits + "," + Race.RaceMeet_ID + "," + Race.RaceStartTime + ") VALUES ('Varsity', 3.1, 'Girls', 3, 1, 1349209800000)");
 			
-			// Add a couple of racers
-			db.execSQL("INSERT INTO " + Racer.getTableName() + "(" + Racer.FirstName + "," + Racer.LastName + "," + Racer.Gender + ") VALUES ('Mark', 'Blakley', 'Boys')");
-			db.execSQL("INSERT INTO " + Racer.getTableName() + "(" + Racer.FirstName + "," + Racer.LastName + "," + Racer.Gender + ") VALUES ('Greg', 'Gray', 'Boys')");
-			db.execSQL("INSERT INTO " + Racer.getTableName() + "(" + Racer.FirstName + "," + Racer.LastName + "," + Racer.Gender + ") VALUES ('Perry', 'Pellerino', 'Boys')");
-			
-			// Add their racer club info
-			db.execSQL("INSERT INTO " + RacerClubInfo.getTableName() + "(" + RacerClubInfo.Racer_ID + "," + RacerClubInfo.TeamInfo_ID + "," + RacerClubInfo.Category + "," + RacerClubInfo.Grade + "," + RacerClubInfo.SpeedLevel + ") VALUES (1, 1, 'Varsity', 12, 6)");
-			db.execSQL("INSERT INTO " + RacerClubInfo.getTableName() + "(" + RacerClubInfo.Racer_ID + "," + RacerClubInfo.TeamInfo_ID + "," + RacerClubInfo.Category + "," + RacerClubInfo.Grade + "," + RacerClubInfo.SpeedLevel + ") VALUES (2, 1, 'Varsity', 11, 8)");
-			db.execSQL("INSERT INTO " + RacerClubInfo.getTableName() + "(" + RacerClubInfo.Racer_ID + "," + RacerClubInfo.TeamInfo_ID + "," + RacerClubInfo.Category + "," + RacerClubInfo.Grade + "," + RacerClubInfo.SpeedLevel + ") VALUES (3, 1, 'Varsity', 10, 4)");
+//			// Add a couple of racers
+//			db.execSQL("INSERT INTO " + Racer.getTableName() + "(" + Racer.FirstName + "," + Racer.LastName + "," + Racer.Gender + ") VALUES ('Mark', 'Blakley', 'Boys')");
+//			db.execSQL("INSERT INTO " + Racer.getTableName() + "(" + Racer.FirstName + "," + Racer.LastName + "," + Racer.Gender + ") VALUES ('Greg', 'Gray', 'Boys')");
+//			db.execSQL("INSERT INTO " + Racer.getTableName() + "(" + Racer.FirstName + "," + Racer.LastName + "," + Racer.Gender + ") VALUES ('Perry', 'Pellerino', 'Boys')");
+//			
+//			// Add their racer club info
+//			db.execSQL("INSERT INTO " + RacerClubInfo.getTableName() + "(" + RacerClubInfo.Racer_ID + "," + RacerClubInfo.TeamInfo_ID + "," + RacerClubInfo.Category + "," + RacerClubInfo.Grade + "," + RacerClubInfo.SpeedLevel + ") VALUES (1, 1, 'Varsity', 12, 6)");
+//			db.execSQL("INSERT INTO " + RacerClubInfo.getTableName() + "(" + RacerClubInfo.Racer_ID + "," + RacerClubInfo.TeamInfo_ID + "," + RacerClubInfo.Category + "," + RacerClubInfo.Grade + "," + RacerClubInfo.SpeedLevel + ") VALUES (2, 1, 'Varsity', 11, 8)");
+//			db.execSQL("INSERT INTO " + RacerClubInfo.getTableName() + "(" + RacerClubInfo.Racer_ID + "," + RacerClubInfo.TeamInfo_ID + "," + RacerClubInfo.Category + "," + RacerClubInfo.Grade + "," + RacerClubInfo.SpeedLevel + ") VALUES (3, 1, 'Varsity', 10, 4)");
 	    }
 
 	    @Override

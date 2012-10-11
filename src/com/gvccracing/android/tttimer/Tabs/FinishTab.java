@@ -220,7 +220,7 @@ public class FinishTab extends BaseTab implements View.OnClickListener,	LoaderMa
 				case TEAMS_LOADER_FINISH:					
 					teamsCA.swapCursor(cursor);	
 					break;
-				case FINISH_ORDER_LOADER_FINISH:					
+				case FINISH_ORDER_LOADER_FINISH:
 					myRacersCA.swapCursor(cursor);	
 					break;
 				case SPLITS_LOADER_FINISH:					

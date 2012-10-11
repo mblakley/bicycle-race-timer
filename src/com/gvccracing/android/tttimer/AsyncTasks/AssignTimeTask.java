@@ -122,9 +122,9 @@ public class AssignTimeTask extends AsyncTask<Long, Void, AssignResult> {
 			
 			UnassignedTimes.Create(context, Long.parseLong(AppSettings.ReadValue(context, AppSettings.AppSetting_RaceID_Name, "-1")), endTime, raceResult_ID, teamInfo_ID, elapsedTime, 0);
 			
-	    	// Calculate Category Placing, Overall Placing, Points
-	    	Calculations.CalculateOverallPlacings(context, Long.parseLong(AppSettings.ReadValue(context, AppSettings.AppSetting_RaceID_Name, "-1"))); // Do this first, since "category" placings are really team placings based on the sum of the top 5 overall placings
-	    	Calculations.CalculateCategoryPlacings(context, Long.parseLong(AppSettings.ReadValue(context, AppSettings.AppSetting_RaceID_Name, "-1"))); 
+//	    	// Calculate Category Placing, Overall Placing, Points
+//	    	Calculations.CalculateOverallPlacings(context, Long.parseLong(AppSettings.ReadValue(context, AppSettings.AppSetting_RaceID_Name, "-1"))); // Do this first, since "category" placings are really team placings based on the sum of the top 5 overall placings
+//	    	Calculations.CalculateCategoryPlacings(context, Long.parseLong(AppSettings.ReadValue(context, AppSettings.AppSetting_RaceID_Name, "-1"))); 
 		}catch(Exception ex){Log.e("AssignTime", "onClick failed:", ex);}
 		return result;
 	}
