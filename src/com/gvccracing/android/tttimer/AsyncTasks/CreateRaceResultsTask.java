@@ -14,11 +14,13 @@ import android.os.AsyncTask;
 import android.os.RemoteException;
 import android.util.Log;
 
+import com.gvccracing.android.tttimer.DataAccess.RacerInfoViewCP.RacerInfoView;
 import com.gvccracing.android.tttimer.DataAccess.TTProvider;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
 import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
 
-public class CreateRaceResultsTask  extends AsyncTask<Long, Void, Void> {
+public class CreateRaceResultsTask  extends AsyncTask<Object, Void, Void> {
 	
 	final Lock lock = new ReentrantLock();
 	
@@ -33,9 +35,11 @@ public class CreateRaceResultsTask  extends AsyncTask<Long, Void, Void> {
 	}
 
 	@Override
-	protected Void doInBackground(Long... params) {
-		long race_ID = params[0];
-		long teamInfo_ID = params[1];
+	protected Void doInBackground(Object... params) {
+		long race_ID = (Long)params[0];
+		long teamInfo_ID = (Long)params[1];
+		String category = (String)params[2];
+		String gender = (String)params[3];
 		
 		try{
 			lock.tryLock(500, TimeUnit.MILLISECONDS);
@@ -44,7 +48,7 @@ public class CreateRaceResultsTask  extends AsyncTask<Long, Void, Void> {
 			// Create the list of operations to perform in the batch
 			ArrayList<ContentProviderOperation> operations = new ArrayList<ContentProviderOperation>();
 			if(raceResults != null && raceResults.getCount() <= 0){
-				Cursor racerClubInfo = RacerClubInfo.Read(context, new String[]{RacerClubInfo._ID}, RacerClubInfo.TeamInfo_ID + "=?", new String[]{Long.toString(teamInfo_ID)}, RacerClubInfo._ID);
+				Cursor racerClubInfo = RacerInfoView.Read(context, new String[]{RacerClubInfo.getTableName() + "." + RacerClubInfo._ID}, RacerClubInfo.TeamInfo_ID + "=? AND " + RacerClubInfo.Category + "=? AND " + Racer.Gender + "=?", new String[]{Long.toString(teamInfo_ID), category, gender}, RacerClubInfo.getTableName() + "." + RacerClubInfo._ID);
 				
 				racerClubInfo.moveToFirst();
 				while(!racerClubInfo.isAfterLast()){			     	
@@ -73,7 +77,10 @@ public class CreateRaceResultsTask  extends AsyncTask<Long, Void, Void> {
 				} catch (OperationApplicationException e) {
 					Log.e("CreateRaceResultsTask", "doInBackground failed", e);
 				}
-			}			
+			}
+			
+			raceResults.close();
+			raceResults = null;
 		} catch (InterruptedException e) {
 			Log.e("CreateRaceResultsTask", "Unable to lock", e);
 		}

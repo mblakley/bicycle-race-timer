@@ -8,8 +8,7 @@
         android:id="@+id/linearLayout11"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:weightSum="1">
+    	android:baselineAligned="false">
 
         <TextView
             android:id="@+id/lblMeet"
@@ -36,7 +35,7 @@
         android:id="@+id/linearLayout12"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical">
+    	android:baselineAligned="false">
 
         <TextView
             android:id="@+id/lblMyTeam"
@@ -63,7 +62,7 @@
         android:id="@+id/linearLayout13"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical">
+    	android:baselineAligned="false">
 
         <TextView
             android:id="@+id/lblCurrentRace"

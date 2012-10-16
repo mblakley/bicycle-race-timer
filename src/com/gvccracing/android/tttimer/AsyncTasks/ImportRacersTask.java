@@ -60,7 +60,6 @@ public class ImportRacersTask extends AsyncTask<Void, Integer, Void> {
 		        try {
 					while((content = br.readLine())!=null)
 					{
-						Log.i("Reader", content);
 						String category = "Varsity";
 						if(filename.contains("modified")){
 							category = "Modified";						
@@ -70,12 +69,13 @@ public class ImportRacersTask extends AsyncTask<Void, Integer, Void> {
 						String firstName = fields[1];
 						Long grade = Long.parseLong(fields[2].trim());
 						String gender = fields[3];
+						float speedLevel = Float.parseFloat(fields[4].trim());
 						
 						Uri racerUri = Racer.Create(context, firstName, lastName, gender, 0, 0, null, 0);
 						
 						Long racer_ID = Long.parseLong(racerUri.getLastPathSegment());
 						
-						RacerClubInfo.Create(context, racer_ID, 23l, category, grade, 5);
+						RacerClubInfo.Create(context, racer_ID, 23l, category, grade, speedLevel);
 					}
 				} catch (IOException e) {
 					// TODO Auto-generated catch block

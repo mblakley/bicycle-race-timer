@@ -2,6 +2,7 @@ package com.gvccracing.android.tttimer.Tabs;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Hashtable;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -99,8 +100,6 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 	public void onResume() {
 		super.onResume(); 		
 		
-		meetsCA = new SingleStringCursorAdapter(getActivity(), null);
-		spinMeet.setAdapter(meetsCA);
 		
 		spinMeet.setOnItemSelectedListener(new OnItemSelectedListener() {		    
 		    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
@@ -116,8 +115,6 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 		    }
 		});
 		
-		teamsCA = new SingleStringCursorAdapter(getActivity(), null);
-		spinMyTeam.setAdapter(teamsCA);
 		
 		spinMyTeam.setOnItemSelectedListener(new OnItemSelectedListener() {		    
 		    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
@@ -132,15 +129,17 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 		    }
 		});		
 		
-		racesCA = new SingleStringCursorAdapter(getActivity(), null);
-		spinRaceCategory.setAdapter(racesCA);
 		
 		spinRaceCategory.setOnItemSelectedListener(new OnItemSelectedListener() {		    
 		    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
 		    	AppSettings.Update(getActivity(), AppSettings.AppSetting_RaceID_Name, Long.toString(id), true);		    	
 
+		    	Hashtable<String, Object> raceValues = Race.getValues(getActivity(), id);
+		    	String category = raceValues.get(Race.Category).toString();
+		    	String gender = raceValues.get(Race.Gender).toString();
+		    	
 				CreateRaceResultsTask crrt = new CreateRaceResultsTask(getActivity());
-				crrt.execute(id, selectedTeamInfo_ID);
+				crrt.execute(id, selectedTeamInfo_ID, category, gender);
 
 				getActivity().getSupportLoaderManager().restartLoader(RACE_INFO_LOADER, null, RaceInfoTab.this);
 				
@@ -156,9 +155,9 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 		});
 		
 		// Initialize the cursor loader for the meets
-		getActivity().getSupportLoaderManager().initLoader(MEETS_LOADER, null, this);
+		getActivity().getSupportLoaderManager().restartLoader(MEETS_LOADER, null, this);
 		
-		selectedTeamInfo_ID = Long.parseLong(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_TeamID_Name, Long.toString(selectedTeamInfo_ID)));
+		//selectedTeamInfo_ID = Long.parseLong(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_TeamID_Name, Long.toString(selectedTeamInfo_ID)));
 		
 
 	    //getActivity().getSupportLoaderManager().initLoader(APP_SETTINGS_LOADER_RACEINFO, null, this);
@@ -251,7 +250,17 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 			Log.i(LOG_TAG(), "onLoadFinished start: id=" + Integer.toString(loader.getId()));
 			switch(loader.getId()){
 				case MEETS_LOADER:
-					meetsCA.swapCursor(cursor);						
+					if(meetsCA == null){
+						if(cursor.getCount() > 0){
+							meetsCA = new SingleStringCursorAdapter(getActivity(), cursor);
+							spinMeet.setAdapter(meetsCA);
+						} else{
+							Log.i("Binding shit", "Not binding anything");
+						}
+					} else{
+						spinMeet.setAdapter(meetsCA);
+						meetsCA.swapCursor(cursor);
+					}
 					
 					getActivity().getSupportLoaderManager().restartLoader(CURRENT_MEET_LOADER, null, this);
 					break;
@@ -265,15 +274,30 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 						
 						if(meet_ID > 0){
 							meetIDPosition = GetPositionByID(meetsCA, meet_ID);
-						}	
+						}
+						spinMeet.setSelection(meetIDPosition);
+						
 					} 
-					spinMeet.setSelection(meetIDPosition);
+					if(cursor != null){
+						cursor.close();
+						cursor = null;
+					}
 					
 					// After the new meet has been selected, restart the teams loader
 					getActivity().getSupportLoaderManager().restartLoader(MEET_TEAMS_LOADER, null, this);					
 					break;
-				case MEET_TEAMS_LOADER:					
-					teamsCA.swapCursor(cursor);	
+				case MEET_TEAMS_LOADER:		
+					if(teamsCA == null){
+						if(cursor.getCount() > 0){
+							teamsCA = new SingleStringCursorAdapter(getActivity(), cursor);
+							spinMyTeam.setAdapter(teamsCA);
+						} else{
+							Log.i("Binding shit", "Not binding anything");
+						}
+					} else{
+						spinMyTeam.setAdapter(teamsCA);
+						teamsCA.swapCursor(cursor);
+					}
 
 					getActivity().getSupportLoaderManager().restartLoader(CURRENT_MEET_TEAM_LOADER, null, this);
 					break;
@@ -287,15 +311,28 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 						if(team_ID > 0){
 							teamIDPosition = GetPositionByID(teamsCA, team_ID);
 						}	
+						spinMyTeam.setSelection(teamIDPosition);
 					} 
-					spinMyTeam.setSelection(teamIDPosition);
-					
+					if(cursor != null){
+						cursor.close();
+						cursor = null;
+					}					
 					
 					// After the new team has been selected, restart the races loader
 					getActivity().getSupportLoaderManager().restartLoader(MEET_RACES_LOADER, null, this);
 					break;
-				case MEET_RACES_LOADER:					
-					racesCA.swapCursor(cursor);															
+				case MEET_RACES_LOADER:	
+					if(racesCA == null){
+						if(cursor.getCount() > 0){
+							racesCA = new SingleStringCursorAdapter(getActivity(), cursor);
+							spinRaceCategory.setAdapter(racesCA);
+						} else{
+							Log.i("Binding shit", "Not binding anything");
+						}
+					} else{
+						spinRaceCategory.setAdapter(racesCA);
+						racesCA.swapCursor(cursor);
+					}														
 
 					getActivity().getSupportLoaderManager().restartLoader(CURRENT_MEET_RACE_LOADER, null, this);
 					break;
@@ -309,8 +346,12 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 						if(race_ID > 0){
 							raceIDPosition = GetPositionByID(racesCA, race_ID);
 						}
+						spinRaceCategory.setSelection(raceIDPosition);	
 					} 			
-					spinRaceCategory.setSelection(raceIDPosition);					
+					if(cursor != null){
+						cursor.close();
+						cursor = null;
+					}				
 					
 					// After the new team has been selected, restart the races loader
 					getActivity().getSupportLoaderManager().restartLoader(RACE_INFO_LOADER, null, this);
@@ -328,6 +369,10 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 						raceCourseName.setText(courseName);
 						
 						raceDistance.setText(Float.toString(distanceF) + " mi");
+					}
+					if(cursor != null){
+						cursor.close();
+						cursor = null;
 					}
 					break;
 			}

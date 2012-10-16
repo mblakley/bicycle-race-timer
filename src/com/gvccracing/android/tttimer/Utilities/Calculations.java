@@ -93,6 +93,9 @@ public class Calculations {
 				
 				int numMyTeamResults = myTeamResults.getCount();
 				
+				myTeamResults.close();
+				myTeamResults = null;
+				
 				long myTeamID = Long.parseLong(AppSettings.ReadValue(context, AppSettings.AppSetting_TeamID_Name, "-1"));
 
 	    		//Long raceType_ID = Race.getValues(context, race_ID).get(Race.RaceType);
@@ -101,8 +104,8 @@ public class Calculations {
 					Long raceTeam = teams.getLong(0);
 					// Get the race results for this race and this category
 					Cursor teamResults = context.getContentResolver().query(RaceResultsLapsView.CONTENT_URI, new String[]{RaceResults.getTableName() + "." + RaceResults._ID + " as _id", RaceResults.getTableName() + "." + RaceResults.TeamInfo_ID, RaceResults.getTableName() + "." + RaceResults.ElapsedTime, RaceResults.getTableName() + "." + RaceResults.OverallPlacing}, 
-																			 RaceResults.getTableName() + "." + RaceResults.Race_ID + "=? AND " + RaceResults.getTableName() + "." + RaceResults.ElapsedTime + " IS NOT NULL AND " + RaceResults.getTableName() + "." + RaceResults.TeamInfo_ID + "=? OR " + RaceResults.getTableName() + "." + RaceResults.TeamInfo_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_TeamID_Name), 
-																			 new String[]{Long.toString(race_ID), Long.toString(raceTeam)}, RaceResults.getTableName() + "." + RaceResults.ElapsedTime);
+																			 RaceResults.getTableName() + "." + RaceResults.Race_ID + "=? AND " + RaceResults.getTableName() + "." + RaceResults.ElapsedTime + " IS NOT NULL AND " + RaceResults.getTableName() + "." + RaceResults.TeamInfo_ID + "=? OR " + RaceResults.getTableName() + "." + RaceResults.TeamInfo_ID + "=?", 
+																			 new String[]{Long.toString(race_ID), Long.toString(raceTeam), Long.toString(myTeamID)}, RaceResults.getTableName() + "." + RaceResults.ElapsedTime);
 					// Get the total number of racers in this category
 					Integer totalTeam2Racers = teamResults.getCount() - numMyTeamResults;
 					long resultPoints = 0;

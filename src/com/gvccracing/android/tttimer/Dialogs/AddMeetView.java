@@ -126,8 +126,8 @@ public class AddMeetView extends BaseDialog implements View.OnClickListener, Loa
 	
 	protected Date GetRaceDate(int hour, int minute){
 		DatePicker datePicker = (DatePicker) getView().findViewById(R.id.dateRaceDate);
-		GregorianCalendar cal = new GregorianCalendar(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth(), hour, minute);		
-		return cal.getTime();
+		Date cal = new Date(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth(), hour, minute);		
+		return cal;
 	}
 	
 	public void onClick(View v) { 
@@ -136,10 +136,10 @@ public class AddMeetView extends BaseDialog implements View.OnClickListener, Loa
 				Uri raceMeetUri = RaceMeet.Create(getActivity(), GetRaceDate(0, 0), raceLocation.getSelectedItemId());
 				long raceMeet_ID = Long.parseLong(raceMeetUri.getLastPathSegment());
 				
-				AddMeetTeam(raceMeet_ID, 3);
+				AddMeetTeam(raceMeet_ID, 6);
 				AddMeetTeam(raceMeet_ID, 4);
-				AddMeetTeam(raceMeet_ID, 12);
-				AddMeetTeam(raceMeet_ID, 15);
+				AddMeetTeam(raceMeet_ID, 9);
+				AddMeetTeam(raceMeet_ID, 22);
 				AddMeetTeam(raceMeet_ID, 23);
 				
 				// Add races for Boys Varsity, Girls Varsity, and Modified

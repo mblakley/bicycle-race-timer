@@ -55,7 +55,7 @@ public class DualMeetResultsCursorAdapter extends BaseCursorAdapter {
         
         
         TextView lblTeam1Name = (TextView) v.findViewById(R.id.lblTeam1Name);
-        TextView lblTeam1Points = (TextView) v.findViewById(R.id.lblTeam1Name);
+        TextView lblTeam1Points = (TextView) v.findViewById(R.id.lblTeam1Points);
         TextView lblTeam2Name = (TextView) v.findViewById(R.id.lblTeam2Name);
         TextView lblTeam2Points = (TextView) v.findViewById(R.id.lblTeam2Points);
 		
