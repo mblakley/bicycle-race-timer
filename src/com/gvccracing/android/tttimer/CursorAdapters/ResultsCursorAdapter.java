@@ -3,7 +3,6 @@ package com.gvccracing.android.tttimer.CursorAdapters;
 import com.gvccracing.android.tttimer.R;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
-import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
 import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
 import com.gvccracing.android.tttimer.Utilities.TimeFormatter;
 
@@ -113,7 +112,7 @@ public class ResultsCursorAdapter extends BaseCursorAdapter {
         	lblCategory.setLayoutParams(param);
 
 
-	    	int pointsCol = c.getColumnIndex(RaceResults.Points);
+	    	int pointsCol = 0;//c.getColumnIndex(RaceResults.Points);
 	        Integer points = c.getInt(pointsCol);	 
 
 			TextView lblPoints = (TextView) v.findViewById(R.id.lblPoints);

@@ -26,7 +26,9 @@ public class RaceCP {
         public static final String RaceMeet_ID = "RaceMeet_ID";
         public static final String Gender = "Gender";
         public static final String Category = "Category";
+        public static final String ExpectedStartTime = "ExpectedStartTime";
         public static final String RaceStartTime = "RaceStartTime";
+        public static final String RaceEndTime = "RaceEndTime";
         public static final String NumSplits = "NumSplits";
         public static final String Distance = "Distance";
         
@@ -40,7 +42,9 @@ public class RaceCP {
         	        + RaceMeet_ID + " integer references " + RaceMeet.getTableName() + "(" + RaceMeet._ID + ") not null,"
         	        + Gender + " text not null,"
         	        + Category + " text not null,"
+        	        + ExpectedStartTime + " integer not null,"
         	        + RaceStartTime + " integer null,"
+        	        + RaceEndTime + " integer null,"
         	        + Distance + " integer not null,"
         	        + NumSplits + " integer not null);";
         }
@@ -49,26 +53,37 @@ public class RaceCP {
         	return new Uri[]{Race.CONTENT_URI, CheckInViewInclusive.CONTENT_URI, CheckInViewExclusive.CONTENT_URI, RaceInfoView.CONTENT_URI, RaceLocation.CONTENT_URI};
         }
 
-		public static Uri Create(Context context, long raceMeet_ID, Date raceStartTime, String gender, String category, float distance, long numSplits) {
+		public static Uri Create(Context context, long raceMeet_ID, Date expectedStartTime, String gender, String category, float distance, long numSplits) {
 			ContentValues content = new ContentValues();
 			content.put(Race.RaceMeet_ID, raceMeet_ID);
-			content.put(Race.RaceStartTime, raceStartTime.getTime());
+			content.put(Race.ExpectedStartTime, expectedStartTime.getTime());
+			content.putNull(Race.RaceStartTime);
+			content.putNull(Race.RaceEndTime);
 			content.put(Race.Gender, gender);
+			content.put(Race.Category, category);
 			content.put(Race.NumSplits, numSplits);
 			content.put(Race.Distance, distance);
 
 	     	return context.getContentResolver().insert(Race.CONTENT_URI, content);
 		}
 
-		public static int Update(Context context, String where, String[] selectionArgs, Long raceMeet_ID, Date raceStartTime, String gender, String category, Float distance, Long numSplits) {
+		public static int Update(Context context, String where, String[] selectionArgs, Long raceMeet_ID, Date expectedStartTime, Date raceStartTime, Long raceEndTime, String gender, String category, Float distance, Long numSplits) {
 			ContentValues content = new ContentValues();
 			if(raceMeet_ID != null)
 	        {
 				content.put(Race.RaceMeet_ID, raceMeet_ID);
 	        }
+			if(expectedStartTime != null)
+	        {
+	        	content.put(Race.ExpectedStartTime, expectedStartTime.getTime());
+	        }
 	        if(raceStartTime != null)
 	        {
 	        	content.put(Race.RaceStartTime, raceStartTime.getTime());
+	        }
+	        if(raceEndTime != null)
+	        {
+	        	content.put(Race.RaceEndTime, raceEndTime);
 	        }
 	        if(gender != null)
 	        {
@@ -103,7 +118,9 @@ public class RaceCP {
 				raceValues.put(Race.RaceMeet_ID, raceCursor.getLong(raceCursor.getColumnIndex(Race.RaceMeet_ID)));
 				raceValues.put(Race.Gender, raceCursor.getString(raceCursor.getColumnIndex(Race.Gender)));
 				raceValues.put(Race.Category, raceCursor.getString(raceCursor.getColumnIndex(Race.Category)));
+				raceValues.put(Race.ExpectedStartTime, raceCursor.getLong(raceCursor.getColumnIndex(Race.ExpectedStartTime)));
 				raceValues.put(Race.RaceStartTime, raceCursor.getLong(raceCursor.getColumnIndex(Race.RaceStartTime)));
+				raceValues.put(Race.RaceEndTime, raceCursor.getLong(raceCursor.getColumnIndex(Race.RaceEndTime)));
 				raceValues.put(Race.Distance, raceCursor.getLong(raceCursor.getColumnIndex(Race.Distance)));
 				raceValues.put(Race.NumSplits, raceCursor.getLong(raceCursor.getColumnIndex(Race.NumSplits)));
 			}

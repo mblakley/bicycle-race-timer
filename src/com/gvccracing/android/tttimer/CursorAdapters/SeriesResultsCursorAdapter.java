@@ -52,7 +52,7 @@ public class SeriesResultsCursorAdapter extends BaseCursorAdapter {
         int firstNameCol = c.getColumnIndex(Racer.FirstName);
         int lastNameCol = c.getColumnIndex(Racer.LastName);
         int categoryCol = c.getColumnIndex(RacerClubInfo.Category);
-    	int pointsCol = c.getColumnIndex(RaceResults.Points);
+    	int pointsCol = 0;//c.getColumnIndex(RaceResults.Points);
         
         String firstName = c.getString(firstNameCol);
         String lastName = c.getString(lastNameCol);

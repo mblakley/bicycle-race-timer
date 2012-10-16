@@ -58,56 +58,89 @@
 	            android:choiceMode="singleChoice" >
 		    </ListView>
 	    </LinearLayout>
-    </LinearLayout>
+    </LinearLayout>    
     
-    <LinearLayout
-        android:id="@+id/llSplits"
-        android:layout_width="fill_parent"
-        android:layout_height="0dip"
-        android:orientation="vertical"
-        android:layout_weight="0.3" >
     
-	    <TextView
-	        android:id="@+id/lblFinishOrder"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:text="@string/FinishOrder"
-	        android:gravity="center_horizontal"
-	        style="@style/Medium"
-	        android:visibility="gone" />   
-	    
-	    <TextView
-	        android:id="@+id/lblSplits"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:text="@string/Splits"
-	        android:gravity="center_horizontal"
-	        style="@style/Medium" /> 
 	        
-	    <ListView
-	        android:id="@+id/lvFinishOrder"
-	        android:layout_width="fill_parent"
-	        android:layout_height="50dp"
-	        android:gravity="center_horizontal" />
-	    
-	    <GridView  
-		    android:id="@+id/gvSplitButtons"
-		    android:layout_width="wrap_content" 
-		    android:layout_height="100dp"
-		    android:columnWidth="90dp"
-		    android:numColumns="3"
-		    android:verticalSpacing="0dp"
-		    android:horizontalSpacing="10dp"
-		    android:stretchMode="columnWidth"
-		    android:gravity="center"
-		    android:visibility="gone"/>
-	    
-	    <Button
-	        android:id="@+id/btnRacerFinished"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:state_enabled="false"
-	        android:text="@string/AllRacersFinished"
-	        style="@style/Medium.Padded" />
+	<TextView
+		android:id="@+id/lblSplits"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:text="@string/Splits"
+		android:gravity="center_horizontal"
+		style="@style/Medium" />
+	
+   	<ListView
+        android:id="@+id/lvSplits"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.20"/>
+	
+	<LinearLayout
+	    android:id="@+id/llSplitButtons"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:weightSum="0.9"
+        android:layout_weight="0.15"
+        android:layout_margin="0dp">	
+<!--         <Button -->
+<!--             android:id="@+id/btn1" -->
+<!--             android:layout_width="fill_parent" -->
+<!--             android:layout_height="wrap_content" -->
+<!--             style="@style/Medium" -->
+<!--             android:layout_weight="0.3" -->
+<!--             android:text="Split 1"/> -->
+<!--         <Button -->
+<!--             android:id="@+id/btn2" -->
+<!--             android:layout_width="fill_parent" -->
+<!--             android:layout_height="wrap_content" -->
+<!--             style="@style/Medium" -->
+<!--             android:layout_weight="0.3" -->
+<!--             android:text="Split 2"/> -->
+<!--         <Button -->
+<!--             android:id="@+id/btn3" -->
+<!--             android:layout_width="fill_parent" -->
+<!--             android:layout_height="wrap_content" -->
+<!--             style="@style/Medium" -->
+<!--             android:layout_weight="0.3" -->
+<!--             android:text="Split 3"/> -->
     </LinearLayout>
+	    
+<!--     <TabHost -->
+<!--    		android:id="@+id/tabSplits" -->
+<!-- 		android:layout_width="fill_parent" -->
+<!-- 		android:layout_height="0dip" -->
+<!-- 		android:orientation="vertical" -->
+<!-- 		android:layout_weight="0.3" > -->
+
+<!-- 	    <LinearLayout -->
+<!-- 	        android:layout_width="fill_parent" -->
+<!-- 	        android:layout_height="fill_parent" -->
+<!-- 	        android:orientation="vertical">			         -->
+<!-- 	        <FrameLayout -->
+<!-- 	            android:id="@+android:id/tabcontent" -->
+<!-- 	            android:layout_width="fill_parent" -->
+<!-- 	            android:layout_height="wrap_content"> -->
+<!-- 	            <TextView -->
+<!-- 			        android:id="@+id/lblSplitsTest" -->
+<!-- 			        android:layout_width="fill_parent" -->
+<!-- 			        android:layout_height="wrap_content" -->
+<!-- 			        android:text="@string/Splits" -->
+<!-- 			        android:gravity="center_horizontal" -->
+<!-- 			        style="@style/Medium" /> -->
+<!--             	<ListView -->
+<!-- 			        android:id="@+id/lvSplits" -->
+<!-- 			        android:layout_width="fill_parent" -->
+<!-- 			        android:layout_height="fill_parent" -->
+<!-- 			        android:visibility="gone"> -->
+<!-- 		    	</ListView> -->
+<!--             </FrameLayout>	 -->
+	        
+<!-- 	        <TabWidget -->
+<!-- 	            android:id="@android:id/tabs" -->
+<!-- 	            android:layout_width="fill_parent" -->
+<!-- 	            android:layout_height="wrap_content" /> -->
+<!-- 	    </LinearLayout> -->
+<!-- 	</TabHost>     -->
 </LinearLayout>

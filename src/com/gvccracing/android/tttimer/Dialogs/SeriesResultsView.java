@@ -17,6 +17,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import com.gvccracing.android.tttimer.R;
 import com.gvccracing.android.tttimer.CursorAdapters.SeriesResultsCursorAdapter;
 import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewExclusive;
+import com.gvccracing.android.tttimer.DataAccess.DualMeetResultsCP.DualMeetResults;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
 import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
@@ -76,10 +77,10 @@ public class SeriesResultsView extends BaseDialog implements View.OnClickListene
 		String sortOrder;
 		switch(id){			
 			case SERIES_RESULTS_LOADER:
-				projection = new String[]{RacerClubInfo.getTableName() + "." + RacerClubInfo._ID, Racer.LastName, Racer.FirstName, RacerClubInfo.Category, "SUM(" + RaceResults.Points + ") as " + RaceResults.Points};
+				projection = new String[]{RacerClubInfo.getTableName() + "." + RacerClubInfo._ID, Racer.LastName, Racer.FirstName, RacerClubInfo.Category, "SUM(" + DualMeetResults.Team1_Points + ") as " + DualMeetResults.Team1_Points};
 				selection = RaceResults.ElapsedTime + " IS NOT NULL AND " + RacerClubInfo.Category + "!=?";
 				selectionArgs = new String[]{"G"};
-				sortOrder = RacerClubInfo.Category + "," + RaceResults.Points + " DESC," + Racer.LastName;
+				sortOrder = RacerClubInfo.Category + "," + DualMeetResults.Team1_Points + " DESC," + Racer.LastName;
 				loader = new CursorLoader(getActivity(), Uri.withAppendedPath(CheckInViewExclusive.CONTENT_URI, "group by " + RacerClubInfo.getTableName() + "." + RacerClubInfo._ID + "," + Racer.LastName + "," + Racer.FirstName + "," + RacerClubInfo.Category), projection, selection, selectionArgs, sortOrder);
 				break;
 		}

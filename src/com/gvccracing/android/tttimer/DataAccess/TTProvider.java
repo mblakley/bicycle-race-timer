@@ -3,6 +3,8 @@ package com.gvccracing.android.tttimer.DataAccess;
 import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
 import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewExclusive;
 import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewInclusive;
+import com.gvccracing.android.tttimer.DataAccess.DualMeetResultsCP.DualMeetResults;
+import com.gvccracing.android.tttimer.DataAccess.DualMeetResultsCP.DualMeetResultsView;
 import com.gvccracing.android.tttimer.DataAccess.LocationImagesCP.LocationImages;
 import com.gvccracing.android.tttimer.DataAccess.LookupGroupsCP.LookupGroups;
 import com.gvccracing.android.tttimer.DataAccess.PrimesCP.Primes;
@@ -13,12 +15,14 @@ import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.RaceInfoView;
 import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.RaceLapsInfoView;
 import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.UnassignedTimesView;
 import com.gvccracing.android.tttimer.DataAccess.RaceLapsCP.RaceLaps;
+import com.gvccracing.android.tttimer.DataAccess.RaceLapsCP.RaceResultsLapsView;
 import com.gvccracing.android.tttimer.DataAccess.RaceLapsCP.TeamLaps;
 import com.gvccracing.android.tttimer.DataAccess.RaceLocationCP.RaceLocation;
 import com.gvccracing.android.tttimer.DataAccess.RaceMeetCP.RaceMeet;
 import com.gvccracing.android.tttimer.DataAccess.RaceMeetTeamsCP.RaceMeetTeams;
 import com.gvccracing.android.tttimer.DataAccess.RaceNotesCP.RaceNotes;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.RaceResultsRacerViewCP.RaceResultsRacerView;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsTeamOrRacerViewCP.RaceResultsTeamOrRacerView;
 import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
 import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
@@ -149,6 +153,12 @@ public class TTProvider extends ContentProvider {
 			resultUri = Uri.withAppendedPath(resultUri, Long.toString(locationImage_ID));
 			
 			notifyUris = LocationImages.getAllUrisToNotifyOnChange();
+		} else if(uri.toString().contains(RaceMeet.CONTENT_URI.toString())){
+			long raceMeet_ID = mDB.getWritableDatabase().insert(RaceMeet.getTableName(), null, content);
+			
+			resultUri = Uri.withAppendedPath(resultUri, Long.toString(raceMeet_ID));
+			
+			notifyUris = RaceMeet.getAllUrisToNotifyOnChange();
 		} else{
 			throw new UnsupportedOperationException("You're an idiot...add the uri " + uri.toString() + " to the TTProvider.insert if/else statement");
 		}
@@ -167,8 +177,15 @@ public class TTProvider extends ContentProvider {
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
 			String sortOrder) {
+		
+		String allSelectionArgs = "";
+		if(selectionArgs != null){
+			for(int i = 0; i < selectionArgs.length; i++){
+				allSelectionArgs += selectionArgs[i] + " ";
+			}
+		}		
 
-		Log.i("TTProvider", "query start: uri=" + uri.toString() + " selection=" + selection);
+		Log.i("TTProvider", "query start: uri=" + uri.toString() + " selection=" + selection + " selectionArgs=" + allSelectionArgs);
 		SQLiteQueryBuilder qBuilder = new SQLiteQueryBuilder();
 		qBuilder.setDistinct(true);
 		if(uri.toString().contains(CheckInViewInclusive.CONTENT_URI.toString())){
@@ -523,8 +540,60 @@ public class TTProvider extends ContentProvider {
 													selectionArgs, groupBy, null, sortOrder,
 													limit);
 			checkInCursor.setNotificationUri(getContext().getContentResolver(), UnassignedTimesView.CONTENT_URI);	
-			Log.i("TTProvider", "query complete: uri=" + uri.toString() + " selection=" + selection);
+			Log.i("TTProvider", "query complete: uri=" + uri.toString() + " selection=" + selection + " selectionArgs=" + allSelectionArgs);
 			return checkInCursor;
+		} else if(uri.toString().contains(RaceResultsLapsView.CONTENT_URI.toString())){
+			// RaceResultsLapsView
+			qBuilder.setTables(RaceResultsLapsView.getTableName());		
+			
+			Cursor cursor = qBuilder.query(mDB.getReadableDatabase(),
+													projection, 
+													selection, 
+													selectionArgs, null, null, sortOrder,
+													null);	
+			
+			cursor.setNotificationUri(getContext().getContentResolver(), uri);	
+			Log.i("TTProvider", "query complete: uri=" + uri.toString() + " selection=" + selection);
+			return cursor;
+		} else if(uri.toString().contains(RaceResultsRacerView.CONTENT_URI.toString())){
+			// RaceResultsRacerView
+			qBuilder.setTables(RaceResultsRacerView.getTableName());		
+			
+			Cursor cursor = qBuilder.query(mDB.getReadableDatabase(),
+													projection, 
+													selection, 
+													selectionArgs, null, null, sortOrder,
+													null);	
+			
+			cursor.setNotificationUri(getContext().getContentResolver(), uri);	
+			Log.i("TTProvider", "query complete: uri=" + uri.toString() + " selection=" + selection);
+			return cursor;
+		} else if(uri.toString().contains(DualMeetResultsView.CONTENT_URI.toString())){
+			// DualMeetResultsView
+			qBuilder.setTables(DualMeetResultsView.getTableName());		
+			
+			Cursor cursor = qBuilder.query(mDB.getReadableDatabase(),
+													projection, 
+													selection, 
+													selectionArgs, null, null, sortOrder,
+													null);	
+			
+			cursor.setNotificationUri(getContext().getContentResolver(), uri);	
+			Log.i("TTProvider", "query complete: uri=" + uri.toString() + " selection=" + selection);
+			return cursor;
+		} else if(uri.toString().contains(DualMeetResults.CONTENT_URI.toString())){
+			// DualMeetResults
+			qBuilder.setTables(DualMeetResults.getTableName());		
+			
+			Cursor cursor = qBuilder.query(mDB.getReadableDatabase(),
+													projection, 
+													selection, 
+													selectionArgs, null, null, sortOrder,
+													null);	
+			
+			cursor.setNotificationUri(getContext().getContentResolver(), uri);	
+			Log.i("TTProvider", "query complete: uri=" + uri.toString() + " selection=" + selection);
+			return cursor;
 		} else{
 			throw new UnsupportedOperationException("You're an idiot...add the uri " + uri.toString() + " to the TTProvider.query if/else statement");
 		}		
@@ -687,7 +756,8 @@ public class TTProvider extends ContentProvider {
     		db.execSQL("INSERT INTO " + LookupGroups.getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Category + "', 'Varsity');");
     		db.execSQL("INSERT INTO " + LookupGroups.getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Category + "', 'JV');");
     		db.execSQL("INSERT INTO " + LookupGroups.getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Category + "', 'Modified');");
-    		db.execSQL(LocationImages.getCreate());		
+    		db.execSQL(LocationImages.getCreate());
+    		db.execSQL(DualMeetResults.getCreate());	
     	
     		// Create all teams
     		// Arcadia
@@ -742,23 +812,23 @@ public class TTProvider extends ContentProvider {
 			db.execSQL("INSERT INTO " + TeamInfo.getTableName() + "(" + TeamInfo.TeamName + "," + TeamInfo.Year + "," + TeamInfo.Division + "," + TeamInfo.DivisionWins + "," + TeamInfo.DivisionLosses + "," + TeamInfo.OverallWins + "," + TeamInfo.OverallLosses + ") VALUES ('W. Irondequoit', 2012, 2, 0, 0, 0, 0)");
 						
 			// Create a location for the meet
-			db.execSQL("INSERT INTO " + RaceLocation.getTableName() + "(" + RaceLocation.CourseName + ") VALUES ('Parma Park')");
+			//db.execSQL("INSERT INTO " + RaceLocation.getTableName() + "(" + RaceLocation.CourseName + ") VALUES ('Parma Park')");
 			
 			// Create a single meet for testing
-			db.execSQL("INSERT INTO " + RaceMeet.getTableName() + "(" + RaceMeet.RaceLocation_ID + "," + RaceMeet.RaceMeetDate + ") VALUES (1, 1349209800000)");
+			//db.execSQL("INSERT INTO " + RaceMeet.getTableName() + "(" + RaceMeet.RaceLocation_ID + "," + RaceMeet.RaceMeetDate + ") VALUES (1, 1349209800000)");
 			
 			// Add teams to the meet
-			db.execSQL("INSERT INTO " + RaceMeetTeams.getTableName() + "(" + RaceMeetTeams.RaceMeet_ID + "," + RaceMeetTeams.TeamInfo_ID + ") VALUES (1, 3)");
-			db.execSQL("INSERT INTO " + RaceMeetTeams.getTableName() + "(" + RaceMeetTeams.RaceMeet_ID + "," + RaceMeetTeams.TeamInfo_ID + ") VALUES (1, 4)");
-			db.execSQL("INSERT INTO " + RaceMeetTeams.getTableName() + "(" + RaceMeetTeams.RaceMeet_ID + "," + RaceMeetTeams.TeamInfo_ID + ") VALUES (1, 12)");
-			db.execSQL("INSERT INTO " + RaceMeetTeams.getTableName() + "(" + RaceMeetTeams.RaceMeet_ID + "," + RaceMeetTeams.TeamInfo_ID + ") VALUES (1, 15)");
-			db.execSQL("INSERT INTO " + RaceMeetTeams.getTableName() + "(" + RaceMeetTeams.RaceMeet_ID + "," + RaceMeetTeams.TeamInfo_ID + ") VALUES (1, 23)");
+			//db.execSQL("INSERT INTO " + RaceMeetTeams.getTableName() + "(" + RaceMeetTeams.RaceMeet_ID + "," + RaceMeetTeams.TeamInfo_ID + ") VALUES (1, 3)");
+			//db.execSQL("INSERT INTO " + RaceMeetTeams.getTableName() + "(" + RaceMeetTeams.RaceMeet_ID + "," + RaceMeetTeams.TeamInfo_ID + ") VALUES (1, 4)");
+			//db.execSQL("INSERT INTO " + RaceMeetTeams.getTableName() + "(" + RaceMeetTeams.RaceMeet_ID + "," + RaceMeetTeams.TeamInfo_ID + ") VALUES (1, 12)");
+			//db.execSQL("INSERT INTO " + RaceMeetTeams.getTableName() + "(" + RaceMeetTeams.RaceMeet_ID + "," + RaceMeetTeams.TeamInfo_ID + ") VALUES (1, 15)");
+			//db.execSQL("INSERT INTO " + RaceMeetTeams.getTableName() + "(" + RaceMeetTeams.RaceMeet_ID + "," + RaceMeetTeams.TeamInfo_ID + ") VALUES (1, 23)");
 			
 			
 			// Add races to the meet
 			//db.execSQL("INSERT INTO " + Race.getTableName() + "(" + Race.Category + "," + Race.Distance + "," + Race.Gender + "," + Race.NumSplits + "," + Race.RaceMeet_ID + "," + Race.RaceStartTime + ") VALUES ('Varsity', 3.1, 'Boys', 3, 1, 1349209800000)");
-			db.execSQL("INSERT INTO " + Race.getTableName() + "(" + Race.Category + "," + Race.Distance + "," + Race.Gender + "," + Race.NumSplits + "," + Race.RaceMeet_ID + "," + Race.RaceStartTime + ") VALUES ('Modified', 2, 'Both', 2, 1, 1349209800000)");
-			db.execSQL("INSERT INTO " + Race.getTableName() + "(" + Race.Category + "," + Race.Distance + "," + Race.Gender + "," + Race.NumSplits + "," + Race.RaceMeet_ID + "," + Race.RaceStartTime + ") VALUES ('Varsity', 3.1, 'Girls', 3, 1, 1349209800000)");
+			//db.execSQL("INSERT INTO " + Race.getTableName() + "(" + Race.Category + "," + Race.Distance + "," + Race.Gender + "," + Race.NumSplits + "," + Race.RaceMeet_ID + "," + Race.RaceStartTime + ") VALUES ('Modified', 2, 'Both', 2, 1, 1349209800000)");
+			//db.execSQL("INSERT INTO " + Race.getTableName() + "(" + Race.Category + "," + Race.Distance + "," + Race.Gender + "," + Race.NumSplits + "," + Race.RaceMeet_ID + "," + Race.RaceStartTime + ") VALUES ('Varsity', 3.1, 'Girls', 3, 1, 1349209800000)");
 			
 //			// Add a couple of racers
 //			db.execSQL("INSERT INTO " + Racer.getTableName() + "(" + Racer.FirstName + "," + Racer.LastName + "," + Racer.Gender + ") VALUES ('Mark', 'Blakley', 'Boys')");

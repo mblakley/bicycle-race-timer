@@ -107,6 +107,17 @@ public class AdminMenuView extends BaseDialog implements View.OnClickListener {
     	    }else{
     	    	Log.i(LOG_TAG, "Authentication not successful");
     	    }
+    		if(Boolean.parseBoolean(AppSettings.ReadValue(getActivity(), "btnGetImagesFromDropbox", "false"))){
+    			AppSettings.Update(getActivity(), "btnGetImagesFromDropbox", "false", true);
+    			onClick(btnGetImagesFromDropbox);
+    		}
+    		if(Boolean.parseBoolean(AppSettings.ReadValue(getActivity(), "btnGetImagesFromDropbox", "false"))){
+    			AppSettings.Update(getActivity(), "btnGetImagesFromDropbox", "false", true);
+    			onClick(btnGetImagesFromDropbox);
+    		} else if(Boolean.parseBoolean(AppSettings.ReadValue(getActivity(), "btnUploadToDropbox", "false"))){
+    			AppSettings.Update(getActivity(), "btnUploadToDropbox", "false", true);
+    			onClick(btnUploadToDropbox);
+    		}
         }
 	}
 	
@@ -124,19 +135,16 @@ public class AdminMenuView extends BaseDialog implements View.OnClickListener {
 			FragmentManager fm = getFragmentManager();
 			if (v == btnAddRace){
 				long raceMeet_ID = 1l;
-				String gender = "M";
-				String category = "Varsity";
-				AddRaceView addRaceDialog = new AddRaceView(raceMeet_ID, gender, category);
-				addRaceDialog.show(fm, AddRaceView.LOG_TAG);
+				AddMeetView addRaceDialog = new AddMeetView();
+				addRaceDialog.show(fm, AddMeetView.LOG_TAG);
 			} else if (v == btnAddLocation){
 				AddLocationView addLocationDialog = new AddLocationView();
 				addLocationDialog.show(fm, AddLocationView.LOG_TAG);
 			} else if (v == btnEditRace){
-				long raceMeet_ID = 1l;
-				String gender = "M";
-				String category = "Varsity";
-				EditRaceConfiguration editRaceDialog = new EditRaceConfiguration(raceMeet_ID, gender, category);
-				editRaceDialog.show(fm, EditRaceConfiguration.LOG_TAG);
+				throw new Exception("raceMeet_ID not filled in correctly");
+//				long raceMeet_ID = 1l;
+//				EditRaceMeetConfiguration editRaceDialog = new EditRaceMeetConfiguration(raceMeet_ID);
+//				editRaceDialog.show(fm, EditRaceMeetConfiguration.LOG_TAG);
 			} else if (v == btnRecalculateResults){
 				try{
 					txtMessage.setVisibility(View.VISIBLE);
@@ -157,8 +165,9 @@ public class AdminMenuView extends BaseDialog implements View.OnClickListener {
 				AndroidAuthSession session = new AndroidAuthSession(appKeys, ACCESS_TYPE);
 				mDBApi = new DropboxAPI<AndroidAuthSession>(session);
 				if(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_DropBox_Key_Name, null) == null || AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_DropBox_Secret_Name, null) == null){				
-					AppSettings.Update(getActivity(), AppSettings.AppSetting_ResumePreviousState_Name, "true", true);
+					//AppSettings.Update(getActivity(), AppSettings.AppSetting_ResumePreviousState_Name, "true", true);
 					AppSettings.Update(getActivity(), AppSettings.AppSetting_AuthenticatingDropbox_Name, "true", true);
+					AppSettings.Update(getActivity(), "btnUploadToDropbox", "true", true);
 					mDBApi.getSession().startAuthentication(getActivity());
 				}else{
 					// Create a file on the SD card for the results and roster, and upload the roster to dropbox
@@ -179,12 +188,14 @@ public class AdminMenuView extends BaseDialog implements View.OnClickListener {
 				mDBApi = new DropboxAPI<AndroidAuthSession>(session);
 		    	
 				if(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_DropBox_Key_Name, null) == null || AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_DropBox_Secret_Name, null) == null){				
-					AppSettings.Update(getActivity(), AppSettings.AppSetting_ResumePreviousState_Name, "true", true);
+					//AppSettings.Update(getActivity(), AppSettings.AppSetting_ResumePreviousState_Name, "true", true);
 					AppSettings.Update(getActivity(), AppSettings.AppSetting_AuthenticatingDropbox_Name, "true", true);
+					AppSettings.Update(getActivity(), "btnGetImagesFromDropbox", "true", true);
 					mDBApi.getSession().startAuthentication(getActivity());
+				} else{
+					ImportRacersTask irTask = new ImportRacersTask(getActivity());
+					irTask.execute(new Void[]{});
 				}
-				ImportRacersTask irTask = new ImportRacersTask(getActivity());
-				irTask.execute(new Void[]{});
 	            //AddLocationImages downloadNewImages = new AddLocationImages();
 		    	//downloadNewImages.show(fm, AddLocationImages.LOG_TAG);
 			} else {

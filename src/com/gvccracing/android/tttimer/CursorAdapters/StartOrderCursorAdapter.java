@@ -47,11 +47,13 @@ public class StartOrderCursorAdapter extends BaseCursorAdapter {
         int lastNameCol = c.getColumnIndex(Racer.LastName);
         int teamCol = c.getColumnIndex(TeamInfo.TeamName);
         int raceResultCol = c.getColumnIndex(RaceResults._ID);
+        int removedCol = c.getColumnIndex(RaceResults.Removed);
 
         String firstName = c.getString(firstNameCol);
         String lastName = c.getString(lastNameCol);
         String teamName = c.getString(teamCol);
         Long raceResult_ID = c.getLong(raceResultCol);
+        boolean removed = Boolean.parseBoolean(c.getString(removedCol));
 
         /**
          * Next set the name of the entry.
@@ -66,15 +68,13 @@ public class StartOrderCursorAdapter extends BaseCursorAdapter {
         if (lblTeamName != null) {
         	lblTeamName.setText(teamName);
         }
-        
-        Cursor raceResult = RaceResults.Read(context, new String[]{RaceResults._ID}, RaceResults._ID + "=?", new String[]{Long.toString(raceResult_ID)}, null);
-        
+               
         Button btnRemove = (Button) v.findViewById(R.id.btnCheckIn);
         if(btnRemove != null){
         	btnRemove.setTag(raceResult_ID);
         	
         	// Check if the racer has previously checked in
-        	if(raceResult != null && raceResult.getCount() > 0){
+        	if(!removed){
         		// They have a race result ID already, so set up the button differently
         		btnRemove.setText("Remove");
         	}else{

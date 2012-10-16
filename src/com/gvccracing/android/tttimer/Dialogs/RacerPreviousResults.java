@@ -97,7 +97,7 @@ public class RacerPreviousResults extends BaseDialog implements View.OnClickList
 		String sortOrder;
 		switch(id){			
 			case ALL_RACE_RESULTS_LOADER:
-				projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID + " as _id", RaceMeet.RaceMeetDate, Racer.FirstName, Racer.LastName, RaceMeet.RaceLocation_ID, RaceLocation.CourseName, RaceResults.ElapsedTime, RacerClubInfo.Category, RaceResults.CategoryPlacing, RaceResults.OverallPlacing, RaceResults.Points};
+				projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID + " as _id", RaceMeet.RaceMeetDate, Racer.FirstName, Racer.LastName, RaceMeet.RaceLocation_ID, RaceLocation.CourseName, RaceResults.ElapsedTime, RacerClubInfo.Category, RaceResults.OverallPlacing};
 				selection = Racer.getTableName() + "." + Racer._ID + " in (" + 
 							SQLiteQueryBuilder.buildQueryString(true, RacerPreviousResultsView.getTableName(), new String[]{Racer.getTableName() + "." + Racer._ID}, 
 																RaceResults.getTableName() + "." + RaceResults._ID + "=" + raceResultID, null, null, RaceResults.getTableName() + "." + RaceResults._ID, "1") + ")";

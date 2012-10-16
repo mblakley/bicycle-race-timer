@@ -82,7 +82,7 @@ public class AssignLapTimeTask extends AsyncTask<Long, Void, AssignResult> {
 						int startTimeCol = raceResultToAssignTo.getColumnIndex(RaceResults.StartTime);	    	
 						Long startTime = raceResultToAssignTo.getLong(startTimeCol);
 						elapsedTime = endTime - startTime;
-						RaceLaps.Create(context, raceResult_ID, numRaceLaps + 1, startTime, endTime, elapsedTime);
+						RaceLaps.Create(context, raceResult_ID, null, numRaceLaps + 1, startTime, endTime, elapsedTime, race_ID);
 						numRaceLaps++;
 					} else {
 						// There is a previous lap to pull info from
@@ -90,7 +90,7 @@ public class AssignLapTimeTask extends AsyncTask<Long, Void, AssignResult> {
 						// raceResult_ID, LapNumber, StartTime, FinishTime, ElapsedTime
 						Long startTime = raceLaps.getLong(raceLaps.getColumnIndex(RaceLaps.FinishTime));
 						elapsedTime = endTime - startTime;
-						RaceLaps.Create(context, raceResult_ID, numRaceLaps + 1, startTime, endTime, elapsedTime);
+						RaceLaps.Create(context, raceResult_ID, null,  numRaceLaps + 1, startTime, endTime, elapsedTime, race_ID);
 						numRaceLaps++;
 					}
 					

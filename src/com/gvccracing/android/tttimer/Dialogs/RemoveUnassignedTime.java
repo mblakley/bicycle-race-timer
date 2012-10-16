@@ -46,7 +46,7 @@ public class RemoveUnassignedTime extends BaseDialog implements View.OnClickList
 				UnassignedTimes.Delete(getActivity(), UnassignedTimes._ID + "=?", new String[]{Long.toString(unassignedTimeIDToRemove)});
 				
 				// Update all race results that have higher start order than the racer to delete.  Change the start order and start time offset
-				Cursor checkins = RaceResults.Read(getActivity(), new String[]{RaceResults._ID}, RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name), null, RaceResults.StartOrder);
+				Cursor checkins = RaceResults.Read(getActivity(), new String[]{RaceResults._ID}, RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name), null, null);
 				if(checkins.getCount() > 0){
 					Long startInterval = 0l;
 					long startOrder = 1;
@@ -55,8 +55,8 @@ public class RemoveUnassignedTime extends BaseDialog implements View.OnClickList
 						Long startTimeOffset = (startInterval * startOrder) * 1000l;
 						
 						ContentValues content = new ContentValues();
-						content.put(RaceResults.StartOrder, startOrder);
-						content.put(RaceResults.StartTimeOffset, startTimeOffset);
+						//content.put(RaceResults.StartOrder, startOrder);
+						//content.put(RaceResults.StartTimeOffset, startTimeOffset);
 						RaceResults.Update(getActivity(), content, RaceResults._ID + "=?", new String[]{Long.toString(checkins.getLong(checkins.getColumnIndex(RaceResults._ID)))});
 						startOrder++;
 					}while(checkins.moveToNext());

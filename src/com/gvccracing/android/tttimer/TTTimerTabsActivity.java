@@ -18,13 +18,14 @@ import android.view.View;
 import android.widget.TabHost;
 import android.widget.TextView;
 
+import com.gvccracing.android.tttimer.AsyncTasks.AllRacersFinishedTask;
 import com.gvccracing.android.tttimer.Controls.Timer;
 import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
 import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
 import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.RaceInfoResultsView;
 import com.gvccracing.android.tttimer.DataAccess.RaceMeetCP.RaceMeet;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
-import com.gvccracing.android.tttimer.Dialogs.AddRaceView;
+import com.gvccracing.android.tttimer.Dialogs.AddMeetView;
 import com.gvccracing.android.tttimer.Dialogs.OtherRaceResults;
 import com.gvccracing.android.tttimer.Tabs.FinishTab;
 import com.gvccracing.android.tttimer.Tabs.OtherTab;
@@ -101,12 +102,8 @@ public class TTTimerTabsActivity extends FragmentActivity {
 		super.onResume();
 		
 		AppSettings.Update(this, AppSettings.AppSetting_AdminMode_Name, Boolean.toString(false), true);
-
-		AppSettings.Update(this, AppSettings.AppSetting_TeamID_Name, Long.toString(23l), true);
-
-		AppSettings.Update(this, AppSettings.AppSetting_RaceID_Name, Long.toString(2l), true);
 		
-		AddActionFilter(AddRaceView.RACE_ADDED_ACTION);
+		AddActionFilter(AddMeetView.RACE_ADDED_ACTION);
 		AddActionFilter(Timer.RACE_IS_FINISHED_ACTION);
 		AddActionFilter(TTTimerTabsActivity.CHANGE_VISIBLE_TAB);
 		AddActionFilter(TTTimerTabsActivity.RACE_ID_CHANGED_ACTION);
@@ -115,11 +112,11 @@ public class TTTimerTabsActivity extends FragmentActivity {
         this.registerReceiver(mActionReceiver, actionFilter);
 		timer.RegisterReceiver();
 		
-		if(!Boolean.parseBoolean(AppSettings.ReadValue(this, AppSettings.AppSetting_ResumePreviousState_Name, "false"))){
+		//if(!Boolean.parseBoolean(AppSettings.ReadValue(this, AppSettings.AppSetting_ResumePreviousState_Name, "false"))){
 			UpdateRaceState();
-		}else{
-			AppSettings.Update(this, AppSettings.AppSetting_ResumePreviousState_Name, "false", true);
-		}
+		//}else{
+		//	AppSettings.Update(this, AppSettings.AppSetting_ResumePreviousState_Name, "false", true);
+		//}
 	}
 	
 	@Override 
@@ -133,61 +130,61 @@ public class TTTimerTabsActivity extends FragmentActivity {
 	
 	public void UpdateRaceState(){
 	    // Figure out if a race is currently going on.  
-//        if(FindRaceInProgress()) {
-//        	// Since races are started and tracked only locally, if a race is still going, it was started on this device
-//	        // If the race already has a raceStartTime, and not all racers are finished, set the startTime variable to raceStartTime and get the timer running
-//        	UpdateFromRaceInProgress();
-//        } else if (FindAvailableRace()){
-//        	// Find a race that's not started yet, but has been set up for this date
-//        	SetupAvailableRace();
-//        } else if (FindFinishedRace()) {
-//        	// Find a finished race on the current date
-//        	SetupFinishedRace();
-//        } else {
-//        	// If no races are configured for the current date, check if any raceID is in the DB, and display that underneath the upcoming dialog
-//        	// Figure out if there's a race_ID in the database (not -1)
-//        	// if so, set up the tabs for that race, since it's being displayed anyway
-//        	long race_ID = Long.parseLong(AppSettings.ReadValue(this, AppSettings.AppSetting_RaceID_Name, Long.toString(-1l)));
-//        	if(race_ID > 0){
-//            	String[] projection = new String[]{Race.getTableName() + "." + Race._ID + " as _id", Race.RaceStartTime, RaceResults.EndTime};
-//        		String selection = Race.getTableName() + "." + Race._ID + "=?";
-//        		String[] selectionArgs = new String[]{Long.toString(race_ID)}; 
-//        		String sortOrder = Race.getTableName() + "." + Race._ID;
-//        		Cursor theRace =  getContentResolver().query(RaceInfoResultsView.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
-//        		if(theRace != null){
-//        			theRace.moveToFirst();
-//        		}
-//        		if(IsRaceFinished(theRace)){
-//        			// Do the same thing as SetupFinishedRace, but don't show the results tab
-//        			// Hide the timer
-//        	    	timer.setVisibility(View.GONE);     	
-//        	    	// Remove "check in" tab - Don't allow any more racers to check in, the race is done!
-//        	    	//tabHost.getTabWidget().getChildTabViewAt(1).setVisibility(View.GONE);//.setEnabled(false);
-//        	    	// Remove "finish" tab - There are no unfinished racers
-//        	    	//tabHost.getTabWidget().getChildTabViewAt(3).setVisibility(View.GONE);//.setEnabled(false);
-//        		} else {
-//        			SetupAvailableRace();
-//        		}
-//        		if(theRace != null){
-//        			theRace.close();
-//        			theRace = null;
-//        		}
-//        	}else{
-//        		AppSettings.Update(this, AppSettings.AppSetting_RaceID_Name, Long.toString(-1l), true);
-//        	}
-//        	tabHost.setCurrentTabByTag(RaceInfoTab.RaceInfoTabSpecName);
-//        	// Couldn't find a race in progress, or an unstarted race, or a finished race, so need to add a race, or select a previous one
-//        	// Let the user choose whether to add a race or view a previous one	 
-//        	if(FindAnyRaces()){
-////				ChooseViewingMode chooseModeDialog = new ChooseViewingMode();
-////				FragmentManager fm = getSupportFragmentManager();
-////				chooseModeDialog.show(fm, ChooseViewingMode.LOG_TAG);
-//        	}else{
-////        		AddRaceView addRaceDialog = new AddRaceView();
-////				FragmentManager fm = getSupportFragmentManager();
-////				addRaceDialog.show(fm, AddRaceView.LOG_TAG);
-//        	}
-//        }
+        if(FindRaceInProgress()) {
+        	// Since races are started and tracked only locally, if a race is still going, it was started on this device
+	        // If the race already has a raceStartTime, and not all racers are finished, set the startTime variable to raceStartTime and get the timer running
+        	UpdateFromRaceInProgress();
+        } else if (FindAvailableRace()){
+        	// Find a race that's not started yet, but has been set up for this date
+        	SetupAvailableRace();
+        } else if (FindFinishedRace()) {
+        	// Find a finished race on the current date
+        	SetupFinishedRace();
+        } else {
+        	// If no races are configured for the current date, check if any raceID is in the DB, and display that underneath the upcoming dialog
+        	// Figure out if there's a race_ID in the database (not -1)
+        	// if so, set up the tabs for that race, since it's being displayed anyway
+        	long race_ID = Long.parseLong(AppSettings.ReadValue(this, AppSettings.AppSetting_RaceID_Name, Long.toString(-1l)));
+        	if(race_ID > 0){
+            	String[] projection = new String[]{Race.getTableName() + "." + Race._ID + " as _id", Race.RaceStartTime, Race.RaceEndTime};
+        		String selection = Race.getTableName() + "." + Race._ID + "=?";
+        		String[] selectionArgs = new String[]{Long.toString(race_ID)}; 
+        		String sortOrder = Race.getTableName() + "." + Race._ID;
+        		Cursor theRace =  getContentResolver().query(Race.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+        		if(theRace != null){
+        			theRace.moveToFirst();
+        		}
+        		if(IsRaceFinished(theRace)){
+        			// Do the same thing as SetupFinishedRace, but don't show the results tab
+        			// Hide the timer
+        	    	timer.setVisibility(View.GONE);     	
+        	    	// Remove "check in" tab - Don't allow any more racers to check in, the race is done!
+        	    	//tabHost.getTabWidget().getChildTabViewAt(1).setVisibility(View.GONE);//.setEnabled(false);
+        	    	// Remove "finish" tab - There are no unfinished racers
+        	    	//tabHost.getTabWidget().getChildTabViewAt(3).setVisibility(View.GONE);//.setEnabled(false);
+        		} else {
+        			SetupAvailableRace();
+        		}
+        		if(theRace != null){
+        			theRace.close();
+        			theRace = null;
+        		}
+        	}else{
+        		AppSettings.Update(this, AppSettings.AppSetting_RaceID_Name, Long.toString(-1l), true);
+        	}
+        	tabHost.setCurrentTabByTag(RaceInfoTab.RaceInfoTabSpecName);
+        	// Couldn't find a race in progress, or an unstarted race, or a finished race, so need to add a race, or select a previous one
+        	// Let the user choose whether to add a race or view a previous one	 
+        	if(FindAnyRaces()){
+				//ChooseViewingMode chooseModeDialog = new ChooseViewingMode();
+				//FragmentManager fm = getSupportFragmentManager();
+				//chooseModeDialog.show(fm, ChooseViewingMode.LOG_TAG);
+        	}else{
+        		AddMeetView addMeetDialog = new AddMeetView();
+				FragmentManager fm = getSupportFragmentManager();
+				addMeetDialog.show(fm, AddMeetView.LOG_TAG);
+        	}
+        }
 	}
 	
 	/**
@@ -357,9 +354,9 @@ public class TTTimerTabsActivity extends FragmentActivity {
     	// Show the timer
     	timer.setVisibility(View.VISIBLE);
     	// Enable "check in" tab - Allow racers to check in
-		tabHost.getTabWidget().getChildTabViewAt(1).setVisibility(View.VISIBLE);
+		//tabHost.getTabWidget().getChildTabViewAt(1).setVisibility(View.VISIBLE);
     	// Enable "finish" tab - Nothing has even started yet!
-    	tabHost.getTabWidget().getChildTabViewAt(3).setVisibility(View.VISIBLE);
+    	//tabHost.getTabWidget().getChildTabViewAt(3).setVisibility(View.VISIBLE);
     	// Show "race info" panel - Let the user know which race they are looking at
     	tabHost.setCurrentTabByTag(RaceInfoTab.RaceInfoTabSpecName);
 	}
@@ -394,7 +391,7 @@ public class TTTimerTabsActivity extends FragmentActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
         	Log.v(LOG_TAG, "onReceive");
-        	if(intent.getAction().equals(AddRaceView.RACE_ADDED_ACTION)){	// Set the raceID to the currently added race
+        	if(intent.getAction().equals(AddMeetView.RACE_ADDED_ACTION)){	// Set the raceID to the currently added race
         		AppSettings.Update(context, AppSettings.AppSetting_RaceID_Name, Long.toString(intent.getLongExtra(AppSettings.AppSetting_RaceID_Name, -1l)), true);
         		SetupAvailableRace();
         	} else if(intent.getAction().equals(TTTimerTabsActivity.CHANGE_VISIBLE_TAB)){
@@ -404,7 +401,8 @@ public class TTTimerTabsActivity extends FragmentActivity {
         		}
         		tabHost.setCurrentTabByTag(visibleTabTag);
         	} else if(intent.getAction().equals(Timer.RACE_IS_FINISHED_ACTION)){
-				//timer.CleanUpExtraUnassignedTimes();
+				AllRacersFinishedTask allFinished = new AllRacersFinishedTask(TTTimerTabsActivity.this);
+				allFinished.execute(new Long[]{System.currentTimeMillis()});
 				SetupFinishedRace();
         	} else if(intent.getAction().equals(TTTimerTabsActivity.RACE_ID_CHANGED_ACTION)){
         		long raceID = Long.parseLong(intent.getStringExtra(RaceResults.Race_ID));
@@ -456,18 +454,18 @@ public class TTTimerTabsActivity extends FragmentActivity {
 	private boolean FindRaceInProgress() {
 		boolean foundRaceInProgress = false;
 		try{
-			String[] projection = new String[]{Race.getTableName() + "." + Race._ID + " as _id", Race.RaceStartTime, RaceResults.StartTime, RaceResults.EndTime};
-			String selection = RaceResults.StartTime + " > 0 and " + RaceResults.EndTime + " IS NULL";
+			String[] projection = new String[]{Race.getTableName() + "." + Race._ID + " as _id", Race.RaceStartTime, Race.RaceEndTime};
+			String selection = Race.RaceStartTime + " > 0 and " + Race.RaceEndTime + " IS NULL";
 			String[] selectionArgs = null; 
 			String sortOrder = Race.getTableName() + "." + Race._ID;
 			
-			Cursor currentRace = getContentResolver().query(RaceInfoResultsView.CONTENT_URI, projection, selection, selectionArgs, sortOrder);			
+			Cursor currentRace = Race.Read(this, projection, selection, selectionArgs, sortOrder);					
 			
 			if(currentRace.getCount() > 0){	
 				currentRace.moveToFirst();
 				int idIndex = currentRace.getColumnIndex(Race._ID);
 				Long raceID = currentRace.getLong(idIndex);
-				if(System.currentTimeMillis() < currentRace.getLong(currentRace.getColumnIndex(RaceResults.StartTime)) + 86400000)
+				if(System.currentTimeMillis() < currentRace.getLong(currentRace.getColumnIndex(Race.RaceStartTime)) + 86400000)
 				{				
 					foundRaceInProgress = true;
 					
@@ -546,7 +544,7 @@ public class TTTimerTabsActivity extends FragmentActivity {
 			Long endOfDay = startOfDay + 86400000;
 			
 			String[] projection = new String[]{Race.getTableName() + "." + Race._ID};
-			String selection = RaceMeet.RaceMeetDate + ">=? AND " + RaceMeet.RaceMeetDate + "<? AND " + Race.RaceStartTime + ">0 AND " + RaceResults.EndTime + ">0";
+			String selection = RaceMeet.RaceMeetDate + ">=? AND " + RaceMeet.RaceMeetDate + "<? AND " + Race.RaceStartTime + ">0 AND " + Race.RaceEndTime + ">0";
 			String[] selectionArgs = new String[]{Long.toString(startOfDay), Long.toString(endOfDay)}; 
 			String sortOrder = Race.getTableName() + "." + Race._ID;
 			
@@ -568,12 +566,12 @@ public class TTTimerTabsActivity extends FragmentActivity {
 	 */
 	private void UpdateFromRaceInProgress() {
 		try{
-			String[] projection = new String[]{Race.getTableName() + "." + Race._ID + " as " + Race._ID, Race.RaceStartTime, RaceResults.StartTime, RaceResults.EndTime};
-			String selection = Race.RaceStartTime + " > 0 and " + RaceResults.EndTime + " IS NULL";
+			String[] projection = new String[]{Race.getTableName() + "." + Race._ID + " as " + Race._ID, Race.RaceStartTime, Race.RaceEndTime};
+			String selection = Race.RaceStartTime + " > 0 and " + Race.RaceEndTime + " IS NULL";
 			String[] selectionArgs = null; 
 			String sortOrder = Race.getTableName() + "." + Race._ID;
 			
-			Cursor currentRace = getContentResolver().query(RaceInfoResultsView.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+			Cursor currentRace = getContentResolver().query(Race.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 			
 			currentRace.moveToFirst();
 			
@@ -593,8 +591,8 @@ public class TTTimerTabsActivity extends FragmentActivity {
 			// Show timer
 			timer.setVisibility(View.VISIBLE);
 	    	// Show all tabs		
-	    	tabHost.getTabWidget().getChildTabViewAt(1).setVisibility(View.VISIBLE);//.setEnabled(false);
-	    	tabHost.getTabWidget().getChildTabViewAt(3).setVisibility(View.VISIBLE);//.setEnabled(false);
+	    	//tabHost.getTabWidget().getChildTabViewAt(1).setVisibility(View.VISIBLE);//.setEnabled(false);
+	    	//tabHost.getTabWidget().getChildTabViewAt(3).setVisibility(View.VISIBLE);//.setEnabled(false);
 			
 			theRace.moveToFirst();
 			

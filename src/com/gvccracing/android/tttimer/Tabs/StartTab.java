@@ -50,8 +50,9 @@ public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 	
 	private ListView startOrderList;
 	private LinearLayout timerControls;
-
-	private Loader<Cursor> startOrderLoader = null;
+	
+	private String raceCategory = "Varsity";
+	private String raceGender = "Boys";
 	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -249,7 +250,7 @@ public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 			case START_ORDER_LOADER_START:
 				// Create the cursor adapter for the start order list
 				startOrderCA = new StartOrderCursorAdapter(getActivity(), null);
-
+				
 				SetupList(startOrderList, startOrderCA, new OnItemLongClickListener(){
 					public boolean onItemLongClick(AdapterView<?> arg0, View v,
 							int pos, long id) {
@@ -259,9 +260,9 @@ public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 						return false;
 					}
 	    		});
-				projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID + " as _id", Racer.LastName, Racer.FirstName, TeamInfo.TeamName};
-				selection = RaceResults.getTableName() + "." + RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.getTableName() + "." + RaceResults.TeamInfo_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_TeamID_Name) + " AND " + Race.getTableName() + "." + Race.Category + "='Varsity' AND " + Race.getTableName() + "." + Race.Gender + "='Girls'" ;// + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
-				selectionArgs = null;
+				projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID + " as _id", Racer.LastName, Racer.FirstName, TeamInfo.TeamName, RaceResults.Removed};
+				selection = RaceResults.getTableName() + "." + RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.getTableName() + "." + RaceResults.TeamInfo_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_TeamID_Name) + " AND " + Race.getTableName() + "." + Race.Category + "=? AND " + Race.getTableName() + "." + Race.Gender + "=?";
+				selectionArgs = new String[]{raceCategory, raceGender};
 				sortOrder = TeamInfo.TeamName + "," + Racer.LastName;
 				loader = new CursorLoader(getActivity(), CheckInViewExclusive.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
@@ -322,12 +323,11 @@ public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 					if(cursor!= null && cursor.getCount() > 0){
 						cursor.moveToFirst();
 						// Set up the tab based on the race information
+						raceCategory = cursor.getString(cursor.getColumnIndex(Race.Category));
+						raceGender = cursor.getString(cursor.getColumnIndex(Race.Gender));
+						
 						if(getView() != null){
-							if(startOrderLoader == null){
-								startOrderLoader = getActivity().getSupportLoaderManager().initLoader(START_ORDER_LOADER_START, null, this);
-							} else {
-								startOrderLoader = getActivity().getSupportLoaderManager().restartLoader(START_ORDER_LOADER_START, null, this);
-							}
+							getActivity().getSupportLoaderManager().restartLoader(START_ORDER_LOADER_START, null, this);							
 						}
 					}
 					break;

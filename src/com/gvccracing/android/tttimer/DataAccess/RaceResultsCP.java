@@ -24,15 +24,11 @@ public class RaceResultsCP {
         public static final String RacerClubInfo_ID = "RacerClubInfo_ID";
         public static final String TeamInfo_ID = "TeamInfo_ID";
         public static final String Race_ID = "Race_ID";
-        public static final String StartOrder = "StartOrder";
-        public static final String StartTimeOffset = "StartTimeOffset";
         public static final String StartTime = "StartTime";
         public static final String EndTime = "EndTime";
         public static final String ElapsedTime = "ElapsedTime";
         public static final String OverallPlacing = "OverallPlacing";
-        public static final String CategoryPlacing = "CategoryPlacing";
-        public static final String Points = "Points";
-        public static final String PrimePoints = "PrimePoints";
+        public static final String Removed = "Removed";
         
         public static String getTableName(){
         	return RaceResults.class.getSimpleName();
@@ -44,15 +40,11 @@ public class RaceResultsCP {
         	        + RacerClubInfo_ID + " integer references " + RacerClubInfo.getTableName() + "(" + RacerClubInfo._ID + ") null, "
         	        + TeamInfo_ID + " integer references " + TeamInfo.getTableName() + "(" + TeamInfo._ID + ") null, "
         	        + Race_ID + " integer references " + Race.getTableName() + "(" + Race._ID + ") not null, "
-        	        + StartOrder + " integer not null,"
-        	        + StartTimeOffset + " integer not null,"
         	        + StartTime + " integer null,"
         	        + EndTime + " integer null,"
         	        + ElapsedTime + " integer null,"
         	        + OverallPlacing + " integer null,"
-        	        + CategoryPlacing + " integer null,"
-        	        + Points + " integer not null,"
-        	        + PrimePoints + " integer not null"
+        	        + Removed + " text not null"
         	        + ");";
         }
         
@@ -61,23 +53,19 @@ public class RaceResultsCP {
         }
 
 		public static Uri Create(Context context,
-				Long racerInfo_ID, long race_ID, int startOrder,
-				Long startTimeOffset, Long startTime, Long endTime,
+				Long racerInfo_ID, long race_ID,
+				Long startTime, Long endTime,
 				Long elapsedTime, Integer overallPlacing,
-				Integer categoryPlacing, Integer points, Integer primePoints, Long teamInfo_ID) {
+				Long teamInfo_ID, boolean removed) {
 			ContentValues content = new ContentValues();
 	     	content.put(RaceResults.RacerClubInfo_ID, racerInfo_ID);
 	     	content.put(RaceResults.Race_ID, race_ID);
-	     	content.put(RaceResults.StartOrder, startOrder);
-	     	content.put(RaceResults.StartTimeOffset, startTimeOffset);
 	     	content.put(RaceResults.StartTime, startTime);
 	     	content.put(RaceResults.EndTime, endTime);
 	     	content.put(RaceResults.ElapsedTime, elapsedTime);
 	     	content.put(RaceResults.OverallPlacing, overallPlacing);
-	     	content.put(RaceResults.CategoryPlacing, categoryPlacing);
-	     	content.put(RaceResults.Points, points);
-	     	content.put(RaceResults.PrimePoints, primePoints);
 	     	content.put(RaceResults.TeamInfo_ID, teamInfo_ID);
+	     	content.put(RaceResults.Removed, Boolean.toString(removed));
 	     	return context.getContentResolver().insert(RaceResults.CONTENT_URI, content);
 		}
 		

@@ -44,8 +44,8 @@ public class TeamStartOrderCursorAdapter extends BaseCursorAdapter {
     private void fillData(Cursor c, View v) {
     	int teamNameCol = c.getColumnIndex(TeamInfo.TeamName);
     	int racerNamesCol = c.getColumnIndex("RacerNames");
-        int startOrderCol = c.getColumnIndex(RaceResults.StartOrder);
-        int startTimeCol = c.getColumnIndex(RaceResults.StartTimeOffset);
+        int startOrderCol = 0;//c.getColumnIndex(RaceResults.StartOrder);
+        int startTimeCol = 0;//c.getColumnIndex(RaceResults.StartTimeOffset);
         
         String teamName = c.getString(teamNameCol);
         String racerNames = c.getString(racerNamesCol);

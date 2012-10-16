@@ -5,14 +5,12 @@ import java.util.Date;
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteQueryBuilder;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,39 +18,30 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.gvccracing.android.tttimer.R;
 import com.gvccracing.android.tttimer.TTTimerTabsActivity;
 import com.gvccracing.android.tttimer.AsyncTasks.CreateRaceResultsTask;
-import com.gvccracing.android.tttimer.Controls.Timer;
-import com.gvccracing.android.tttimer.CursorAdapters.StableSimpleCursorAdapter;
+import com.gvccracing.android.tttimer.CursorAdapters.SingleStringCursorAdapter;
 import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
 import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
 import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.MeetTeamsView;
-import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.RaceInfoResultsView;
 import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.RaceInfoView;
 import com.gvccracing.android.tttimer.DataAccess.RaceLocationCP.RaceLocation;
 import com.gvccracing.android.tttimer.DataAccess.RaceMeetCP.RaceMeet;
 import com.gvccracing.android.tttimer.DataAccess.RaceMeetTeamsCP.RaceMeetTeams;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
-import com.gvccracing.android.tttimer.Dialogs.AddRacerView;
 import com.gvccracing.android.tttimer.Dialogs.AdminAuthView;
 import com.gvccracing.android.tttimer.Dialogs.AdminMenuView;
-import com.gvccracing.android.tttimer.Dialogs.MarshalLocations;
 import com.gvccracing.android.tttimer.Dialogs.OtherRaceResults;
 import com.gvccracing.android.tttimer.Dialogs.SeriesResultsView;
-import com.gvccracing.android.tttimer.Utilities.TimeFormatter;
-import com.gvccracing.android.tttimer.Utilities.Enums.RaceType;
 
 public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
 
 	public static final String RaceInfoTabSpecName =  "RaceInfoTab";
-
-	private static final int APP_SETTINGS_LOADER_RACEINFO = 0x22;
 
 	private static final int RACE_INFO_LOADER = 0x114;
 
@@ -61,17 +50,21 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 	private static final int MEETS_LOADER = 53453;
 
 	private static final int MEET_RACES_LOADER = 432220;
+
+	private static final int CURRENT_MEET_LOADER = 524352;
+
+	private static final int CURRENT_MEET_TEAM_LOADER = 23623;
+
+	private static final int CURRENT_MEET_RACE_LOADER = 73673;
 	
 	private TextView raceDate;
 	private TextView raceCourseName;
 	private TextView raceDistance;
-	private String distanceUnit;
-	private String distance;
 	
 
-	private StableSimpleCursorAdapter teamsCA;
-	private StableSimpleCursorAdapter meetsCA;
-	private StableSimpleCursorAdapter racesCA;
+	private SingleStringCursorAdapter teamsCA;
+	private SingleStringCursorAdapter meetsCA;
+	private SingleStringCursorAdapter racesCA;
 	
 	private Spinner spinMeet;
 	private Spinner spinRaceCategory;
@@ -104,18 +97,16 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 	
 	@Override
 	public void onResume() {
-		super.onResume(); 
+		super.onResume(); 		
 		
-		String[] columns = new String[] { RaceLocation.CourseName };
-        int[] to = new int[] {android.R.id.text1 };
-		
-		meetsCA = new StableSimpleCursorAdapter(getActivity(), R.layout.control_simple_spinner, null, columns, to, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-		meetsCA.setDropDownViewResource( R.layout.control_simple_spinner_dropdown );
+		meetsCA = new SingleStringCursorAdapter(getActivity(), null);
 		spinMeet.setAdapter(meetsCA);
 		
 		spinMeet.setOnItemSelectedListener(new OnItemSelectedListener() {		    
 		    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
 		    	selectedMeet = id;
+		    	
+		    	AppSettings.Update(getActivity(), AppSettings.AppSetting_RaceMeet_ID_Name, Long.toString(selectedMeet), true);
 		    	
 		    	getActivity().getSupportLoaderManager().restartLoader(MEET_TEAMS_LOADER, null, RaceInfoTab.this);
 		    }
@@ -125,17 +116,13 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 		    }
 		});
 		
-		columns = new String[] { TeamInfo.TeamName };
-        to = new int[] {android.R.id.text1 };
-		
-		teamsCA = new StableSimpleCursorAdapter(getActivity(), R.layout.control_simple_spinner, null, columns, to, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-		teamsCA.setDropDownViewResource( R.layout.control_simple_spinner_dropdown );
+		teamsCA = new SingleStringCursorAdapter(getActivity(), null);
 		spinMyTeam.setAdapter(teamsCA);
 		
 		spinMyTeam.setOnItemSelectedListener(new OnItemSelectedListener() {		    
 		    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
 		    	selectedTeamInfo_ID = id;
-				//AppSettings.Update(getActivity(), AppSettings.AppSetting_TeamID_Name, Long.toString(selectedTeamInfo_ID), true);
+				AppSettings.Update(getActivity(), AppSettings.AppSetting_TeamID_Name, Long.toString(selectedTeamInfo_ID), true);
 		    	
 		    	getActivity().getSupportLoaderManager().restartLoader(MEET_RACES_LOADER, null, RaceInfoTab.this);
 		    }
@@ -143,18 +130,14 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 		    public void onNothingSelected(AdapterView<?> parentView) {
 		        // your code here
 		    }
-		});
+		});		
 		
-		columns = new String[] { "RaceCategory" };
-        to = new int[] {android.R.id.text1 };
-		
-		racesCA = new StableSimpleCursorAdapter(getActivity(), R.layout.control_simple_spinner, null, columns, to, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-		racesCA.setDropDownViewResource( R.layout.control_simple_spinner_dropdown );
+		racesCA = new SingleStringCursorAdapter(getActivity(), null);
 		spinRaceCategory.setAdapter(racesCA);
 		
 		spinRaceCategory.setOnItemSelectedListener(new OnItemSelectedListener() {		    
 		    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-		    	//AppSettings.Update(getActivity(), AppSettings.AppSetting_RaceID_Name, Long.toString(id), true);		    	
+		    	AppSettings.Update(getActivity(), AppSettings.AppSetting_RaceID_Name, Long.toString(id), true);		    	
 
 				CreateRaceResultsTask crrt = new CreateRaceResultsTask(getActivity());
 				crrt.execute(id, selectedTeamInfo_ID);
@@ -174,8 +157,21 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 		
 		// Initialize the cursor loader for the meets
 		getActivity().getSupportLoaderManager().initLoader(MEETS_LOADER, null, this);
+		
+		selectedTeamInfo_ID = Long.parseLong(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_TeamID_Name, Long.toString(selectedTeamInfo_ID)));
+		
 
 	    //getActivity().getSupportLoaderManager().initLoader(APP_SETTINGS_LOADER_RACEINFO, null, this);
+	}
+
+	private int GetPositionByID(CursorAdapter ca, long selected_ID) {
+		
+		for(int position = 0; position < ca.getCount(); position++){
+			if(ca.getItemId(position) == selected_ID){
+				return position;
+			}
+		}
+		return -1;
 	}
 
 	@Override
@@ -203,12 +199,26 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 				sortOrder = RaceMeet.RaceMeetDate;
 				loader = new CursorLoader(getActivity(), MeetTeamsView.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
+			case CURRENT_MEET_LOADER:
+				projection = new String[]{AppSettings.AppSettingValue};
+				selection = AppSettings.AppSettingName + "='" + AppSettings.AppSetting_RaceMeet_ID_Name + "'";
+				sortOrder = null;
+				selectionArgs = null;
+				loader = new CursorLoader(getActivity(), AppSettings.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				break;
 			case MEET_TEAMS_LOADER:
 				projection = new String[]{TeamInfo.getTableName() + "." + TeamInfo._ID + " as _id", TeamInfo.TeamName};
 				selection = RaceMeetTeams.getTableName() + "." + RaceMeetTeams.RaceMeet_ID + "=?";
 				selectionArgs = new String[]{Long.toString(selectedMeet)};
 				sortOrder = TeamInfo.getTableName() + "." + TeamInfo._ID + " DESC";
 				loader = new CursorLoader(getActivity(), MeetTeamsView.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				break;
+			case CURRENT_MEET_TEAM_LOADER:
+				projection = new String[]{AppSettings.AppSettingValue};
+				selection = AppSettings.AppSettingName + "='" + AppSettings.AppSetting_TeamID_Name + "'";
+				sortOrder = null;
+				selectionArgs = null;
+				loader = new CursorLoader(getActivity(), AppSettings.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case MEET_RACES_LOADER:
 				projection = new String[]{Race.getTableName() + "." + Race._ID + " as _id", Race.Category + "||' '||" + Race.Gender + " as RaceCategory"};
@@ -217,20 +227,20 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 				sortOrder = Race.getTableName() + "." + Race._ID;
 				loader = new CursorLoader(getActivity(), Race.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
+			case CURRENT_MEET_RACE_LOADER:
+				projection = new String[]{AppSettings.AppSettingValue};
+				selection = AppSettings.AppSettingName + "='" + AppSettings.AppSetting_RaceID_Name + "'";
+				sortOrder = null;
+				selectionArgs = null;
+				loader = new CursorLoader(getActivity(), AppSettings.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				break;
 			case RACE_INFO_LOADER:
 				projection = new String[]{Race.getTableName() + "." + Race._ID + " as _id", Race.RaceStartTime, RaceLocation.CourseName, Race.Gender, Race.Category, Race.NumSplits, Race.Distance};
-				selection = Race.getTableName() + "." + Race._ID + "=?";// + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
-				selectionArgs = new String[]{AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_RaceID_Name, "-1")};
+				selection = Race.getTableName() + "." + Race._ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
+				selectionArgs = null;
 				sortOrder = Race.getTableName() + "." + Race._ID;
 				loader = new CursorLoader(getActivity(), RaceInfoView.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
-//			case APP_SETTINGS_LOADER_RACEINFO:
-//				projection = new String[]{AppSettings.AppSettingName, AppSettings.AppSettingValue};
-//				selection = null;
-//				sortOrder = null;
-//				selectionArgs = null;
-//				loader = new CursorLoader(getActivity(), AppSettings.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
-//				break;
 		}
 		Log.i(LOG_TAG(), "onCreateLoader complete: id=" + Integer.toString(id));
 		return loader;
@@ -241,44 +251,76 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 			Log.i(LOG_TAG(), "onLoadFinished start: id=" + Integer.toString(loader.getId()));
 			switch(loader.getId()){
 				case MEETS_LOADER:
-					cursor.moveToFirst();
-					selectedMeet = cursor.getLong(cursor.getColumnIndex(RaceMeet._ID));
-
-					meetsCA.swapCursor(cursor);
+					meetsCA.swapCursor(cursor);						
 					
-					getActivity().getSupportLoaderManager().restartLoader(MEET_TEAMS_LOADER, null, this);
-					getActivity().getSupportLoaderManager().restartLoader(RACE_INFO_LOADER, null, this);
+					getActivity().getSupportLoaderManager().restartLoader(CURRENT_MEET_LOADER, null, this);
 					break;
-				case MEET_TEAMS_LOADER:
-					cursor.moveToFirst();
-
-					selectedTeamInfo_ID = cursor.getLong(cursor.getColumnIndex(TeamInfo._ID));
-					//AppSettings.Update(getActivity(), AppSettings.AppSetting_TeamID_Name, Long.toString(selectedTeamInfo_ID), true);
+				case CURRENT_MEET_LOADER:
+					int meetIDPosition = 0;
+					// If there's a meet_ID in the appSettings table select that
+					if(cursor != null && cursor.getCount() > 0){
+						cursor.moveToFirst();
+						
+						long meet_ID = Long.parseLong(cursor.getString(0));
+						
+						if(meet_ID > 0){
+							meetIDPosition = GetPositionByID(meetsCA, meet_ID);
+						}	
+					} 
+					spinMeet.setSelection(meetIDPosition);
 					
+					// After the new meet has been selected, restart the teams loader
+					getActivity().getSupportLoaderManager().restartLoader(MEET_TEAMS_LOADER, null, this);					
+					break;
+				case MEET_TEAMS_LOADER:					
 					teamsCA.swapCursor(cursor);	
 
+					getActivity().getSupportLoaderManager().restartLoader(CURRENT_MEET_TEAM_LOADER, null, this);
+					break;
+				case CURRENT_MEET_TEAM_LOADER:
+					int teamIDPosition = 0;
+					if(cursor != null && cursor.getCount() > 0){
+						cursor.moveToFirst();
+						// If there's a team_ID in the appSettings table select that
+						long team_ID = Long.parseLong(cursor.getString(0));
+						
+						if(team_ID > 0){
+							teamIDPosition = GetPositionByID(teamsCA, team_ID);
+						}	
+					} 
+					spinMyTeam.setSelection(teamIDPosition);
+					
+					
+					// After the new team has been selected, restart the races loader
 					getActivity().getSupportLoaderManager().restartLoader(MEET_RACES_LOADER, null, this);
 					break;
-				case MEET_RACES_LOADER:
-					cursor.moveToFirst();
-					long selectedRace_ID = cursor.getLong(cursor.getColumnIndex(Race._ID));
-					//AppSettings.Update(getActivity(), AppSettings.AppSetting_RaceID_Name, Long.toString(selectedRace_ID), true);
-					
-					racesCA.swapCursor(cursor);										
-					
-					//CreateRaceResultsTask crrt = new CreateRaceResultsTask(getActivity());
-					//crrt.execute(selectedRace_ID, selectedTeamInfo_ID);
+				case MEET_RACES_LOADER:					
+					racesCA.swapCursor(cursor);															
 
-					//getActivity().getSupportLoaderManager().restartLoader(RACE_INFO_LOADER, null, this);
+					getActivity().getSupportLoaderManager().restartLoader(CURRENT_MEET_RACE_LOADER, null, this);
 					break;
+				case CURRENT_MEET_RACE_LOADER:
+					int raceIDPosition = 0;
+					if(cursor != null && cursor.getCount() > 0){
+						cursor.moveToFirst();
+						// If there's a race_ID in the appSettings table select that
+						long race_ID = Long.parseLong(cursor.getString(0));
+						
+						if(race_ID > 0){
+							raceIDPosition = GetPositionByID(racesCA, race_ID);
+						}
+					} 			
+					spinRaceCategory.setSelection(raceIDPosition);					
+					
+					// After the new team has been selected, restart the races loader
+					getActivity().getSupportLoaderManager().restartLoader(RACE_INFO_LOADER, null, this);
+					break;	
 				case RACE_INFO_LOADER:
 					cursor.moveToFirst();
 					if(cursor.getCount() > 0){
 						Long raceDateMS = cursor.getLong(cursor.getColumnIndex(Race.RaceStartTime));
 						String courseName = cursor.getString(cursor.getColumnIndex(RaceLocation.CourseName));
-						Float distanceF = cursor.getFloat(cursor.getColumnIndex(Race.Distance));
-						
-						//llRaceLaps.setVisibility(View.GONE);
+						Float distanceF = cursor.getFloat(cursor.getColumnIndex(Race.Distance));						
 						
 						Date raceDateTemp = new Date(raceDateMS);
 						SimpleDateFormat formatter = new SimpleDateFormat("M/d/yy h:mm");
@@ -288,22 +330,6 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 						raceDistance.setText(Float.toString(distanceF) + " mi");
 					}
 					break;
-//				case APP_SETTINGS_LOADER_RACEINFO:						
-//					Integer distanceUnitID = Integer.parseInt(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_DistanceUnits_Name, "0"));
-//					distanceUnit = "mi";
-//					switch(distanceUnitID){
-//						case 0:
-//							distanceUnit = "mi";
-//							break;
-//						case 1:
-//							distanceUnit = "km";
-//							break;
-//						default:
-//							distanceUnit = "mi";
-//							break;
-//					}
-//					getActivity().getSupportLoaderManager().restartLoader(RACE_INFO_LOADER, null, this);
-//					break;
 			}
 			Log.i(LOG_TAG(), "onLoadFinished complete: id=" + Integer.toString(loader.getId()));
 		}catch(Exception ex){
@@ -326,8 +352,6 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 					break;
 				case RACE_INFO_LOADER:
 					break;
-//				case APP_SETTINGS_LOADER_RACEINFO:
-//					break;
 			}
 			Log.i(LOG_TAG(), "onLoaderReset complete: id=" + Integer.toString(loader.getId()));
 		}catch(Exception ex){
@@ -355,13 +379,6 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 				SeriesResultsView seriesResultsDialog = new SeriesResultsView();
 				seriesResultsDialog.show(fm, SeriesResultsView.LOG_TAG);
 				break;
-//			case R.id.btnAddRacer:
-//				long teamInfo_ID = spinMyTeam.getSelectedItemId();
-//				String gender = "M"; // TODO: Get from selected race
-//				String category = "Varsity"; // TODO: Get from selected race
-//	            AddRacerView addRacer = new AddRacerView(true, teamInfo_ID, gender, category);
-//	            addRacer.show(fm, AddRacerView.LOG_TAG);
-//				break;
 		}
 	}
 

@@ -33,23 +33,16 @@
 	            android:id="@+android:id/realtabcontent"
 	            android:layout_width="fill_parent"
 	            android:layout_height="0dp"
-	            android:layout_weight="0.85"
-	            android:padding="5dp"/>
+	            android:layout_weight="0.9"
+	            android:paddingLeft="5dp"
+	            android:paddingRight="5dp" />
 	        
 		   <com.gvccracing.android.tttimer.Controls.Timer
 	            android:id="@+id/TimerBottom"
 	            android:layout_width="fill_parent"
 	            android:layout_height="0dp"
-	            android:layout_weight="0.15"
-	            android:gravity="center_horizontal" />
-		   <Button
-	            android:id="@+id/btnBackToRaceInProgress"
-	            android:layout_width="fill_parent"
-	            android:layout_height="0dp"
-	            android:layout_weight="0.15"
-	            style="@style/Medium"
-	            android:text="@string/BackToRaceInProgress"
-	            android:visibility="gone" />
+	            android:layout_weight="0.1"
+	            android:gravity="center_horizontal" />		   
 	    </LinearLayout>
 	</TabHost>
 </LinearLayout>

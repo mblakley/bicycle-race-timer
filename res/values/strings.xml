@@ -102,7 +102,7 @@
 	</string-array>
 	<string name="btnAddNewTeam">Save Team</string>
 	<string name="RaceLocation">Race Location:</string>
-	<string name="AddRace">Add New Race</string>
+	<string name="AddMeet">Add New Meet</string>
 	<string name="EnterAdminPassword">Enter the Admin password:</string> 
 	<string name="btnCancel">Cancel</string> 
 	<string name="AdminMenu">Admin Menu</string> 
@@ -250,4 +250,6 @@
 		<item >11</item>
 		<item >12</item>
 	</string-array>
+	<string name="NumFinished">Finished:</string>
+	<string name="lblPoints">Pts:</string>
 </resources>

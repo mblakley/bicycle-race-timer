@@ -11,13 +11,12 @@ import android.util.Log;
 
 import com.gvccracing.android.tttimer.Controls.Timer;
 import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
+import com.gvccracing.android.tttimer.DataAccess.RaceLapsCP.RaceLaps;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
 import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
 import com.gvccracing.android.tttimer.DataAccess.RacerInfoViewCP.RacerInfoView;
-import com.gvccracing.android.tttimer.DataAccess.UnassignedTimesCP.UnassignedTimes;
 import com.gvccracing.android.tttimer.Utilities.AssignResult;
-import com.gvccracing.android.tttimer.Utilities.Calculations;
 import com.gvccracing.android.tttimer.Utilities.TimeFormatter;
 
 public class AssignTimeTask extends AsyncTask<Long, Void, AssignResult> {
@@ -41,10 +40,15 @@ public class AssignTimeTask extends AsyncTask<Long, Void, AssignResult> {
 			Long raceResult_ID = params[1];
 			Long teamInfo_ID = params[2];			
 			Long startTime = params[3];
+			Long currentRaceLap = params[4];
+			Long maxRaceLaps = params[5];
+			Integer overallPlacing = Integer.parseInt(Long.toString(params[6]));
+			
+			Log.i("OverallPlacing", Integer.toString(overallPlacing));
 			
 	    	Long elapsedTime = endTime - startTime;
 			
-			if(raceResult_ID != null){
+			if(raceResult_ID != null && currentRaceLap == maxRaceLaps){
 		    	// Get the race result record based on the racerInfo_ID and the race_ID
 		    	Cursor raceResultToAssignTo = RaceResults.Read(context, new String[]{RaceResults._ID, RaceResults.StartTime, RaceResults.RacerClubInfo_ID}, RaceResults._ID + " = ?", 
 		    																  new String[]{raceResult_ID.toString()}, null);
@@ -61,14 +65,10 @@ public class AssignTimeTask extends AsyncTask<Long, Void, AssignResult> {
 			    	racerClubInfo = null;
 		    	}
 		    	
-		    	// Get the start time for the given raceResult_ID
-		    	int startTimeCol = raceResultToAssignTo.getColumnIndex(RaceResults.StartTime);	    	
-		    	startTime = raceResultToAssignTo.getLong(startTimeCol);
-		    	
-		    	
 		    	ContentValues content = new ContentValues();
 				content.put(RaceResults.EndTime, endTime);
 				content.put(RaceResults.ElapsedTime, elapsedTime);
+				content.put(RaceResults.OverallPlacing, overallPlacing);
 		
 				// Update the race result
 				RaceResults.Update(context, content, RaceResults._ID + "= ?", new String[]{Long.toString(raceResult_ID)});
@@ -78,12 +78,7 @@ public class AssignTimeTask extends AsyncTask<Long, Void, AssignResult> {
 				String racerName = racerValues.get(Racer.FirstName).toString() + " " + racerValues.get(Racer.LastName).toString();
 				
 				result.message = "Assigned time " + TimeFormatter.Format(elapsedTime, true, true, true, true, true, false, false, false) + " -> " + racerName;
-				Intent messageToShow = new Intent();
-				messageToShow.setAction(Timer.SHOW_MESSAGE_ACTION);
-				messageToShow.putExtra(Timer.MESSAGE, result.message);
-				messageToShow.putExtra(Timer.DURATION, 2300l);
-				context.sendBroadcast(messageToShow);
-				
+								
 		    	// Delete the unassignedTimes row from the database
 				// context.getContentResolver().delete(UnassignedTimes.CONTENT_URI, UnassignedTimes._ID + "=?", new String[]{Long.toString(unassignedTime_ID)});	    	
 	
@@ -118,9 +113,28 @@ public class AssignTimeTask extends AsyncTask<Long, Void, AssignResult> {
 //				
 //				numStarted.close();
 //				numStarted = null;
+			} else if(teamInfo_ID != null){
+				// If it's the last lap, this is the final time, so it will be used for scoring.
+				// Create a RaceResult with the teamInfo_ID
+				if(currentRaceLap == maxRaceLaps){
+					long race_ID = Long.parseLong(AppSettings.ReadValue(context, AppSettings.AppSetting_RaceID_Name, "-1"));
+					RaceResults.Create(context, null, race_ID, startTime, endTime, elapsedTime, overallPlacing, teamInfo_ID, false);
+				}
+				
+				result.message = "Assigned time " + TimeFormatter.Format(elapsedTime, true, true, true, true, true, false, false, false) + " -> " + Long.toString(teamInfo_ID);
 			}
 			
-			UnassignedTimes.Create(context, Long.parseLong(AppSettings.ReadValue(context, AppSettings.AppSetting_RaceID_Name, "-1")), endTime, raceResult_ID, teamInfo_ID, elapsedTime, 0);
+			Intent messageToShow = new Intent();
+			messageToShow.setAction(Timer.SHOW_MESSAGE_ACTION);
+			messageToShow.putExtra(Timer.MESSAGE, result.message);
+			messageToShow.putExtra(Timer.DURATION, 2300l);
+			context.sendBroadcast(messageToShow);
+			
+			long race_ID = Long.parseLong(AppSettings.ReadValue(context, AppSettings.AppSetting_RaceID_Name, "-1"));
+			
+			RaceLaps.Create(context, raceResult_ID, teamInfo_ID, currentRaceLap, startTime, endTime, elapsedTime, race_ID);
+			
+			//UnassignedTimes.Create(context, Long.parseLong(AppSettings.ReadValue(context, AppSettings.AppSetting_RaceID_Name, "-1")), endTime, raceResult_ID, teamInfo_ID, elapsedTime, 0);
 			
 //	    	// Calculate Category Placing, Overall Placing, Points
 //	    	Calculations.CalculateOverallPlacings(context, Long.parseLong(AppSettings.ReadValue(context, AppSettings.AppSetting_RaceID_Name, "-1"))); // Do this first, since "category" placings are really team placings based on the sum of the top 5 overall placings

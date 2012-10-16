@@ -5,9 +5,10 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
+import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 
-public class RacerStartedTask extends AsyncTask<Long, Void, Void> {
+public class AllRacersFinishedTask extends AsyncTask<Long, Void, Void> {
 	
 	private Context context;
 	
@@ -15,19 +16,21 @@ public class RacerStartedTask extends AsyncTask<Long, Void, Void> {
 		return RacerStartedTask.class.getSimpleName();
 	}
 	
-	public RacerStartedTask(Context c){
+	public AllRacersFinishedTask(Context c){
 		context = c;
 	}
 	
 	@Override
 	protected Void doInBackground(Long... params) {			
-		long startTime = params[0];
+		long endTime = params[0];
 		long race_ID = Long.parseLong(AppSettings.ReadValue(context, AppSettings.AppSetting_RaceID_Name, "-1"));//Long.parseLong(AppSettings.ReadValue(context, AppSettings.AppSetting_RaceID_Name, "1"));
 		
 		ContentValues content = new ContentValues();
-		content.put(RaceResults.StartTime, startTime);
+		content.put(RaceResults.EndTime, endTime);
 		
 		RaceResults.Update(context, content, RaceResults.Race_ID + "=?", new String[]{Long.toString(race_ID)});
+		
+		Race.Update(context, Race._ID + "=?", new String[]{Long.toString(race_ID)}, null, null, null, endTime, null, null, null, null);
 		//context.getContentResolver().update(RaceResults.CONTENT_URI, content, RaceResults.Race_ID + "=?", new String[]{Long.toString(race_ID)});
 		
 		return null;

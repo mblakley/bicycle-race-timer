@@ -101,7 +101,7 @@ public class EditRaceResultView extends BaseDialog implements View.OnClickListen
 		    	
 		    	if(initialPoints != Long.parseLong(txtPoints.getText().toString())){
 					ContentValues content = new ContentValues();
-					content.put(RaceResults.Points, txtPoints.getText().toString());
+					//content.put(RaceResults.Points, txtPoints.getText().toString());
 					
 			    	// Update the points - we changed this for a reason!
 					RaceResults.Update(getActivity(), content, RaceResults._ID + "= ?", new String[]{Long.toString(raceResultID)});
@@ -176,7 +176,7 @@ public class EditRaceResultView extends BaseDialog implements View.OnClickListen
 		String sortOrder;
 		switch(id){
 			case RACE_RESULT_LOADER:
-				projection = new String[]{RaceResults._ID, RaceResults.Race_ID, RaceResults.ElapsedTime, RaceResults.Points};
+				projection = new String[]{RaceResults._ID, RaceResults.Race_ID, RaceResults.ElapsedTime/*, RaceResults.Points*/};
 				selection = RaceResults._ID + "=?";
 				selectionArgs = new String[]{Long.toString(raceResultID)};
 				sortOrder = RaceResults._ID;
@@ -202,7 +202,7 @@ public class EditRaceResultView extends BaseDialog implements View.OnClickListen
 							tpElapsed.SetTime(initialTime);
 						}
 						raceID = cursor.getLong(cursor.getColumnIndex(RaceResults.Race_ID));
-						initialPoints = cursor.getLong(cursor.getColumnIndex(RaceResults.Points));
+						initialPoints = 0l;//cursor.getLong(cursor.getColumnIndex(RaceResults.Points));
 						txtPoints.setText(Long.toString(initialPoints));
 					}
 					break;

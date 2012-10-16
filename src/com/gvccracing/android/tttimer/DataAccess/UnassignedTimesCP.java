@@ -1,6 +1,7 @@
 package com.gvccracing.android.tttimer.DataAccess;
 
 import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
+import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.UnassignedTimesView;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
 
@@ -44,7 +45,7 @@ public class UnassignedTimesCP {
         }
 
 		public static Uri[] getAllUrisToNotifyOnChange() {
-			return new Uri[]{UnassignedTimes.CONTENT_URI};
+			return new Uri[]{UnassignedTimes.CONTENT_URI, UnassignedTimesView.CONTENT_URI};
 		}
 		
 		/*

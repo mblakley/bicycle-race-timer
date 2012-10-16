@@ -32,8 +32,10 @@ public class ButtonAssignTime extends Button implements View.OnClickListener{
     	}catch(Exception ex){Log.e(LOG_TAG, "onClick failed:", ex);}
 	}
 
-	private void AssignTimeToRacer(long unassignedTime_ID, long raceResult_ID) {		
+	private void AssignTimeToRacer(long unassignedTime_ID, long raceResult_ID) throws Exception {		
 		AssignTimeTask task = new AssignTimeTask(getContext());
-		task.execute(new Long[] { unassignedTime_ID, raceResult_ID });		
+		// TODO: Fill in all parameters correctly!
+		throw new Exception("ButtonAssignTime.AssignTimeToRacer did nothing!");
+		//task.execute(new Long[] { unassignedTime_ID, raceResult_ID });		
     }
 }

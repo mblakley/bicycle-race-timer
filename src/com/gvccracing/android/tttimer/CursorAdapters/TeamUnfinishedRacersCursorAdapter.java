@@ -40,7 +40,7 @@ public class TeamUnfinishedRacersCursorAdapter extends BaseCursorAdapter  {
     public void bindView(View v, Context context, Cursor c) {
 
     	try{
-	        int startOrderCol = c.getColumnIndex(RaceResults.StartOrder);
+	        int startOrderCol = 0;//c.getColumnIndex(RaceResults.StartOrder);
 	        
 	        Integer startOrder = c.getInt(startOrderCol);	   
 	        
@@ -63,7 +63,7 @@ public class TeamUnfinishedRacersCursorAdapter extends BaseCursorAdapter  {
     		Cursor c = (Cursor)getItem(position);
 
     		int teamNameCol = c.getColumnIndex(TeamInfo.TeamName);
-	        int startOrderCol = c.getColumnIndex(RaceResults.StartOrder);
+	        int startOrderCol = 0;//c.getColumnIndex(RaceResults.StartOrder);
 	        int lapsCompletedCol = c.getColumnIndex("LapsCompleted");
 	        
 	        String teamName = c.getString(teamNameCol);

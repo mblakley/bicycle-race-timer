@@ -33,6 +33,8 @@ public class AppSettingsCP {
 		public static final String AppSetting_AuthenticatingDropbox_Name = "AuthenticatingDropbox";
 		public static final String AppSetting_ResumePreviousState_Name = "ResumePreviousState";
 		public static final String AppSetting_TeamID_Name = "Team_ID";
+
+		public static final String AppSetting_RaceMeet_ID_Name = "RaceMeet_ID";
         
         public static String getTableName(){
         	return AppSettings.class.getSimpleName();

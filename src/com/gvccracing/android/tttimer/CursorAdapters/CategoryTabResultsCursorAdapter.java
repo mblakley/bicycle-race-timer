@@ -49,14 +49,12 @@ public class CategoryTabResultsCursorAdapter extends BaseCursorAdapter {
 		        int firstNameCol = c.getColumnIndex(Racer.FirstName);
 		        int lastNameCol = c.getColumnIndex(Racer.LastName);
 		        int categoryCol = c.getColumnIndex(RacerClubInfo.Category);
-	        	int pointsCol = c.getColumnIndex(RaceResults.Points);
 		        
 		        Integer placing = c.getInt(placingCol);
 		        Long elapsedTime = c.getLong(elapsedTimeCol);
 		        String firstName = c.getString(firstNameCol);
 		        String lastName = c.getString(lastNameCol);
 		        String category = c.getString(categoryCol);
-		        Integer points = c.getInt(pointsCol);	   
 		
 		        /**
 		         * Next set the name of the entry.
@@ -87,11 +85,6 @@ public class CategoryTabResultsCursorAdapter extends BaseCursorAdapter {
 		        TextView lblCategory = (TextView) v.findViewById(R.id.lblCategory);
 		        if (lblCategory != null) {
 		        	lblCategory.setText(category);
-		        }
-		        
-		        TextView lblPoints = (TextView) v.findViewById(R.id.lblPoints);
-		        if (lblPoints != null) {
-		        	lblPoints.setText(points.toString());
 		        }
     		}
 		}catch(Exception ex){

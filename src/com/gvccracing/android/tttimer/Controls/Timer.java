@@ -418,13 +418,6 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
 		String[] selectionArgs;
 		String sortOrder;
 		switch(id){
-			case ON_DECK_LOADER_TIMER:
-				projection = new String[]{RaceResults._ID, RaceResults.StartOrder, RaceResults.StartTimeOffset};
-				selection = RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.StartTime + " IS NULL";
-				selectionArgs = null;
-				sortOrder = RaceResults.StartOrder;
-				loader = new CursorLoader(getContext(), RaceResults.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
-				break;
 			case RACE_INFO_LOADER_TIMER:
 				projection = new String[]{Race.NumSplits};
 				selection = Race.getTableName() + "." + Race._ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
@@ -455,19 +448,6 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
 		try{
 			Log.i(LOG_TAG, "onLoadFinished start: id=" + Integer.toString(loader.getId()));			
 			switch(loader.getId()){
-				case ON_DECK_LOADER_TIMER:					
-			    	// Reset these variables, so it doesn't affect the race lists (by default)
-					long raceResult_ID = -1;
-			    	long startTimeOffset = -1;
-				    if( cursor != null && cursor.getCount() > 0) {
-				    	cursor.moveToFirst();
-				    	// We found a race, so get the raceResult_ID and StartTimeOffset
-				    	raceResult_ID = cursor.getLong(cursor.getColumnIndex(RaceResults._ID));
-				    	startTimeOffset = cursor.getLong(cursor.getColumnIndex(RaceResults.StartTimeOffset));
-
-					    setNewRacerOnDeck(raceResult_ID, startTimeOffset);
-				    }
-					break;
 				case RACE_INFO_LOADER_TIMER:
 					if(cursor != null && cursor.getCount() > 0){
 						cursor.moveToFirst();

@@ -2,10 +2,8 @@ package com.gvccracing.android.tttimer.AsyncTasks;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Reader;
 
 import android.content.Context;
 import android.net.Uri;
@@ -55,7 +53,6 @@ public class ImportRacersTask extends AsyncTask<Void, Integer, Void> {
 			// Loop through and fill in the list of images with DownloadedImage objects
 		    for(Entry file : imageFiles.contents){
 		    	String filename = file.fileName();
-		    	String revision = file.rev;
 		    	byte[] fileBytes = ImageFormatter.GetImageBytesFromDropBox("/RacerLists/" + filename, context, null);
 		    	InputStream is = new ByteArrayInputStream(fileBytes);
 		    	BufferedReader br = new BufferedReader(new java.io.InputStreamReader(is));

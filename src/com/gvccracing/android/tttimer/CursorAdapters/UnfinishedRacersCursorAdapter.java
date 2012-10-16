@@ -3,7 +3,6 @@ package com.gvccracing.android.tttimer.CursorAdapters;
 import com.gvccracing.android.tttimer.R;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
-import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -64,7 +63,7 @@ public class UnfinishedRacersCursorAdapter extends BaseCursorAdapter  {
 
     		int firstNameCol = c.getColumnIndex(Racer.FirstName);
 	        int lastNameCol = c.getColumnIndex(Racer.LastName);
-	        int startOrderCol = c.getColumnIndex(RaceResults.StartOrder);
+	        int startOrderCol = 0;//c.getColumnIndex(RaceResults.StartOrder);
 	        
 	        String firstName = c.getString(firstNameCol);
 	        String lastName = c.getString(lastNameCol);

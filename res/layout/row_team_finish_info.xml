@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:orientation="vertical"
+	android:paddingRight="1dp">  
+	<TextView
+		android:id="@+id/lblTeamName"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:paddingTop="5dp"
+		android:paddingBottom="5dp"
+		style="@style/Medium" />
+	
+	<LinearLayout 
+		android:id="@+id/llFinished"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:weightSum="4"> 
+		
+		<TextView
+			android:id="@+id/NumFinished"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:textStyle="bold"
+			android:text="@string/NumFinished"
+			style="@style/Small.Padded"
+			android:layout_weight="2"/>
+		
+		<TextView
+			android:id="@+id/lblNumFinished"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:text="0"
+			style="@style/Small"
+			android:layout_weight="0.5"/>
+	
+		<TextView
+			android:id="@+id/NumPoints"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:textStyle="bold"
+			android:text="@string/lblPoints"
+			style="@style/Small.Padded"
+			android:layout_weight="1"/>
+		
+		<TextView
+			android:id="@+id/lblPoints"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:text="0"
+			style="@style/Small"
+			android:layout_weight="0.5"/>		
+	</LinearLayout>	
+</LinearLayout>

@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.gvccracing.android.tttimer.R;
@@ -25,14 +24,15 @@ import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 import com.gvccracing.android.tttimer.Utilities.Enums.RaceType;
 import com.gvccracing.android.tttimer.Utilities.Enums.StartInterval;
 
-public class EditRaceConfiguration extends AddRaceView implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
+public class EditRaceMeetConfiguration extends AddMeetView implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 	public static final String LOG_TAG = "EditRaceConfiguration";
 	
 	private static final int RACE_INFO_LOADER = 0x06;
+	
+	private long raceMeet_ID;
 
-	public EditRaceConfiguration(long raceMeet_ID, String gender,
-			String category) {
-		super(raceMeet_ID, gender, category);
+	public EditRaceMeetConfiguration(long raceMeet_ID) {
+		this.raceMeet_ID = raceMeet_ID;
 	}
 	
     @Override
@@ -60,29 +60,29 @@ public class EditRaceConfiguration extends AddRaceView implements View.OnClickLi
     public void onClick(View v) { 
 		try{
 			if (v == btnAddNewRace){
-				Race.Update(getActivity(), Race._ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name), null, raceMeet_ID, GetRaceDate(), gender, category, null, null);	 			
+				throw new java.lang.Exception("Unable to update race...missing implementation");
+				//Race.Update(getActivity(), Race._ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name), null, raceMeet_ID, GetRaceDate(), null, gender, category, null, null);	 			
 				
 				// Figure out if checkin has already started.  If checkin has started, and start interval has changed, update the start intervals of everyone.
-				Cursor checkins = RaceResults.Read(getActivity(), new String[]{RaceResults._ID, RaceResults.StartOrder}, RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name), null, RaceResults.StartOrder);
-				if(checkins.getCount() > 0){
-					checkins.moveToFirst();
-					// Checkin was already started, so update all startIntervals
-					do{
-						long raceResultID = checkins.getLong(checkins.getColumnIndex(RaceResults._ID));
-						long startOrder = checkins.getLong(checkins.getColumnIndex(RaceResults.StartOrder));
-						Long startTimeOffset = 0l;
-						ContentValues content = new ContentValues();
-						content.put(RaceResults.StartTimeOffset, startTimeOffset);
-						RaceResults.Update(getActivity(), content,  RaceResults._ID + "=?", new String[]{Long.toString(raceResultID)});
-					} while(checkins.moveToNext());
-				}
-				if(checkins != null){
-					checkins.close();
-					checkins = null;
-				}
-				
-	 			// Hide the dialog
-	 			dismiss();
+//				Cursor checkins = RaceResults.Read(getActivity(), new String[]{RaceResults._ID, RaceResults.StartOrder}, RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name), null, RaceResults.StartOrder);
+//				if(checkins.getCount() > 0){
+//					checkins.moveToFirst();
+//					// Checkin was already started, so update all startIntervals
+//					do{
+//						long raceResultID = checkins.getLong(checkins.getColumnIndex(RaceResults._ID));
+//						Long startTimeOffset = 0l;
+//						ContentValues content = new ContentValues();
+//						content.put(RaceResults.StartTimeOffset, startTimeOffset);
+//						RaceResults.Update(getActivity(), content,  RaceResults._ID + "=?", new String[]{Long.toString(raceResultID)});
+//					} while(checkins.moveToNext());
+//				}
+//				if(checkins != null){
+//					checkins.close();
+//					checkins = null;
+//				}
+//				
+//	 			// Hide the dialog
+//	 			dismiss();
 			} else {
 				super.onClick(v);
 			}
@@ -165,17 +165,6 @@ public class EditRaceConfiguration extends AddRaceView implements View.OnClickLi
 			String raceLocationInSpinner = value.getString(value.getColumnIndex(RaceLocation.CourseName));
 		    if (raceLocationInSpinner.equalsIgnoreCase(raceCourseName)) {
 		    	raceLocation.setSelection(i);
-		    	break;
-		    }
-		}
-	}
-
-	private void SetStartIntervalSelectionByValue(Spinner spinnerControl, Long startIntervalSeconds) {
-		String dbStartIntervalDesc = StartInterval.DescriptionFromStartIntervalSeconds(startIntervalSeconds);
-		for (int i = 0; i < spinnerControl.getCount(); i++) {
-		    String desc = spinnerControl.getItemAtPosition(i).toString();
-		    if (desc.equalsIgnoreCase(dbStartIntervalDesc)) {
-		    	spinnerControl.setSelection(i);
 		    	break;
 		    }
 		}

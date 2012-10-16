@@ -22,16 +22,15 @@ import android.widget.TextView;
 
 import com.gvccracing.android.tttimer.R;
 import com.gvccracing.android.tttimer.CursorAdapters.ResultsCursorAdapter;
-import com.gvccracing.android.tttimer.CursorAdapters.TeamResultsCursorAdapter;
 import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
-import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewExclusive;
+import com.gvccracing.android.tttimer.DataAccess.DualMeetResultsCP.DualMeetResults;
+import com.gvccracing.android.tttimer.DataAccess.DualMeetResultsCP.DualMeetResultsView;
 import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
-import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.UnassignedTimesView;
+import com.gvccracing.android.tttimer.DataAccess.RaceLapsCP.RaceLaps;
+import com.gvccracing.android.tttimer.DataAccess.RaceLapsCP.RaceResultsLapsView;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
-import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
 import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
-import com.gvccracing.android.tttimer.DataAccess.UnassignedTimesCP.UnassignedTimes;
 import com.gvccracing.android.tttimer.Dialogs.AdminAuthView;
 import com.gvccracing.android.tttimer.Dialogs.EditRaceResultView;
 import com.gvccracing.android.tttimer.Dialogs.RacerPreviousResults;
@@ -41,22 +40,14 @@ public class ResultsTab extends BaseTab implements View.OnClickListener, LoaderM
 
 	public static final String ResultsTabSpecName =  "ResultsActivity";
 
-	private static final int TEAM_OVERALL_RESULTS_LOADER = 0x90;
-
 	private static final int RACE_INFO_LOADER_RESULTS = 0x189;
 
 	private static final int OVERALL_RESULTS_LOADER_RESULTS = 0x118;
 
 	private static final int CATEGORY_RESULTS_LOADER_RESULTS = 0x119;
-
-	private Long raceTypeID = 0l;	
 	
 	private CursorAdapter overallResultsCA;
 	private ResultsCursorAdapter categoryResultsCA;
-	
-	private Loader<Cursor> overallResultsLoader = null;
-	private Loader<Cursor> teamOverallResultsLoader = null;
-	private Loader<Cursor> categoryResultsLoader = null;
 	
 	private ListView overallResultsList;
 	private ListView categoryResultsList; 
@@ -166,18 +157,19 @@ public class ResultsTab extends BaseTab implements View.OnClickListener, LoaderM
 						}
 		    		});
 				}
-				projection = new String[]{UnassignedTimes.getTableName() + "." + UnassignedTimes._ID + " as _id", Racer.LastName, Racer.FirstName, UnassignedTimes.getTableName() + "." + UnassignedTimes.ElapsedTime, TeamInfo.TeamName, UnassignedTimes.getTableName() + "." + UnassignedTimes.OverallPlacing, UnassignedTimes.getTableName() + "." + UnassignedTimes.Points};
-				selection = UnassignedTimes.getTableName() + "." + UnassignedTimes.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + UnassignedTimes.getTableName() + "." + UnassignedTimes.ElapsedTime + " IS NOT NULL";// AND " + RacerClubInfo.getTableName() + "." + RacerClubInfo.Category + "!=?";
-				selectionArgs = null;//ew String[]{"G"};
-				sortOrder = UnassignedTimes.getTableName() + "." + UnassignedTimes.ElapsedTime + "," + UnassignedTimes.getTableName() + "." + UnassignedTimes._ID;
-				loader = new CursorLoader(getActivity(), UnassignedTimesView.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				projection = new String[]{RaceLaps.getTableName() + "." + RaceLaps._ID + " as _id", Racer.LastName, Racer.FirstName, RaceLaps.getTableName() + "." + RaceLaps.ElapsedTime, TeamInfo.TeamName, RaceResults.getTableName() + "." + RaceResults.OverallPlacing};
+				selection = RaceLaps.getTableName() + "." + RaceLaps.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceLaps.getTableName() + "." + RaceLaps.ElapsedTime + " IS NOT NULL AND " + RaceLaps.LapNumber + "=" + Race.NumSplits;
+				selectionArgs = null;
+				sortOrder = RaceLaps.getTableName() + "." + RaceLaps.ElapsedTime + "," + RaceResults.getTableName() + "." + RaceResults.OverallPlacing;
+				loader = new CursorLoader(getActivity(), RaceResultsLapsView.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case CATEGORY_RESULTS_LOADER_RESULTS:
-				projection = new String[]{UnassignedTimes.getTableName() + "." + UnassignedTimes.TeamInfo_ID + " as _id", TeamInfo.TeamName, "Sum(" + UnassignedTimes.getTableName() + "." + UnassignedTimes.Points + ") as " + UnassignedTimes.Points};
-				selection = UnassignedTimes.getTableName() + "." + UnassignedTimes.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + UnassignedTimes.getTableName() + "." + UnassignedTimes.ElapsedTime + " IS NOT NULL" /* AND " + RacerClubInfo.getTableName() + "." + RacerClubInfo.Category + "!=?*/ + " AND " + UnassignedTimes.getTableName() + "." + UnassignedTimes.Points + " IS NOT NULL AND " + UnassignedTimes.getTableName() + "." + UnassignedTimes.Points + "!=0";
-				selectionArgs = null;//ew String[]{"G"};
-				sortOrder = UnassignedTimes.Points;				
-				loader = new CursorLoader(getActivity(), Uri.withAppendedPath(UnassignedTimesView.CONTENT_URI, "group by _id, " + TeamInfo.TeamName), projection, selection, selectionArgs, sortOrder);
+				String currentTeamInfo_ID = AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_TeamID_Name, "-1");
+				projection = new String[]{DualMeetResults.getTableName() + "." + DualMeetResults._ID + " as _id", DualMeetResultsView.TeamInfo1 + "." + TeamInfo.TeamName, DualMeetResultsView.TeamInfo2 + "." + TeamInfo.TeamName, DualMeetResults.Team1_Points, DualMeetResults.Team2_Points};
+				selection = DualMeetResults.getTableName() + "." + DualMeetResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND (" + DualMeetResults.Team1_TeamInfo_ID + "=? OR " + DualMeetResults.Team1_TeamInfo_ID + "=?)";
+				selectionArgs = new String[]{currentTeamInfo_ID};
+				sortOrder = DualMeetResults.Winning_TeamInfo_ID;				
+				loader = new CursorLoader(getActivity(), Uri.withAppendedPath(DualMeetResultsView.CONTENT_URI, "group by _id"), projection, selection, selectionArgs, sortOrder);
 				break;
 			case RACE_INFO_LOADER_RESULTS:
 				projection = new String[]{Race.getTableName() + "." + Race._ID + " as _id", Race.Gender, Race.Category, Race.NumSplits};
@@ -207,7 +199,7 @@ public class ResultsTab extends BaseTab implements View.OnClickListener, LoaderM
 						cursor.moveToFirst();
 						// Set up the tab based on the race information
 						if(getView() != null){
-							overallResultsLoader = getActivity().getSupportLoaderManager().restartLoader(OVERALL_RESULTS_LOADER_RESULTS, null, this);
+							getActivity().getSupportLoaderManager().restartLoader(OVERALL_RESULTS_LOADER_RESULTS, null, this);
 
 							// Now create a cursor adapter and set it to display using our row
 					        categoryResultsCA = new ResultsCursorAdapter(getActivity(), null, false);
@@ -220,7 +212,7 @@ public class ResultsTab extends BaseTab implements View.OnClickListener, LoaderM
 					        }
 
 							// Initialize the cursor loader for the category results list						        
-							categoryResultsLoader = getActivity().getSupportLoaderManager().restartLoader(CATEGORY_RESULTS_LOADER_RESULTS, null, this);							
+							getActivity().getSupportLoaderManager().restartLoader(CATEGORY_RESULTS_LOADER_RESULTS, null, this);							
 						}
 					}
 					break;

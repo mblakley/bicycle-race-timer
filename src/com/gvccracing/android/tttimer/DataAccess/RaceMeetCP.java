@@ -10,6 +10,7 @@ import android.provider.BaseColumns;
 
 import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewExclusive;
 import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewInclusive;
+import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.MeetTeamsView;
 import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.RaceInfoView;
 import com.gvccracing.android.tttimer.DataAccess.RaceLocationCP.RaceLocation;
 
@@ -36,10 +37,10 @@ public class RaceMeetCP {
         }
         
         public static Uri[] getAllUrisToNotifyOnChange(){
-        	return new Uri[]{RaceMeet.CONTENT_URI, CheckInViewInclusive.CONTENT_URI, CheckInViewExclusive.CONTENT_URI, RaceInfoView.CONTENT_URI, RaceLocation.CONTENT_URI};
+        	return new Uri[]{RaceMeet.CONTENT_URI, MeetTeamsView.CONTENT_URI, CheckInViewInclusive.CONTENT_URI, CheckInViewExclusive.CONTENT_URI, RaceInfoView.CONTENT_URI, RaceLocation.CONTENT_URI};
         }
 
-		public static Uri Create(Context context, Date raceMeetDate, Long raceStartTime, Long raceLocation_ID) {
+		public static Uri Create(Context context, Date raceMeetDate, Long raceLocation_ID) {
 			ContentValues content = new ContentValues();
 			content.put(RaceMeet.RaceMeetDate, raceMeetDate.getTime());
 			content.put(RaceMeet.RaceLocation_ID, raceLocation_ID);
