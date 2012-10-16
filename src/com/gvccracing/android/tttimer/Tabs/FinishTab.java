@@ -20,8 +20,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.gvccracing.android.tttimer.R;
 import com.gvccracing.android.tttimer.AsyncTasks.AssignTimeTask;
@@ -40,6 +38,7 @@ import com.gvccracing.android.tttimer.DataAccess.RaceResultsRacerViewCP.RaceResu
 import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
 import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
 import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
+import com.gvccracing.android.tttimer.Utilities.Calculations;
 
 /**
  * @author Perry, Mark
@@ -378,6 +377,9 @@ public class FinishTab extends BaseTab implements View.OnClickListener,	LoaderMa
 					Intent raceIsFinished = new Intent();
 		    		raceIsFinished.setAction(Timer.RACE_IS_FINISHED_ACTION);
 		    		getActivity().sendBroadcast(raceIsFinished);
+		    		
+		    		// Calculate the dual meet results (points vs overall list)
+		    		Calculations.CalculateCategoryPlacings(getActivity(), Long.parseLong(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_RaceID_Name, "-1")));
 				}
 			}
 		} catch (Exception ex) {

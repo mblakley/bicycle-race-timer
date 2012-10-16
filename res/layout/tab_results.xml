@@ -95,53 +95,45 @@
 			android:layout_height="wrap_content"
 			android:orientation="horizontal"
 			android:weightSum="1.0"
-			android:padding="1dp">  
-			<TextView
-				android:id="@+id/lblPlacingCat"
-				android:layout_weight="0.1"
-				android:layout_width="0dip"
-				android:layout_height="wrap_content"
-				style="@style/Small.Padded" />
+			android:padding="1dp">  		
 		
-		        <TextView
-		            android:id="@+id/lblElapsedTimeCat"
-				android:layout_weight=".25"
-				android:layout_width="0dip"
-				android:layout_height="wrap_content"
-		            android:text="@string/HeaderTime"
-		            android:textStyle="bold"
-					style="@style/Small.Padded"
-					android:visibility="gone"/>
-		
-		        <TextView
-		            android:id="@+id/lblNameCat"
+	        <TextView
+	            android:id="@+id/lblTeam1NameCat"
 				android:layout_weight="0.4"
 				android:layout_width="0dip"
 				android:layout_height="wrap_content"
-		            android:text="@string/HeaderRacerName"
-		            android:textStyle="bold"
-		            android:singleLine="true"
-					style="@style/Small.Padded"
-					android:visibility="gone" />
-		
-		        <TextView
-		            android:id="@+id/lblCategoryCat"
-				android:layout_weight="0.7"
+	            android:text="@string/HeaderTeam1Name"
+	            android:textStyle="bold"
+	            android:singleLine="true"
+				style="@style/Small.Padded" />
+	
+	        <TextView
+	            android:id="@+id/lblTeam1PointsCat"
+				android:layout_weight="0.1"
 				android:layout_width="0dip"
 				android:layout_height="wrap_content"
-		            android:text="@string/HeaderCat"
-		            android:textStyle="bold"
-					style="@style/Small.Padded" />
-		
-		        <TextView
-		            android:id="@+id/lblPointsCat"
-				android:layout_weight="0.2"
+	            android:text="@string/HeaderPoints"
+	            android:textStyle="bold"
+				style="@style/Small.Padded" /> 
+				
+	        <TextView
+	            android:id="@+id/lblTeam2NameCat"
+				android:layout_weight="0.4"
 				android:layout_width="0dip"
 				android:layout_height="wrap_content"
-		            android:text="@string/HeaderPoints"
-		            android:textStyle="bold"
-					style="@style/Small.Padded"
-					android:gravity="right" /> 
+	            android:text="@string/HeaderTeam2Name"
+	            android:textStyle="bold"
+	            android:singleLine="true"
+				style="@style/Small.Padded" />
+	
+	        <TextView
+	            android:id="@+id/lblTeam2PointsCat"
+				android:layout_weight="0.1"
+				android:layout_width="0dip"
+				android:layout_height="wrap_content"
+	            android:text="@string/HeaderPoints"
+	            android:textStyle="bold"
+				style="@style/Small.Padded" /> 
 		</LinearLayout>
 	
 	    <ListView

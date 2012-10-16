@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -47,6 +48,8 @@ public class AssignTimeTask extends AsyncTask<Long, Void, AssignResult> {
 			Log.i("OverallPlacing", Integer.toString(overallPlacing));
 			
 	    	Long elapsedTime = endTime - startTime;
+
+			long race_ID = Long.parseLong(AppSettings.ReadValue(context, AppSettings.AppSetting_RaceID_Name, "-1"));
 			
 			if(raceResult_ID != null && currentRaceLap == maxRaceLaps){
 		    	// Get the race result record based on the racerInfo_ID and the race_ID
@@ -117,8 +120,8 @@ public class AssignTimeTask extends AsyncTask<Long, Void, AssignResult> {
 				// If it's the last lap, this is the final time, so it will be used for scoring.
 				// Create a RaceResult with the teamInfo_ID
 				if(currentRaceLap == maxRaceLaps){
-					long race_ID = Long.parseLong(AppSettings.ReadValue(context, AppSettings.AppSetting_RaceID_Name, "-1"));
-					RaceResults.Create(context, null, race_ID, startTime, endTime, elapsedTime, overallPlacing, teamInfo_ID, false);
+					Uri raceResultsUri = RaceResults.Create(context, null, race_ID, startTime, endTime, elapsedTime, overallPlacing, teamInfo_ID, false);
+					raceResult_ID = Long.parseLong(raceResultsUri.getLastPathSegment());
 				}
 				
 				result.message = "Assigned time " + TimeFormatter.Format(elapsedTime, true, true, true, true, true, false, false, false) + " -> " + Long.toString(teamInfo_ID);
@@ -129,8 +132,6 @@ public class AssignTimeTask extends AsyncTask<Long, Void, AssignResult> {
 			messageToShow.putExtra(Timer.MESSAGE, result.message);
 			messageToShow.putExtra(Timer.DURATION, 2300l);
 			context.sendBroadcast(messageToShow);
-			
-			long race_ID = Long.parseLong(AppSettings.ReadValue(context, AppSettings.AppSetting_RaceID_Name, "-1"));
 			
 			RaceLaps.Create(context, raceResult_ID, teamInfo_ID, currentRaceLap, startTime, endTime, elapsedTime, race_ID);
 			

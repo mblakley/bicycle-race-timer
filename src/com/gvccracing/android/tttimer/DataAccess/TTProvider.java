@@ -159,6 +159,12 @@ public class TTProvider extends ContentProvider {
 			resultUri = Uri.withAppendedPath(resultUri, Long.toString(raceMeet_ID));
 			
 			notifyUris = RaceMeet.getAllUrisToNotifyOnChange();
+		} else if(uri.toString().contains(DualMeetResults.CONTENT_URI.toString())){
+			long raceMeet_ID = mDB.getWritableDatabase().insert(DualMeetResults.getTableName(), null, content);
+			
+			resultUri = Uri.withAppendedPath(resultUri, Long.toString(raceMeet_ID));
+			
+			notifyUris = DualMeetResults.getAllUrisToNotifyOnChange();
 		} else{
 			throw new UnsupportedOperationException("You're an idiot...add the uri " + uri.toString() + " to the TTProvider.insert if/else statement");
 		}
@@ -661,6 +667,10 @@ public class TTProvider extends ContentProvider {
 			numChanged = mDB.getWritableDatabase().update(LocationImages.getTableName(), content, selection, selectionArgs);
 
 			notifyUris = LocationImages.getAllUrisToNotifyOnChange();
+		} else if(uri.toString().contains(DualMeetResults.CONTENT_URI.toString())){
+			numChanged = mDB.getWritableDatabase().update(DualMeetResults.getTableName(), content, selection, selectionArgs);
+
+			notifyUris = DualMeetResults.getAllUrisToNotifyOnChange();
 		} else {
 			throw new UnsupportedOperationException("You're an idiot...add the uri " + uri.toString() + " to the TTProvider.update if/else statement");
 		}

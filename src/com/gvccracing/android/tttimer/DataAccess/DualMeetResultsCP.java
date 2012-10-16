@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 
 import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
-import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
 
 public class DualMeetResultsCP {
@@ -58,12 +57,26 @@ public class DualMeetResultsCP {
 	     	return context.getContentResolver().insert(DualMeetResults.CONTENT_URI, content);
 		}
 		
+		public static Uri Create(Context context, ContentValues content) {
+	     	return context.getContentResolver().insert(DualMeetResults.CONTENT_URI, content);
+		}
+		
 		public static Cursor Read(Context context, String[] fieldsToRetrieve, String selection, String[] selectionArgs, String sortOrder) {
 			return context.getContentResolver().query(DualMeetResults.CONTENT_URI, fieldsToRetrieve, selection, selectionArgs, sortOrder);
 		}
 
 		public static int Update(Context context, ContentValues content, String selection, String[] selectionArgs) {
 			return context.getContentResolver().update(DualMeetResults.CONTENT_URI, content, selection, selectionArgs);
+		}
+		
+		public static int Update(Context context, ContentValues content, String selection, String[] selectionArgs, boolean addIfNotExist) {			
+			int numChanged = context.getContentResolver().update(DualMeetResults.CONTENT_URI, content, selection, selectionArgs);
+			if(addIfNotExist && numChanged < 1){
+				DualMeetResults.Create(context, content);
+				numChanged = 1;
+			}
+			
+			return numChanged;
 		}
 		
 		public static int Delete(Context context, String selection, String[] selectionArgs) {
