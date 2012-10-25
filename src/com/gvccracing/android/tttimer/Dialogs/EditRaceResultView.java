@@ -3,6 +3,7 @@ package com.gvccracing.android.tttimer.Dialogs;
 import com.gvccracing.android.tttimer.R;
 import com.gvccracing.android.tttimer.TTTimerTabsActivity;
 import com.gvccracing.android.tttimer.Controls.TimePicker;
+import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
 import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
 import com.gvccracing.android.tttimer.DataAccess.UnassignedTimesCP.UnassignedTimes;
 import com.gvccracing.android.tttimer.Tabs.FinishTab;
@@ -95,7 +96,7 @@ public class EditRaceResultView extends BaseDialog implements View.OnClickListen
 					RaceResults.Update(getActivity(), content, RaceResults._ID + "= ?", new String[]{Long.toString(raceResultID)});
 
 					// Recalculate placings and points
-			    	Calculations.CalculateCategoryPlacings(getActivity(), raceID);
+			    	Calculations.CalculateCategoryPlacings(getActivity(), raceID, Long.parseLong(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_TeamID_Name, "0")));
 			    	Calculations.CalculateOverallPlacings(getActivity(), raceID); 
 				}
 		    	
@@ -138,7 +139,7 @@ public class EditRaceResultView extends BaseDialog implements View.OnClickListen
 				getActivity().sendBroadcast(changeTab);
 				
 				// Recalculate placings and points
-		    	Calculations.CalculateCategoryPlacings(getActivity(), raceID);
+		    	Calculations.CalculateCategoryPlacings(getActivity(), raceID, Long.parseLong(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_TeamID_Name, "0")));
 		    	Calculations.CalculateOverallPlacings(getActivity(), raceID); 
 			} else {
 				super.onClick(v);

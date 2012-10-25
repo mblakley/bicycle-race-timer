@@ -208,7 +208,7 @@ public class AdminMenuView extends BaseDialog implements View.OnClickListener {
 	}
 	
 	private void RecalculateResults() {
-    	Calculations.CalculateCategoryPlacings(getActivity(), Long.parseLong(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_RaceID_Name, "0")));
+    	Calculations.CalculateCategoryPlacings(getActivity(), Long.parseLong(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_RaceID_Name, "0")), Long.parseLong(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_TeamID_Name, "0")));
     	Calculations.CalculateOverallPlacings(getActivity(), Long.parseLong(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_RaceID_Name, "0")));  
 	}
 	

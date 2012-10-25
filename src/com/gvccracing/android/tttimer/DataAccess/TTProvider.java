@@ -403,10 +403,17 @@ public class TTProvider extends ContentProvider {
 			// RaceLaps
 			qBuilder.setTables(RaceLaps.getTableName());		
 			
+			String groupBy = null;
+			if(!uri.getLastPathSegment().contains("~")){
+				if(uri.getLastPathSegment().contains("group by")){
+					groupBy = uri.getLastPathSegment().replace("group by", "");
+				}
+			}
+			
 			Cursor raceLapsResultsCursor = qBuilder.query(mDB.getReadableDatabase(),
 													projection, 
 													selection, 
-													selectionArgs, null, null, sortOrder,
+													selectionArgs, groupBy, null, sortOrder,
 													null);	
 			
 			raceLapsResultsCursor.setNotificationUri(getContext().getContentResolver(), uri);	

@@ -120,8 +120,8 @@ public class AssignLapTimeTask extends AsyncTask<Long, Void, AssignResult> {
 						RaceResults.Update(context, content, RaceResults._ID + "= ?", new String[]{Long.toString(raceResult_ID)});
 						
 						// Calculate Category Placing, Overall Placing, Points
-				    	Calculations.CalculateCategoryPlacings(context, race_ID);
 				    	Calculations.CalculateOverallPlacings(context, race_ID); 
+				    	Calculations.CalculateCategoryPlacings(context, race_ID, teamInfo_ID);
 					}
 				}
 

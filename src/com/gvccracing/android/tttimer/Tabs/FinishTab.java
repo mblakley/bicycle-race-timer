@@ -3,8 +3,13 @@
  */
 package com.gvccracing.android.tttimer.Tabs;
 
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
+
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -17,9 +22,9 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.gvccracing.android.tttimer.R;
 import com.gvccracing.android.tttimer.AsyncTasks.AssignTimeTask;
@@ -28,6 +33,7 @@ import com.gvccracing.android.tttimer.CursorAdapters.SplitTimesCursorAdapter;
 import com.gvccracing.android.tttimer.CursorAdapters.TeamFinishCursorAdapter;
 import com.gvccracing.android.tttimer.CursorAdapters.UnfinishedRacersCursorAdapter;
 import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
+import com.gvccracing.android.tttimer.DataAccess.DualMeetResultsCP.DualMeetResults;
 import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
 import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.MeetTeamsView;
 import com.gvccracing.android.tttimer.DataAccess.RaceLapsCP.RaceLaps;
@@ -59,24 +65,29 @@ public class FinishTab extends BaseTab implements View.OnClickListener,	LoaderMa
 	private static final int CURRENT_LAP_LOADER_FINISH = 99898;
 
 	private static final int CURRENT_PLACING_LOADER_FINISH = 5543433;
+
+	private static final int TEAM_NUM_FINISHERS_LOADER = 776332;
+
+	private static final int TEAM_POINTS_LOADER = 1000098;
 	
 	private Long numRaceLaps = 1l;
 
 	private CursorAdapter myRacersCA;
-	private CursorAdapter teamsCA;
+	private TeamFinishCursorAdapter teamsCA;
 	private CursorAdapter splitsCA;
 
 	private ListView teams;
 	private ListView myRacers;
 	private ListView splits;	
 	
-	//private TabHost tabHost;
 	private LinearLayout llSplitButtons;
 	
 	private long teamInfo_ID;
 	private long overallPlacing = 1;
 	
 	private long currentRaceLap = 1;
+	
+	private Hashtable<Long, Long> teamFinishers = new Hashtable<Long, Long>();
 	
 	/**
 	 * 
@@ -105,9 +116,6 @@ public class FinishTab extends BaseTab implements View.OnClickListener,	LoaderMa
 		llSplitButtons = (LinearLayout) getView().findViewById(R.id.llSplitButtons);
 		
 		splits = (ListView) getView().findViewById(R.id.lvSplits);
-//		tabHost = (TabHost)getView().findViewById(android.R.id.tabhost);  // The activity TabHost
-//	    tabHost.setup();	    
-//	    tabHost.getTabWidget().setDividerDrawable(R.drawable.tab_divider);
 	    
 		teamInfo_ID = Long.parseLong(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_TeamID_Name, "-1"));
 
@@ -134,27 +142,6 @@ public class FinishTab extends BaseTab implements View.OnClickListener,	LoaderMa
 		return FinishTabSpecName;
 	}
 
-//	public void RacerFinished() {
-//		try {
-//			Log.v(LOG_TAG(), "RacerFinished");
-//
-//			// Create an unassigned time record
-//			long finishTime = System.currentTimeMillis(); // get the endTime from the timer
-//			Long race_ID = Long.parseLong(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_RaceID_Name, "-1"));
-//			
-//			ContentValues content = new ContentValues();
-//			content.put(RaceLaps.FinishTime, finishTime);
-//			content.put(RaceLaps.Race_ID, race_ID);
-//
-//			RaceLaps.Create(getActivity(), raceResult_ID, teamInfo_ID, lapNumber, finishTime, raceFinishTime, elapsedTime, race_ID)
-//			//UnassignedTimes.Create(getActivity(), race_ID, finishTime, null, null, null, null);
-//			//getActivity().getContentResolver().insert(UnassignedTimes.CONTENT_URI, content);
-//
-//		} catch (Exception ex) {
-//			Log.e(LOG_TAG(), "RacerFinished failed", ex);
-//		}
-//	}
-
 	public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
 		Log.i(LOG_TAG(), "onCreateLoader start: id=" + Integer.toString(id));
 		CursorLoader loader = null;
@@ -165,7 +152,7 @@ public class FinishTab extends BaseTab implements View.OnClickListener,	LoaderMa
 		switch (id) {			
 			case TEAMS_LOADER_FINISH:
 				// Create the cursor adapter for the list of unassigned times
-				teamsCA = new TeamFinishCursorAdapter(getActivity(), null);				
+				teamsCA = new TeamFinishCursorAdapter(getActivity(), null, teamFinishers);				
 
 				if (teams != null) {
 		        	
@@ -174,12 +161,9 @@ public class FinishTab extends BaseTab implements View.OnClickListener,	LoaderMa
 					teams.setOnItemClickListener(new OnItemClickListener() {
 							public void onItemClick(AdapterView<?> arg0, View v, int pos, long teamInfo_ID) {
 								overallPlacing++;
-								//TextView lblNumFinished = (TextView)((LinearLayout)((LinearLayout)v).getChildAt(1)).getChildAt(1);
-								//TextView teamName = ((TextView)((LinearLayout)v).getChildAt(0));
-								//String name = (String) teamName.getText();
-								//lblNumFinished.setText(name + "9");
-								//name = (String) teamName.getText();
-								//temp.bringToFront();
+								
+								teamsCA.addToNumFinished(teamInfo_ID);
+								
 								AssignTimeTask task = new AssignTimeTask(FinishTab.this.getActivity());
 								task.execute(new Long[] { System.currentTimeMillis(), null, teamInfo_ID, raceStartTime, currentRaceLap, numRaceLaps, overallPlacing });	
 							}
@@ -200,6 +184,10 @@ public class FinishTab extends BaseTab implements View.OnClickListener,	LoaderMa
 		        	myRacers.setOnItemClickListener(new OnItemClickListener() {
 						public void onItemClick(AdapterView<?> arg0, View v, int pos, long raceResult_ID) {
 							overallPlacing++;
+							
+							teamsCA.addToNumFinished(teamInfo_ID);
+							teamsCA.notifyDataSetChanged();
+							
 							AssignTimeTask task = new AssignTimeTask(FinishTab.this.getActivity());
 							task.execute(new Long[] { System.currentTimeMillis(), raceResult_ID, teamInfo_ID, raceStartTime, currentRaceLap, numRaceLaps, overallPlacing });	
 						}
@@ -222,6 +210,20 @@ public class FinishTab extends BaseTab implements View.OnClickListener,	LoaderMa
 				selectionArgs = new String[]{Long.toString(currentRaceLap)};
 				sortOrder = RaceLaps.getTableName() + "." + RaceLaps.ElapsedTime + " DESC";
 				loader = new CursorLoader(getActivity(), RaceResultsLapsView.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				break;
+			case TEAM_NUM_FINISHERS_LOADER:
+				projection = new String[]{RaceLaps.getTableName() + "." + RaceLaps.TeamInfo_ID, "COUNT(" + RaceLaps._ID + ") as NumFinishers"};
+				selection = RaceLaps.getTableName() + "." + RaceLaps.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceLaps.LapNumber + "=?";
+				selectionArgs = new String[]{Long.toString(currentRaceLap)};
+				sortOrder = RaceLaps.getTableName() + "." + RaceLaps.TeamInfo_ID;
+				loader = new CursorLoader(getActivity(), Uri.withAppendedPath(RaceLaps.CONTENT_URI, "group by " + RaceLaps.TeamInfo_ID), projection, selection, selectionArgs, sortOrder);
+				break;
+			case TEAM_POINTS_LOADER:
+				projection = new String[]{DualMeetResults.getTableName() + "." + DualMeetResults.Team2_TeamInfo_ID + " as _id", DualMeetResults.Team2_Points, DualMeetResults.Team1_Points};
+				selection = DualMeetResults.getTableName() + "." + DualMeetResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + DualMeetResults.Team1_TeamInfo_ID + "=?";
+				selectionArgs = new String[]{Long.toString(teamInfo_ID)};
+				sortOrder = DualMeetResults.getTableName() + "." + DualMeetResults.Team2_TeamInfo_ID;
+				loader = new CursorLoader(getActivity(), DualMeetResults.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case RACE_INFO_LOADER_FINISH:
 				projection = new String[]{Race.getTableName() + "." + Race._ID + " as _id", Race.Gender, Race.Category, Race.NumSplits, Race.RaceStartTime};
@@ -272,61 +274,81 @@ public class FinishTab extends BaseTab implements View.OnClickListener,	LoaderMa
 						numRaceLaps = cursor.getLong(numLapsCol);
 						
 						raceStartTime = cursor.getLong(cursor.getColumnIndex(Race.RaceStartTime));
+						String tabText;
+						
+						boolean foundSelectedRaceLap = false;						
 						
 						// Add a button for each split
-						for(long i = 0; i < numRaceLaps; i++){
-							Button btnSplit = new Button(getActivity());
-							LayoutParams params = new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT, (0.9f/((float)numRaceLaps + 1.0f)));
-							btnSplit.setPadding(0, 0, 0, 0);
-							btnSplit.setTag(i + 1);
-							btnSplit.setWidth(0);
-							
+						for(long i = 0; i < numRaceLaps; i++){							
 							if(i == numRaceLaps - 1){
-								btnSplit.setText("Finish");
-								//btnSplit.setColorFilter(Color.argb(0, 155, 155, 155));
-								//btnSplit.setBackgroundResource(android.R.drawable.button_onoff_indicator_off);
-								//btnSplit.setBackgroundColor(getResources().getColor(R.color.normal_bg_gray));
-								//tabHost.addTab(tabHost.newTabSpec("Finish").setIndicator("Finish").setContent(this));
+								tabText = "Finish";
 							}else{
-								btnSplit.setText("Split " + Long.toString(i + 1));
-								//tabHost.addTab(tabHost.newTabSpec("Split" + Integer.toString(i)).setIndicator("Split " + Integer.toString(i)).setContent(this));
+								tabText = "Split " + Long.toString(i + 1);
 							}
+							View btnSplit = createTabView(tabText);
+							
+							LayoutParams params = new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT, (0.9f/((float)numRaceLaps + 1.0f)));
+							btnSplit.setTag(i + 1);						
+							
 							btnSplit.setOnClickListener(this);
 							
 							llSplitButtons.addView(btnSplit, (int)i, params);
+							
+							if(currentRaceLap == i + 1){
+								btnSplit.setSelected(true);
+								foundSelectedRaceLap = true;
+							}
 						}
 						
-						Button btnSplit = new Button(getActivity());
-						LayoutParams params = new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT, (0.9f/((float)numRaceLaps + 1.0f)));
-						btnSplit.setPadding(0, 0, 0, 0);
-						btnSplit.setTag(numRaceLaps + 1);
-						btnSplit.setWidth(0);
+						tabText = "Done";
+						View btnSplit = createTabView(tabText);
 						
-						btnSplit.setText("Done");
+						LayoutParams params = new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT, (0.9f/((float)numRaceLaps + 1.0f)));
+						btnSplit.setTag(numRaceLaps + 1);						
 						
 						btnSplit.setOnClickListener(this);
 						
 						llSplitButtons.addView(btnSplit, Integer.parseInt(Long.toString(numRaceLaps)), params);
+						if(!foundSelectedRaceLap){
+							btnSplit.setSelected(true);
+						}
 					}
 					break;
-				case CURRENT_LAP_LOADER_FINISH:					
-					cursor.moveToFirst();
-					currentRaceLap = cursor.getLong(0);
+				case TEAM_NUM_FINISHERS_LOADER:										
+					teamFinishers.clear();
 					
-					getActivity().getSupportLoaderManager().destroyLoader(CURRENT_LAP_LOADER_FINISH);
-					
-					// Restart the loaders
-					getActivity().getSupportLoaderManager().restartLoader(RACE_INFO_LOADER_FINISH, null, this);
+					if(cursor != null && cursor.getCount() > 0){
+						cursor.moveToFirst();
+						
+						do{
+							teamFinishers.put(cursor.getLong(cursor.getColumnIndex(RaceLaps.TeamInfo_ID)), cursor.getLong(cursor.getColumnIndex("NumFinishers")));
+						} while(cursor.moveToNext());
+						
+						getActivity().getSupportLoaderManager().destroyLoader(TEAM_NUM_FINISHERS_LOADER);
+					}
+					// Restart the team loader
 					getActivity().getSupportLoaderManager().restartLoader(TEAMS_LOADER_FINISH, null, this);
+					break;
+				case CURRENT_LAP_LOADER_FINISH:										
+					if(cursor != null && cursor.getCount() > 0){
+						cursor.moveToFirst();
+						currentRaceLap = cursor.getLong(0);
+						
+						getActivity().getSupportLoaderManager().destroyLoader(CURRENT_LAP_LOADER_FINISH);
+					}
+					// Restart the loaders
+					getActivity().getSupportLoaderManager().restartLoader(TEAM_NUM_FINISHERS_LOADER, null, this);
+					getActivity().getSupportLoaderManager().restartLoader(RACE_INFO_LOADER_FINISH, null, this);
 					getActivity().getSupportLoaderManager().restartLoader(FINISH_ORDER_LOADER_FINISH, null, this);
 					getActivity().getSupportLoaderManager().restartLoader(SPLITS_LOADER_FINISH, null, this);
 					break;
-				case CURRENT_PLACING_LOADER_FINISH:					
-					cursor.moveToFirst();
-					overallPlacing = cursor.getLong(0);
-					
-					getActivity().getSupportLoaderManager().destroyLoader(CURRENT_PLACING_LOADER_FINISH);
-					
+				case CURRENT_PLACING_LOADER_FINISH:		
+					if(cursor != null && cursor.getCount() > 0){
+						cursor.moveToFirst();
+						overallPlacing = cursor.getLong(0);
+						
+						getActivity().getSupportLoaderManager().destroyLoader(CURRENT_PLACING_LOADER_FINISH);
+					}
 					// Restart the loaders
 					getActivity().getSupportLoaderManager().restartLoader(CURRENT_LAP_LOADER_FINISH, null, this);
 					break;
@@ -335,6 +357,13 @@ public class FinishTab extends BaseTab implements View.OnClickListener,	LoaderMa
 		} catch (Exception ex) {
 			Log.e(LOG_TAG(), "onLoadFinished error", ex);
 		}
+	}
+	
+	private View createTabView(final String text) {
+	    View view = LayoutInflater.from(getActivity()).inflate(R.layout.tabs_bg, null);	
+	    TextView tv = (TextView) view.findViewById(R.id.tabsText);	
+	    tv.setText(text);	
+	    return view;	
 	}
 
 	public void onLoaderReset(Loader<Cursor> loader) {
@@ -362,9 +391,18 @@ public class FinishTab extends BaseTab implements View.OnClickListener,	LoaderMa
 
 	public void onClick(View v) {
 		try {
+			// De-select all of the buttons first
+			for(int i = 0; i < llSplitButtons.getChildCount(); i++){
+				llSplitButtons.getChildAt(i).setSelected(false);
+			}
+			// Set the clicked button as selected
+			v.setSelected(true);
 			long raceLap = Long.parseLong(v.getTag().toString());
 			if(raceLap > 0 && currentRaceLap != raceLap){
+				// TODO: Set the overall placing to the number of results for the selected lap
+				
 				currentRaceLap = raceLap;
+				getActivity().getSupportLoaderManager().restartLoader(TEAM_NUM_FINISHERS_LOADER, null, this);
 				getActivity().getSupportLoaderManager().restartLoader(FINISH_ORDER_LOADER_FINISH, null, this);
 				getActivity().getSupportLoaderManager().restartLoader(SPLITS_LOADER_FINISH, null, this);
 				
@@ -379,17 +417,11 @@ public class FinishTab extends BaseTab implements View.OnClickListener,	LoaderMa
 		    		getActivity().sendBroadcast(raceIsFinished);
 		    		
 		    		// Calculate the dual meet results (points vs overall list)
-		    		Calculations.CalculateCategoryPlacings(getActivity(), Long.parseLong(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_RaceID_Name, "-1")));
+		    		Calculations.CalculateCategoryPlacings(getActivity(), Long.parseLong(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_RaceID_Name, "-1")), teamInfo_ID);
 				}
 			}
 		} catch (Exception ex) {
 			Log.e(LOG_TAG(), "btnNewRacerClick failed", ex);
 		}
 	}
-
-//	public View createTabContent(String tag) {
-//		final TextView tv = new TextView(getActivity());
-//        tv.setText("Content for tab with tag " + tag);
-//        return tv;
-//	}
 }

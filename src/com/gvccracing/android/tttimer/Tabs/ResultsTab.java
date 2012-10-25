@@ -250,6 +250,6 @@ public class ResultsTab extends BaseTab implements View.OnClickListener, LoaderM
 	public void onClick(View v) {
 		// Calculate Category Placing, Overall Placing, Points
     	Calculations.CalculateOverallPlacings(getActivity(), Long.parseLong(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_RaceID_Name, "-1"))); // Do this first, since "category" placings are really team placings based on the sum of the top 5 overall placings
-    	Calculations.CalculateCategoryPlacings(getActivity(), Long.parseLong(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_RaceID_Name, "-1")));
+    	Calculations.CalculateCategoryPlacings(getActivity(), Long.parseLong(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_RaceID_Name, "-1")), Long.parseLong(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_TeamID_Name, "-1")));
 	}
 }
