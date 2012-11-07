@@ -81,7 +81,8 @@
 	    android:layout_width="fill_parent"
 	    android:layout_height="0dip"
 	    android:orientation="vertical"
-	    android:layout_weight="0.8" >
+	    android:layout_weight="1.0" >
+	  
 	    <TextView
 	        android:id="@+id/lblCategoryResults"
 	        android:layout_width="wrap_content"
@@ -94,7 +95,7 @@
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:orientation="horizontal"
-			android:weightSum="1.0"
+			android:weightSum="0.5"
 			android:padding="1dp">  		
 		
 	        <TextView
@@ -115,25 +116,6 @@
 	            android:text="@string/HeaderPoints"
 	            android:textStyle="bold"
 				style="@style/Small.Padded" /> 
-				
-	        <TextView
-	            android:id="@+id/lblTeam2NameCat"
-				android:layout_weight="0.4"
-				android:layout_width="0dip"
-				android:layout_height="wrap_content"
-	            android:text="@string/HeaderTeam2Name"
-	            android:textStyle="bold"
-	            android:singleLine="true"
-				style="@style/Small.Padded" />
-	
-	        <TextView
-	            android:id="@+id/lblTeam2PointsCat"
-				android:layout_weight="0.1"
-				android:layout_width="0dip"
-				android:layout_height="wrap_content"
-	            android:text="@string/HeaderPoints"
-	            android:textStyle="bold"
-				style="@style/Small.Padded" /> 
 		</LinearLayout>
 	
 	    <ListView
@@ -141,10 +123,10 @@
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content" />
 	</LinearLayout>
-	<Button android:id="@+id/btnCalcResults"
-	    android:layout_width="fill_parent"
-	    android:layout_height="0dip"
-    	android:layout_weight="0.2"
-	    android:text="@string/CalculateResults"
-	    style="@style/Medium" />
+<!-- 	<Button android:id="@+id/btnCalcResults" -->
+<!-- 	    android:layout_width="fill_parent" -->
+<!-- 	    android:layout_height="0dip" -->
+<!--     	android:layout_weight="0.2" -->
+<!-- 	    android:text="@string/CalculateResults" -->
+<!-- 	    style="@style/Medium" /> -->
 </LinearLayout>

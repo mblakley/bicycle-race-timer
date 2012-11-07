@@ -252,6 +252,6 @@
 	</string-array>
 	<string name="NumFinished">Finished:</string>
 	<string name="lblPoints">Pts:</string>
-	<string name="HeaderTeam1Name"><u>Team 1</u></string>
+	<string name="HeaderTeam1Name"><u>Team Name</u></string>
 	<string name="HeaderTeam2Name"><u>Team 2</u></string>
 </resources>

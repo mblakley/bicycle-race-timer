@@ -37,7 +37,7 @@
 	            android:paddingLeft="5dp"
 	            android:paddingRight="5dp" />
 	        
-		   <com.gvccracing.android.tttimer.Controls.Timer
+		   <com.xcracetimer.android.tttimer.Controls.Timer
 	            android:id="@+id/TimerBottom"
 	            android:layout_width="fill_parent"
 	            android:layout_height="0dp"

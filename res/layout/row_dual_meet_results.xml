@@ -3,7 +3,7 @@
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
 	android:orientation="horizontal"
-	android:weightSum="1.0"
+	android:weightSum="0.5"
 	android:padding="1dp">  
 	
 	<TextView
@@ -16,21 +16,6 @@
 	
 	<TextView
 		android:id="@+id/lblTeam1Points"
-		android:layout_weight=".1"
-		android:layout_width="0dip"
-		android:layout_height="wrap_content"
-		style="@style/Small.Padded" /> 
-		
-	<TextView
-		android:id="@+id/lblTeam2Name"
-		android:layout_weight=".4"
-		android:layout_width="0dip"
-		android:layout_height="wrap_content"
-		android:singleLine="true"
-		style="@style/Small.Padded" />
-	
-	<TextView
-		android:id="@+id/lblTeam2Points"
 		android:layout_weight=".1"
 		android:layout_width="0dip"
 		android:layout_height="wrap_content"

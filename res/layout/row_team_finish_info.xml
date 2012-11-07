@@ -10,47 +10,58 @@
 		android:layout_height="wrap_content"
 		android:paddingTop="5dp"
 		android:paddingBottom="5dp"
-		style="@style/Medium" />
+		android:textSize="24sp"
+		android:singleLine="true" />
 	
-	<LinearLayout 
-		android:id="@+id/llFinished"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:orientation="horizontal"
-		android:weightSum="4"> 
-		
-		<TextView
-			android:id="@+id/NumFinished"
-			android:layout_width="0dp"
+		<LinearLayout 
+			android:id="@+id/llFinished"
+			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
-			android:textStyle="bold"
-			android:text="@string/NumFinished"
-			style="@style/Small.Padded"
-			android:layout_weight="2"/>
-		
-		<TextView
-			android:id="@+id/lblNumFinished"
-			android:layout_width="0dp"
+			android:orientation="horizontal"
+			android:padding="0dp"
+			android:weightSum="4"> 		
+			<TextView
+				android:id="@+id/NumFinished"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:textStyle="bold"
+				android:text="@string/NumFinished"
+				style="@style/Small.Padded"
+				android:layout_weight="3"
+				android:singleLine="true"/>
+			
+			<TextView
+				android:id="@+id/lblNumFinished"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:text="0"
+				style="@style/Small"
+				android:layout_weight="1"/>
+	 	</LinearLayout>
+	 	
+		<LinearLayout 
+			android:id="@+id/llPoints"
+			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
-			android:text="0"
-			style="@style/Small"
-			android:layout_weight="0.5"/>
-	
-		<TextView
-			android:id="@+id/NumPoints"
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
-			android:textStyle="bold"
-			android:text="@string/lblPoints"
-			style="@style/Small.Padded"
-			android:layout_weight="1"/>
-		
-		<TextView
-			android:id="@+id/lblPoints"
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
-			android:text="0"
-			style="@style/Small"
-			android:layout_weight="0.5"/>		
-	</LinearLayout>	
+			android:orientation="horizontal"
+			android:padding="0dp"
+			android:weightSum="4"> 	
+			<TextView
+				android:id="@+id/NumPoints"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:textStyle="bold"
+				android:text="@string/lblPoints"
+				style="@style/Small.Padded"
+				android:layout_weight="2"				
+				android:singleLine="true"/>
+			
+			<TextView
+				android:id="@+id/lblPoints"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:text="0"
+				style="@style/Small"
+				android:layout_weight="2"/>		
+		</LinearLayout>
 </LinearLayout>

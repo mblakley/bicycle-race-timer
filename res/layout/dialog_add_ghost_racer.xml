@@ -14,11 +14,11 @@
         android:text="@string/txtNumGhostSpots"
         style="@style/Medium"/>
     
-    <com.gvccracing.android.tttimer.Controls.NumberPicker
+    <com.xcracetimer.android.tttimer.Controls.NumberPicker
         android:id="@+id/numSpots"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" >
-    </com.gvccracing.android.tttimer.Controls.NumberPicker>
+    </com.xcracetimer.android.tttimer.Controls.NumberPicker>
     	
     <Button
         android:id="@+id/btnAddGhostRacer"
