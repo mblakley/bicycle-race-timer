@@ -29,7 +29,7 @@
             style="@style/Small.Padded" />
 	</LinearLayout>
 	
-	<com.gvccracing.android.tttimer.Controls.ButtonTeamCheckIn
+	<com.xcracetiming.android.tttimer.Controls.ButtonTeamCheckIn
 		android:id="@+id/btnTeamCheckIn"
 		android:text="@string/CheckIn"
 		android:paddingLeft="0sp"

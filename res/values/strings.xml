@@ -9,9 +9,7 @@
     <string name="VerifyRacers">Verify Racers</string>
     <string name="StartOrder"><u>Start Order</u></string>
 	<string name="btnNewRacer">Add New Racer</string>
-	<string name="btnNewRacerClickHandler">btnNewRacerClickHandler</string>
 	<string name="btnAddNewRacer">Submit New Racer</string>
-	<string name="btnAddNewRacerClickHandler">btnAddNewRacerClickHandler</string>
 	<string name="txtFirstName">First Name: </string>
 	<string name="txtLastName">Last Name: </string>
 	<string name="txtBarcode">Barcode: </string>

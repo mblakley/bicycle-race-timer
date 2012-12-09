@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.gvccracing.android.tttimer"
+    package="com.xcracetiming.android.tttimer"
     android:versionCode="2"
     android:versionName="2.0" >
 
@@ -47,7 +47,7 @@
 	        </intent-filter>  
 		</receiver> 
 		<provider
-		    android:authorities="com.gvccracing.android.tttimer.DataAccess.TTProvider"
+		    android:authorities="com.xcracetiming.android.tttimer.DataAccess.TTProvider"
 		    android:multiprocess="true"
 		    android:name=".DataAccess.TTProvider">
 		</provider>

@@ -1,7 +1,7 @@
-package com.gvccracing.android.tttimer.Dialogs;
+package com.xcracetiming.android.tttimer.Dialogs;
 
-import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.DataAccess.AppSettings;
+import com.xcracetiming.android.tttimer.R;
+import com.xcracetiming.android.tttimer.DataAccess.AppSettings;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;

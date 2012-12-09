@@ -31,7 +31,7 @@
         android:checkMark="?android:attr/listChoiceIndicatorSingle"
         style="@style/Large" />
 
-<!-- 		<com.gvccracing.android.tttimer.Controls.ButtonAssignTime -->
+<!-- 		<com.xcracetiming.android.tttimer.Controls.ButtonAssignTime -->
 <!--             android:id="@+id/btnAssign" -->
 <!--             android:layout_width="wrap_content" -->
 <!--             android:layout_height="wrap_content" -->

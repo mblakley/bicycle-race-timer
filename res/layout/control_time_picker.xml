@@ -4,11 +4,11 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal" >
 
-    <com.gvccracing.android.tttimer.Controls.NumberPicker
+    <com.xcracetiming.android.tttimer.Controls.NumberPicker
         android:id="@+id/timeHours"
         android:layout_width="60dp"
         android:layout_height="fill_parent" >
-    </com.gvccracing.android.tttimer.Controls.NumberPicker>
+    </com.xcracetiming.android.tttimer.Controls.NumberPicker>
 
     <TextView
         android:id="@+id/textView21"
@@ -18,11 +18,11 @@
 		style="@style/Medium" />
 
 
-    <com.gvccracing.android.tttimer.Controls.NumberPicker
+    <com.xcracetiming.android.tttimer.Controls.NumberPicker
         android:id="@+id/timeMinutes"
         android:layout_width="60dp"
         android:layout_height="fill_parent" >
-    </com.gvccracing.android.tttimer.Controls.NumberPicker>
+    </com.xcracetiming.android.tttimer.Controls.NumberPicker>
     
     <TextView
         android:id="@+id/textView31"
@@ -32,11 +32,11 @@
 		style="@style/Medium" />
 
 
-    <com.gvccracing.android.tttimer.Controls.NumberPicker
+    <com.xcracetiming.android.tttimer.Controls.NumberPicker
         android:id="@+id/timeSeconds"
         android:layout_width="60dp"
         android:layout_height="fill_parent" >
-    </com.gvccracing.android.tttimer.Controls.NumberPicker>
+    </com.xcracetiming.android.tttimer.Controls.NumberPicker>
 
     <TextView
         android:id="@+id/textView41"
@@ -46,10 +46,10 @@
 		style="@style/Medium" />
     
 
-    <com.gvccracing.android.tttimer.Controls.NumberPicker
+    <com.xcracetiming.android.tttimer.Controls.NumberPicker
         android:id="@+id/timeMilliseconds"
         android:layout_width="60dp"
         android:layout_height="fill_parent" >
-    </com.gvccracing.android.tttimer.Controls.NumberPicker>
+    </com.xcracetiming.android.tttimer.Controls.NumberPicker>
 
 </LinearLayout> 

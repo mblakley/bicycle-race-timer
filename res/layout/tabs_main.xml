@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/llmain"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:weightSum="1.0" >
 
 	<TabHost
     	android:id="@android:id/tabhost"
 	    android:layout_width="fill_parent"
-	    android:layout_height="fill_parent" >
+	    android:layout_height="0dp"
+	    android:layout_weight="0.85">
 	
 	    <LinearLayout
 	        android:layout_width="fill_parent"
@@ -32,24 +32,25 @@
 	        <FrameLayout
 	            android:id="@+android:id/realtabcontent"
 	            android:layout_width="fill_parent"
-	            android:layout_height="0dp"
-	            android:layout_weight="0.85"
+	            android:layout_height="fill_parent"
 	            android:padding="5dp"/>
-	        
-		   <com.gvccracing.android.tttimer.Controls.Timer
-	            android:id="@+id/TimerBottom"
-	            android:layout_width="fill_parent"
-	            android:layout_height="0dp"
-	            android:layout_weight="0.15"
-	            android:gravity="center_horizontal" />
-		   <Button
-	            android:id="@+id/btnBackToRaceInProgress"
-	            android:layout_width="fill_parent"
-	            android:layout_height="0dp"
-	            android:layout_weight="0.15"
-	            style="@style/Medium"
-	            android:text="@string/BackToRaceInProgress"
-	            android:visibility="gone" />
 	    </LinearLayout>
-	</TabHost>
+	</TabHost>	
+
+	<LinearLayout
+	    android:id="@+id/AdminPage"
+	    android:layout_width="fill_parent"
+	    android:layout_height="0dp"
+	    android:layout_weight="0.85"
+	    android:orientation="vertical"
+	    android:visibility="gone" >
+	</LinearLayout>
+	        
+	<com.xcracetiming.android.tttimer.Controls.Timer
+		android:id="@+id/TimerBottom"
+		android:layout_width="fill_parent"
+		android:layout_height="0dp"
+		android:layout_weight="0.15"
+		android:gravity="center_horizontal"
+		android:padding="5dp" />
 </LinearLayout>
