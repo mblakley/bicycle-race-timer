@@ -1,6 +1,7 @@
 package com.xcracetiming.android.tttimer.Dialogs;
 
 import com.xcracetiming.android.tttimer.R;
+import com.xcracetiming.android.tttimer.DataAccess.Race;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -46,7 +47,10 @@ public class ChooseViewingMode extends BaseDialog implements View.OnClickListene
 	public void onClick(View v) { 
 		try{
 			if (v == btnAddNewRace){
-				AddRaceView addRaceDialog = new AddRaceView(-1);
+				AddRaceView addRaceDialog = new AddRaceView();
+	        	Bundle b = new Bundle();
+	        	b.putLong(Race.RaceSeries_ID, -1);
+	        	addRaceDialog.setArguments(b);
 				FragmentManager fm = getFragmentManager();
 				addRaceDialog.show(fm, AddRaceView.LOG_TAG);
 				// Hide the dialog

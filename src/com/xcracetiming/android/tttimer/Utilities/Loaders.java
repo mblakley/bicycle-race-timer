@@ -20,4 +20,10 @@ public final class Loaders {
 	public static final int CHECKIN_LOADER_CHECKIN = 0x110;
 
 	public static final int START_ORDER_LOADER_CHECKIN = 0x111;
+	
+	// Dialogs
+	public static final int RACE_LOCATIONS_LOADER = 0x01;
+	
+	// AddRaceView
+	public static final int RACE_TYPES_LOADER = 1014;
 }

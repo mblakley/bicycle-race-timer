@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import com.xcracetiming.android.tttimer.R;
+import com.xcracetiming.android.tttimer.DataAccess.Race;
 import com.xcracetiming.android.tttimer.DataAccess.RaceSeries;
 
 import android.net.Uri;
@@ -65,7 +66,10 @@ public class AddRaceSeriesView extends BaseDialog implements View.OnClickListene
 				
 				long raceSeries_ID = Long.parseLong(raceSeriesUri.getLastPathSegment());
 				
-				AddRaceView addRaceDialog = new AddRaceView(raceSeries_ID);
+				AddRaceView addRaceDialog = new AddRaceView();
+	        	Bundle b = new Bundle();
+	        	b.putLong(Race.RaceSeries_ID, raceSeries_ID);
+	            addRaceDialog.setArguments(b);
 				FragmentManager fm = getActivity().getSupportFragmentManager();
 				addRaceDialog.show(fm, AddRaceView.LOG_TAG);
 				

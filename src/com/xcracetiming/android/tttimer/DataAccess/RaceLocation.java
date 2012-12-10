@@ -19,7 +19,7 @@ public final class RaceLocation extends ContentProviderTable implements BaseColu
     // Table column
     public static final String CourseName = "CourseName";
     public static final String Distance = "Distance";
-    public static final String DistanceUnits = "DistanceUnits";
+    public static final String DistanceUnit = "DistanceUnits";
     
     public String getTableName(){
     	return RaceLocation.class.getSimpleName();
@@ -30,7 +30,7 @@ public final class RaceLocation extends ContentProviderTable implements BaseColu
     	        + " (" + _ID + " integer primary key autoincrement, "
     	        + CourseName + " text not null, " 
     	        + Distance + " real not null,"
-    	        + DistanceUnits + " text not null"
+    	        + DistanceUnit + " text not null"
     	        + ");";
     }
 

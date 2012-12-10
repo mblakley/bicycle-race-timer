@@ -51,7 +51,6 @@ public abstract class BaseTab extends Fragment {
 	
 	@Override
 	public void onStart() {
-		setLocalViewVariables();
 		addClickListeners();
 	}
 	
@@ -78,9 +77,7 @@ public abstract class BaseTab extends Fragment {
 	
 	protected void startAllLoaders(){};
 	
-	protected void destroyAllLoaders(){};
-	
-	protected void setLocalViewVariables(){};
+	protected void destroyAllLoaders(){};	
 	
 	protected void addClickListeners(){};
 	

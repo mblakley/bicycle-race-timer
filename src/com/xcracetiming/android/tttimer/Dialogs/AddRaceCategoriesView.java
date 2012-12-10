@@ -3,6 +3,7 @@ package com.xcracetiming.android.tttimer.Dialogs;
 import com.xcracetiming.android.tttimer.R;
 import com.xcracetiming.android.tttimer.DataAccess.AppSettings;
 import com.xcracetiming.android.tttimer.DataAccess.RaceCategory;
+import com.xcracetiming.android.tttimer.Utilities.Loaders;
 
 import android.database.Cursor;
 import android.os.Bundle;
@@ -134,7 +135,7 @@ public class AddRaceCategoriesView extends BaseDialog implements View.OnClickLis
 		try{
 			Log.v(LOG_TAG, "onLoadFinished start: id=" + Integer.toString(loader.getId()));			
 			switch(loader.getId()){
-				case RACE_LOCATIONS_LOADER:
+				case Loaders.RACE_LOCATIONS_LOADER:
 					raceCategoriesCA.swapCursor(null);
 					break;
 			}

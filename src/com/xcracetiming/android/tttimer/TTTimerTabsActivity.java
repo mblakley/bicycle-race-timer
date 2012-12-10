@@ -84,7 +84,8 @@ public class TTTimerTabsActivity extends FragmentActivity {
 	/**
 	 * Does some basic setup, including setting the layout to use, setting up action filters, creating the tabs, setting some member variables,
 	 * and setting up which tabs are visible, and what state they're in.
-	 * @param The saved instance state of this activity that could be used to restore the previous state that we were in before being killed off
+	 * 
+	 * @param savedInstanceState - The saved instance state of this activity that could be used to restore the previous state that we were in before being killed off
 	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -187,7 +188,10 @@ public class TTTimerTabsActivity extends FragmentActivity {
 					FragmentManager fm = getSupportFragmentManager();
 					chooseModeDialog.show(fm, ChooseViewingMode.LOG_TAG);
 	        	}else{ 
-	        		AddRaceView addRaceDialog = new AddRaceView(-1);
+	        		AddRaceView addRaceDialog = new AddRaceView();
+	        		Bundle b = new Bundle();
+		        	b.putLong(Race.RaceSeries_ID, -1);
+		        	addRaceDialog.setArguments(b);
 					FragmentManager fm = getSupportFragmentManager();
 					addRaceDialog.show(fm, AddRaceView.LOG_TAG);
 	        	}
@@ -355,13 +359,13 @@ public class TTTimerTabsActivity extends FragmentActivity {
 	    // Check In Tab
 	    tabManager.addTab(tabHost.newTabSpec(CheckInTab.class.getSimpleName()).setIndicator(createTabView(this,"Check In")), CheckInTab.class, null);
 	    // Start Tab
-	    tabManager.addTab(tabHost.newTabSpec(StartTab.StartTabSpecName).setIndicator(createTabView(this,"Start")), StartTab.class, null);
+	    tabManager.addTab(tabHost.newTabSpec(StartTab.class.getSimpleName()).setIndicator(createTabView(this,"Start")), StartTab.class, null);
 	    // Finish Tab
-	    tabManager.addTab(tabHost.newTabSpec(FinishTab.FinishTabSpecName).setIndicator(createTabView(this,FinishTab.FinishTabSpecName)), FinishTab.class, null);
+	    tabManager.addTab(tabHost.newTabSpec(FinishTab.class.getSimpleName()).setIndicator(createTabView(this,"Finish")), FinishTab.class, null);
 	    // Results Tab
-	    tabManager.addTab(tabHost.newTabSpec(ResultsTab.ResultsTabSpecName).setIndicator(createTabView(this,"Results")), ResultsTab.class, null);
+	    tabManager.addTab(tabHost.newTabSpec(ResultsTab.class.getSimpleName()).setIndicator(createTabView(this,"Results")), ResultsTab.class, null);
 	    // Other Tab
-	    tabManager.addTab(tabHost.newTabSpec(OtherTab.OtherTabSpecName).setIndicator(createTabView(this,"Other")), OtherTab.class, null);
+	    tabManager.addTab(tabHost.newTabSpec(OtherTab.class.getSimpleName()).setIndicator(createTabView(this,"Other")), OtherTab.class, null);
 	}
 	
 	private View createTabView(final Context context, final String text) {
@@ -370,7 +374,6 @@ public class TTTimerTabsActivity extends FragmentActivity {
 	    tv.setText(text);	
 	    return view;	
 	}
-
 
 	/**
 	 * Set up the tabs control display for a finished race
@@ -418,7 +421,6 @@ public class TTTimerTabsActivity extends FragmentActivity {
 	 * @param tabName - The name of the tab to show
 	 */
 	public void ShowTab(String tabName) {
-
     	tabHost.setCurrentTabByTag(tabName);  
 	}
 	
@@ -463,8 +465,7 @@ public class TTTimerTabsActivity extends FragmentActivity {
 	    	super.onStop();
     	}catch(Exception ex){
     		Log.e(LOG_TAG, "Unexpected error in onStop", ex);
-    	}
-        
+    	}        
     }	 
 	
 	/**

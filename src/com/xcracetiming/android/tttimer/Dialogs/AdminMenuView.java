@@ -8,6 +8,7 @@ import com.dropbox.client2.session.Session.AccessType;
 import com.xcracetiming.android.tttimer.R;
 import com.xcracetiming.android.tttimer.AsyncTasks.UploadUSACNumbersToDropboxTask;
 import com.xcracetiming.android.tttimer.DataAccess.AppSettings;
+import com.xcracetiming.android.tttimer.DataAccess.Race;
 import com.xcracetiming.android.tttimer.Utilities.Calculations;
 
 import android.os.Bundle;
@@ -122,13 +123,19 @@ public class AdminMenuView extends BaseDialog implements View.OnClickListener {
 		try{
 			FragmentManager fm = getFragmentManager();
 			if (v == btnAddRace){
-				AddRaceView addRaceDialog = new AddRaceView(-1);
+				AddRaceView addRaceDialog = new AddRaceView();
+				Bundle b = new Bundle();
+				b.putLong(Race.RaceSeries_ID, -1);
+				addRaceDialog.setArguments(b);
 				addRaceDialog.show(fm, AddRaceView.LOG_TAG);
 			} else if (v == btnAddLocation){
 				AddLocationView addLocationDialog = new AddLocationView();
 				addLocationDialog.show(fm, AddLocationView.LOG_TAG);
 			} else if (v == btnEditRace){
-				EditRaceConfiguration editRaceDialog = new EditRaceConfiguration(-1);
+				EditRaceConfiguration editRaceDialog = new EditRaceConfiguration();
+				Bundle b = new Bundle();
+				b.putLong(Race.RaceSeries_ID, -1);
+				editRaceDialog.setArguments(b);
 				editRaceDialog.show(fm, EditRaceConfiguration.LOG_TAG);
 			} else if (v == btnRecalculateResults){
 				try{

@@ -28,10 +28,6 @@ import com.xcracetiming.android.tttimer.DataAccess.Views.SeriesRaceIndividualRes
 import com.xcracetiming.android.tttimer.Utilities.Enums.StartInterval;
 
 public class EditRaceConfiguration extends AddRaceView implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
-	
-	public EditRaceConfiguration(long raceSeries_ID) {
-		super(raceSeries_ID);
-	}
 
 	public static final String LOG_TAG = "EditRaceConfiguration";
 	
@@ -41,7 +37,7 @@ public class EditRaceConfiguration extends AddRaceView implements View.OnClickLi
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     	View v = super.onCreateView(inflater, container, savedInstanceState);
     	
-    	btnAddNewRace.setText(R.string.SaveChanges);
+    	getButton(R.id.btnAddNewRace).setText(R.string.SaveChanges);
     	
 		return v;
     }
@@ -61,7 +57,7 @@ public class EditRaceConfiguration extends AddRaceView implements View.OnClickLi
     @Override
     public void onClick(View v) { 
 		try{
-			if (v == btnAddNewRace){
+			if (v.getId() == R.id.btnAddNewRace){
 				long startInterval = GetRaceStartInterval();
 				long numLaps = Long.parseLong(((EditText)getView().findViewById(R.id.txtNumLaps)).getText().toString());
 				String eventName = "";
@@ -144,7 +140,7 @@ public class EditRaceConfiguration extends AddRaceView implements View.OnClickLi
 					SetStartIntervalSelectionByValue(startInterval, startIntervalValue);
 					// Race Location from RaceLocation_ID
 					String raceCourseName = cursor.getString(cursor.getColumnIndex(RaceLocation.CourseName));
-					SetRaceLocationSelectionByValue(raceLocation, raceCourseName);
+					SetRaceLocationSelectionByValue(getSpinner(R.id.spinnerRaceLocation), raceCourseName);
 					// Date from RaceDate
 					DatePicker date = (DatePicker) getView().findViewById(R.id.dateRaceDate);
 					Long raceDateValue = cursor.getLong(cursor.getColumnIndex(Race.RaceDate));

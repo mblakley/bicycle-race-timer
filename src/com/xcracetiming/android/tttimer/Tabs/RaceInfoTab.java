@@ -31,21 +31,43 @@ import com.xcracetiming.android.tttimer.Dialogs.MarshalLocations;
 import com.xcracetiming.android.tttimer.Dialogs.OtherRaceResults;
 import com.xcracetiming.android.tttimer.Dialogs.SeriesResultsView;
 import com.xcracetiming.android.tttimer.Utilities.Loaders;
+import com.xcracetiming.android.tttimer.Utilities.QueryUtilities.SelectBuilder;
 import com.xcracetiming.android.tttimer.Utilities.TimeFormatter;
 
+/**
+ * RaceInfoTab displays relevant information about the selected race.  This includes:
+ * - Race Series Name
+ * - Date
+ * - Course name
+ * - Race type (TT, TTT, Crit, etc)
+ * - Start interval (for TT races)
+ * - Course distance (w/distance unit)
+ * - Course record
+ * 
+ * @author mab
+ *
+ */
 public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
 	
 	private String distanceUnitSetting = "mi";
 	private String distanceUnit = "mi";
 	private float distance;
-	private long raceLocation_ID;
 	
-	@Override
+	/**
+	 * Inflates the view from xml and returns it.  Nothing else!
+	 * @param inflater
+	 * @param container
+	 * @param savedInstanceState
+	 */
+	@Override	
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.tab_race_info, container, false);    
     }	
 	
+	/**
+	 * Add the click listeners to any controls that will accept or deal with a click.  Called from base.onStart
+	 */
 	@Override
 	protected void addClickListeners(){
         getButton(R.id.btnMarshalLocations).setOnClickListener(this);
@@ -54,12 +76,18 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
         getButton(R.id.btnAdminMenu).setOnClickListener(this);
 	}
 	
+	/**
+	 * Start the chain of loaders.  Called from base.onResume
+	 */
 	@Override
 	protected void startAllLoaders(){
 		// Initialize the cursor loaders for the race info tab
 		getActivity().getSupportLoaderManager().restartLoader(Loaders.RACE_INFO_LOADER, null, this);	 
 	}
 	
+	/**
+	 * Shut down the all of the loaders when the screen is hidden, so we're not doing updates unless the screen is focused
+	 */
 	@Override
 	protected void destroyAllLoaders(){
 		// destroy the cursor loaders for the race info tab
@@ -67,33 +95,38 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 	    getActivity().getSupportLoaderManager().destroyLoader(Loaders.APP_SETTINGS_LOADER_RACEINFO);	    
 	    getActivity().getSupportLoaderManager().destroyLoader(Loaders.COURSE_RECORD_LOADER);
 	}
-
+	
+	/**
+	 * Create the loader with the given id.
+	 * @param id - The id of the loader to create.
+	 * @param args - A list that can be filled with parameters to be used in the loader's query
+	 */
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {	
 		Log.v(LOG_TAG(), "onCreateLoader start: id=" + Integer.toString(id));
 		CursorLoader loader = null;
 		String[] projection;
 		String selection;
 		String[] selectionArgs = null;
-		String sortOrder;
+		String sortOrder;		
 		switch(id){
 			case Loaders.RACE_INFO_LOADER:				
-				projection = new String[]{Race.Instance().getTableName() + "." + Race._ID + " as _id", RaceSeries.SeriesName, Race.RaceDate, Race.RaceLocation_ID, RaceLocation.CourseName, RaceType.HasMultipleLaps, Race.StartInterval, RaceLocation.Distance, RaceLocation.DistanceUnits, RaceWave.NumLaps, RaceType.RaceTypeDescription};
-				selection = Race.Instance().getTableName() + "." + Race._ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name);
+				projection = new String[]{Race.Instance().getColumnName(Race._ID), RaceSeries.SeriesName, Race.RaceDate, Race.RaceLocation_ID, RaceLocation.CourseName, RaceType.HasMultipleLaps, Race.StartInterval, RaceLocation.Distance, RaceLocation.DistanceUnit, RaceWave.NumLaps, RaceType.RaceTypeDescription};
+				selection = SelectBuilder.Where(Race.Instance().getColumnName(Race._ID)).Equals(AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name)).toString();
 				selectionArgs = null;
-				sortOrder = Race.Instance().getTableName() + "." + Race._ID;
+				sortOrder = Race.Instance().getColumnName(Race._ID);
 				loader = new CursorLoader(getActivity(), RaceInfoView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case Loaders.APP_SETTINGS_LOADER_RACEINFO:
 				projection = new String[]{AppSettings.AppSettingValue};
-				selection = AppSettings.Instance().getTableName() + "." + AppSettings.AppSettingValue + "=?";
+				selection = SelectBuilder.Where(AppSettings.Instance().getColumnName(AppSettings.AppSettingValue)).EqualsParameter().toString();
 				sortOrder = null;
 				selectionArgs = new String[]{AppSettings.AppSetting_DistanceUnits_Name};
 				loader = new CursorLoader(getActivity(), AppSettings.Instance().CONTENT_URI.buildUpon().appendQueryParameter(ContentProviderTable.Limit, "1").build(), projection, selection, selectionArgs, sortOrder);
 				break;
 			case Loaders.COURSE_RECORD_LOADER:
 				projection = new String[]{RaceResults.ElapsedTime};
-				selection = Race.Instance().getTableName() + "." + Race.RaceLocation_ID + "=? and " + RaceResults.ElapsedTime + ">= 0";
-				selectionArgs = new String[]{Long.toString(raceLocation_ID)};
+				selection = SelectBuilder.Where(Race.Instance().getColumnName(Race.RaceLocation_ID)).EqualsParameter().And(RaceResults.ElapsedTime).EqualsParameter().And(RaceResults.ElapsedTime).GTE(0).toString();
+				selectionArgs = new String[]{Long.toString(args.getLong(Race.RaceLocation_ID))};
 				sortOrder = RaceResults.ElapsedTime;
 				loader = new CursorLoader(getActivity(), RaceInfoResultsView.Instance().CONTENT_URI.buildUpon().appendQueryParameter(ContentProviderTable.Limit, "1").build(), projection, selection, selectionArgs, sortOrder);
 				break;
@@ -102,22 +135,28 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 		return loader;
 	}
 
+	/**
+	 * The cursor loader is finished, so get the results and do something with them.
+	 * @param loader - The loader that finished loading
+	 * @param cursor - The cursor that is filled the result of the loader's query
+	 */
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 		try{
 			Log.v(LOG_TAG(), "onLoadFinished start: id=" + Integer.toString(loader.getId()));
-			cursor.moveToFirst();			
-			switch(loader.getId()){
-				case Loaders.RACE_INFO_LOADER:
-					if(cursor.getCount() > 0){
+			if(cursor != null && cursor.getCount() > 0){
+				cursor.moveToFirst();			
+				switch(loader.getId()){
+					case Loaders.RACE_INFO_LOADER:
 						// Get all of the values out of the cursors, and set the textboxes to their values
 						String raceSeries = cursor.getString(cursor.getColumnIndex(RaceSeries.SeriesName));						
 						Long raceDateMS = cursor.getLong(cursor.getColumnIndex(Race.RaceDate));
 						String courseName = cursor.getString(cursor.getColumnIndex(RaceLocation.CourseName));
-						raceLocation_ID = cursor.getLong(cursor.getColumnIndex(Race.RaceLocation_ID));
+						long raceLocation_ID = cursor.getLong(cursor.getColumnIndex(Race.RaceLocation_ID));
 						String raceTypeName = cursor.getString(cursor.getColumnIndex(RaceType.RaceTypeDescription));
 						long startInterval = cursor.getLong(cursor.getColumnIndex(Race.StartInterval));
 						String startIntervalText = Long.toString(startInterval);
-						boolean hasMultipleLaps = cursor.getInt(cursor.getColumnIndex(RaceType.HasMultipleLaps)) > 0;								
+						boolean hasMultipleLaps = cursor.getInt(cursor.getColumnIndex(RaceType.HasMultipleLaps)) > 0;
+						distanceUnit = cursor.getString(cursor.getColumnIndex(RaceLocation.DistanceUnit));	
 						
 						// Show the race laps if there's more than 1 total lap, or if the race can have multiple laps
 						long numRaceLaps = 1;
@@ -125,7 +164,7 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 							getLinearLayout(R.id.llRaceLaps).setVisibility(View.GONE);
 						}else{
 							numRaceLaps = cursor.getLong(cursor.getColumnIndex(RaceWave.NumLaps));
-
+	
 							// You can't do 0 laps, or there wouldn't be a race!  Default it to 1.
 							if(numRaceLaps <= 0){
 								numRaceLaps = 1;
@@ -156,22 +195,21 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 						getTextView(R.id.raceSeriesName).setText(raceSeries);	
 						// Set the text of the number of race laps
 						getTextView(R.id.raceLaps).setText(Long.toString(numRaceLaps));
-					}
-					getActivity().getSupportLoaderManager().restartLoader(Loaders.APP_SETTINGS_LOADER_RACEINFO, null, this);   
-				    getActivity().getSupportLoaderManager().restartLoader(Loaders.COURSE_RECORD_LOADER, null, this);
-					break;
-				case Loaders.APP_SETTINGS_LOADER_RACEINFO:	
-					if(cursor != null && cursor.getCount() > 0){
-						distanceUnit = cursor.getString(cursor.getColumnIndex(AppSettings.AppSettingValue));					
-						SetDistance();
-					}
-					break;	
-				case Loaders.COURSE_RECORD_LOADER:
-					if(cursor != null && cursor.getCount() > 0){
+					
+						getActivity().getSupportLoaderManager().restartLoader(Loaders.APP_SETTINGS_LOADER_RACEINFO, null, this); 
+						Bundle b = new Bundle();
+						b.putLong(Race.RaceLocation_ID, raceLocation_ID);
+					    getActivity().getSupportLoaderManager().restartLoader(Loaders.COURSE_RECORD_LOADER, b, this);
+						break;
+					case Loaders.APP_SETTINGS_LOADER_RACEINFO:					
+						distanceUnitSetting = cursor.getString(cursor.getColumnIndex(AppSettings.AppSettingValue));					
+						SetDistance(distance, distanceUnit, distanceUnitSetting);
+						break;	
+					case Loaders.COURSE_RECORD_LOADER:
 						long elapsedTime = cursor.getLong(cursor.getColumnIndex(RaceResults.ElapsedTime));
 			        	getTextView(R.id.courseRecord).setText(TimeFormatter.Format(elapsedTime, true, true, true, true, true, false, false, false));
-					}
-					break;
+						break;
+				}
 			}
 			Log.v(LOG_TAG(), "onLoadFinished complete: id=" + Integer.toString(loader.getId()));
 		}catch(Exception ex){
@@ -179,34 +217,10 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 		}
 	}
 
-	private void SetDistance()
-	{
-		if (distance > 0f && distanceUnit == "")
-		{
-			getTextView(R.id.raceDistance).setText(Float.toString(distance));
-		}
-		else if (distanceUnit != "" && distance > 0)
-		{
-			float convertedDist = ConvertDistanceUnits(distance, distanceUnit, distanceUnitSetting);
-			getTextView(R.id.raceDistance).setText(Float.toString(convertedDist) + " " + distanceUnit);
-		}
-	}
-	
-	private float ConvertDistanceUnits(float dist, String fromDistance, String toDistance) {
-		// Distance units don't match, so convert the actual distance
-		if(fromDistance != toDistance){
-			// If going from km to mi
-			if(fromDistance != "mi"){
-				dist /= 2.54f;
-			} else{
-				// Otherwise mi to km
-				dist *= 2.54;
-			}
-		}
-		
-		return dist;
-	}
-
+	/**
+	 * The loader has been reset.  Really this should be used for cleaning up binding.
+	 * @param loader - The loader that was reset.
+	 */
 	public void onLoaderReset(Loader<Cursor> loader) {
 		try{
 			Log.v(LOG_TAG(), "onLoaderReset start: id=" + Integer.toString(loader.getId()));
@@ -224,12 +238,17 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 		}
 	}
 
+	/**
+	 * Called when a control that is subscribed to this fragment as a click listener is clicked.
+	 * 
+	 * @param v - The view that was clicked
+	 */
 	public void onClick(View v) {
         FragmentManager fm = getActivity().getSupportFragmentManager();
 		switch (v.getId())
 		{
 			case R.id.btnMarshalLocations:
-				showMarshalLocations(v);
+				showMarshalLocations();
 				break;
 			case R.id.btnPreviousResults:
 				showChoosePreviousRace();
@@ -249,14 +268,64 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 				break;
 		}
 	}
+	
+	/**
+	 * Set the distance display.  May need conversion between units.
+	 * 
+	 * @param dist - The number of miles or km
+	 * @param fromDistance - The distance unit to convert from
+	 * @param toDistance - The distance unit to convert to
+	 */
+	private void SetDistance(float dist, String fromDistance, String toDistance)
+	{
+		if (dist > 0f && fromDistance == "")
+		{
+			getTextView(R.id.raceDistance).setText(Float.toString(dist));
+		}
+		else if (fromDistance != "" && dist > 0)
+		{
+			float convertedDist = ConvertDistanceUnits(dist, fromDistance, toDistance);
+			getTextView(R.id.raceDistance).setText(Float.toString(convertedDist) + " " + fromDistance);
+		}
+	}
+	
+	/**
+	 * Convert the distance units from whatever unit they are stored in within the RaceLocation table to the unit that is configured in the AppSettings table
+	 * - If going from km to miles, multiply by 0.621371
+	 * - If going from miles to km, divide by 0.621371
+	 * @param dist - The distance to be converted
+	 * @param fromDistance - The unit to convert from - Can be "mi" or "km"
+	 * @param toDistance - The unit to convert from - Can be "mi" or "km"
+	 * @return The converted distance in the unit from the AppSettings table
+	 */
+	private float ConvertDistanceUnits(float dist, String fromDistance, String toDistance) {
+		// Distance units don't match, so convert the actual distance
+		if(fromDistance != toDistance){
+			// If going from km to mi
+			if(fromDistance != "mi"){
+				dist *= 0.621371f;
+			} else{
+				// Otherwise mi to km
+				dist /= 0.621371f;
+			}
+		}
+		
+		return dist;
+	}
 
+	/**
+	 * Show a dialog to allow the user to choose a different race to display
+	 */
 	private void showChoosePreviousRace() {
 		OtherRaceResults previousResultsDialog = new OtherRaceResults();
 		FragmentManager fm = getParentActivity().getSupportFragmentManager();
 		previousResultsDialog.show(fm, OtherRaceResults.LOG_TAG);
 	}
 
-	private void showMarshalLocations(View v) {
+	/**
+	 * Show a dialog with the marshal locations for the current course
+	 */
+	private void showMarshalLocations() {
 		MarshalLocations marshalLocationsDialog = new MarshalLocations();
 		FragmentManager fm = getParentActivity().getSupportFragmentManager();
 		marshalLocationsDialog.show(fm, MarshalLocations.LOG_TAG);

@@ -1,5 +1,7 @@
 package com.xcracetiming.android.tttimer.Dialogs;
 
+import java.util.Hashtable;
+
 import com.xcracetiming.android.tttimer.R;
 import com.xcracetiming.android.tttimer.DataAccess.AppSettings;
 
@@ -8,7 +10,11 @@ import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.view.WindowManager.LayoutParams;
 
@@ -16,10 +22,11 @@ import android.view.WindowManager.LayoutParams;
  * @author Mark
  *
  */
-public abstract class BaseDialog extends DialogFragment implements View.OnClickListener {
-	protected static final int RACE_LOCATIONS_LOADER = 0x01;
+public abstract class BaseDialog extends DialogFragment implements View.OnClickListener {	
 	
-	protected ImageButton btnBack;
+	private ImageButton btnBack;
+
+	private Hashtable<Integer, View> viewList = new Hashtable<Integer, View>();
 	
 	private boolean showCancelButton = true;
 	
@@ -34,14 +41,12 @@ public abstract class BaseDialog extends DialogFragment implements View.OnClickL
 		setStyle(DialogFragment.STYLE_NO_TITLE, R.style.CustomDialogTheme);
 	}
 	
-	protected void ShowCancelButton(boolean show) {
+	protected void showCloseButton(boolean show) {
 		showCancelButton = show;
-		if(btnBack != null){
-			if(showCancelButton){
-				btnBack.setVisibility(View.VISIBLE);
-			}else{
-				btnBack.setVisibility(View.GONE);
-			}
+		if(showCancelButton){
+			getButton(R.id.btnBaseDialogClose1).setVisibility(View.VISIBLE);
+		}else{
+			getButton(R.id.btnBaseDialogClose1).setVisibility(View.GONE);
 		}
 	}
 
@@ -51,29 +56,78 @@ public abstract class BaseDialog extends DialogFragment implements View.OnClickL
 		
 		AppSettings.Instance().Update(getActivity(), AppSettings.AppSetting_ResumePreviousState_Name, "true", true);
 
-		if(btnBack == null){
-			View title = LayoutInflater.from(getActivity()).inflate(R.layout.title_with_back, (ViewGroup)getView(), false);
-			ViewGroup dialog = (ViewGroup)getView().findViewById(R.id.dialogContainer);
-			dialog.addView(title, 0);
-			
-			getDialog().getWindow().setLayout(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
-			btnBack = (ImageButton)getView().findViewById(R.id.btnBaseDialogClose1);
-			btnBack.setOnClickListener(this);
-		}
 		if(showCancelButton){
-			btnBack.setVisibility(View.VISIBLE);
+			getButton(R.id.btnBaseDialogClose1).setVisibility(View.VISIBLE);
 		}else{
-			btnBack.setVisibility(View.GONE);
+			getButton(R.id.btnBaseDialogClose1).setVisibility(View.GONE);
 		}
+		
+		startAllLoaders();
 
-		((TextView)(getView().findViewById(R.id.title))).setText(GetTitleResourceID());
+		getTextView(R.id.title).setText(GetTitleResourceID());
 	}
 	
 	@Override
 	public void onPause() {
 		super.onPause();
+
+    	destroyAllLoaders();
+    	
 		dismiss();
 	}
+	
+	@Override
+	public void onStart() {
+		View title = LayoutInflater.from(getActivity()).inflate(R.layout.title_with_back, (ViewGroup)getView(), false);
+		ViewGroup dialog = (ViewGroup)getView().findViewById(R.id.dialogContainer);
+		dialog.addView(title, 0);
+		
+		getDialog().getWindow().setLayout(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+		getButton(R.id.btnBaseDialogClose1).setOnClickListener(this);
+		
+		addClickListeners();
+	}
+	
+	protected void addClickListeners(){};
+	
+	public TextView getTextView(int id){
+		if(!viewList.containsKey(id)){
+			viewList.put(id, (TextView) getView().findViewById(id));
+		}
+		return (TextView)viewList.get(id);
+	}
+	
+	public LinearLayout getLinearLayout(int id){
+		if(!viewList.containsKey(id)){
+			viewList.put(id, (TextView) getView().findViewById(id));
+		}
+		return (LinearLayout)viewList.get(id);
+	}
+	
+	public Button getButton(int id){
+		if(!viewList.containsKey(id)){
+			viewList.put(id, (TextView) getView().findViewById(id));
+		}
+		return (Button)viewList.get(id);
+	}
+	
+	public EditText getEditText(int id){
+		if(!viewList.containsKey(id)){
+			viewList.put(id, (EditText) getView().findViewById(id));
+		}
+		return (EditText)viewList.get(id);
+	}
+	
+	public Spinner getSpinner(int id){
+		if(!viewList.containsKey(id)){
+			viewList.put(id, (Spinner) getView().findViewById(id));
+		}
+		return (Spinner)viewList.get(id);
+	}
+
+	protected void startAllLoaders(){};
+	
+	protected void destroyAllLoaders(){};
 
 	public void onClick(View v) {
 		if (v == btnBack){

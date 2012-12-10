@@ -23,6 +23,10 @@ public abstract class ContentProviderTable {
     public String getClassName(){
     	return this.getClass().getCanonicalName();
     }
+    
+    public String getColumnName(String column){
+    	return getTableName() + "." + column;
+    }
 	
 	public ArrayList<Uri> getAllUrisToNotifyOnChange(){
 		ArrayList<Uri> notifyUris = new ArrayList<Uri>();

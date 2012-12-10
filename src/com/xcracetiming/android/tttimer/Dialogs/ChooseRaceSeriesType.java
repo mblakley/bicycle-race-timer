@@ -1,6 +1,8 @@
 package com.xcracetiming.android.tttimer.Dialogs;
 
 import com.xcracetiming.android.tttimer.R;
+import com.xcracetiming.android.tttimer.DataAccess.Race;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,7 +43,10 @@ public class ChooseRaceSeriesType extends BaseDialog implements View.OnClickList
 			if (v == btnAddIndividualRace){
 				// Find the race series named "Individual", and get the RaceSeries_ID from that
 				long raceSeries_ID = GetIndividualRaceSeriesID();
-				AddRaceView addRaceDialog = new AddRaceView(raceSeries_ID);
+				AddRaceView addRaceDialog = new AddRaceView();
+	        	Bundle b = new Bundle();
+	        	b.putLong(Race.RaceSeries_ID, raceSeries_ID);
+	            addRaceDialog.setArguments(b);
 				FragmentManager fm = getFragmentManager();
 				addRaceDialog.show(fm, AddRaceView.LOG_TAG);
 				// Hide the dialog

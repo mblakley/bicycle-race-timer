@@ -9,6 +9,7 @@ import com.xcracetiming.android.tttimer.DataAccess.RaceCategory;
 import com.xcracetiming.android.tttimer.DataAccess.RaceLocation;
 import com.xcracetiming.android.tttimer.DataAccess.RaceSeries;
 import com.xcracetiming.android.tttimer.DataAccess.RaceType;
+import com.xcracetiming.android.tttimer.Utilities.Loaders;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -22,12 +23,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -37,53 +34,38 @@ import android.support.v4.widget.SimpleCursorAdapter;
 public class AddRaceView extends BaseDialog implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 	public static final String LOG_TAG = "AddRaceView";
 	
-	protected Button btnAddNewRace;
 	private SimpleCursorAdapter locationsCursorAdapter = null;
 	private SimpleCursorAdapter raceTypesCursorAdapter = null;
-	protected Spinner raceLocation = null;
-	protected Spinner raceType = null;
-	private EditText txtLaps = null;
-	private TextView lblRaceName = null;
-	private EditText txtRaceName = null;
 	/**
      * This is a special intent action that means "load your tab data".
      */
     public static final String RACE_ADDED_ACTION = "com.xcracetiming.android.tttimer.RACE_ADDED";
 
-	private static final int RACE_TYPES_LOADER = 1014;
 	private long raceSeries_ID;
 	
-	public AddRaceView(long raceSeries_ID) {
-		this.raceSeries_ID = raceSeries_ID;
-	}
+	
+	@Override
+	public void setArguments(Bundle args) {
+		this.raceSeries_ID = args.getLong(Race.RaceSeries_ID);
+	}	
 
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		AppSettings.Instance().Update(getActivity(), AppSettings.AppSetting_RaceSeriesID_Name, Long.toString(raceSeries_ID), true);
 		View v = inflater.inflate(R.layout.dialog_add_race, container, false);
 
-		btnAddNewRace = (Button) v.findViewById(R.id.btnAddNewRace);
-		btnAddNewRace.setOnClickListener(this);		
-		
-		raceLocation = (Spinner) v.findViewById(R.id.spinnerRaceLocation);		
-		
-		txtLaps = (EditText) v.findViewById(R.id.txtNumLaps);
-		
-		lblRaceName = (TextView) v.findViewById(R.id.lblRaceName);
-		txtRaceName = (EditText) v.findViewById(R.id.txtRaceName);
+		getButton(R.id.btnAddNewRace).setOnClickListener(this);							
         
-        raceType = (Spinner) v.findViewById(R.id.spinnerRaceType);
-        raceType.setOnItemSelectedListener(new OnItemSelectedListener() {
+        getSpinner(R.id.spinnerRaceType).setOnItemSelectedListener(new OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-        		LinearLayout laps = (LinearLayout) getView().findViewById(R.id.llLaps);
             	if(id == 1){
-            		txtLaps.setText("1");
-            		laps.setVisibility(View.GONE);
+            		getEditText(R.id.txtNumLaps).setText("1");
+            		getLinearLayout(R.id.llLaps).setVisibility(View.GONE);
             	}else{
-            		if(Long.parseLong(txtLaps.getText().toString()) <= 1){
-            			txtLaps.setText("2");
+            		if(Long.parseLong(getEditText(R.id.txtNumLaps).getText().toString()) <= 1){
+            			getEditText(R.id.txtNumLaps).setText("2");
             		}
-            		laps.setVisibility(View.VISIBLE);
+            		getLinearLayout(R.id.llLaps).setVisibility(View.VISIBLE);
             	}
             }
 
@@ -94,11 +76,10 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 		
         // Intervals probably won't ever change, so I'm ok with this for now but...
         // TODO change this to use an underlying tag for how long the selected interval is
-		Spinner startInterval = (Spinner) v.findViewById(R.id.spinnerStartInterval);
         ArrayAdapter<CharSequence> startIntervalAdapter = ArrayAdapter.createFromResource(
         		getActivity(), R.array.start_interval_array, R.layout.control_simple_spinner );
         startIntervalAdapter.setDropDownViewResource( R.layout.control_simple_spinner_dropdown );
-        startInterval.setAdapter(startIntervalAdapter);
+        getSpinner(R.id.spinnerStartInterval).setAdapter(startIntervalAdapter);
 		
 		return v;
 	}
@@ -120,16 +101,16 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 		}
 		
 		if(raceSeries_ID == -1){
-			lblRaceName.setVisibility(View.VISIBLE);
-			txtRaceName.setVisibility(View.VISIBLE);
+			getTextView(R.id.lblRaceName).setVisibility(View.VISIBLE);
+			getEditText(R.id.txtRaceName).setVisibility(View.VISIBLE);
 		} else {
-			lblRaceName.setVisibility(View.GONE);
-			txtRaceName.setVisibility(View.GONE);
+			getTextView(R.id.lblRaceName).setVisibility(View.GONE);
+			getEditText(R.id.txtRaceName).setVisibility(View.GONE);
 		}
 		
 		// Initialize the cursor loader for the races list
-		this.getLoaderManager().initLoader(RACE_LOCATIONS_LOADER, null, this);
-		this.getLoaderManager().initLoader(RACE_TYPES_LOADER, null, this);
+		this.getLoaderManager().initLoader(Loaders.RACE_LOCATIONS_LOADER, null, this);
+		this.getLoaderManager().initLoader(Loaders.RACE_TYPES_LOADER, null, this);
 	}
 	
 	private boolean FindAnyRaceLocations() {
@@ -194,10 +175,8 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 		return 1;//raceTypeSpinner.getSelectedItemId();
 	}
 	
-	protected long GetRaceLocationID(){
-		Spinner raceLocationSpinner = (Spinner) getView().findViewById(R.id.spinnerRaceLocation);
-		
-		return raceLocationSpinner.getSelectedItemId();
+	protected long GetRaceLocationID(){		
+		return getSpinner(R.id.spinnerRaceLocation).getSelectedItemId();
 	}
 	
 	protected Date GetRaceDate(){
@@ -207,13 +186,13 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 	
 	public void onClick(View v) { 
 		try{
-			if (v == btnAddNewRace){
+			if (v.getId() == R.id.btnAddNewRace){
 				String eventName = "";
 				Long eventID = 0l;
 				String discipline = "";
 				String scoring = "Club";
 				if(raceSeries_ID == -1){
-					Uri seriesCreated = RaceSeries.Instance().Create(getActivity(), txtRaceName.getText().toString(), GetRaceDate(), GetRaceDate(), scoring);
+					Uri seriesCreated = RaceSeries.Instance().Create(getActivity(), getEditText(R.id.txtRaceName).getText().toString(), GetRaceDate(), GetRaceDate(), scoring);
 					raceSeries_ID = Long.parseLong(seriesCreated.getLastPathSegment());
 				}
 				
@@ -252,14 +231,14 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 		String[] selectionArgs;
 		String sortOrder;
 		switch(id){
-			case RACE_LOCATIONS_LOADER:
+			case Loaders.RACE_LOCATIONS_LOADER:
 				projection = new String[]{RaceLocation._ID, RaceLocation.CourseName};
 				selection = null;
 				selectionArgs = null;
 				sortOrder = RaceLocation.CourseName;
 				loader = new CursorLoader(getActivity(), RaceLocation.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
-			case RACE_TYPES_LOADER:
+			case Loaders.RACE_TYPES_LOADER:
 				projection = new String[]{RaceType._ID, RaceType.RaceTypeDescription};
 				selection = null;
 				selectionArgs = null;
@@ -277,25 +256,25 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 			String[] columns;
             int[] to;
 			switch(loader.getId()){
-				case RACE_LOCATIONS_LOADER:
+				case Loaders.RACE_LOCATIONS_LOADER:
 					columns = new String[] { RaceLocation.CourseName };
 		            to = new int[] {android.R.id.text1 };
 		            
 					// Create the cursor adapter for the list of races
 		            locationsCursorAdapter = new SimpleCursorAdapter(getActivity(), R.layout.control_simple_spinner, cursor, columns, to, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 		            locationsCursorAdapter.setDropDownViewResource( R.layout.control_simple_spinner_dropdown );
-		        	raceLocation.setAdapter(locationsCursorAdapter);
+		        	getSpinner(R.id.spinnerRaceLocation).setAdapter(locationsCursorAdapter);
 					
 					locationsCursorAdapter.swapCursor(cursor);
 					break;
-				case RACE_TYPES_LOADER:
+				case Loaders.RACE_TYPES_LOADER:
 					columns = new String[] { RaceType.RaceTypeDescription };
 		            to = new int[] {android.R.id.text1 };
 		            
 					// Create the cursor adapter for the list of races
 		            raceTypesCursorAdapter = new SimpleCursorAdapter(getActivity(), R.layout.control_simple_spinner, cursor, columns, to, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 		            raceTypesCursorAdapter.setDropDownViewResource( R.layout.control_simple_spinner_dropdown );
-		        	raceType.setAdapter(raceTypesCursorAdapter);
+		            getSpinner(R.id.spinnerRaceType).setAdapter(raceTypesCursorAdapter);
 		        	
 					raceTypesCursorAdapter.swapCursor(cursor);
 					break;
@@ -310,10 +289,10 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 		try{
 			Log.v(LOG_TAG, "onLoadFinished start: id=" + Integer.toString(loader.getId()));			
 			switch(loader.getId()){
-				case RACE_LOCATIONS_LOADER:
+				case Loaders.RACE_LOCATIONS_LOADER:
 					locationsCursorAdapter.swapCursor(null);
 					break;
-				case RACE_TYPES_LOADER:
+				case Loaders.RACE_TYPES_LOADER:
 					raceTypesCursorAdapter.swapCursor(null);
 					break;
 			}
