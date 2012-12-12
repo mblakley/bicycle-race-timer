@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.xcracetiming.android.tttimer.Controls.Timer;
@@ -103,7 +104,7 @@ public class AssignLapTimeTask extends AsyncTask<Long, Void, AssignResult> {
 					messageToShow.setAction(Timer.SHOW_MESSAGE_ACTION);
 					messageToShow.putExtra(Timer.MESSAGE, result.message);
 					messageToShow.putExtra(Timer.DURATION, 2300l);
-					context.sendBroadcast(messageToShow);
+					LocalBroadcastManager.getInstance(context).sendBroadcast(messageToShow);
 					
 					// We added a race lap, so if the total number of race laps for this raceResult equals the total number of laps in the race...
 					if(numRaceLaps == totalRaceLaps){
@@ -149,11 +150,11 @@ public class AssignLapTimeTask extends AsyncTask<Long, Void, AssignResult> {
 					// Stop and hide the timer
 					Intent stopAndHideTimer = new Intent();
 					stopAndHideTimer.setAction(Timer.STOP_AND_HIDE_TIMER_ACTION);
-					context.sendBroadcast(stopAndHideTimer);
+					LocalBroadcastManager.getInstance(context).sendBroadcast(stopAndHideTimer);
 					
 					Intent raceIsFinished = new Intent();
 	        		raceIsFinished.setAction(Timer.RACE_IS_FINISHED_ACTION);
-	        		context.sendBroadcast(raceIsFinished);
+	        		LocalBroadcastManager.getInstance(context).sendBroadcast(raceIsFinished);
 				} 
 			} else{
 				result.message = "No racers have started yet, so the unassigned time would never be used";
@@ -162,7 +163,7 @@ public class AssignLapTimeTask extends AsyncTask<Long, Void, AssignResult> {
 				messageToShow.setAction(Timer.SHOW_MESSAGE_ACTION);
 				messageToShow.putExtra(Timer.MESSAGE, result.message);
 				messageToShow.putExtra(Timer.DURATION, 2300l);
-				context.sendBroadcast(messageToShow);
+				LocalBroadcastManager.getInstance(context).sendBroadcast(messageToShow);
 			}
 			
 			numStarted.close();

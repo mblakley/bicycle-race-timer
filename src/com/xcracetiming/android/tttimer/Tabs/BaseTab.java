@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -91,11 +92,11 @@ public abstract class BaseTab extends Fragment {
      */
     protected void AddActionFilter(String action){
     	// First unregister from any broadcasts before changing the filter
-    	getActivity().unregisterReceiver(mActionReceiver);
+    	LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mActionReceiver);
     	// Add the action to the intent filter
 		filter.addAction(action);
         // Register for broadcasts when a tab is changed
-		getActivity().registerReceiver(mActionReceiver, filter);
+		LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mActionReceiver, filter);
     }
     
     @Override
@@ -119,7 +120,7 @@ public abstract class BaseTab extends Fragment {
     	super.onStop();
     	Log.v(LOG_TAG(), "onStop - Unregistering all receivers");
     	if(mActionReceiver != null && filter.countActions() > 0){
-    		getActivity().unregisterReceiver(mActionReceiver);
+    		LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mActionReceiver);
     	}
     }
 	

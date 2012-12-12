@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
@@ -195,7 +196,7 @@ public class AddRacerView extends BaseDialog implements View.OnClickListener, Lo
 		racerAdded.putExtra(RACER_ADDED_ACTION, racerInfo_ID);
 		racerAdded.putExtra(CHECKIN_RACER_ACTION, checkin);
 		// send to all listeners
-		getActivity().sendBroadcast(racerAdded);
+		LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(racerAdded);
 	}
 	
 	@Override

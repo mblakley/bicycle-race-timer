@@ -12,6 +12,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -115,7 +116,7 @@ public class TTTimerTabsActivity extends FragmentActivity {
 		AddActionFilter(TTTimerTabsActivity.RACE_ID_CHANGED_ACTION);
 
         // Register for broadcasts when a tab is changed
-        this.registerReceiver(mActionReceiver, actionFilter);
+		LocalBroadcastManager.getInstance(this).registerReceiver(mActionReceiver, actionFilter);
 		timer.RegisterReceiver();
 		
 		if(!Boolean.parseBoolean(AppSettings.Instance().ReadValue(this, AppSettings.AppSetting_ResumePreviousState_Name, "false"))){
@@ -130,7 +131,7 @@ public class TTTimerTabsActivity extends FragmentActivity {
 		super.onPause();
 		timer.UnregisterReceiver();
 		if(mActionReceiver != null && actionFilter.countActions() > 0){
-    		unregisterReceiver(mActionReceiver);
+			LocalBroadcastManager.getInstance(this).unregisterReceiver(mActionReceiver);
     	}
 	}
 	
@@ -657,7 +658,7 @@ public class TTTimerTabsActivity extends FragmentActivity {
 			Intent startTimer = new Intent();
 		 	startTimer.setAction(Timer.START_TIMER_ACTION);
 		 	startTimer.putExtra(Timer.START_TIME, startTime);
-		 	sendBroadcast(startTimer);
+		 	LocalBroadcastManager.getInstance(this).sendBroadcast(startTimer);
 		 	
 		 	// Figure out how many racers are in this race
 		 	String[] projection = new String[]{SeriesRaceIndividualResults.RaceResult_ID};

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -84,7 +85,7 @@ public class OtherRaceResults extends BaseDialog implements LoaderManager.Loader
 				Intent raceHasChanged = new Intent();
 				raceHasChanged.setAction(TTTimerTabsActivity.RACE_ID_CHANGED_ACTION);
 				raceHasChanged.putExtra(SeriesRaceIndividualResults.Race_ID, Long.toString(spinnerRaceToView.getSelectedItemId()));
-        		getActivity().sendBroadcast(raceHasChanged);
+				LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(raceHasChanged);
 			} else {
 				super.onClick(v);
 			}

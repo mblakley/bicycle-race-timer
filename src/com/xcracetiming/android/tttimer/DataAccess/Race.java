@@ -33,7 +33,6 @@ public final class Race extends ContentProviderTable implements BaseColumns {
     public static final String StartInterval = "StartInterval";
     public static final String EventName = "EventName";
     public static final String USACEventID = "USACEventID";
-    public static final String RaceDiscipline = "RaceDiscipline";
     public static final String RaceSeries_ID = "RaceSeries_ID";
     public static final String ScoringType = "ScoringType";
     
@@ -47,7 +46,6 @@ public final class Race extends ContentProviderTable implements BaseColumns {
     	        + StartInterval + " integer null,"
     	        + EventName + " text not null,"
 	        	+ USACEventID + " integer null,"
-	        	+ RaceDiscipline + " text not null,"
 	        	+ RaceSeries_ID + " integer references " + RaceSeries.Instance().getTableName() + "(" + RaceSeries._ID + ") null,"
 	        	+ ScoringType + " text not null);";
     }
@@ -62,7 +60,7 @@ public final class Race extends ContentProviderTable implements BaseColumns {
     	return urisToNotify;
     }
 
-	public Uri Create(Context context, long raceLocation, Date raceDate, Long raceStartTime, long raceType_ID, Long startTimeOffset, String eventName, Long USACEventID, String raceDiscipline, long raceSeries_ID, String scoringType) {
+	public Uri Create(Context context, long raceLocation, Date raceDate, Long raceStartTime, long raceType_ID, Long startTimeOffset, String eventName, Long USACEventID, long raceSeries_ID, String scoringType) {
 		ContentValues content = new ContentValues();
 		content.put(Race.RaceLocation_ID, raceLocation);
 		content.put(Race.RaceDate, raceDate.getTime());
@@ -71,7 +69,6 @@ public final class Race extends ContentProviderTable implements BaseColumns {
 		content.put(Race.StartInterval, startTimeOffset);
 		content.put(Race.EventName, eventName);
 		content.put(Race.USACEventID, USACEventID);
-		content.put(Race.RaceDiscipline, raceDiscipline);
 		content.put(Race.RaceSeries_ID, raceSeries_ID);
 		content.put(Race.ScoringType, scoringType);
 
@@ -107,11 +104,7 @@ public final class Race extends ContentProviderTable implements BaseColumns {
         if(USACEventID != null)
         {
         	content.put(Race.USACEventID, USACEventID);
-        }
-        if(raceDiscipline != null)
-        {
-        	content.put(Race.RaceDiscipline, raceDiscipline);
-        }
+        }        
         if(raceSeries_ID != null)
         {
         	content.put(Race.RaceSeries_ID, raceSeries_ID);
@@ -137,7 +130,6 @@ public final class Race extends ContentProviderTable implements BaseColumns {
 			raceValues.put(Race.StartInterval, raceCursor.getLong(raceCursor.getColumnIndex(Race.StartInterval)));
 			raceValues.put(Race.EventName, raceCursor.getString(raceCursor.getColumnIndex(Race.EventName)));
 			raceValues.put(Race.USACEventID, raceCursor.getLong(raceCursor.getColumnIndex(Race.USACEventID)));
-			raceValues.put(Race.RaceDiscipline, raceCursor.getString(raceCursor.getColumnIndex(Race.RaceDiscipline)));
 			raceValues.put(Race.RaceSeries_ID, raceCursor.getLong(raceCursor.getColumnIndex(Race.RaceSeries_ID)));
 			raceValues.put(Race.ScoringType, raceCursor.getString(raceCursor.getColumnIndex(Race.ScoringType)));
 		}

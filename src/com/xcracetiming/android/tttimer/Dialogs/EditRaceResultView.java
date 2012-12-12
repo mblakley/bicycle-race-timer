@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 
 public class EditRaceResultView extends BaseDialog implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 	public static final String LOG_TAG = "EditRaceResult";
@@ -136,7 +137,7 @@ public class EditRaceResultView extends BaseDialog implements View.OnClickListen
 				Intent changeTab = new Intent();
 				changeTab.setAction(TTTimerTabsActivity.CHANGE_VISIBLE_TAB);
 				changeTab.putExtra(TTTimerTabsActivity.VISIBLE_TAB_TAG, FinishTab.FinishTabSpecName);
-				getActivity().sendBroadcast(changeTab);
+				LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(changeTab);
 				
 				// Recalculate placings and points
 		    	Calculations.CalculateCategoryPlacings(getActivity(), raceID);

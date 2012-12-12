@@ -5,7 +5,6 @@ import java.util.Date;
 import com.xcracetiming.android.tttimer.R;
 import com.xcracetiming.android.tttimer.DataAccess.AppSettings;
 import com.xcracetiming.android.tttimer.DataAccess.Race;
-import com.xcracetiming.android.tttimer.DataAccess.RaceCategory;
 import com.xcracetiming.android.tttimer.DataAccess.RaceLocation;
 import com.xcracetiming.android.tttimer.DataAccess.RaceSeries;
 import com.xcracetiming.android.tttimer.DataAccess.RaceType;
@@ -28,6 +27,7 @@ import android.widget.Spinner;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
 
@@ -41,47 +41,48 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
      */
     public static final String RACE_ADDED_ACTION = "com.xcracetiming.android.tttimer.RACE_ADDED";
 
-	private long raceSeries_ID;
-	
+	private long raceSeries_ID;	
 	
 	@Override
 	public void setArguments(Bundle args) {
 		this.raceSeries_ID = args.getLong(Race.RaceSeries_ID);
+		AppSettings.Instance().Update(getActivity(), AppSettings.AppSetting_RaceSeriesID_Name, Long.toString(raceSeries_ID), true);
 	}	
 
 	@Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		AppSettings.Instance().Update(getActivity(), AppSettings.AppSetting_RaceSeriesID_Name, Long.toString(raceSeries_ID), true);
-		View v = inflater.inflate(R.layout.dialog_add_race, container, false);
-
-		getButton(R.id.btnAddNewRace).setOnClickListener(this);							
-        
-        getSpinner(R.id.spinnerRaceType).setOnItemSelectedListener(new OnItemSelectedListener() {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {		
+		return inflater.inflate(R.layout.dialog_add_race, container, false);
+	}
+	
+	@Override
+	protected void addListeners() {
+		getButton(R.id.btnAddNewRace).setOnClickListener(this);	
+		
+		getSpinner(R.id.spinnerRaceType).setOnItemSelectedListener(new OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-            	if(id == 1){
-            		getEditText(R.id.txtNumLaps).setText("1");
-            		getLinearLayout(R.id.llLaps).setVisibility(View.GONE);
-            	}else{
+            	// Need to just check the "HasMultipleLaps" field to see if we should configure the number of laps
+            	Cursor selectedRaceType = raceTypesCursorAdapter.getCursor();
+            	selectedRaceType.moveToPosition(position);
+            	
+            	// If the race has multiple laps, show the num laps
+            	if(selectedRaceType.getInt(selectedRaceType.getColumnIndex(RaceType.HasMultipleLaps)) > 0){
             		if(Long.parseLong(getEditText(R.id.txtNumLaps).getText().toString()) <= 1){
             			getEditText(R.id.txtNumLaps).setText("2");
             		}
             		getLinearLayout(R.id.llLaps).setVisibility(View.VISIBLE);
+            	}else{
+            		// The race is only a single "lap", so don't show the number of laps
+            		getEditText(R.id.txtNumLaps).setText("1");
+            		getLinearLayout(R.id.llLaps).setVisibility(View.GONE);
             	}
             }
 
             public void onNothingSelected(AdapterView<?> parentView) {
-                // your code here
+            	// Try to select the first item in the list
+            	// TODO: Check this!
+            	getSpinner(R.id.spinnerRaceType).setSelection(0, false);
             }
         });
-		
-        // Intervals probably won't ever change, so I'm ok with this for now but...
-        // TODO change this to use an underlying tag for how long the selected interval is
-        ArrayAdapter<CharSequence> startIntervalAdapter = ArrayAdapter.createFromResource(
-        		getActivity(), R.array.start_interval_array, R.layout.control_simple_spinner );
-        startIntervalAdapter.setDropDownViewResource( R.layout.control_simple_spinner_dropdown );
-        getSpinner(R.id.spinnerStartInterval).setAdapter(startIntervalAdapter);
-		
-		return v;
 	}
 
 	@Override 
@@ -98,19 +99,39 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
         	AddLocationView addLocationDialog = new AddLocationView();
 			FragmentManager fm = getActivity().getSupportFragmentManager();
 			addLocationDialog.show(fm, AddLocationView.LOG_TAG);
+		} else{
+			// Continue with setting up the race
+			
+	        // Intervals probably won't ever change, so I'm ok with this for now but...
+	        // TODO: change this to use an underlying tag for how long the selected interval is
+	        ArrayAdapter<CharSequence> startIntervalAdapter = ArrayAdapter.createFromResource(
+	        		getActivity(), R.array.start_interval_array, R.layout.control_simple_spinner );
+	        startIntervalAdapter.setDropDownViewResource( R.layout.control_simple_spinner_dropdown );
+	        getSpinner(R.id.spinnerStartInterval).setAdapter(startIntervalAdapter);
+			
+	        // TODO: Don't like the specific handling for invalid raceSeries_ID - Maybe use a checkbox for "Is this race part of a series?" that will hide or show the available series list, with an option for "Add new series"        
+			if(raceSeries_ID == -1){
+				getTextView(R.id.lblRaceName).setVisibility(View.VISIBLE);
+				getEditText(R.id.txtRaceName).setVisibility(View.VISIBLE);
+			} else {
+				getTextView(R.id.lblRaceName).setVisibility(View.GONE);
+				getEditText(R.id.txtRaceName).setVisibility(View.GONE);
+			}		
 		}
-		
-		if(raceSeries_ID == -1){
-			getTextView(R.id.lblRaceName).setVisibility(View.VISIBLE);
-			getEditText(R.id.txtRaceName).setVisibility(View.VISIBLE);
-		} else {
-			getTextView(R.id.lblRaceName).setVisibility(View.GONE);
-			getEditText(R.id.txtRaceName).setVisibility(View.GONE);
-		}
-		
+	}
+	
+	@Override
+	protected void startAllLoaders() {
 		// Initialize the cursor loader for the races list
 		this.getLoaderManager().initLoader(Loaders.RACE_LOCATIONS_LOADER, null, this);
 		this.getLoaderManager().initLoader(Loaders.RACE_TYPES_LOADER, null, this);
+	}
+	
+	@Override
+	protected void destroyAllLoaders() {
+		// Destroy the cursor loaders
+		this.getLoaderManager().destroyLoader(Loaders.RACE_LOCATIONS_LOADER);
+		this.getLoaderManager().destroyLoader(Loaders.RACE_TYPES_LOADER);
 	}
 	
 	private boolean FindAnyRaceLocations() {
@@ -132,27 +153,28 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 		return foundRaceLocations;
 	}	
 
-	private boolean FindAnyRaceCategories() {
-		boolean foundRaceCategories = false;
-		try{
-			String[] projection = new String[]{RaceCategory._ID + " as _id"};
-			String selection = null;
-			String[] selectionArgs = null; 
-			String sortOrder = RaceCategory._ID;
-			
-			Cursor raceCat = RaceCategory.Instance().Read(getActivity(), projection, selection, selectionArgs, sortOrder);
-			
-			if(raceCat != null && raceCat.getCount() > 0){	
-				foundRaceCategories = true;
-			}
-			
-			raceCat.close();
-			raceCat = null;
-     	}catch(Exception ex){Log.e(LOG_TAG, "FindAnyRaceCategories failed", ex);}
-		
-		return foundRaceCategories;
-	}
+//	private boolean FindAnyRaceCategories() {
+//		boolean foundRaceCategories = false;
+//		try{
+//			String[] projection = new String[]{RaceCategory._ID};
+//			String selection = null;
+//			String[] selectionArgs = null; 
+//			String sortOrder = RaceCategory._ID;
+//			
+//			Cursor raceCat = RaceCategory.Instance().Read(getActivity(), projection, selection, selectionArgs, sortOrder);
+//			
+//			if(raceCat != null && raceCat.getCount() > 0){	
+//				foundRaceCategories = true;
+//			}
+//			
+//			raceCat.close();
+//			raceCat = null;
+//     	}catch(Exception ex){Log.e(LOG_TAG, "FindAnyRaceCategories failed", ex);}
+//		
+//		return foundRaceCategories;
+//	}
 	
+	// TODO: Don't like that this is so hard coded - Need options for start interval, but start interval should be configurable
 	protected long GetRaceStartInterval(){
 			Spinner startIntervalSpinner = (Spinner) getView().findViewById(R.id.spinnerStartInterval);
 			int raceStartIntervalID = (int)startIntervalSpinner.getSelectedItemId();
@@ -169,10 +191,8 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 			return raceStartInterval;
 	}
 	
-	protected long GetRaceTypeID(){
-		//Spinner raceTypeSpinner = (Spinner) getView().findViewById(R.id.spinnerRaceType);
-		
-		return 1;//raceTypeSpinner.getSelectedItemId();
+	protected long GetRaceTypeID(){		
+		return getSpinner(R.id.spinnerRaceType).getSelectedItemId();
 	}
 	
 	protected long GetRaceLocationID(){		
@@ -180,23 +200,27 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 	}
 	
 	protected Date GetRaceDate(){
-		DatePicker datePicker = (DatePicker) getView().findViewById(R.id.dateRaceDate);
+		DatePicker datePicker = getDatePicker(R.id.dateRaceDate);
 		return new Date(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
 	}
-	
+
 	public void onClick(View v) { 
 		try{
 			if (v.getId() == R.id.btnAddNewRace){
+				// Add the new race
+				// TODO: Fill in event name and id (for USAC)
 				String eventName = "";
 				Long eventID = 0l;
-				String discipline = "";
+				
+				// TODO: What's the difference between club scoring and USAC scoring?
 				String scoring = "Club";
+				// Don't like the special handling for invalid raceSeries_ID - Should not be necessary
 				if(raceSeries_ID == -1){
 					Uri seriesCreated = RaceSeries.Instance().Create(getActivity(), getEditText(R.id.txtRaceName).getText().toString(), GetRaceDate(), GetRaceDate(), scoring);
 					raceSeries_ID = Long.parseLong(seriesCreated.getLastPathSegment());
 				}
 				
-				Uri resultUri = Race.Instance().Create(getActivity(), GetRaceLocationID(), GetRaceDate(), null, GetRaceTypeID(), GetRaceStartInterval(), eventName, eventID, discipline, raceSeries_ID, scoring);
+				Uri resultUri = Race.Instance().Create(getActivity(), GetRaceLocationID(), GetRaceDate(), null, GetRaceTypeID(), GetRaceStartInterval(), eventName, eventID, raceSeries_ID, scoring);
 	 			long race_ID = Long.parseLong(resultUri.getLastPathSegment());
 	 			
 	 			// Broadcast that a race was added
@@ -204,13 +228,15 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
     			raceAdded.setAction(RACE_ADDED_ACTION);
     			raceAdded.putExtra(AppSettings.AppSetting_RaceID_Name, race_ID);
     			raceAdded.putExtra(AppSettings.AppSetting_StartInterval_Name, GetRaceStartInterval());
-    			getActivity().sendBroadcast(raceAdded);
+    			LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(raceAdded);
     			
-    			if(!FindAnyRaceCategories()){
+    			
+    			// TODO: Add categories to the race that we just added.  Otherwise, everyone will be in the "General" category
+    			//if(!FindAnyRaceCategories()){
     				AddRaceCategoriesView addRaceCategoriesDialog = new AddRaceCategoriesView();
     				FragmentManager fm = getActivity().getSupportFragmentManager();
     				addRaceCategoriesDialog.show(fm, AddRaceCategoriesView.LOG_TAG);
-    			}
+    			//}
 
     			// Hide the dialog
      			dismiss();

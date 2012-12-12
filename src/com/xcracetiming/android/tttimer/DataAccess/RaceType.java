@@ -21,11 +21,13 @@ public final class RaceType extends ContentProviderTable implements BaseColumns 
     public static final String LicenseType = "LicenseType";
     public static final String IsTeamRace = "IsTeamRace";
     public static final String HasMultipleLaps = "HasMultipleLaps";
+    public static final String RaceDiscipline = "RaceDiscipline";
     
     public String getCreate(){
     	return "create table " + getTableName() 
     	        + " (" + _ID + " integer primary key autoincrement, "
     	        + RaceTypeDescription + " text not null,"
+    	        + RaceDiscipline + " text not null," 
     	        + LicenseType + " text not null," 
     	        + IsTeamRace + " integer not null,"
     	        + HasMultipleLaps + " integer not null"

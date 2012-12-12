@@ -3,6 +3,7 @@ package com.xcracetiming.android.tttimer.AsyncTasks;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.xcracetiming.android.tttimer.TTTimerTabsActivity;
 import com.xcracetiming.android.tttimer.Tabs.FinishTab;
@@ -30,6 +31,6 @@ public class AllRacersStartedTask extends AsyncTask<Void, Void, Void> {
 		Intent changeTab = new Intent();
 		changeTab.setAction(TTTimerTabsActivity.CHANGE_VISIBLE_TAB);
 		changeTab.putExtra(TTTimerTabsActivity.VISIBLE_TAB_TAG, FinishTab.FinishTabSpecName);
-		context.sendBroadcast(changeTab);
+		LocalBroadcastManager.getInstance(context).sendBroadcast(changeTab);
 	}
 }

@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.CursorAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -204,7 +205,7 @@ public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 	 	Intent startTimer = new Intent();
 	 	startTimer.setAction(Timer.START_TIMER_ACTION);
 	 	startTimer.putExtra(Timer.START_TIME, startTime);
-	 	getActivity().sendBroadcast(startTimer);
+	 	LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(startTimer);
     }
      
     public void stopTimerClick(View view) {
@@ -212,7 +213,7 @@ public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
     	
     	Intent stopTimer = new Intent();
     	stopTimer.setAction(Timer.STOP_TIMER_ACTION);
-    	getActivity().sendBroadcast(stopTimer);
+    	LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(stopTimer);
     }
      
     public void resetClick (View view){
@@ -544,7 +545,7 @@ public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 		if(doReset){
 			Intent resetTimer = new Intent();
 			resetTimer.setAction(Timer.RESET_TIMER_ACTION);
-			getActivity().sendBroadcast(resetTimer);
+			LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(resetTimer);
 			
 			// Set the start button text to "Start"
 			Button startButton = (Button)getView().findViewById(R.id.btnStartTimer);

@@ -27,6 +27,7 @@ import android.os.Handler;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.app.FragmentActivity;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -285,7 +286,7 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
 		AddActionFilter(SHOW_MESSAGE_ACTION);
 
         // Register for broadcasts when a tab is changed
-		getContext().registerReceiver(mActionReceiver, actionFilter);
+		LocalBroadcastManager.getInstance(getContext()).registerReceiver(mActionReceiver, actionFilter);
 	}
 
 	/**
@@ -300,7 +301,7 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
     public void UnregisterReceiver(){
     	try{
 	    	if(mActionReceiver != null && actionFilter.countActions() > 0){
-	    		getContext().unregisterReceiver(mActionReceiver);
+	    		LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mActionReceiver);
 	    	}
     	}catch(Exception e){
     		Log.e(LOG_TAG, "Error in UnregisterReceiver", e);

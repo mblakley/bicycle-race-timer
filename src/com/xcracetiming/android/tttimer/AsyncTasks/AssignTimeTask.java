@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.xcracetiming.android.tttimer.Controls.Timer;
@@ -83,7 +84,7 @@ public class AssignTimeTask extends AsyncTask<Long, Void, AssignResult> {
 			messageToShow.setAction(Timer.SHOW_MESSAGE_ACTION);
 			messageToShow.putExtra(Timer.MESSAGE, result.message);
 			messageToShow.putExtra(Timer.DURATION, 2300l);
-			context.sendBroadcast(messageToShow);
+			LocalBroadcastManager.getInstance(context).sendBroadcast(messageToShow);
 			
 	    	// Delete the unassignedTimes row from the database
 			// context.getContentResolver().delete(UnassignedTimes.CONTENT_URI, UnassignedTimes._ID + "=?", new String[]{Long.toString(unassignedTime_ID)});	    	
@@ -109,11 +110,11 @@ public class AssignTimeTask extends AsyncTask<Long, Void, AssignResult> {
 					// Stop and hide the timer
 					Intent stopAndHideTimer = new Intent();
 					stopAndHideTimer.setAction(Timer.STOP_AND_HIDE_TIMER_ACTION);
-					context.sendBroadcast(stopAndHideTimer);
+					LocalBroadcastManager.getInstance(context).sendBroadcast(stopAndHideTimer);
 					
 					Intent raceIsFinished = new Intent();
 	        		raceIsFinished.setAction(Timer.RACE_IS_FINISHED_ACTION);
-	        		context.sendBroadcast(raceIsFinished);
+	        		LocalBroadcastManager.getInstance(context).sendBroadcast(raceIsFinished);
 				}
 			}
 			

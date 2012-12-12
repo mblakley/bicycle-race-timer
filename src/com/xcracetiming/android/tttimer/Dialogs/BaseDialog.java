@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -85,44 +86,51 @@ public abstract class BaseDialog extends DialogFragment implements View.OnClickL
 		getDialog().getWindow().setLayout(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
 		getButton(R.id.btnBaseDialogClose1).setOnClickListener(this);
 		
-		addClickListeners();
+		addListeners();
 	}
 	
-	protected void addClickListeners(){};
+	protected void addListeners(){};
 	
-	public TextView getTextView(int id){
+	protected TextView getTextView(int id){
 		if(!viewList.containsKey(id)){
 			viewList.put(id, (TextView) getView().findViewById(id));
 		}
 		return (TextView)viewList.get(id);
 	}
 	
-	public LinearLayout getLinearLayout(int id){
+	protected LinearLayout getLinearLayout(int id){
 		if(!viewList.containsKey(id)){
 			viewList.put(id, (TextView) getView().findViewById(id));
 		}
 		return (LinearLayout)viewList.get(id);
 	}
 	
-	public Button getButton(int id){
+	protected Button getButton(int id){
 		if(!viewList.containsKey(id)){
 			viewList.put(id, (TextView) getView().findViewById(id));
 		}
 		return (Button)viewList.get(id);
 	}
 	
-	public EditText getEditText(int id){
+	protected EditText getEditText(int id){
 		if(!viewList.containsKey(id)){
 			viewList.put(id, (EditText) getView().findViewById(id));
 		}
 		return (EditText)viewList.get(id);
 	}
 	
-	public Spinner getSpinner(int id){
+	protected Spinner getSpinner(int id){
 		if(!viewList.containsKey(id)){
 			viewList.put(id, (Spinner) getView().findViewById(id));
 		}
 		return (Spinner)viewList.get(id);
+	}
+	
+	protected DatePicker getDatePicker(int id) {
+		if(!viewList.containsKey(id)){
+			viewList.put(id, (DatePicker) getView().findViewById(id));
+		}
+		return (DatePicker)viewList.get(id);
 	}
 
 	protected void startAllLoaders(){};
