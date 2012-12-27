@@ -2,6 +2,7 @@ package com.xcracetiming.android.tttimer.Tabs;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import android.database.Cursor;
 import android.os.Bundle;
@@ -16,22 +17,18 @@ import android.view.ViewGroup;
 
 import com.xcracetiming.android.tttimer.R;
 import com.xcracetiming.android.tttimer.DataAccess.AppSettings;
-import com.xcracetiming.android.tttimer.DataAccess.ContentProviderTable;
 import com.xcracetiming.android.tttimer.DataAccess.Race;
 import com.xcracetiming.android.tttimer.DataAccess.RaceLocation;
 import com.xcracetiming.android.tttimer.DataAccess.RaceResults;
 import com.xcracetiming.android.tttimer.DataAccess.RaceSeries;
 import com.xcracetiming.android.tttimer.DataAccess.RaceType;
 import com.xcracetiming.android.tttimer.DataAccess.RaceWave;
-import com.xcracetiming.android.tttimer.DataAccess.Views.RaceInfoResultsView;
-import com.xcracetiming.android.tttimer.DataAccess.Views.RaceInfoView;
 import com.xcracetiming.android.tttimer.Dialogs.AdminAuthView;
 import com.xcracetiming.android.tttimer.Dialogs.AdminMenuView;
 import com.xcracetiming.android.tttimer.Dialogs.MarshalLocations;
 import com.xcracetiming.android.tttimer.Dialogs.OtherRaceResults;
 import com.xcracetiming.android.tttimer.Dialogs.SeriesResultsView;
 import com.xcracetiming.android.tttimer.Utilities.Loaders;
-import com.xcracetiming.android.tttimer.Utilities.QueryUtilities.SelectBuilder;
 import com.xcracetiming.android.tttimer.Utilities.TimeFormatter;
 
 /**
@@ -103,32 +100,16 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 	 */
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {	
 		Log.v(LOG_TAG(), "onCreateLoader start: id=" + Integer.toString(id));
-		CursorLoader loader = null;
-		String[] projection;
-		String selection;
-		String[] selectionArgs = null;
-		String sortOrder;		
+		CursorLoader loader = null;	
 		switch(id){
-			case Loaders.RACE_INFO_LOADER:				
-				projection = new String[]{Race.Instance().getColumnName(Race._ID), RaceSeries.SeriesName, Race.RaceDate, Race.RaceLocation_ID, RaceLocation.CourseName, RaceType.HasMultipleLaps, Race.StartInterval, RaceLocation.Distance, RaceLocation.DistanceUnit, RaceWave.NumLaps, RaceType.RaceTypeDescription};
-				selection = SelectBuilder.Where(Race.Instance().getColumnName(Race._ID)).Equals(AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name)).toString();
-				selectionArgs = null;
-				sortOrder = Race.Instance().getColumnName(Race._ID);
-				loader = new CursorLoader(getActivity(), RaceInfoView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+			case Loaders.RACE_INFO_LOADER:					
+				loader = Loaders.GetRaceInfo(getActivity());
 				break;
-			case Loaders.APP_SETTINGS_LOADER_RACEINFO:
-				projection = new String[]{AppSettings.AppSettingValue};
-				selection = SelectBuilder.Where(AppSettings.Instance().getColumnName(AppSettings.AppSettingValue)).EqualsParameter().toString();
-				sortOrder = null;
-				selectionArgs = new String[]{AppSettings.AppSetting_DistanceUnits_Name};
-				loader = new CursorLoader(getActivity(), AppSettings.Instance().CONTENT_URI.buildUpon().appendQueryParameter(ContentProviderTable.Limit, "1").build(), projection, selection, selectionArgs, sortOrder);
+			case Loaders.APP_SETTINGS_LOADER_RACEINFO:				
+				loader = Loaders.GetDistanceUnits(getActivity());
 				break;
 			case Loaders.COURSE_RECORD_LOADER:
-				projection = new String[]{RaceResults.ElapsedTime};
-				selection = SelectBuilder.Where(Race.Instance().getColumnName(Race.RaceLocation_ID)).EqualsParameter().And(RaceResults.ElapsedTime).EqualsParameter().And(RaceResults.ElapsedTime).GTE(0).toString();
-				selectionArgs = new String[]{Long.toString(args.getLong(Race.RaceLocation_ID))};
-				sortOrder = RaceResults.ElapsedTime;
-				loader = new CursorLoader(getActivity(), RaceInfoResultsView.Instance().CONTENT_URI.buildUpon().appendQueryParameter(ContentProviderTable.Limit, "1").build(), projection, selection, selectionArgs, sortOrder);
+				loader = Loaders.GetCourseRecord(getActivity(), args);
 				break;
 		}
 		Log.v(LOG_TAG(), "onCreateLoader complete: id=" + Integer.toString(id));
@@ -178,7 +159,7 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 						
 						// Set the race date text in the format M/d/yy
 						Date raceDateTemp = new Date(raceDateMS);
-						SimpleDateFormat formatter = new SimpleDateFormat("M/d/yy");						
+						SimpleDateFormat formatter = new SimpleDateFormat("M/d/yy", Locale.US);						
 						getTextView(R.id.raceDate).setText(formatter.format(raceDateTemp).toString());
 						// Set the course name
 						getTextView(R.id.raceCourseName).setText(courseName);

@@ -17,6 +17,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -60,6 +61,13 @@ public abstract class BaseTab extends Fragment {
 			viewList.put(id, (TextView) getView().findViewById(id));
 		}
 		return (TextView)viewList.get(id);
+	}
+	
+	public EditText getEditText(int id){
+		if(!viewList.containsKey(id)){
+			viewList.put(id, (EditText) getView().findViewById(id));
+		}
+		return (EditText)viewList.get(id);
 	}
 	
 	public LinearLayout getLinearLayout(int id){

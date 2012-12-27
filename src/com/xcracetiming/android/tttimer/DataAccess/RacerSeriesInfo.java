@@ -38,7 +38,7 @@ public final class RacerSeriesInfo extends ContentProviderTable implements BaseC
     	return "create table " + getTableName() 
     	        + " (" + _ID + " integer primary key autoincrement, "
     	        + RacerUSACInfo_ID + " integer references " + RacerUSACInfo.Instance().getTableName() + "(" + RacerUSACInfo._ID + ") not null, " 
-    	        + SeriesBibNumber + " text not null, " 
+    	        + SeriesBibNumber + " integer not null, " 
     	        + RaceSeries_ID + " integer references " + RaceSeries.Instance().getTableName() + "(" + RaceSeries._ID + ") not null, "
     	        + CurrentRaceCategory_ID + " integer references " + RaceCategory.Instance().getTableName() + "(" + RaceCategory._ID + ") not null, " 
     	        + TTPoints + " integer not null," 

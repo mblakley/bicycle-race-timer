@@ -80,15 +80,6 @@ public class CheckInTab extends BaseTab implements LoaderManager.LoaderCallbacks
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.tab_checkin, container, false);
-        
-        btnAddRacer = (Button) view.findViewById(R.id.btnAddNewRacer);
-		btnAddRacer.setOnClickListener(this);
-		
-		btnAddNewTeam = (Button) view.findViewById(R.id.btnAddNewTeam);
-		btnAddNewTeam.setOnClickListener(this);
-		
-		btnAddGhostRacer = (Button) view.findViewById(R.id.btnAddGhostRacer);
-		btnAddGhostRacer.setOnClickListener(this);
 		
         view.setKeepScreenOn(true);
         
@@ -96,30 +87,33 @@ public class CheckInTab extends BaseTab implements LoaderManager.LoaderCallbacks
     }
 	
 	@Override
-	public void onResume() { 
-		super.onResume(); 
-		
-        RestartLoaderTextWatcher tw = new RestartLoaderTextWatcher(getActivity().getSupportLoaderManager(), Loaders.CHECKIN_LOADER_CHECKIN, this);
-        
-        racerNameSearchText = (EditText) getView().findViewById (R.id.txtRacerNameFilter);
-		racerNameSearchText.addTextChangedListener(tw);
-		
-		startOrderList = (ListView) getView().findViewById(R.id.tblCheckedInRacers);
-		checkInList = (ListView) getView().findViewById(R.id.tblFilteredRacers);
-		
-	    getActivity().getSupportLoaderManager().restartLoader(Loaders.APP_SETTINGS_LOADER_CHECKIN, null, this);
-	    getActivity().getSupportLoaderManager().restartLoader(Loaders.RACE_INFO_LOADER_CHECKIN, null, this);
+	protected void addClickListeners() {
+		getButton(R.id.btnAddNewRacer).setOnClickListener(this);
+		getButton(R.id.btnAddNewTeam).setOnClickListener(this);
+		getButton(R.id.btnAddGhostRacer).setOnClickListener(this);
 	}
 	
 	@Override
-	public void onPause() {
-		super.onPause();
+	protected void startAllLoaders() {
+	    getActivity().getSupportLoaderManager().restartLoader(Loaders.APP_SETTINGS_LOADER_CHECKIN, null, this);
+	    getActivity().getSupportLoaderManager().restartLoader(Loaders.RACE_INFO_LOADER_CHECKIN, null, this);		
+	}
+	
+	@Override
+	protected void destroyAllLoaders() {
 		getActivity().getSupportLoaderManager().destroyLoader(Loaders.APP_SETTINGS_LOADER_CHECKIN);
 		getActivity().getSupportLoaderManager().destroyLoader(Loaders.CHECKIN_LOADER_CHECKIN);
 		getActivity().getSupportLoaderManager().destroyLoader(Loaders.TEAM_CHECKIN_LOADER);
 		getActivity().getSupportLoaderManager().destroyLoader(Loaders.START_ORDER_LOADER_CHECKIN);
 		getActivity().getSupportLoaderManager().destroyLoader(Loaders.TEAM_START_ORDER_LOADER);
-		getActivity().getSupportLoaderManager().destroyLoader(Loaders.RACE_INFO_LOADER_CHECKIN);	
+		getActivity().getSupportLoaderManager().destroyLoader(Loaders.RACE_INFO_LOADER_CHECKIN);
+	}
+	
+	@Override
+	public void onResume() { 
+		super.onResume(); 
+		
+		getEditText(R.id.txtRacerNameFilter).addTextChangedListener(new RestartLoaderTextWatcher(getActivity().getSupportLoaderManager(), Loaders.CHECKIN_LOADER_CHECKIN, this));	
 	}
 	
 	private void SetupList(ListView list, CursorAdapter ca, OnItemLongClickListener listener) {	
@@ -256,15 +250,11 @@ public class CheckInTab extends BaseTab implements LoaderManager.LoaderCallbacks
 					break;
 				case Loaders.START_ORDER_LOADER_CHECKIN:													
 					startOrderCA.swapCursor(cursor);
-					if(getView() != null){
-			    		startOrderList.setSelection(startOrderList.getCount());
-					}
+		    		startOrderList.setSelection(startOrderList.getCount());
 					break;
 				case Loaders.TEAM_START_ORDER_LOADER:
 					startOrderCA.swapCursor(cursor);
-					if(getView() != null){
-			    		startOrderList.setSelection(startOrderList.getCount());
-					}
+		    		startOrderList.setSelection(startOrderList.getCount());				
 					break;
 				case Loaders.RACE_INFO_LOADER_CHECKIN:	
 					if(cursor!= null && cursor.getCount() > 0){
@@ -346,15 +336,19 @@ public class CheckInTab extends BaseTab implements LoaderManager.LoaderCallbacks
      	{
  			Log.v(LOG_TAG(), "onClick");
 			FragmentManager fm = getActivity().getSupportFragmentManager();
- 			if(v == btnAddRacer){
-	            AddRacerView addRacer = new AddRacerView(autoCheckIn);
-	            addRacer.show(fm, AddRacerView.LOG_TAG);
- 			} else if(v == btnAddNewTeam){
-				AddTeamView addTeam = new AddTeamView();
-				addTeam.show(fm, AddTeamView.LOG_TAG);
- 			} else if(v == btnAddGhostRacer){
-				AddGhostRacerView addGhost = new AddGhostRacerView();
-				addGhost.show(fm, AddGhostRacerView.LOG_TAG);
+			switch(v.getId()){
+				case R.id.btnAddRacer:
+		            AddRacerView addRacer = new AddRacerView(autoCheckIn);
+		            addRacer.show(fm, AddRacerView.LOG_TAG);
+		            break;
+				case R.id.btnAddNewTeam:
+					AddTeamView addTeam = new AddTeamView();
+					addTeam.show(fm, AddTeamView.LOG_TAG);
+					break;
+				case R.id.btnAddGhostRacer:
+					AddGhostRacerView addGhost = new AddGhostRacerView();
+					addGhost.show(fm, AddGhostRacerView.LOG_TAG);
+					break;
 			}
      	}
      	catch(Exception ex)

@@ -252,24 +252,12 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 	public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
 		Log.v(LOG_TAG, "onCreateLoader start: id=" + Integer.toString(id));
 		CursorLoader loader = null;
-		String[] projection;
-		String selection;
-		String[] selectionArgs;
-		String sortOrder;
 		switch(id){
 			case Loaders.RACE_LOCATIONS_LOADER:
-				projection = new String[]{RaceLocation._ID, RaceLocation.CourseName};
-				selection = null;
-				selectionArgs = null;
-				sortOrder = RaceLocation.CourseName;
-				loader = new CursorLoader(getActivity(), RaceLocation.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = Loaders.GetAllCourseNames(getActivity());
 				break;
 			case Loaders.RACE_TYPES_LOADER:
-				projection = new String[]{RaceType._ID, RaceType.RaceTypeDescription};
-				selection = null;
-				selectionArgs = null;
-				sortOrder = RaceType._ID;
-				loader = new CursorLoader(getActivity(), RaceType.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = Loaders.GetAllRaceTypeDescriptions(getActivity());
 				break;
 		}
 		Log.v(LOG_TAG, "onCreateLoader complete: id=" + Integer.toString(id));

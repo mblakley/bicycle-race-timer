@@ -25,7 +25,7 @@ public final class RaceWave extends ContentProviderTable implements BaseColumns 
     public String getCreate(){
     	return "create table " + getTableName()
     	        + " (" + _ID + " integer primary key autoincrement, "
-    	        + Race_ID + " text not null, " 
+    	        + Race_ID + " integer not null, " 
     	        + RaceCategory_ID + " integer not null, " 
     	        + WaveStartTime + " integer not null,"
     	        + NumLaps + " integer not null"
