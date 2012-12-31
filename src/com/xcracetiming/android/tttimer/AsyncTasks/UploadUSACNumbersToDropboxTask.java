@@ -61,7 +61,7 @@ public class UploadUSACNumbersToDropboxTask extends AsyncTask<Void, Void, Void> 
 	
 	@Override
 	protected Void doInBackground(Void... params) {					
-		raceTypeID = (Long) Race.getValues(context, Long.parseLong(AppSettings.Instance().ReadValue(context, AppSettings.AppSetting_RaceID_Name, "-1"))).get(Race.RaceType_ID);
+		raceTypeID = (Long) Race.getValues(context, AppSettings.Instance().ReadLongValue(context, AppSettings.AppSetting_RaceID_Name, null)).get(Race.RaceType_ID);
 		
         try {
         	String[] projection;
@@ -160,7 +160,7 @@ public class UploadUSACNumbersToDropboxTask extends AsyncTask<Void, Void, Void> 
         }
         
         if( mExternalStorageAvailable && mExternalStorageWriteable){
-        	Long raceDateMS = (Long) Race.getValues(context, Long.parseLong(AppSettings.Instance().ReadValue(context, AppSettings.AppSetting_RaceID_Name, "-1"))).get(Race.RaceDate);
+        	Long raceDateMS = (Long) Race.getValues(context, AppSettings.Instance().ReadLongValue(context, AppSettings.AppSetting_RaceID_Name, null)).get(Race.RaceDate);
     		Date raceDateTemp = new Date(raceDateMS);
     		SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yy");
     		filename = dateFormat.format(raceDateTemp) + "_GTourRoster.csv";

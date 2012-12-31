@@ -4,18 +4,21 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.xcracetiming.android.tttimer.R;
+import com.xcracetiming.android.tttimer.TTTimerTabsActivity;
 import com.xcracetiming.android.tttimer.DataAccess.AppSettings;
 import com.xcracetiming.android.tttimer.DataAccess.Race;
 import com.xcracetiming.android.tttimer.DataAccess.RaceLocation;
@@ -24,12 +27,12 @@ import com.xcracetiming.android.tttimer.DataAccess.RaceSeries;
 import com.xcracetiming.android.tttimer.DataAccess.RaceType;
 import com.xcracetiming.android.tttimer.DataAccess.RaceWave;
 import com.xcracetiming.android.tttimer.Dialogs.AdminAuthView;
-import com.xcracetiming.android.tttimer.Dialogs.AdminMenuView;
-import com.xcracetiming.android.tttimer.Dialogs.MarshalLocations;
 import com.xcracetiming.android.tttimer.Dialogs.OtherRaceResults;
-import com.xcracetiming.android.tttimer.Dialogs.SeriesResultsView;
 import com.xcracetiming.android.tttimer.Utilities.Loaders;
 import com.xcracetiming.android.tttimer.Utilities.TimeFormatter;
+import com.xcracetiming.android.tttimer.WizardPages.AdminMenuView;
+import com.xcracetiming.android.tttimer.WizardPages.MarshalLocations;
+import com.xcracetiming.android.tttimer.WizardPages.SeriesResultsView;
 
 /**
  * RaceInfoTab displays relevant information about the selected race.  This includes:
@@ -235,17 +238,21 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 				showChoosePreviousRace();
 				break;
 			case R.id.btnAdminMenu:
-				if(AppSettings.Instance().ReadBooleanValue(getActivity(), AppSettings.AppSetting_AdminMode_Name, "false")){
-					AdminMenuView adminMenuDialog = new AdminMenuView();
-					adminMenuDialog.show(fm, AdminMenuView.LOG_TAG);
+				if(AppSettings.Instance().ReadBooleanValue(getActivity(), AppSettings.AppSetting_AdminMode_Name, "false")){					
+					Intent showAdminView = new Intent();
+					showAdminView.setAction(TTTimerTabsActivity.CHANGE_MAIN_VIEW_ACTION);
+					showAdminView.putExtra("ShowView", new AdminMenuView().getClass().getCanonicalName());
+					LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(showAdminView);
 				} else {
 					AdminAuthView adminAuthDialog = new AdminAuthView();
 			        adminAuthDialog.show(fm, AdminAuthView.LOG_TAG);
 				}
 				break;
 			case R.id.btnSeriesResults:
-				SeriesResultsView seriesResultsDialog = new SeriesResultsView();
-				seriesResultsDialog.show(fm, SeriesResultsView.LOG_TAG);
+				Intent showSeriesResultsView = new Intent();
+				showSeriesResultsView.setAction(TTTimerTabsActivity.CHANGE_MAIN_VIEW_ACTION);
+				showSeriesResultsView.putExtra("ShowView", new SeriesResultsView().getClass().getCanonicalName());
+				LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(showSeriesResultsView);
 				break;
 		}
 	}
@@ -306,9 +313,10 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 	/**
 	 * Show a dialog with the marshal locations for the current course
 	 */
-	private void showMarshalLocations() {
-		MarshalLocations marshalLocationsDialog = new MarshalLocations();
-		FragmentManager fm = getParentActivity().getSupportFragmentManager();
-		marshalLocationsDialog.show(fm, MarshalLocations.LOG_TAG);
+	private void showMarshalLocations() {			
+		Intent showMarshalLocationsView = new Intent();
+		showMarshalLocationsView.setAction(TTTimerTabsActivity.CHANGE_MAIN_VIEW_ACTION);
+		showMarshalLocationsView.putExtra("ShowView", new MarshalLocations().getClass().getCanonicalName());
+		LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(showMarshalLocationsView);
 	}
 }

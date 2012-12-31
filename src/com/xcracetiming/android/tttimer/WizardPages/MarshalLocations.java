@@ -1,4 +1,4 @@
-package com.xcracetiming.android.tttimer.Dialogs;
+package com.xcracetiming.android.tttimer.WizardPages;
 
 import com.xcracetiming.android.tttimer.R;
 import com.xcracetiming.android.tttimer.DataAccess.AppSettings;
@@ -20,7 +20,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class MarshalLocations extends BaseDialog implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
+public class MarshalLocations extends BaseWizardPage implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 	public static final String LOG_TAG = "MarshalLocations";
 
 	private static final int RACE_LOCATION_IMAGES_LOADER = 1113;

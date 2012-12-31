@@ -16,12 +16,12 @@ public final class RaceType extends ContentProviderTable implements BaseColumns 
         return instance;
     }
 
-    // Table column
-    public static final String RaceTypeDescription = "RaceTypeDescription";
-    public static final String LicenseType = "LicenseType";
-    public static final String IsTeamRace = "IsTeamRace";
-    public static final String HasMultipleLaps = "HasMultipleLaps";
-    public static final String RaceDiscipline = "RaceDiscipline";
+    // Table columns    
+    public static final String RaceTypeDescription = "RaceTypeDescription";	//Team Time Trial
+    public static final String LicenseType = "LicenseType";					// Road
+    public static final String IsTeamRace = "IsTeamRace";					// True
+    public static final String HasMultipleLaps = "HasMultipleLaps";			// True
+	public static final String RaceDiscipline = "RaceDiscipline";			// Time Trial
     
     public String getCreate(){
     	return "create table " + getTableName() 

@@ -29,8 +29,8 @@
             android:layout_height="wrap_content"
             style="@style/Medium" >
         </TextView>
-
-    </LinearLayout>    
+    </LinearLayout>
+    
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="fill_parent"
@@ -176,8 +176,8 @@
             android:textColor="@color/normal_fg" >
         </TextView>        
         
-    </LinearLayout>
-    
+    </LinearLayout>
+        
     <LinearLayout
         android:id="@+id/linearLayout6"
         android:layout_width="fill_parent"

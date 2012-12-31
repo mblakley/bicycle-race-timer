@@ -1,10 +1,14 @@
 package com.xcracetiming.android.tttimer.Dialogs;
 
 import com.xcracetiming.android.tttimer.R;
+import com.xcracetiming.android.tttimer.TTTimerTabsActivity;
 import com.xcracetiming.android.tttimer.DataAccess.AppSettings;
+import com.xcracetiming.android.tttimer.WizardPages.AdminMenuView;
+import com.xcracetiming.android.tttimer.WizardPages.BaseWizardPage;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,22 +18,26 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-
 public class AdminAuthView extends BaseDialog implements View.OnClickListener {
 	public static final String LOG_TAG = "AdminAuthView";
 	
 	private Button btnSubmit;
 	private EditText txtPassword;
-	private BaseDialog navigateAfterAuth;
+	private BaseWizardPage navigateAfterAuth;
+	private BaseDialog navigateAfterAuthDialog;
 	
 	public AdminAuthView(){
 		navigateAfterAuth = null;
 	}
 	
-	public AdminAuthView(BaseDialog navigateAfter){
+	public AdminAuthView(BaseWizardPage navigateAfter){
 		this.navigateAfterAuth = navigateAfter;
 	}
 	
+	public AdminAuthView(BaseDialog navigateAfter) {
+		this.navigateAfterAuthDialog = navigateAfter;
+	}
+
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.dialog_admin_auth, container, false);
@@ -54,8 +62,10 @@ public class AdminAuthView extends BaseDialog implements View.OnClickListener {
 			if(navigateAfterAuth == null){
 				GoToAdminMenu();
 			}else{
-				FragmentManager fm = getFragmentManager();
-		        navigateAfterAuth.show(fm, navigateAfterAuth.LOG_TAG());
+		        Intent showAdminView = new Intent();
+				showAdminView.setAction(TTTimerTabsActivity.CHANGE_MAIN_VIEW_ACTION);
+				showAdminView.putExtra("ShowView", navigateAfterAuth.getClass().getCanonicalName());
+				LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(showAdminView);
 			}
 			this.dismiss();
 		}else{		
@@ -70,9 +80,10 @@ public class AdminAuthView extends BaseDialog implements View.OnClickListener {
 	}
 	
 	private void GoToAdminMenu() {
-		AdminMenuView adminMenuDialog = new AdminMenuView();
-		FragmentManager fm = getFragmentManager();
-		adminMenuDialog.show(fm, AdminMenuView.LOG_TAG);
+		Intent showAdminView = new Intent();
+		showAdminView.setAction(TTTimerTabsActivity.CHANGE_MAIN_VIEW_ACTION);
+		showAdminView.putExtra("ShowView", new AdminMenuView().getClass().getCanonicalName());
+		LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(showAdminView);
 	}
 
 	public void onClick(View v) { 
@@ -84,13 +95,15 @@ public class AdminAuthView extends BaseDialog implements View.OnClickListener {
 					if(navigateAfterAuth == null){
 						GoToAdminMenu();
 					}else{
-						FragmentManager fm = getFragmentManager();
-				        navigateAfterAuth.show(fm, navigateAfterAuth.LOG_TAG());
+				        Intent showAdminView = new Intent();
+						showAdminView.setAction(TTTimerTabsActivity.CHANGE_MAIN_VIEW_ACTION);
+						showAdminView.putExtra("ShowView", navigateAfterAuth.getClass().getCanonicalName());
+						LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(showAdminView);
 					}
 					this.dismiss();
 				}else{
 					// Display an invalid password message
-					Toast.makeText(getActivity(), R.string.InvalidPassword, 3000).show();
+					Toast.makeText(getActivity(), R.string.InvalidPassword, Toast.LENGTH_LONG).show();
 				}
 			} else{
 				super.onClick(v);

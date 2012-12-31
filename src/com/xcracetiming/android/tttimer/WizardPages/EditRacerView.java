@@ -1,9 +1,11 @@
-package com.xcracetiming.android.tttimer.Dialogs;
+package com.xcracetiming.android.tttimer.WizardPages;
 
 import com.xcracetiming.android.tttimer.R;
 import com.xcracetiming.android.tttimer.DataAccess.Racer;
 import com.xcracetiming.android.tttimer.DataAccess.RacerSeriesInfo;
 import com.xcracetiming.android.tttimer.DataAccess.Views.SeriesRaceIndividualResultsView;
+import com.xcracetiming.android.tttimer.Dialogs.AddRacerView;
+import com.xcracetiming.android.tttimer.Dialogs.RacerUpgraded;
 
 import android.database.Cursor;
 import android.os.Bundle;

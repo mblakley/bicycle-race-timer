@@ -138,7 +138,7 @@ public class FinishTab extends BaseTab implements View.OnClickListener,	LoaderMa
 
 			// Create an unassigned time record
 			long finishTime = System.currentTimeMillis(); // get the endTime from the timer
-			Long race_ID = Long.parseLong(AppSettings.Instance().ReadValue(getActivity(), AppSettings.AppSetting_RaceID_Name, "-1"));
+			Long race_ID = AppSettings.Instance().ReadLongValue(getActivity(), AppSettings.AppSetting_RaceID_Name, null);
 			
 			ContentValues content = new ContentValues();
 			content.put(UnassignedTimes.FinishTime, finishTime);

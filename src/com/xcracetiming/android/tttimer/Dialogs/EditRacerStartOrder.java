@@ -47,6 +47,8 @@ public class EditRacerStartOrder extends BaseDialog implements View.OnClickListe
 	private Loader<Cursor> startOrderLoader = null;
 	private Loader<Cursor> teamStartOrderLoader = null;
 	
+	public EditRacerStartOrder(){};
+	
 	public EditRacerStartOrder(long raceResultIDToEdit) {
 		this.raceResultIDToEdit = raceResultIDToEdit;
 	}

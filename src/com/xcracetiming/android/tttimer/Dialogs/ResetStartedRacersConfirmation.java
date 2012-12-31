@@ -3,6 +3,7 @@ package com.xcracetiming.android.tttimer.Dialogs;
 import com.xcracetiming.android.tttimer.R;
 import com.xcracetiming.android.tttimer.AsyncTasks.ResetAllRacersStartTime;
 import com.xcracetiming.android.tttimer.DataAccess.AppSettings;
+import com.xcracetiming.android.tttimer.WizardPages.BaseWizardPage;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -34,7 +35,7 @@ public class ResetStartedRacersConfirmation extends BaseDialog implements View.O
 		switch (v.getId())
 		{
 			case R.id.btnYesReset:
-				long race_ID = Long.parseLong(AppSettings.Instance().ReadValue(getActivity(), AppSettings.AppSetting_RaceID_Name, "-1"));
+				long race_ID = AppSettings.Instance().ReadLongValue(getActivity(), AppSettings.AppSetting_RaceID_Name, null);
 				
 				if(race_ID > 0){
 					// Reset all racers in this race

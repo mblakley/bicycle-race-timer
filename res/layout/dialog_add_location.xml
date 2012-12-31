@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:text="@string/CourseName"
         style="@style/Medium"
-        android:layout_marginLeft="10sp" />
+        android:layout_marginLeft="10sp" />
     <EditText
         android:id="@+id/txtCourseName"
         android:layout_width="fill_parent"

@@ -1,4 +1,4 @@
-package com.xcracetiming.android.tttimer.Dialogs;
+package com.xcracetiming.android.tttimer.WizardPages;
 
 import java.util.Date;
 

@@ -1,4 +1,4 @@
-package com.xcracetiming.android.tttimer.Dialogs;
+package com.xcracetiming.android.tttimer.WizardPages;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,7 +41,7 @@ import com.xcracetiming.android.tttimer.DataAccess.LocationImages;
 import com.xcracetiming.android.tttimer.DataAccess.RaceLocation;
 import com.xcracetiming.android.tttimer.Utilities.ImageFormatter;
 
-public class AddLocationImages extends BaseDialog implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
+public class AddLocationImages extends BaseWizardPage implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 
 	// Used to temporarily store image info while we're editing
 	private class DownloadedImage{

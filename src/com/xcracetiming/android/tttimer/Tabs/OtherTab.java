@@ -82,7 +82,7 @@ public class OtherTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 		try{
 			Log.v(LOG_TAG(), "SaveNotes");
 
-			Long race_ID = Long.parseLong(AppSettings.Instance().ReadValue(getActivity(), AppSettings.AppSetting_RaceID_Name, "-1"));
+			Long race_ID = AppSettings.Instance().ReadLongValue(getActivity(), AppSettings.AppSetting_RaceID_Name, null);
 	     	// Save weather and notes info	 			
  			EditText txtWeatherNotes = (EditText) getView().findViewById(R.id.txtWeatherNotes);
     		String weatherNotes = txtWeatherNotes.getText().toString();

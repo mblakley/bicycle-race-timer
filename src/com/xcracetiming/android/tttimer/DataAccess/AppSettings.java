@@ -82,6 +82,29 @@ public final class AppSettings extends ContentProviderTable implements BaseColum
 		
 		return numChanged;
 	}
+	
+	public int UpdateLong(Context context, String appSettingName, Long appSettingValue, boolean addIfNotExist) {
+		ContentValues content = new ContentValues();
+        if(appSettingValue != null)
+        {
+        	content.put(AppSettings.AppSettingValue, appSettingValue);
+        }else{
+        	content.putNull(AppSettings.AppSettingValue);
+        }
+        Integer numChanged = 0;
+        try{
+        	numChanged = context.getContentResolver().update(CONTENT_URI, content, AppSettings.AppSettingName + "=?", new String[]{appSettingName});
+        }catch(Exception ex){
+        	
+        }
+		if(addIfNotExist && (numChanged == null || numChanged < 1)){
+			content.put(AppSettingName, appSettingName);
+			AppSettings.Instance().Create(context, content);
+			numChanged = 1;
+		}
+		
+		return numChanged;
+	}
 
 	public Cursor Read(Context context, String appSettingToRetrieve) {
 		return context.getContentResolver().query(CONTENT_URI, new String[]{AppSettings.AppSettingValue, AppSettings._ID}, AppSettings.AppSettingName + "=?", new String[]{appSettingToRetrieve}, null);  //new String[]{AppSettings.AppSettingValue}, AppSettings.AppSettingName + "=?", new String[]{appSettingToRetrieve}, null);
@@ -95,6 +118,23 @@ public final class AppSettings extends ContentProviderTable implements BaseColum
 			if(temp != null && temp.getCount() > 0){
 				temp.moveToFirst();
 				val = temp.getString(0);
+			}
+			temp.close();
+			temp = null;
+		}catch(Exception ex){
+			Log.e(AppSettings.Instance().getTableName(), "Unexpected error reading " + appSettingToRetrieve, ex);
+		}
+		return val;
+	}
+	
+	public Long ReadLongValue(Context context, String appSettingToRetrieve, Long defaultValue) {
+		Long val = defaultValue;
+		try{
+			Cursor temp = AppSettings.Instance().Read(context, appSettingToRetrieve);
+
+			if(temp != null && temp.getCount() > 0){
+				temp.moveToFirst();
+				val = temp.getLong(0);
 			}
 			temp.close();
 			temp = null;

@@ -8,6 +8,7 @@ import com.xcracetiming.android.tttimer.DataAccess.Racer;
 import com.xcracetiming.android.tttimer.DataAccess.RacerSeriesInfo;
 import com.xcracetiming.android.tttimer.DataAccess.TeamInfo;
 import com.xcracetiming.android.tttimer.DataAccess.TeamMembers;
+import com.xcracetiming.android.tttimer.WizardPages.BaseWizardPage;
 
 import android.database.Cursor;
 import android.net.Uri;
@@ -18,7 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-public class AddGhostRacerView extends BaseDialog implements View.OnClickListener {
+public class AddGhostRacerView extends BaseWizardPage implements View.OnClickListener {
 	public static final String LOG_TAG = "AddGhostRacerView";
 	
 	protected Button btnAddGhostRacer;

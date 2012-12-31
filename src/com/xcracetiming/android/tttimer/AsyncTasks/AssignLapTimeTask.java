@@ -44,7 +44,7 @@ public class AssignLapTimeTask extends AsyncTask<Long, Void, AssignResult> {
 			Long unassignedTime_ID = params[0];
 			Long raceResult_ID = params[1];
 
-    		Long race_ID = Long.parseLong(AppSettings.Instance().ReadValue(context, AppSettings.AppSetting_RaceID_Name, "-1"));	    	
+    		Long race_ID = AppSettings.Instance().ReadLongValue(context, AppSettings.AppSetting_RaceID_Name, null);	    	
 	    	
 			// Figure out if the race has been started yet
 			Cursor numStarted = SeriesRaceTeamResultsView.Instance().Read(context, new String[]{SeriesRaceTeamResults.RaceResult_ID, RaceResults.StartTime}, SeriesRaceTeamResults.Race_ID + "=? AND " + RaceResults.StartTime + " IS NOT NULL", new String[]{Long.toString(race_ID)}, null);

@@ -1,4 +1,4 @@
-package com.xcracetiming.android.tttimer.Dialogs;
+package com.xcracetiming.android.tttimer.WizardPages;
 
 import com.xcracetiming.android.tttimer.R;
 import com.xcracetiming.android.tttimer.DataAccess.AppSettings;
@@ -24,7 +24,7 @@ import android.widget.TextView;
 import android.widget.AdapterView.OnItemSelectedListener;
 
 
-public class EditLocation extends BaseDialog implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
+public class EditLocation extends BaseWizardPage implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 	public static final String LOG_TAG = "EditLocationView";
 
 	private static final int CURRENT_RACE_LOCATION_LOADER = 98;

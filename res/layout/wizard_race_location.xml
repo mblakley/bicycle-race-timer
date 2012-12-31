@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialogContainer"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" 
+    android:background="#FFFF"
+    style="@style/Padded" >
+
+    <TextView
+        android:id="@+id/lblCourse"
+        style="@style/Medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Choose Course:" />
+
+    <Spinner
+        android:id="@+id/spinnerRaceLocation"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/Medium.Padded"
+        android:text="or" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+        	style="@style/Medium"
+            android:text="New Course:" />
+        
+    <TextView
+        android:id="@+id/lblCourseName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/CourseName"
+        style="@style/Medium" />
+
+    <EditText
+        android:id="@+id/txtCourseName"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        style="@style/Medium"
+        android:inputType="textCapWords" >
+    </EditText>
+    
+    <TextView
+        android:id="@+id/lblDistance"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/Distance"
+        style="@style/Medium" />
+
+	    <LinearLayout
+	        android:id="@+id/linearLayout1"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:weightSum="1">
+	
+	        <EditText
+	            android:id="@+id/txtDistance"
+	            android:layout_width="0dip"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="0.9"
+	        	style="@style/Medium"
+	        	android:inputType="numberDecimal" />
+	
+	        <TextView
+	            android:id="@+id/lblDistanceUnit"
+	            android:layout_width="0dip"
+	            android:layout_height="wrap_content"
+	        	style="@style/Medium"
+	        	android:layout_weight="0.1" />
+	
+	    </LinearLayout>
+
+	    <Button
+	        android:id="@+id/btnAddLocation"
+	        style="@style/Medium"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="Save and Continue" />
+
+    </LinearLayout>
+    
+</LinearLayout>

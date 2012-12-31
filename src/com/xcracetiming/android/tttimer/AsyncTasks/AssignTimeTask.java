@@ -44,7 +44,7 @@ public class AssignTimeTask extends AsyncTask<Long, Void, AssignResult> {
 			Long unassignedTime_ID = params[0];
 			Long raceResult_ID = params[1];
 
-    		Long race_ID = Long.parseLong(AppSettings.Instance().ReadValue(context, AppSettings.AppSetting_RaceID_Name, "-1"));
+    		Long race_ID = AppSettings.Instance().ReadLongValue(context, AppSettings.AppSetting_RaceID_Name, null);
 	    	Cursor unassignedTime = UnassignedTimes.Instance().Read(context, new String[]{UnassignedTimes.FinishTime}, UnassignedTimes._ID + " = ?", 
 				  													new String[]{Long.toString(unassignedTime_ID)}, null);
 	    	unassignedTime.moveToFirst();

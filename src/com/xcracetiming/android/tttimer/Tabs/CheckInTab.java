@@ -3,7 +3,10 @@
  */
 package com.xcracetiming.android.tttimer.Tabs;
 
+import java.util.Locale;
+
 import com.xcracetiming.android.tttimer.R;
+import com.xcracetiming.android.tttimer.TTTimerTabsActivity;
 import com.xcracetiming.android.tttimer.CursorAdapters.CheckInCursorAdapter;
 import com.xcracetiming.android.tttimer.CursorAdapters.StartOrderCursorAdapter;
 import com.xcracetiming.android.tttimer.CursorAdapters.TeamCheckInCursorAdapter;
@@ -27,27 +30,27 @@ import com.xcracetiming.android.tttimer.DataAccess.Views.SeriesRaceTeamResultsVi
 import com.xcracetiming.android.tttimer.DataAccess.Views.TeamInfoView;
 import com.xcracetiming.android.tttimer.Dialogs.AddGhostRacerView;
 import com.xcracetiming.android.tttimer.Dialogs.AddRacerView;
-import com.xcracetiming.android.tttimer.Dialogs.AddTeamView;
-import com.xcracetiming.android.tttimer.Dialogs.EditRacerView;
-import com.xcracetiming.android.tttimer.Dialogs.EditTeamView;
 import com.xcracetiming.android.tttimer.Dialogs.StartOrderActions;
 import com.xcracetiming.android.tttimer.Utilities.Loaders;
 import com.xcracetiming.android.tttimer.Utilities.RestartLoaderTextWatcher;
+import com.xcracetiming.android.tttimer.WizardPages.EditRacerView;
+import com.xcracetiming.android.tttimer.Wizards.AddTeamWizard;
+import com.xcracetiming.android.tttimer.Wizards.EditTeamWizard;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.CursorAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -60,11 +63,6 @@ public class CheckInTab extends BaseTab implements LoaderManager.LoaderCallbacks
 
 	private CursorAdapter checkInsCA;
 	private CursorAdapter startOrderCA;
-	
-	private Button btnAddRacer = null;
-	private Button btnAddGhostRacer = null;
-	private Button btnAddNewTeam = null;	
-	private EditText racerNameSearchText;	
 	
 	private Loader<Cursor> checkInLoader = null;
 	private Loader<Cursor> teamsCheckInLoader = null;
@@ -156,10 +154,10 @@ public class CheckInTab extends BaseTab implements LoaderManager.LoaderCallbacks
 				selection = RacerSeriesInfo.Instance().getTableName() + "." + RacerSeriesInfo.RaceSeries_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceSeriesID_Name) + " AND " + RacerSeriesInfo.Upgraded + "=? AND " + RaceCategory.FullCategoryName + "!=?";
 				selectionArgs = new String[]{Long.toString(0l), "G"};
 				sortOrder = Racer.LastName;
-				String racerNameText = racerNameSearchText.getText().toString();
+				String racerNameText = getEditText(R.id.txtRacerNameFilter).getText().toString();
 				if(!racerNameText.equals("")){
 					selection += " AND UPPER(" + Racer.LastName + ") GLOB ?";
-					selectionArgs = new String[]{ Long.toString(0l), "G", racerNameSearchText.getText().toString().toUpperCase() + "*"};
+					selectionArgs = new String[]{ Long.toString(0l), "G", getEditText(R.id.txtRacerNameFilter).getText().toString().toUpperCase(Locale.US) + "*"};
 				}
 				loader = new CursorLoader(getActivity(), RacerSeriesInfoView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
@@ -168,10 +166,12 @@ public class CheckInTab extends BaseTab implements LoaderManager.LoaderCallbacks
 		        checkInsCA = new TeamCheckInCursorAdapter(getActivity(), null);
 
 				SetupList(checkInList, checkInsCA, new OnItemLongClickListener(){
-					public boolean onItemLongClick(AdapterView<?> arg0, View v,	int pos, long id) {
-						EditTeamView editRacerDialog = new EditTeamView(id);
-						FragmentManager fm = getActivity().getSupportFragmentManager();
-						editRacerDialog.show(fm, EditTeamView.LOG_TAG);
+					public boolean onItemLongClick(AdapterView<?> arg0, View v,	int pos, long id) {						
+						Intent showEditTeamWizard = new Intent();
+						showEditTeamWizard.setAction(TTTimerTabsActivity.CHANGE_MAIN_VIEW_ACTION);
+						showEditTeamWizard.putExtra("ShowView", new EditTeamWizard().getClass().getCanonicalName());
+						LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(showEditTeamWizard);
+						
 						return false;
 					}
 	    		});
@@ -263,18 +263,17 @@ public class CheckInTab extends BaseTab implements LoaderManager.LoaderCallbacks
 						boolean isTeamRace = cursor.getLong(cursor.getColumnIndex(RaceType.IsTeamRace)) == 1l;
 						if(getView() != null){
 							LinearLayout llFilters = (LinearLayout) getView().findViewById(R.id.llFilters);
-							Button btnAddNewTeam = (Button) getView().findViewById(R.id.btnAddNewTeam);
 
 							if(!isTeamRace){						        							
-								btnAddNewTeam.setVisibility(View.GONE);
-								btnAddRacer.setVisibility(View.VISIBLE);
+								getButton(R.id.btnAddNewTeam).setVisibility(View.GONE);
+								getButton(R.id.btnAddRacer).setVisibility(View.VISIBLE);
 								llFilters.setVisibility(View.VISIBLE);
 
 								checkInLoader = getActivity().getSupportLoaderManager().restartLoader(Loaders.CHECKIN_LOADER_CHECKIN, null, this);
 								startOrderLoader = getActivity().getSupportLoaderManager().restartLoader(Loaders.START_ORDER_LOADER_CHECKIN, null, this);
 							}else {	
-								btnAddNewTeam.setVisibility(View.VISIBLE);
-								btnAddRacer.setVisibility(View.GONE);
+								getButton(R.id.btnAddNewTeam).setVisibility(View.VISIBLE);
+								getButton(R.id.btnAddRacer).setVisibility(View.GONE);
 								llFilters.setVisibility(View.GONE);
 
 								teamsCheckInLoader = getActivity().getSupportLoaderManager().restartLoader(Loaders.TEAM_CHECKIN_LOADER, null, this);
@@ -341,13 +340,17 @@ public class CheckInTab extends BaseTab implements LoaderManager.LoaderCallbacks
 		            AddRacerView addRacer = new AddRacerView(autoCheckIn);
 		            addRacer.show(fm, AddRacerView.LOG_TAG);
 		            break;
-				case R.id.btnAddNewTeam:
-					AddTeamView addTeam = new AddTeamView();
-					addTeam.show(fm, AddTeamView.LOG_TAG);
+				case R.id.btnAddNewTeam:					
+					Intent showAddTeamWizard = new Intent();
+					showAddTeamWizard.setAction(TTTimerTabsActivity.CHANGE_MAIN_VIEW_ACTION);
+					showAddTeamWizard.putExtra("ShowView", new AddTeamWizard().getClass().getCanonicalName());
+					LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(showAddTeamWizard);
 					break;
 				case R.id.btnAddGhostRacer:
-					AddGhostRacerView addGhost = new AddGhostRacerView();
-					addGhost.show(fm, AddGhostRacerView.LOG_TAG);
+					Intent showAddGhostRacerView = new Intent();
+					showAddGhostRacerView.setAction(TTTimerTabsActivity.CHANGE_MAIN_VIEW_ACTION);
+					showAddGhostRacerView.putExtra("ShowView", new AddGhostRacerView().getClass().getCanonicalName());
+					LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(showAddGhostRacerView);
 					break;
 			}
      	}

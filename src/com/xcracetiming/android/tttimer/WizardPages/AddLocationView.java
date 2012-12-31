@@ -1,21 +1,22 @@
-package com.xcracetiming.android.tttimer.Dialogs;
+package com.xcracetiming.android.tttimer.WizardPages;
 
 import com.xcracetiming.android.tttimer.R;
 import com.xcracetiming.android.tttimer.DataAccess.AppSettings;
 import com.xcracetiming.android.tttimer.DataAccess.RaceLocation;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 
-public class AddLocationView extends BaseDialog implements View.OnClickListener {
+public class AddLocationView extends BaseWizardPage implements View.OnClickListener {
 	public static final String LOG_TAG = "AddLocationView";
 	
 	private Button btnAddLocation;
@@ -48,7 +49,8 @@ public class AddLocationView extends BaseDialog implements View.OnClickListener 
 		mCourseName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 		    public void onFocusChange(View v, boolean hasFocus) {
 		        if (hasFocus) {
-		            getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+		        	InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+		    		mgr.showSoftInput(v, InputMethodManager.SHOW_IMPLICIT);
 		        }
 		    }
 		});

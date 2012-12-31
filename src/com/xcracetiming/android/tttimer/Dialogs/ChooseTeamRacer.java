@@ -7,6 +7,7 @@ import com.xcracetiming.android.tttimer.DataAccess.Racer;
 import com.xcracetiming.android.tttimer.DataAccess.RacerSeriesInfo;
 import com.xcracetiming.android.tttimer.DataAccess.Views.SeriesRaceTeamResultsView;
 import com.xcracetiming.android.tttimer.Utilities.RestartLoaderTextWatcher;
+import com.xcracetiming.android.tttimer.WizardPages.BaseWizardPage;
 
 import android.database.Cursor;
 import android.os.Bundle;

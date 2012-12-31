@@ -5,7 +5,8 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" 
     android:background="#FFFF"
-    style="@style/Padded" >
+    style="@style/Padded" >
+    
     <Button
         android:id="@+id/btnAddLocation"
         android:layout_width="fill_parent"

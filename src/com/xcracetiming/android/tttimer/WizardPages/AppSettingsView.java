@@ -1,4 +1,4 @@
-package com.xcracetiming.android.tttimer.Dialogs;
+package com.xcracetiming.android.tttimer.WizardPages;
 
 import com.xcracetiming.android.tttimer.R;
 import com.xcracetiming.android.tttimer.DataAccess.AppSettings;
@@ -17,7 +17,7 @@ import android.widget.Button;
 import android.widget.CheckedTextView;
 import android.widget.Spinner;
 
-public class AppSettingsView extends BaseDialog implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
+public class AppSettingsView extends BaseWizardPage implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
 	public static final String LOG_TAG = "AppSettingsView";
 
 	private static final int TEMPERATURE_UNITS_LOADER = 32;

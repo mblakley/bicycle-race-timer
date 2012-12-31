@@ -1,4 +1,4 @@
-package com.xcracetiming.android.tttimer.Dialogs;
+package com.xcracetiming.android.tttimer.WizardPages;
 
 import android.database.Cursor;
 import android.os.Bundle;
@@ -22,7 +22,7 @@ import com.xcracetiming.android.tttimer.DataAccess.Racer;
 import com.xcracetiming.android.tttimer.DataAccess.RacerSeriesInfo;
 import com.xcracetiming.android.tttimer.DataAccess.Views.SeriesRaceIndividualResultsView;
 
-public class SeriesResultsView extends BaseDialog implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
+public class SeriesResultsView extends BaseWizardPage implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 	public static final String LOG_TAG = "SeriesResultsView";
 
 	private static final int SERIES_RESULTS_LOADER = 97;

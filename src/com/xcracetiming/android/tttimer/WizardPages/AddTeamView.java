@@ -1,4 +1,4 @@
-package com.xcracetiming.android.tttimer.Dialogs;
+package com.xcracetiming.android.tttimer.WizardPages;
 
 import java.util.ArrayList;
 
@@ -9,8 +9,10 @@ import com.xcracetiming.android.tttimer.DataAccess.RacerSeriesInfo;
 import com.xcracetiming.android.tttimer.DataAccess.TeamInfo;
 import com.xcracetiming.android.tttimer.DataAccess.TeamMembers;
 import com.xcracetiming.android.tttimer.DataAccess.Views.SeriesRaceTeamResultsView;
+import com.xcracetiming.android.tttimer.Dialogs.ChooseTeamRacer;
 import com.xcracetiming.android.tttimer.Dialogs.ChooseTeamRacer.ChooseRacerDialogListener;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -23,12 +25,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class AddTeamView extends BaseDialog implements View.OnClickListener, ChooseRacerDialogListener, LoaderManager.LoaderCallbacks<Cursor> {
+public class AddTeamView extends BaseWizardPage implements View.OnClickListener, ChooseRacerDialogListener, LoaderManager.LoaderCallbacks<Cursor> {
 	public static final String LOG_TAG = "AddTeamView";
 	
 	private Button btnAddNewTeam;
@@ -84,7 +87,8 @@ public class AddTeamView extends BaseDialog implements View.OnClickListener, Cho
 		    public void onFocusChange(View v, boolean hasFocus) {
 		    	String teamNameText = txtTeamName.getText().toString(); 
 		        if (hasFocus && teamNameText.equals("")) {
-		            getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+		        	InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+		    		mgr.showSoftInput(v, InputMethodManager.SHOW_IMPLICIT);
 		        }
 		    }
 		});
@@ -145,7 +149,8 @@ public class AddTeamView extends BaseDialog implements View.OnClickListener, Cho
 	private void showChooseTeamRacerDialog(int racerNumber) {
 		FragmentManager fm = getActivity().getSupportFragmentManager();
         ChooseTeamRacer editNameDialog = new ChooseTeamRacer(racerNumber, this);
-        editNameDialog.show(fm, ChooseTeamRacer.LOG_TAG);
+        // TODO: Fix this
+        //editNameDialog.show(fm, ChooseTeamRacer.LOG_TAG);
 	}
 
 	public void onFinishEditDialog(int racerNum, Long racerClubInfo_ID) {

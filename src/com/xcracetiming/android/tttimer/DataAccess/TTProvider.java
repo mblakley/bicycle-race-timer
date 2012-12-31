@@ -227,8 +227,8 @@ public class TTProvider extends ContentProvider {
     		db.execSQL("INSERT INTO " + RaceSeries.Instance().getTableName() + "(" + RaceSeries.SeriesName + "," + RaceSeries.SeriesStartDate + "," + RaceSeries.SeriesEndDate + "," + RaceSeries.SeriesScoringType + ") VALUES ('Individual', " + startOfSeries.getTime() + "," + endOfSeries.getTime() + ",'Club');");
     		db.execSQL(RaceType.Instance().getCreate());
     		// Initial load of race types
-	        db.execSQL("INSERT INTO " + RaceType.Instance().getTableName() + "(" + RaceType.RaceTypeDescription + "," + RaceType.LicenseType + "," + RaceType.IsTeamRace  + ") VALUES ('Time Trial', 'Road', 0);");
-	        db.execSQL("INSERT INTO " + RaceType.Instance().getTableName() + "(" + RaceType.RaceTypeDescription + "," + RaceType.LicenseType + "," + RaceType.IsTeamRace + ") VALUES ('Team Time Trial', 'Road', 1);");
+	        db.execSQL("INSERT INTO " + RaceType.Instance().getTableName() + "(" + RaceType.RaceTypeDescription + "," + RaceType.LicenseType + "," + RaceType.IsTeamRace + "," + RaceType.HasMultipleLaps + "," + RaceType.RaceDiscipline + ") VALUES ('Time Trial', 'Road', 0, 0, 'Time Trial');");
+	        db.execSQL("INSERT INTO " + RaceType.Instance().getTableName() + "(" + RaceType.RaceTypeDescription + "," + RaceType.LicenseType + "," + RaceType.IsTeamRace + "," + RaceType.HasMultipleLaps + "," + RaceType.RaceDiscipline + ") VALUES ('Team Time Trial', 'Road', 1, 1, 'Time Trial');");
 	        db.execSQL(SeriesRaceIndividualResults.Instance().getCreate());
 	        db.execSQL(SeriesRaceTeamResults.Instance().getCreate());
 	        db.execSQL(RaceWave.Instance().getCreate());

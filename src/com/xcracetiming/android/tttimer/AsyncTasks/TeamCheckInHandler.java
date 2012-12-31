@@ -23,7 +23,7 @@ public class TeamCheckInHandler extends CheckInHandler {
 		String[] selectionArgs = null;
 		String sortOrder = RaceResults.StartOrder;
 				
-		long race_ID = Long.parseLong(AppSettings.Instance().ReadValue(context, AppSettings.AppSetting_RaceID_Name, "-1"));
+		Long race_ID = AppSettings.Instance().ReadLongValue(context, AppSettings.AppSetting_RaceID_Name, null);
      	// StartOrder (count of current check-ins + 1)
      	int startOrder = SeriesRaceTeamResultsView.Instance().ReadCount(context, projection, selection, selectionArgs, sortOrder) + 1;
      	Long startInterval = Long.parseLong(AppSettings.Instance().ReadValue(context, AppSettings.AppSetting_StartInterval_Name, "60"));

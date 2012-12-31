@@ -54,7 +54,8 @@
 		    android:text="@string/btnChoose"
         	android:layout_gravity="center_horizontal"
         	android:layout_weight="0.5"
-	    	style="@style/Medium" />
+	    	style="@style/Medium" />
+		
 		<Button
 		    android:id="@+id/btnRemove"
 		    android:layout_width="0dip"

@@ -1,12 +1,11 @@
-package com.xcracetiming.android.tttimer.Dialogs;
+package com.xcracetiming.android.tttimer.WizardPages;
 
 import java.util.Hashtable;
 
 import com.xcracetiming.android.tttimer.R;
 import com.xcracetiming.android.tttimer.DataAccess.AppSettings;
 
-import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,37 +16,29 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.view.WindowManager.LayoutParams;
 
 /**
  * @author Mark
  *
  */
-public abstract class BaseDialog extends DialogFragment implements View.OnClickListener {	
-	
-	private ImageButton btnBack;
+public abstract class BaseWizardPage extends Fragment implements View.OnClickListener {	
 
 	private Hashtable<Integer, View> viewList = new Hashtable<Integer, View>();
 	
-	private boolean showCancelButton = true;
+	private boolean showNavButtons = true;
 	
 	protected abstract int GetTitleResourceID();
 	
 	protected abstract String LOG_TAG();
 	
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-
-		setStyle(DialogFragment.STYLE_NO_TITLE, R.style.CustomDialogTheme);
-	}
-	
-	protected void showCloseButton(boolean show) {
-		showCancelButton = show;
-		if(showCancelButton){
-			getImageButton(R.id.btnBaseDialogClose1).setVisibility(View.VISIBLE);
+	protected void showNavButtons(boolean show) {
+		showNavButtons = show;
+		if(showNavButtons){
+			getImageButton(R.id.btnBaseWizardPageBack).setVisibility(View.VISIBLE);
+			getImageButton(R.id.btnBaseWizardPageForward).setVisibility(View.VISIBLE);
 		}else{
-			getImageButton(R.id.btnBaseDialogClose1).setVisibility(View.GONE);
+			getImageButton(R.id.btnBaseWizardPageBack).setVisibility(View.GONE);
+			getImageButton(R.id.btnBaseWizardPageForward).setVisibility(View.GONE);
 		}
 	}
 
@@ -57,10 +48,12 @@ public abstract class BaseDialog extends DialogFragment implements View.OnClickL
 		
 		AppSettings.Instance().Update(getActivity(), AppSettings.AppSetting_ResumePreviousState_Name, "true", true);
 
-		if(showCancelButton){
-			getImageButton(R.id.btnBaseDialogClose1).setVisibility(View.VISIBLE);
+		if(showNavButtons){
+			getImageButton(R.id.btnBaseWizardPageBack).setVisibility(View.VISIBLE);
+			getImageButton(R.id.btnBaseWizardPageForward).setVisibility(View.VISIBLE);
 		}else{
-			getImageButton(R.id.btnBaseDialogClose1).setVisibility(View.GONE);
+			getImageButton(R.id.btnBaseWizardPageBack).setVisibility(View.GONE);
+			getImageButton(R.id.btnBaseWizardPageForward).setVisibility(View.GONE);
 		}
 		
 		startAllLoaders();
@@ -80,12 +73,12 @@ public abstract class BaseDialog extends DialogFragment implements View.OnClickL
 	@Override
 	public void onStart() {
 		super.onStart();
-		View title = LayoutInflater.from(getActivity()).inflate(R.layout.title_with_back, (ViewGroup)getView(), false);
-		ViewGroup dialog = (ViewGroup)getView().findViewById(R.id.dialogContainer);
-		dialog.addView(title, 0);
+		View title = LayoutInflater.from(getActivity()).inflate(R.layout.wizard_with_nav, (ViewGroup)getView(), false);
+		ViewGroup page = (ViewGroup)getView().findViewById(R.id.dialogContainer);
+		page.addView(title, 0);		
 		
-		getDialog().getWindow().setLayout(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
-		getImageButton(R.id.btnBaseDialogClose1).setOnClickListener(this);
+		getImageButton(R.id.btnBaseWizardPageBack).setOnClickListener(this);
+		getImageButton(R.id.btnBaseWizardPageForward).setOnClickListener(this);
 		
 		addListeners();
 	}
@@ -101,7 +94,7 @@ public abstract class BaseDialog extends DialogFragment implements View.OnClickL
 	
 	protected LinearLayout getLinearLayout(int id){
 		if(!viewList.containsKey(id)){
-			viewList.put(id, (TextView) getView().findViewById(id));
+			viewList.put(id, (LinearLayout) getView().findViewById(id));
 		}
 		return (LinearLayout)viewList.get(id);
 	}
@@ -111,7 +104,7 @@ public abstract class BaseDialog extends DialogFragment implements View.OnClickL
 			viewList.put(id, (Button) getView().findViewById(id));
 		}
 		return (Button)viewList.get(id);
-	}
+	}	
 	
 	protected ImageButton getImageButton(int id){
 		if(!viewList.containsKey(id)){
@@ -146,14 +139,15 @@ public abstract class BaseDialog extends DialogFragment implements View.OnClickL
 	protected void destroyAllLoaders(){};
 
 	public void onClick(View v) {
-		if (v == btnBack){
+		if (v.getId() == R.id.btnBaseWizardPageBack){
+			dismiss();
+		} else if (v.getId() == R.id.btnBaseWizardPageForward){
 			dismiss();
 		}
 	}
 	
-	@Override
 	public void dismiss() {
 		AppSettings.Instance().Update(getActivity(), AppSettings.AppSetting_ResumePreviousState_Name, "false", true);
-		super.dismiss();
+		getFragmentManager().popBackStack();
 	}
 }

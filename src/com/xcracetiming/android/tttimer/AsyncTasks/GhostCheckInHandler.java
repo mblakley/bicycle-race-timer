@@ -24,8 +24,8 @@ public class GhostCheckInHandler extends CheckInHandler {
 
      	int nextOrder = GetNextOrder();
 
-     	long race_ID = Long.parseLong(AppSettings.Instance().ReadValue(context, AppSettings.AppSetting_RaceID_Name, "-1"));
-     	long startInterval = Long.parseLong(AppSettings.Instance().ReadValue(context, AppSettings.AppSetting_StartInterval_Name, "60"));
+     	Long race_ID = AppSettings.Instance().ReadLongValue(context, AppSettings.AppSetting_RaceID_Name, null);
+     	long startInterval = AppSettings.Instance().ReadLongValue(context, AppSettings.AppSetting_StartInterval_Name, 60l);
      	Uri result = RacerSeriesInfo.Instance().CONTENT_URI;
      	for(int startOrder = nextOrder; startOrder < nextOrder + numSpots; startOrder++){
      		// Do the check in

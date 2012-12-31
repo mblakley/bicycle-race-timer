@@ -1,5 +1,7 @@
 package com.xcracetiming.android.tttimer.Dialogs;
 
+import java.util.Locale;
+
 import com.xcracetiming.android.tttimer.R;
 import com.xcracetiming.android.tttimer.AsyncTasks.CheckInHandler;
 import com.xcracetiming.android.tttimer.DataAccess.AppSettings;
@@ -7,7 +9,9 @@ import com.xcracetiming.android.tttimer.DataAccess.RaceCategory;
 import com.xcracetiming.android.tttimer.DataAccess.Racer;
 import com.xcracetiming.android.tttimer.DataAccess.RacerSeriesInfo;
 import com.xcracetiming.android.tttimer.DataAccess.RacerUSACInfo;
+import com.xcracetiming.android.tttimer.WizardPages.BaseWizardPage;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -22,7 +26,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -70,7 +74,8 @@ public class AddRacerView extends BaseDialog implements View.OnClickListener, Lo
 		txtFirstName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 		    public void onFocusChange(View v, boolean hasFocus) {
 		        if (hasFocus) {
-		            getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+		        	InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+		    		mgr.showSoftInput(v, InputMethodManager.SHOW_IMPLICIT);
 		        }
 		    }
 		});
@@ -101,11 +106,11 @@ public class AddRacerView extends BaseDialog implements View.OnClickListener, Lo
  	private boolean AddNewRacer(String firstName, String lastName, String usacNumber, long categoryID) 
  	{
  		boolean success = false;
- 		long raceSeries_ID = Long.parseLong(AppSettings.Instance().ReadValue(getActivity(), AppSettings.AppSetting_RaceSeriesID_Name, "-1"));
+ 		long raceSeries_ID = AppSettings.Instance().ReadLongValue(getActivity(), AppSettings.AppSetting_RaceSeriesID_Name, null);
  		// If none of the fields are blank, we're ok to add the record
  		if(firstName.trim().length() != 0 && lastName.trim().length() != 0 && usacNumber.trim().length() != 0){
  			String selection = "UPPER(" + Racer.FirstName + ")=? AND UPPER(" + Racer.LastName + ")=?";
- 			String[] selectionArgs = new String[]{firstName.trim().toUpperCase(), lastName.trim().toUpperCase()};
+ 			String[] selectionArgs = new String[]{firstName.trim().toUpperCase(Locale.US), lastName.trim().toUpperCase()};
  			long racer_ID = 0;
  			long racerUSACInfo_ID = 0;
  			Uri resultUri;

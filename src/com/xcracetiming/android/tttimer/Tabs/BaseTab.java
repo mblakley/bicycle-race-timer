@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -53,6 +54,7 @@ public abstract class BaseTab extends Fragment {
 	
 	@Override
 	public void onStart() {
+		super.onStart();
 		addClickListeners();
 	}
 	
@@ -79,9 +81,16 @@ public abstract class BaseTab extends Fragment {
 	
 	public Button getButton(int id){
 		if(!viewList.containsKey(id)){
-			viewList.put(id, (TextView) getView().findViewById(id));
+			viewList.put(id, (Button) getView().findViewById(id));
 		}
 		return (Button)viewList.get(id);
+	}
+	
+	public ImageButton getImageButton(int id){
+		if(!viewList.containsKey(id)){
+			viewList.put(id, (ImageButton) getView().findViewById(id));
+		}
+		return (ImageButton)viewList.get(id);
 	}
 	
 	protected void startAllLoaders(){};

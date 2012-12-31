@@ -6,7 +6,47 @@
     android:orientation="vertical" 
     android:background="#FFFF"
     style="@style/Padded" >
+    
+    <LinearLayout
+        android:id="@+id/llRaceSeries"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
 
+        <TextView
+            android:id="@+id/lblRaceSeries"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/RaceSeries"
+        	style="@style/Medium" />
+
+        <TextView
+            android:id="@+id/lblRaceSeriesName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+        	style="@style/Medium" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/lblCourse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/RaceLocation"
+        	style="@style/Medium" />
+
+        <TextView
+            android:id="@+id/lblCourseName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+        	style="@style/Medium" />
+
+    </LinearLayout>    
+    
     <TextView
         android:id="@+id/lblRaceName"
         style="@style/Medium"
@@ -21,7 +61,8 @@
         android:inputType="textCapWords"
         style="@style/Medium" >
     </EditText>
-    
+
+
     <TextView
         android:id="@+id/lblRaceDate"
         style="@style/Medium"
@@ -36,6 +77,7 @@
 
     <LinearLayout
         android:id="@+id/linearLayout3"
+    	android:orientation="vertical" 
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" >
 
@@ -53,28 +95,9 @@
 
     </LinearLayout>
 
-    
     <LinearLayout
-        android:id="@+id/linearLayout1"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
-
-        <TextView
-            android:id="@+id/lblCourse"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/RaceLocation"
-        	style="@style/Medium" />
-
-        <Spinner
-            android:id="@+id/spinnerRaceLocation"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayout2"
+        android:id="@+id/llStartInterval"
+    	android:orientation="vertical" 
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" >
 

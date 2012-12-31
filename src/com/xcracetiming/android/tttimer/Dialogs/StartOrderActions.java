@@ -23,6 +23,8 @@ public class StartOrderActions extends BaseDialog implements View.OnClickListene
 	private Button btnReorderRacer;
 	long raceResultID;
 	
+	public StartOrderActions(){}
+	
 	public StartOrderActions(long RaceResultID) {
 		this.raceResultID = RaceResultID;
 	}

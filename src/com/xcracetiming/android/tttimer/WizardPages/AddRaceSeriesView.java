@@ -1,4 +1,4 @@
-package com.xcracetiming.android.tttimer.Dialogs;
+package com.xcracetiming.android.tttimer.WizardPages;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -7,6 +7,7 @@ import com.xcracetiming.android.tttimer.R;
 import com.xcracetiming.android.tttimer.DataAccess.Race;
 import com.xcracetiming.android.tttimer.DataAccess.RaceSeries;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -15,11 +16,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 
-public class AddRaceSeriesView extends BaseDialog implements View.OnClickListener {
+public class AddRaceSeriesView extends BaseWizardPage implements View.OnClickListener {
 	public static final String LOG_TAG = "AddRaceSeriesView";
 	
 	private Button btnAddRaceSeries;
@@ -36,7 +38,8 @@ public class AddRaceSeriesView extends BaseDialog implements View.OnClickListene
 		txtRaceSeriesName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 		    public void onFocusChange(View v, boolean hasFocus) {
 		        if (hasFocus) {
-		            getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+		        	InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+		    		mgr.showSoftInput(v, InputMethodManager.SHOW_IMPLICIT);
 		        }
 		    }
 		});
@@ -64,14 +67,14 @@ public class AddRaceSeriesView extends BaseDialog implements View.OnClickListene
 				
 				Uri raceSeriesUri = RaceSeries.Instance().Create(getActivity(), raceSeriesName, startOfSeries, endOfSeries, "Club");
 				
-				long raceSeries_ID = Long.parseLong(raceSeriesUri.getLastPathSegment());
-				
-				AddRaceView addRaceDialog = new AddRaceView();
-	        	Bundle b = new Bundle();
-	        	b.putLong(Race.RaceSeries_ID, raceSeries_ID);
-	            addRaceDialog.setArguments(b);
-				FragmentManager fm = getActivity().getSupportFragmentManager();
-				addRaceDialog.show(fm, AddRaceView.LOG_TAG);
+//				long raceSeries_ID = Long.parseLong(raceSeriesUri.getLastPathSegment());
+//				
+//				AddRaceView addRaceDialog = new AddRaceView();
+//	        	Bundle b = new Bundle();
+//	        	b.putLong(Race.RaceSeries_ID, raceSeries_ID);
+//	            addRaceDialog.setArguments(b);
+//				FragmentManager fm = getActivity().getSupportFragmentManager();
+//				addRaceDialog.show(fm, AddRaceView.LOG_TAG);
 				
 				// Hide the dialog
 				dismiss();

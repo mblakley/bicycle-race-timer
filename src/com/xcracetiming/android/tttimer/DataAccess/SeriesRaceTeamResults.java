@@ -26,7 +26,7 @@ public final class SeriesRaceTeamResults extends ContentProviderTable implements
     	        + " (" + _ID + " integer primary key autoincrement, "
     	        + Race_ID + " integer references " + Race.Instance().getTableName() + "(" + Race._ID + ") not null, " 
     	        + TeamInfo_ID + " integer references " + TeamInfo.Instance().getTableName() + "(" + TeamInfo._ID + ") not null, " 
-    	        + RaceResult_ID + " integer references " + RaceResults.Instance().getTableName() + "(" + RaceResults._ID + ") not null, "
+    	        + RaceResult_ID + " integer references " + RaceResults.Instance().getTableName() + "(" + RaceResults._ID + ") not null"
     	        + ");";
     }
 

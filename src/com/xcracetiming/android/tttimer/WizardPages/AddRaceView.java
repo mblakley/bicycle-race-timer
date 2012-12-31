@@ -1,4 +1,4 @@
-package com.xcracetiming.android.tttimer.Dialogs;
+package com.xcracetiming.android.tttimer.WizardPages;
 
 import java.util.Date;
 
@@ -14,7 +14,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,7 +30,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
 
-public class AddRaceView extends BaseDialog implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
+public class AddRaceView extends BaseWizardPage implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 	public static final String LOG_TAG = "AddRaceView";
 	
 	private SimpleCursorAdapter locationsCursorAdapter = null;
@@ -41,12 +40,12 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
      */
     public static final String RACE_ADDED_ACTION = "com.xcracetiming.android.tttimer.RACE_ADDED";
 
-	private long raceSeries_ID;	
+	private Long raceSeries_ID;	
 	
 	@Override
 	public void setArguments(Bundle args) {
 		this.raceSeries_ID = args.getLong(Race.RaceSeries_ID);
-		AppSettings.Instance().Update(getActivity(), AppSettings.AppSetting_RaceSeriesID_Name, Long.toString(raceSeries_ID), true);
+		AppSettings.Instance().UpdateLong(getActivity(), AppSettings.AppSetting_RaceSeriesID_Name, raceSeries_ID, true);
 	}	
 
 	@Override
@@ -96,9 +95,7 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 
 		if(!FindAnyRaceLocations()){
 			// No locations...show another dialog to add a location
-        	AddLocationView addLocationDialog = new AddLocationView();
-			FragmentManager fm = getActivity().getSupportFragmentManager();
-			addLocationDialog.show(fm, AddLocationView.LOG_TAG);
+			getActivity().getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, new AddLocationView()).commit();
 		} else{
 			// Continue with setting up the race
 			
@@ -110,7 +107,7 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 	        getSpinner(R.id.spinnerStartInterval).setAdapter(startIntervalAdapter);
 			
 	        // TODO: Don't like the specific handling for invalid raceSeries_ID - Maybe use a checkbox for "Is this race part of a series?" that will hide or show the available series list, with an option for "Add new series"        
-			if(raceSeries_ID == -1){
+			if(raceSeries_ID == null){
 				getTextView(R.id.lblRaceName).setVisibility(View.VISIBLE);
 				getEditText(R.id.txtRaceName).setVisibility(View.VISIBLE);
 			} else {
@@ -212,10 +209,10 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 				String eventName = "";
 				Long eventID = 0l;
 				
-				// TODO: What's the difference between club scoring and USAC scoring?
+				// TODO: What's the difference between club scoring and USAC scoring? - Club scoring gives points based on the club's preferences.  USAC gives upgrade points based on the race type and number of racers starting.
 				String scoring = "Club";
 				// Don't like the special handling for invalid raceSeries_ID - Should not be necessary
-				if(raceSeries_ID == -1){
+				if(raceSeries_ID == null){
 					Uri seriesCreated = RaceSeries.Instance().Create(getActivity(), getEditText(R.id.txtRaceName).getText().toString(), GetRaceDate(), GetRaceDate(), scoring);
 					raceSeries_ID = Long.parseLong(seriesCreated.getLastPathSegment());
 				}
@@ -233,9 +230,7 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
     			
     			// TODO: Add categories to the race that we just added.  Otherwise, everyone will be in the "General" category
     			//if(!FindAnyRaceCategories()){
-    				AddRaceCategoriesView addRaceCategoriesDialog = new AddRaceCategoriesView();
-    				FragmentManager fm = getActivity().getSupportFragmentManager();
-    				addRaceCategoriesDialog.show(fm, AddRaceCategoriesView.LOG_TAG);
+    				getActivity().getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, new AddRaceCategoriesView()).commit();
     			//}
 
     			// Hide the dialog

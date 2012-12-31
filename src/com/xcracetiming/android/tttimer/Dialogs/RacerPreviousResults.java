@@ -23,6 +23,7 @@ import com.xcracetiming.android.tttimer.DataAccess.RaceResults;
 import com.xcracetiming.android.tttimer.DataAccess.Racer;
 import com.xcracetiming.android.tttimer.DataAccess.Views.RacerPreviousResultsView;
 import com.xcracetiming.android.tttimer.Utilities.TimeFormatter;
+import com.xcracetiming.android.tttimer.WizardPages.BaseWizardPage;
 
 public class RacerPreviousResults extends BaseDialog implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 	public static final String LOG_TAG = "RacerPreviousResults";

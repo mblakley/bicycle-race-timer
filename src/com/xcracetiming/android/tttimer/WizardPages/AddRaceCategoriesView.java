@@ -1,10 +1,11 @@
-package com.xcracetiming.android.tttimer.Dialogs;
+package com.xcracetiming.android.tttimer.WizardPages;
 
 import com.xcracetiming.android.tttimer.R;
 import com.xcracetiming.android.tttimer.DataAccess.AppSettings;
 import com.xcracetiming.android.tttimer.DataAccess.RaceCategory;
 import com.xcracetiming.android.tttimer.Utilities.Loaders;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -17,12 +18,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
 
-public class AddRaceCategoriesView extends BaseDialog implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
+public class AddRaceCategoriesView extends BaseWizardPage implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 	public static final String LOG_TAG = "AddRaceCategoriesView";
 
 	private static final int RACE_CATEGORIES_LOADER = 11116;
@@ -42,7 +44,8 @@ public class AddRaceCategoriesView extends BaseDialog implements View.OnClickLis
 		txtRaceCategory.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 		    public void onFocusChange(View v, boolean hasFocus) {
 		        if (hasFocus) {
-		            getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+		        	InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+		    		mgr.showSoftInput(v, InputMethodManager.SHOW_IMPLICIT);
 		        }
 		    }
 		});

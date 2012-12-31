@@ -332,7 +332,7 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
     private void resetStartTime (){     	
  		// Reset the start time value in the database
  		ContentValues content = new ContentValues();
- 		Long race_ID = Long.parseLong(AppSettings.Instance().ReadValue(getContext(), AppSettings.AppSetting_RaceID_Name, "-1"));
+ 		Long race_ID = AppSettings.Instance().ReadLongValue(getContext(), AppSettings.AppSetting_RaceID_Name, null);
 		content.put(Race._ID, race_ID);
 		content.putNull(Race.RaceStartTime);
 		Uri fullUri = Uri.withAppendedPath(Race.Instance().CONTENT_URI, Long.toString(race_ID));
@@ -565,7 +565,7 @@ public class Timer extends LinearLayout implements LoaderManager.LoaderCallbacks
 		if(startTime > 0){
 			return startTime;
 		}else{
-			Long race_ID = Long.parseLong(AppSettings.Instance().ReadValue(getContext(), AppSettings.AppSetting_RaceID_Name, "-1"));
+			Long race_ID = AppSettings.Instance().ReadLongValue(getContext(), AppSettings.AppSetting_RaceID_Name, null);
 
 			Cursor currentRace = GetCurrentRace(race_ID);
 			
