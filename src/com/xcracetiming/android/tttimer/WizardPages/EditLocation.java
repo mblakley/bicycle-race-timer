@@ -23,7 +23,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemSelectedListener;
 
-
 public class EditLocation extends BaseWizardPage implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 	public static final String LOG_TAG = "EditLocationView";
 
@@ -231,5 +230,10 @@ public class EditLocation extends BaseWizardPage implements View.OnClickListener
 		}catch(Exception ex){
 			Log.e(LOG_TAG, "onLoaderReset error", ex); 
 		}
+	}
+
+	public void Save() {
+		// TODO Auto-generated method stub
+		
 	}
 }

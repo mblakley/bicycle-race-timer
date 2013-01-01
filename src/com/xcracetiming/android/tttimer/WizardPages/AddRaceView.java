@@ -315,4 +315,9 @@ public class AddRaceView extends BaseWizardPage implements View.OnClickListener,
 	protected String LOG_TAG() {
 		return LOG_TAG;
 	}
+
+	public void Save() {
+		// TODO Auto-generated method stub
+		
+	}
 }

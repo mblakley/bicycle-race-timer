@@ -32,7 +32,7 @@ public final class RaceCategory extends ContentProviderTable implements BaseColu
     	        + Gender + " text not null,"
     	        + CategoryClass + " text not null,"
     	        + Age + " text null,"
-    	        + RaceSeries_ID + " integer references " + RaceSeries.Instance().getTableName() + "(" + RaceSeries._ID + ") not null"
+    	        + RaceSeries_ID + " integer references " + RaceSeries.Instance().getTableName() + "(" + RaceSeries._ID + ") null"
     	        + ");";
     }
 

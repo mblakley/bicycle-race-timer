@@ -120,5 +120,10 @@ public class SeriesResultsView extends BaseWizardPage implements View.OnClickLis
 	protected String LOG_TAG() {
 		return LOG_TAG;
 	}
+
+	public void Save() {
+		// TODO Auto-generated method stub
+		
+	}
 }
 

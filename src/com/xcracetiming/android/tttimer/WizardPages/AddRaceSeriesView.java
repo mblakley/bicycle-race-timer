@@ -4,18 +4,15 @@ import java.util.Calendar;
 import java.util.Date;
 
 import com.xcracetiming.android.tttimer.R;
-import com.xcracetiming.android.tttimer.DataAccess.Race;
 import com.xcracetiming.android.tttimer.DataAccess.RaceSeries;
 
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -90,5 +87,10 @@ public class AddRaceSeriesView extends BaseWizardPage implements View.OnClickLis
 	@Override
 	protected String LOG_TAG() {
 		return LOG_TAG;
+	}
+
+	public void Save() {
+		// TODO Auto-generated method stub
+		
 	}
 }

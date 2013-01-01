@@ -42,8 +42,9 @@ public final class RacerSeriesInfo extends ContentProviderTable implements BaseC
     	        + RaceSeries_ID + " integer references " + RaceSeries.Instance().getTableName() + "(" + RaceSeries._ID + ") not null, "
     	        + CurrentRaceCategory_ID + " integer references " + RaceCategory.Instance().getTableName() + "(" + RaceCategory._ID + ") not null, " 
     	        + TTPoints + " integer not null," 
-    	        + RRPoints + " integer not null," 
+    	        + RRPoints + " integer not null,"
     	        + PrimePoints + " integer not null," 
+    	        + BARPoints + " integer not null," 
     	        + Upgraded + " integer not null," 
     	        + OnlineRecordID + " text null"
     			+ ");";

@@ -21,8 +21,8 @@
         android:inputType="textCapWords"
         style="@style/Medium" >
     </EditText>
-    
-    <TextView
+
+	<TextView
         android:id="@+id/lblRaceDate"
         style="@style/Medium"
         android:layout_width="wrap_content"

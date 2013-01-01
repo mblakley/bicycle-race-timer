@@ -3,21 +3,21 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="0dip">
+    android:padding="0dip" >
 
     <ImageButton
         android:id="@+id/btnBaseWizardPageBack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
         android:layout_gravity="left"
-        android:minWidth="25dp"
         android:background="@drawable/main_button"
-        android:scaleType="center"
-        android:src="@drawable/close"
         android:contentDescription="@string/btnCancel"
-        android:layout_alignParentLeft="true">
-    </ImageButton>     
-    
+        android:minWidth="25dp"
+        android:scaleType="center"
+        android:src="@drawable/close" >
+    </ImageButton>
+
     <TextView
         android:id="@+id/title"
         style="@style/Large"
@@ -29,25 +29,25 @@
         android:layout_gravity="center"
         android:layout_toLeftOf="@+id/btnBaseWizardPageForward"
         android:layout_toRightOf="@+id/btnBaseWizardPageBack"
-        android:background="@color/normal_bg_gray"
         android:gravity="center|top"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
+        android:background="#FFFF"
         android:singleLine="true" />
 
     <ImageButton
         android:id="@+id/btnBaseWizardPageForward"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
         android:layout_gravity="right"
-        android:minWidth="25dp"
         android:background="@drawable/main_button"
-        android:scaleType="center"
-        android:src="@drawable/close"
         android:contentDescription="@string/btnCancel"
-        android:layout_alignParentRight="true">
+        android:minWidth="25dp"
+        android:scaleType="center"
+        android:src="@drawable/close" >
     </ImageButton>
-    
+
     <TextView
         android:id="@+id/lblTrail"
         android:layout_width="fill_parent"
@@ -56,6 +56,45 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="false"
         android:layout_below="@id/title"
-        android:background="@color/normal_fg_gray" />
-    
+        android:background="#FFFF" />
+
+    <FrameLayout
+        android:id="@+id/wizardFrame"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/llButtons"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="false"
+        android:layout_below="@id/lblTrail" >
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/llButtons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerHorizontal="true"
+        android:weightSum="2" >
+
+        <Button
+            android:id="@+id/btnCancel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            style="@style/Medium"
+            android:text="Cancel" />
+
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            style="@style/Medium"
+            android:text="Save and Continue" />
+    </LinearLayout>
+
 </RelativeLayout>

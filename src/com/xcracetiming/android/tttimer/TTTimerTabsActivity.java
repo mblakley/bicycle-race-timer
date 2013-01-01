@@ -15,6 +15,7 @@ import android.util.Log;
 import com.xcracetiming.android.tttimer.R;
 import com.xcracetiming.android.tttimer.Controls.Timer;
 import com.xcracetiming.android.tttimer.Tabs.MainTabsView;
+import com.xcracetiming.android.tttimer.Wizards.AddRaceWizard;
 
 public class TTTimerTabsActivity extends FragmentActivity {
 	
@@ -78,6 +79,7 @@ public class TTTimerTabsActivity extends FragmentActivity {
 		        // Create an instance of MainTabsView
 		        MainTabsView firstFragment = new MainTabsView();
 
+		        //AddRaceWizard firstFragment = new AddRaceWizard();
 		        // In case this activity was started with special instructions from an Intent,
 		        // pass the Intent's extras to the fragment as arguments
 		        firstFragment.setArguments(getIntent().getExtras());
@@ -112,11 +114,13 @@ public class TTTimerTabsActivity extends FragmentActivity {
         			// Create the new view
         			String className = intent.getStringExtra("ShowView");
         			
-            		try {						
+            		try {			            			
 						FragmentManager fragmentManager = getSupportFragmentManager();
+						
 			            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
+			            
 			            Fragment mainView = (Fragment)Class.forName(className).newInstance();
+			            mainView.setArguments(intent.getBundleExtra("args"));
 			            fragmentTransaction.add(R.id.fragment_container, mainView);
 			            fragmentTransaction.addToBackStack(className);
 			            fragmentTransaction.commit();

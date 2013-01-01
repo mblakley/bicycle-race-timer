@@ -19,7 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-public class AddGhostRacerView extends BaseWizardPage implements View.OnClickListener {
+public class AddGhostRacerView extends BaseDialog implements View.OnClickListener {
 	public static final String LOG_TAG = "AddGhostRacerView";
 	
 	protected Button btnAddGhostRacer;

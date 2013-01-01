@@ -46,6 +46,11 @@ public class AdminMenuView extends BaseWizardPage implements View.OnClickListene
 	}
 	
 	@Override
+	public void setArguments(Bundle args) {
+		args.getInt("TitleBar");
+	}
+	
+	@Override
 	protected void addListeners() {
 		super.addListeners();	
 		
@@ -193,5 +198,10 @@ public class AdminMenuView extends BaseWizardPage implements View.OnClickListene
 	@Override
 	protected String LOG_TAG() {
 		return LOG_TAG;
+	}
+
+	public void Save() {
+		// TODO Auto-generated method stub
+		
 	}
 }

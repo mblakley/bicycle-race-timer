@@ -14,7 +14,8 @@
         android:text="@string/CourseName"
         style="@style/Medium"
         android:layout_marginLeft="10sp" />
-    <EditText
+
+	<EditText
         android:id="@+id/txtCourseName"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -53,13 +54,5 @@
         	android:layout_marginRight="10sp" />
 
     </LinearLayout>
-
-    <Button
-        android:id="@+id/btnAddLocation"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:onClick="btnAddLocationClick"
-        android:text="@string/AddLocation"
-        style="@style/Medium" />
 
 </LinearLayout>

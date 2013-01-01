@@ -19,14 +19,14 @@ import android.widget.TextView;
 public class AddLocationView extends BaseWizardPage implements View.OnClickListener {
 	public static final String LOG_TAG = "AddLocationView";
 	
-	private Button btnAddLocation;
+	//private Button btnAddLocation;
 	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.dialog_add_location, container, false);
 
-		btnAddLocation = (Button) v.findViewById(R.id.btnAddLocation);
-		btnAddLocation.setOnClickListener(this);
+		//btnAddLocation = (Button) v.findViewById(R.id.btnAddLocation);
+		//btnAddLocation.setOnClickListener(this);
 		
 		TextView lblDistanceUnit = (TextView) v.findViewById(R.id.lblDistanceUnit);
 		
@@ -65,21 +65,21 @@ public class AddLocationView extends BaseWizardPage implements View.OnClickListe
 	
 	public void onClick(View v) { 
 		try{
-			if (v == btnAddLocation){
-				// First name
-				EditText mCourseName = (EditText) getView().findViewById(R.id.txtCourseName);
-				String courseName = mCourseName.getText().toString();
-				
-				EditText mDistance = (EditText) getView().findViewById(R.id.txtDistance);
-				String distance = mDistance.getText().toString();
-		
-				RaceLocation.Instance().Create(getActivity(), courseName, distance);
-					    			
-				// Hide the dialog
-				dismiss();
-			} else {
+//			if (v == btnAddLocation){
+//				// First name
+//				EditText mCourseName = (EditText) getView().findViewById(R.id.txtCourseName);
+//				String courseName = mCourseName.getText().toString();
+//				
+//				EditText mDistance = (EditText) getView().findViewById(R.id.txtDistance);
+//				String distance = mDistance.getText().toString();
+//		
+//				RaceLocation.Instance().Create(getActivity(), courseName, distance);
+//					    			
+//				// Hide the dialog
+//				dismiss();
+//			} else {
 				super.onClick(v);
-			}
+//			}
 		}
 		catch(Exception ex){
 			Log.e(LOG_TAG, "btnStartCheckIn failed",ex);
@@ -89,5 +89,10 @@ public class AddLocationView extends BaseWizardPage implements View.OnClickListe
 	@Override
 	protected String LOG_TAG() {
 		return LOG_TAG;
+	}
+
+	public void Save() {
+		// TODO Auto-generated method stub
+		
 	}
 }

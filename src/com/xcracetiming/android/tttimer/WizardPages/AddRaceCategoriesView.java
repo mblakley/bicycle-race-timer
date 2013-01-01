@@ -147,4 +147,9 @@ public class AddRaceCategoriesView extends BaseWizardPage implements View.OnClic
 			Log.e(LOG_TAG, "onLoaderReset error", ex); 
 		}
 	}
+
+	public void Save() {
+		// TODO Auto-generated method stub
+		
+	}
 }

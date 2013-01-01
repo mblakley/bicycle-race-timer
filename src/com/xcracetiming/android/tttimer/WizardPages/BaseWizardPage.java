@@ -4,11 +4,10 @@ import java.util.Hashtable;
 
 import com.xcracetiming.android.tttimer.R;
 import com.xcracetiming.android.tttimer.DataAccess.AppSettings;
+import com.xcracetiming.android.tttimer.Wizards.BaseWizard;
 
 import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -21,44 +20,23 @@ import android.widget.TextView;
  * @author Mark
  *
  */
-public abstract class BaseWizardPage extends Fragment implements View.OnClickListener {	
+public abstract class BaseWizardPage extends Fragment implements View.OnClickListener, IWizard {	
 
-	private Hashtable<Integer, View> viewList = new Hashtable<Integer, View>();
-	
-	private boolean showNavButtons = true;
+	private Hashtable<Integer, View> viewList = new Hashtable<Integer, View>();	
 	
 	protected abstract int GetTitleResourceID();
 	
 	protected abstract String LOG_TAG();
-	
-	protected void showNavButtons(boolean show) {
-		showNavButtons = show;
-		if(showNavButtons){
-			getImageButton(R.id.btnBaseWizardPageBack).setVisibility(View.VISIBLE);
-			getImageButton(R.id.btnBaseWizardPageForward).setVisibility(View.VISIBLE);
-		}else{
-			getImageButton(R.id.btnBaseWizardPageBack).setVisibility(View.GONE);
-			getImageButton(R.id.btnBaseWizardPageForward).setVisibility(View.GONE);
-		}
-	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
 		
 		AppSettings.Instance().Update(getActivity(), AppSettings.AppSetting_ResumePreviousState_Name, "true", true);
-
-		if(showNavButtons){
-			getImageButton(R.id.btnBaseWizardPageBack).setVisibility(View.VISIBLE);
-			getImageButton(R.id.btnBaseWizardPageForward).setVisibility(View.VISIBLE);
-		}else{
-			getImageButton(R.id.btnBaseWizardPageBack).setVisibility(View.GONE);
-			getImageButton(R.id.btnBaseWizardPageForward).setVisibility(View.GONE);
-		}
 		
-		startAllLoaders();
+		startAllLoaders();		
 
-		getTextView(R.id.title).setText(GetTitleResourceID());
+		//((BaseWizard)getParentFragment()).setTitleText(GetTitleResourceID());
 	}
 	
 	@Override
@@ -72,13 +50,7 @@ public abstract class BaseWizardPage extends Fragment implements View.OnClickLis
 	
 	@Override
 	public void onStart() {
-		super.onStart();
-		View title = LayoutInflater.from(getActivity()).inflate(R.layout.wizard_with_nav, (ViewGroup)getView(), false);
-		ViewGroup page = (ViewGroup)getView().findViewById(R.id.dialogContainer);
-		page.addView(title, 0);		
-		
-		getImageButton(R.id.btnBaseWizardPageBack).setOnClickListener(this);
-		getImageButton(R.id.btnBaseWizardPageForward).setOnClickListener(this);
+		super.onStart();	
 		
 		addListeners();
 	}

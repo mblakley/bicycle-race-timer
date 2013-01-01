@@ -52,7 +52,7 @@ public final class Loaders {
 	}
 
 	public static CursorLoader GetAllRaceTypeDescriptions(FragmentActivity activity) {
-		String[] projection = new String[]{RaceType._ID, RaceType.RaceTypeDescription};
+		String[] projection = new String[]{RaceType._ID, RaceType.RaceTypeDescription, RaceType.HasMultipleLaps};
 		String selection = null;
 		String[] selectionArgs = null;
 		String sortOrder = RaceType._ID;

@@ -219,4 +219,9 @@ public class AppSettingsView extends BaseWizardPage implements LoaderManager.Loa
 	protected String LOG_TAG() {
 		return LOG_TAG;
 	}
+
+	public void Save() {
+		// TODO Auto-generated method stub
+		
+	}
 }
