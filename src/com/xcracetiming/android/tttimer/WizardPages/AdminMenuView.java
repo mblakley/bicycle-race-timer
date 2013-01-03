@@ -200,8 +200,8 @@ public class AdminMenuView extends BaseWizardPage implements View.OnClickListene
 		return LOG_TAG;
 	}
 
-	public void Save() {
+	public Bundle Save() {
 		// TODO Auto-generated method stub
-		
+		return new Bundle();
 	}
 }

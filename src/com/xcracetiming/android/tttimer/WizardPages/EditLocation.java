@@ -232,8 +232,8 @@ public class EditLocation extends BaseWizardPage implements View.OnClickListener
 		}
 	}
 
-	public void Save() {
+	public Bundle Save() {
 		// TODO Auto-generated method stub
-		
+		return new Bundle();
 	}
 }

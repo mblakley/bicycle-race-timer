@@ -148,8 +148,8 @@ public class AddRaceCategoriesView extends BaseWizardPage implements View.OnClic
 		}
 	}
 
-	public void Save() {
+	public Bundle Save() {
 		// TODO Auto-generated method stub
-		
+		return new Bundle();
 	}
 }

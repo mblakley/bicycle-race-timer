@@ -272,8 +272,8 @@ public class AddTeamView extends BaseWizardPage implements View.OnClickListener,
 		return LOG_TAG;
 	}
 
-	public void Save() {
+	public Bundle Save() {
 		// TODO Auto-generated method stub
-		
+		return new Bundle();
 	}
 }

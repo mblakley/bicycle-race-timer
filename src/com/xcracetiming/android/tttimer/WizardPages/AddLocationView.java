@@ -91,8 +91,8 @@ public class AddLocationView extends BaseWizardPage implements View.OnClickListe
 		return LOG_TAG;
 	}
 
-	public void Save() {
+	public Bundle Save() {
 		// TODO Auto-generated method stub
-		
+		return new Bundle();
 	}
 }

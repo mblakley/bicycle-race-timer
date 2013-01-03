@@ -93,10 +93,10 @@ public class AddRaceView extends BaseWizardPage implements View.OnClickListener,
 	public void onResume() {
 		super.onResume();
 
-		if(!FindAnyRaceLocations()){
-			// No locations...show another dialog to add a location
-			getActivity().getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, new AddLocationView()).commit();
-		} else{
+//		if(!FindAnyRaceLocations()){
+//			// No locations...show another dialog to add a location
+//			getActivity().getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, new AddLocationView()).commit();
+//		} else{
 			// Continue with setting up the race
 			
 	        // Intervals probably won't ever change, so I'm ok with this for now but...
@@ -114,7 +114,7 @@ public class AddRaceView extends BaseWizardPage implements View.OnClickListener,
 				getTextView(R.id.lblRaceName).setVisibility(View.GONE);
 				getEditText(R.id.txtRaceName).setVisibility(View.GONE);
 			}		
-		}
+		//}
 	}
 	
 	@Override
@@ -316,8 +316,8 @@ public class AddRaceView extends BaseWizardPage implements View.OnClickListener,
 		return LOG_TAG;
 	}
 
-	public void Save() {
+	public Bundle Save() {
 		// TODO Auto-generated method stub
-		
+		return new Bundle();
 	}
 }

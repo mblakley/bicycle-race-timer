@@ -1,21 +1,15 @@
 package com.xcracetiming.android.tttimer.Wizards;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 import com.xcracetiming.android.tttimer.R;
-import com.xcracetiming.android.tttimer.TTTimerTabsActivity;
 import com.xcracetiming.android.tttimer.DataAccess.AppSettings;
-import com.xcracetiming.android.tttimer.Tabs.MainTabsView;
-import com.xcracetiming.android.tttimer.WizardPages.AddLocationView;
-import com.xcracetiming.android.tttimer.WizardPages.IWizard;
+import com.xcracetiming.android.tttimer.WizardPages.IWizardPage;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,13 +23,18 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 public abstract class BaseWizard extends Fragment implements View.OnClickListener, IWizard {
-private Hashtable<Integer, View> viewList = new Hashtable<Integer, View>();
+	private Hashtable<Integer, View> viewList = new Hashtable<Integer, View>();
 	
 	private boolean showNavButtons = true;
 	
 	protected abstract int GetTitleResourceID();
 	
-	protected abstract String LOG_TAG();		
+	protected abstract String LOG_TAG();
+	
+	protected IWizardPage currentWizardPage;
+	protected int currentWizardPageIndex = 0;
+	
+	protected ArrayList<IWizardPage> wizardPages = new ArrayList<IWizardPage>();
 	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {		
@@ -145,51 +144,49 @@ private Hashtable<Integer, View> viewList = new Hashtable<Integer, View>();
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-		FragmentManager fragmentManager = getChildFragmentManager();
-        String className = new AddLocationView().getClass().getCanonicalName();
-		try {				
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-            Fragment mainView = (Fragment)Class.forName(className).newInstance();		            
-            fragmentTransaction.add(R.id.wizardFrame, mainView);
-			fragmentTransaction.commit();
-		} catch (ClassNotFoundException e) {
-			Log.e("TTTimerTabsActivity.onReceive", "Unable to create class of type " + className, e);
-		} catch (IllegalAccessException e) {
-			Log.e("TTTimerTabsActivity.onReceive", "Unable to create class of type " + className, e);
-		} catch (java.lang.InstantiationException e) {
-			Log.e("TTTimerTabsActivity.onReceive", "Unable to create class of type " + className, e);
-		}
     }
 
 	public void onClick(View v) {
 		FragmentManager fragmentManager = getChildFragmentManager();
-		switch(v.getId()){
+		switch(v.getId()){			
 			case R.id.btnBaseWizardPageBack:		
-				String className = new AddLocationView().getClass().getCanonicalName();
-				try {				
-		            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+				// Save the info from the displayed wizard page
+				Bundle backArgs = currentWizardPage.Save();
+				
+				// Figure out the next wizard page to display
+				currentWizardPageIndex--;
+				currentWizardPage = wizardPages.get(currentWizardPageIndex);	
+		        ((Fragment)currentWizardPage).setArguments(backArgs);
 
-		            Fragment mainView = (Fragment)Class.forName(className).newInstance();		            
-		            fragmentTransaction.add(R.id.wizardFrame, mainView);
-					fragmentTransaction.commit();
-				} catch (ClassNotFoundException e) {
-					Log.e("TTTimerTabsActivity.onReceive", "Unable to create class of type " + className, e);
-				} catch (IllegalAccessException e) {
-					Log.e("TTTimerTabsActivity.onReceive", "Unable to create class of type " + className, e);
-				} catch (java.lang.InstantiationException e) {
-					Log.e("TTTimerTabsActivity.onReceive", "Unable to create class of type " + className, e);
-				}
+				// Show the next wizard page						
+		        fragmentManager.beginTransaction().replace(R.id.wizardFrame, (Fragment)currentWizardPage).commit();	
+		        
+		        if(currentWizardPageIndex <= 0){
+		        	getImageButton(R.id.btnBaseWizardPageBack).setEnabled(false);
+		        }
 				break;
 			case R.id.btnBaseWizardPageForward:
-//				if(fragmentManager.getBackStackEntryCount() > 0){
-//					fragmentManager.popBackStackImmediate();
-//				}
-				Intent showAddRace = new Intent();
-				showAddRace.setAction(TTTimerTabsActivity.CHANGE_MAIN_VIEW_ACTION);
-				showAddRace.putExtra("ShowView", new MainTabsView().getClass().getCanonicalName());
-				LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(showAddRace);
+				// Save the info from the displayed wizard page
+				Bundle args = currentWizardPage.Save();
+				
+				// Figure out the next wizard page to display
+				currentWizardPageIndex++;
+				currentWizardPage = wizardPages.get(currentWizardPageIndex);	
+		        ((Fragment)currentWizardPage).setArguments(args);
+
+				// Show the next wizard page						
+		        fragmentManager.beginTransaction().replace(R.id.wizardFrame, (Fragment)currentWizardPage).commit();
+		        
+		        if(currentWizardPageIndex >= wizardPages.size() - 1){
+		        	getImageButton(R.id.btnBaseWizardPageForward).setEnabled(false);
+		        }
+//				Intent showAddRace = new Intent();
+//				showAddRace.setAction(TTTimerTabsActivity.CHANGE_MAIN_VIEW_ACTION);
+//				showAddRace.putExtra("ShowWizard", new MainTabsView().getClass().getCanonicalName());
+//				LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(showAddRace);
+				break;
+			case R.id.btnSave:
+				SaveAndContinue();
 				break;
 			case R.id.btnCancel:
 				dismiss();

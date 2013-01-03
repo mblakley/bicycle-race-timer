@@ -557,8 +557,8 @@ public class AddLocationImages extends BaseWizardPage implements View.OnClickLis
 		}
 	}
 
-	public void Save() {
+	public Bundle Save() {
 		// TODO Auto-generated method stub
-		
+		return new Bundle();
 	}
 }

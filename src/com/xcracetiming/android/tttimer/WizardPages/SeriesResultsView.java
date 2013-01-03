@@ -121,9 +121,9 @@ public class SeriesResultsView extends BaseWizardPage implements View.OnClickLis
 		return LOG_TAG;
 	}
 
-	public void Save() {
+	public Bundle Save() {
 		// TODO Auto-generated method stub
-		
+		return new Bundle();
 	}
 }
 

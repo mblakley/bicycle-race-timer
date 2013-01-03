@@ -1,5 +1,6 @@
 package com.xcracetiming.android.tttimer.Wizards;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -7,9 +8,8 @@ import android.util.Log;
 import android.view.View;
 
 import com.xcracetiming.android.tttimer.R;
-import com.xcracetiming.android.tttimer.WizardPages.AddLocationView;
-import com.xcracetiming.android.tttimer.WizardPages.AddRaceView;
-import com.xcracetiming.android.tttimer.WizardPages.AdminMenuView;
+import com.xcracetiming.android.tttimer.WizardPages.AddRaceSeriesView;
+import com.xcracetiming.android.tttimer.WizardPages.PartOfSeries;
 
 public class AddRaceWizard extends BaseWizard implements View.OnClickListener {
 	public static final String LOG_TAG = "AddRaceWizard";
@@ -23,6 +23,24 @@ public class AddRaceWizard extends BaseWizard implements View.OnClickListener {
 	// Inherit from wizard page for nav buttons, frame layout, cancel button, and save and continue button
 	// Save and continue calls the "WizardPage.Save" function on the currently selected page fragment, and moves the next one in the list into the frame layout
 	// Cancel just kills the containing wizard fragment
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		if(savedInstanceState != null){
+			return;
+		}
+		
+		wizardPages.add(new PartOfSeries());
+		wizardPages.add(new AddRaceSeriesView());
+		
+		currentWizardPage = wizardPages.get(currentWizardPageIndex);
+		
+		FragmentManager fragmentManager = getChildFragmentManager();				
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();	            
+        fragmentTransaction.add(R.id.wizardFrame, (Fragment)currentWizardPage);
+		fragmentTransaction.commit();
+	}
 
 	@Override
 	protected int GetTitleResourceID() {
@@ -34,31 +52,27 @@ public class AddRaceWizard extends BaseWizard implements View.OnClickListener {
 		return LOG_TAG;
 	}
 
-	public void Save() {
-		FragmentManager fragmentManager = getChildFragmentManager();
-		String className = new AdminMenuView().getClass().getCanonicalName();
-		try {				
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+	public void SaveAndContinue() {
+		
+		// Save the info from the displayed wizard page
+		Bundle args = currentWizardPage.Save();
+		
+		// Figure out the next wizard page to display
+		currentWizardPageIndex++;
+		currentWizardPage = wizardPages.get(currentWizardPageIndex);	
+        ((Fragment)currentWizardPage).setArguments(args);
 
-            Fragment mainView = (Fragment)Class.forName(className).newInstance();		            
-            fragmentTransaction.add(R.id.wizardFrame, mainView);
-			fragmentTransaction.commit();
-		} catch (ClassNotFoundException e) {
-			Log.e("TTTimerTabsActivity.onReceive", "Unable to create class of type " + className, e);
-		} catch (IllegalAccessException e) {
-			Log.e("TTTimerTabsActivity.onReceive", "Unable to create class of type " + className, e);
-		} catch (java.lang.InstantiationException e) {
-			Log.e("TTTimerTabsActivity.onReceive", "Unable to create class of type " + className, e);
-		}
+		// Show the next wizard page						
+		FragmentManager fragmentManager = getChildFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();		         
+        fragmentTransaction.replace(R.id.wizardFrame, (Fragment)currentWizardPage);
+		fragmentTransaction.commit();		
 	}
 	
 	@Override
 	public void onClick(View v) { 
 		try{
-			switch(v.getId()){
-				case R.id.btnSave:
-					Save();
-					break;	
+			switch(v.getId()){			
 				default:
 					super.onClick(v);
 			}

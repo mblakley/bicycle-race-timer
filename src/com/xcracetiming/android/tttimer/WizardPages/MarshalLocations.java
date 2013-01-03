@@ -177,8 +177,8 @@ public class MarshalLocations extends BaseWizardPage implements View.OnClickList
 		}
 	}
 
-	public void Save() {
+	public Bundle Save() {
 		// TODO Auto-generated method stub
-		
+		return new Bundle();
 	}
 }

@@ -5,7 +5,9 @@ import java.util.Hashtable;
 import com.xcracetiming.android.tttimer.R;
 import com.xcracetiming.android.tttimer.DataAccess.AppSettings;
 import com.xcracetiming.android.tttimer.Wizards.BaseWizard;
+import com.xcracetiming.android.tttimer.Wizards.IWizard;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.Button;
@@ -13,6 +15,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -20,7 +23,7 @@ import android.widget.TextView;
  * @author Mark
  *
  */
-public abstract class BaseWizardPage extends Fragment implements View.OnClickListener, IWizard {	
+public abstract class BaseWizardPage extends Fragment implements View.OnClickListener, IWizardPage {	
 
 	private Hashtable<Integer, View> viewList = new Hashtable<Integer, View>();	
 	
@@ -56,6 +59,13 @@ public abstract class BaseWizardPage extends Fragment implements View.OnClickLis
 	}
 	
 	protected void addListeners(){};
+	
+	protected RadioButton getRadioButton(int id){
+		if(!viewList.containsKey(id)){
+			viewList.put(id, (RadioButton) getView().findViewById(id));
+		}
+		return (RadioButton)viewList.get(id);
+	}
 	
 	protected TextView getTextView(int id){
 		if(!viewList.containsKey(id)){
@@ -120,6 +130,6 @@ public abstract class BaseWizardPage extends Fragment implements View.OnClickLis
 	
 	public void dismiss() {
 		AppSettings.Instance().Update(getActivity(), AppSettings.AppSetting_ResumePreviousState_Name, "false", true);
-		getFragmentManager().popBackStack();
+		getFragmentManager().popBackStackImmediate();
 	}
 }

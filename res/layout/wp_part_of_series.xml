@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/wizardFrameContents"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" 
+    android:background="#FFFF"
+    style="@style/Padded" >
+
+    <TextView
+        android:id="@+id/lblRaceSeriesName"
+        style="@style/Medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10sp"
+        android:text="Is this race part of a series?" />
+	
+	<RadioGroup 
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="vertical">
+
+	    <RadioButton
+	        android:id="@+id/radioYes"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:checked="true"
+	        android:text="Yes" />
+	
+	    <RadioButton
+	        android:id="@+id/radioNo"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="No" />
+	</RadioGroup>
+</LinearLayout>
