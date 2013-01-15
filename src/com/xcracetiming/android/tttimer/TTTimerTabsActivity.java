@@ -15,7 +15,6 @@ import android.util.Log;
 import com.xcracetiming.android.tttimer.R;
 import com.xcracetiming.android.tttimer.Controls.Timer;
 import com.xcracetiming.android.tttimer.Tabs.MainTabsView;
-import com.xcracetiming.android.tttimer.Wizards.AddRaceWizard;
 
 public class TTTimerTabsActivity extends FragmentActivity {
 	
@@ -87,9 +86,6 @@ public class TTTimerTabsActivity extends FragmentActivity {
 		        // Add the fragment to the 'fragment_container' FrameLayout
 		        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, firstFragment).commit();
 		    }
-		    
- 			// Set up the timer view
- 			timer = ((Timer)findViewById(R.id.TimerBottom));
 		}catch(Exception ex){
     		Log.e(LOG_TAG, "onCreate failed: ", ex);
 		}
@@ -146,18 +142,11 @@ public class TTTimerTabsActivity extends FragmentActivity {
     }
 	
 	@Override
-	protected void onStart() {
-		super.onStart();
-	}
-	
-	@Override
-	protected void onStop() {
-		super.onStop();
-	}
-	
-	@Override
 	protected void onResume() {
 		super.onResume();
+
+		// Set up the timer view
+		timer = ((Timer)findViewById(R.id.TimerBottom));
 
 		AddActionFilter(TTTimerTabsActivity.RACE_ID_CHANGED_ACTION);
 		AddActionFilter(TTTimerTabsActivity.CHANGE_MAIN_VIEW_ACTION);

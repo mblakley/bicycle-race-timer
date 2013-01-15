@@ -4,8 +4,6 @@ import java.util.Hashtable;
 
 import com.xcracetiming.android.tttimer.R;
 import com.xcracetiming.android.tttimer.DataAccess.AppSettings;
-import com.xcracetiming.android.tttimer.Wizards.BaseWizard;
-import com.xcracetiming.android.tttimer.Wizards.IWizard;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -16,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -31,11 +30,18 @@ public abstract class BaseWizardPage extends Fragment implements View.OnClickLis
 	
 	protected abstract String LOG_TAG();
 
+	public Bundle Save() throws Exception{
+		Bundle b = getArguments();
+		if(b == null){
+			b = new Bundle();
+		}
+		
+		return b;
+	}
+	
 	@Override
 	public void onResume() {
-		super.onResume();
-		
-		AppSettings.Instance().Update(getActivity(), AppSettings.AppSetting_ResumePreviousState_Name, "true", true);
+		super.onResume();		
 		
 		startAllLoaders();		
 
@@ -46,9 +52,7 @@ public abstract class BaseWizardPage extends Fragment implements View.OnClickLis
 	public void onPause() {
 		super.onPause();
 
-    	destroyAllLoaders();
-    	
-		dismiss();
+    	destroyAllLoaders();    	
 	}
 	
 	@Override
@@ -59,6 +63,13 @@ public abstract class BaseWizardPage extends Fragment implements View.OnClickLis
 	}
 	
 	protected void addListeners(){};
+	
+	protected RadioGroup getRadioGroup(int id){
+		if(!viewList.containsKey(id)){
+			viewList.put(id, (RadioGroup) getView().findViewById(id));
+		}
+		return (RadioGroup)viewList.get(id);
+	}
 	
 	protected RadioButton getRadioButton(int id){
 		if(!viewList.containsKey(id)){
@@ -129,7 +140,6 @@ public abstract class BaseWizardPage extends Fragment implements View.OnClickLis
 	}
 	
 	public void dismiss() {
-		AppSettings.Instance().Update(getActivity(), AppSettings.AppSetting_ResumePreviousState_Name, "false", true);
 		getFragmentManager().popBackStackImmediate();
 	}
 }

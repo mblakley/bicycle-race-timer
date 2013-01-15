@@ -12,12 +12,12 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTabHost;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.xcracetiming.android.tttimer.R;
@@ -26,16 +26,16 @@ import com.xcracetiming.android.tttimer.Controls.Timer;
 import com.xcracetiming.android.tttimer.DataAccess.AppSettings;
 import com.xcracetiming.android.tttimer.DataAccess.Race;
 import com.xcracetiming.android.tttimer.DataAccess.RaceResults;
-import com.xcracetiming.android.tttimer.DataAccess.RaceSeries;
 import com.xcracetiming.android.tttimer.DataAccess.SeriesRaceIndividualResults;
 import com.xcracetiming.android.tttimer.DataAccess.Views.RaceInfoResultsView;
 import com.xcracetiming.android.tttimer.DataAccess.Views.SeriesRaceIndividualResultsView;
 import com.xcracetiming.android.tttimer.Dialogs.AdminAuthView;
+import com.xcracetiming.android.tttimer.Dialogs.ChooseViewingMode;
 import com.xcracetiming.android.tttimer.Dialogs.OtherRaceResults;
-import com.xcracetiming.android.tttimer.Utilities.TabManagerContainer;
 import com.xcracetiming.android.tttimer.WizardPages.AddRaceView;
 import com.xcracetiming.android.tttimer.WizardPages.AdminMenuView;
 import com.xcracetiming.android.tttimer.WizardPages.SeriesResultsView;
+import com.xcracetiming.android.tttimer.Wizards.AddRaceWizard;
 
 /**
  * @author mab
@@ -50,17 +50,12 @@ public class MainTabsView extends Fragment {
     /**
      * The intent filter is used to listen for events that getActivity() class can handle.  Subscribed events are set up in onCreate.
      */
-	public IntentFilter actionFilter = new IntentFilter();
-	
-    /**
-     * The tab manager in charge of creating and showing tabs
-     */
-    private TabManagerContainer.TabManager tabManager;
+	public IntentFilter actionFilter = new IntentFilter();	
     
     /**
      * The tabHost that contains all of the tabs
      */
-    private TabHost tabHost;
+    private FragmentTabHost tabHost;
     
 	/**
 	 * Inflates the view from xml and returns it.  Nothing else!
@@ -71,7 +66,7 @@ public class MainTabsView extends Fragment {
 	@Override	
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for getActivity() fragment
-        return inflater.inflate(R.layout.tabs_main, container, false);    
+        return CreateTabs();    
     }
 	
 	@Override
@@ -88,11 +83,13 @@ public class MainTabsView extends Fragment {
         // Register for broadcasts when a tab is changed
 		LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mActionReceiver, actionFilter);
 		
-		if(!Boolean.parseBoolean(AppSettings.Instance().ReadValue(getActivity(), AppSettings.AppSetting_ResumePreviousState_Name, "false"))){
-			UpdateRaceState();
-		}else{
-			AppSettings.Instance().Update(getActivity(), AppSettings.AppSetting_ResumePreviousState_Name, "false", true);
-		}
+		UpdateRaceState();
+		
+//		if(!Boolean.parseBoolean(AppSettings.Instance().ReadValue(getActivity(), AppSettings.AppSetting_ResumePreviousState_Name, "false"))){
+//			UpdateRaceState();
+//		}else{
+//			AppSettings.Instance().Update(getActivity(), AppSettings.AppSetting_ResumePreviousState_Name, "false", true);
+//		}
 	}
 	
 	@Override
@@ -171,94 +168,65 @@ public class MainTabsView extends Fragment {
 	}
 	
 	public void UpdateRaceState(){
-//	    // Figure out if a race is currently going on.  
-//        if(FindRaceInProgress()) {
-//        	// Since races are started and tracked only locally, if a race is still going, it was started on getActivity() device
-//	        // If the race already has a raceStartTime, and not all racers are finished, set the startTime variable to raceStartTime and get the timer running
-//        	UpdateFromRaceInProgress();
-//        } else if (FindAvailableRace()){
-//        	// Find a race that's not started yet, but has been set up for getActivity() date
-//        	SetupAvailableRace();
-//        } else if (FindFinishedRace()) {
-//        	// Find a finished race on the current date
-//        	SetupFinishedRace();
-//        } else {
-//        	// If no races are configured for the current date, check if any raceID is in the DB, and display that underneath the upcoming dialog
-//        	// Figure out if there's a race_ID in the database (not -1)
-//        	// if so, set up the tabs for that race, since it's being displayed anyway
-//        	long race_ID = Long.parseLong(AppSettings.Instance().ReadValue(getActivity(), AppSettings.AppSetting_RaceID_Name, Long.toString(-1l)));
-//        	if(race_ID > 0){
-//            	String[] projection = new String[]{Race.Instance().getTableName() + "." + Race._ID + " as _id", Race.RaceDate, Race.RaceStartTime, RaceResults.EndTime, Race.StartInterval};
-//        		String selection = Race.Instance().getTableName() + "." + Race._ID + "=?";
-//        		String[] selectionArgs = new String[]{Long.toString(race_ID)}; 
-//        		String sortOrder = Race.Instance().getTableName() + "." + Race._ID;
-//        		Cursor theRace =  RaceInfoResultsView.Instance().Read(getActivity(), projection, selection, selectionArgs, sortOrder);
-//        		if(theRace != null){
-//        			theRace.moveToFirst();
-//        		}
-//        		if(IsRaceFinished(theRace)){
-//        			// Do the same thing as SetupFinishedRace, but don't show the results tab
-//        			// Hide the timer
-//        	    	timer.setVisibility(View.GONE);     	
-//        	    	// Remove "check in" tab - Don't allow any more racers to check in, the race is done!
-//        	    	tabHost.getTabWidget().getChildTabViewAt(1).setVisibility(View.GONE);//.setEnabled(false);
-//        	    	// Remove "finish" tab - There are no unfinished racers
-//        	    	tabHost.getTabWidget().getChildTabViewAt(3).setVisibility(View.GONE);//.setEnabled(false);
-//        		} else {
-//        			SetupAvailableRace();
-//        		}
-//        		if(theRace != null){
-//        			theRace.close();
-//        			theRace = null;
-//        		}
-//        	}else{
-//        		AppSettings.Instance().Update(getActivity(), AppSettings.AppSetting_RaceID_Name, Long.toString(-1l), true);
-//        	}
-//        	tabHost.setCurrentTabByTag(RaceInfoTab.class.getSimpleName());
-//        	// Figure out if there's a race series in the DB yet
-//        	if(FindAnyRaceSeries()){
-//	        	// Couldn't find a race in progress, or an unstarted race, or a finished race, so need to add a race, or select a previous one
-//	        	// Let the user choose whether to add a race or view a previous one	        	
-//	        	if(FindAnyRaces()){
-//					ChooseViewingMode chooseModeDialog = new ChooseViewingMode();
-//					FragmentManager fm = getSupportFragmentManager();
-//					chooseModeDialog.show(fm, ChooseViewingMode.LOG_TAG);
-//	        	}else{ 
-//	        		AddRaceView addRaceDialog = new AddRaceView();
-//	        		Bundle b = new Bundle();
-//		        	b.putLong(Race.RaceSeries_ID, -1);
-//		        	addRaceDialog.setArguments(b);
-//					FragmentManager fm = getSupportFragmentManager();
-//					addRaceDialog.show(fm, AddRaceView.LOG_TAG);
-//	        	}
-//        	} else{
-//        		// No series yet, need to add one
-//        		ChooseRaceSeriesType chooseRaceSeriesTypeDialog = new ChooseRaceSeriesType();
-//				FragmentManager fm = getSupportFragmentManager();
-//				chooseRaceSeriesTypeDialog.show(fm, ChooseRaceSeriesType.LOG_TAG);
-//        	}
-//        }
-	}
-
-	private boolean FindAnyRaceSeries() {
-		boolean foundRaceSeries = false;
-		try{
-			String[] projection = new String[]{RaceSeries._ID + " as _id"};
-			String selection = RaceSeries.SeriesName + "!='Individual'";
-			String[] selectionArgs = null; 
-			String sortOrder = RaceSeries._ID;
-			
-			Cursor currentRaceSeries = getActivity().getContentResolver().query(RaceSeries.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
-			
-			if(currentRaceSeries.getCount() > 0){	
-				foundRaceSeries = true;
-			}
-			
-			currentRaceSeries.close();
-			currentRaceSeries = null;
-     	}catch(Exception ex){Log.e(LOG_TAG, "FindAnyRaceSeries failed", ex);}
-		
-		return foundRaceSeries;
+	    // Figure out if a race is currently going on.  
+        if(FindRaceInProgress()) {
+        	// Since races are started and tracked only locally, if a race is still going, it was started on getActivity() device
+	        // If the race already has a raceStartTime, and not all racers are finished, set the startTime variable to raceStartTime and get the timer running
+        	UpdateFromRaceInProgress();
+        } else if (FindAvailableRace()){
+        	// Find a race that's not started yet, but has been set up for getActivity() date
+        	SetupAvailableRace();
+        } else if (FindFinishedRace()) {
+        	// Find a finished race on the current date
+        	SetupFinishedRace();
+        } else {
+        	// If no races are configured for the current date, check if any raceID is in the DB, and display that underneath the upcoming dialog
+        	// Figure out if there's a race_ID in the database (not -1)
+        	// if so, set up the tabs for that race, since it's being displayed anyway
+        	long race_ID = Long.parseLong(AppSettings.Instance().ReadValue(getActivity(), AppSettings.AppSetting_RaceID_Name, Long.toString(-1l)));
+        	if(race_ID > 0){
+            	String[] projection = new String[]{Race.Instance().getTableName() + "." + Race._ID + " as _id", Race.RaceDate, Race.RaceStartTime, RaceResults.EndTime, Race.StartInterval};
+        		String selection = Race.Instance().getTableName() + "." + Race._ID + "=?";
+        		String[] selectionArgs = new String[]{Long.toString(race_ID)}; 
+        		String sortOrder = Race.Instance().getTableName() + "." + Race._ID;
+        		Cursor theRace =  RaceInfoResultsView.Instance().Read(getActivity(), projection, selection, selectionArgs, sortOrder);
+        		if(theRace != null){
+        			theRace.moveToFirst();
+        		}
+        		if(IsRaceFinished(theRace)){
+        			// Do the same thing as SetupFinishedRace, but don't show the results tab
+        			// TODO: Hide the timer
+        	    	//timer.setVisibility(View.GONE);     	
+        	    	// Remove "check in" tab - Don't allow any more racers to check in, the race is done!
+        	    	tabHost.getTabWidget().getChildTabViewAt(1).setVisibility(View.GONE);//.setEnabled(false);
+        	    	// Remove "finish" tab - There are no unfinished racers
+        	    	tabHost.getTabWidget().getChildTabViewAt(3).setVisibility(View.GONE);//.setEnabled(false);
+        		} else {
+        			SetupAvailableRace();
+        		}
+        		if(theRace != null){
+        			theRace.close();
+        			theRace = null;
+        		}
+        	}else{
+        		AppSettings.Instance().Update(getActivity(), AppSettings.AppSetting_RaceID_Name, Long.toString(-1l), true);
+        	}
+        	tabHost.setCurrentTabByTag(RaceInfoTab.class.getSimpleName());
+        	
+        	// Couldn't find a race in progress, or an unstarted race, or a finished race, so need to add a race, or select a previous one
+        	// Let the user choose whether to add a race or view a previous one	        	
+        	if(FindAnyRaces()){			
+				Intent showChooseViewingMode = new Intent();
+				showChooseViewingMode.setAction(TTTimerTabsActivity.CHANGE_MAIN_VIEW_ACTION);
+				showChooseViewingMode.putExtra("ShowView", new ChooseViewingMode().getClass().getCanonicalName());
+				LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(showChooseViewingMode);
+        	}else{ 
+        		Intent showAddRaceWizard = new Intent();
+				showAddRaceWizard.setAction(TTTimerTabsActivity.CHANGE_MAIN_VIEW_ACTION);
+				showAddRaceWizard.putExtra("ShowView", new AddRaceWizard().getClass().getCanonicalName());
+				LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(showAddRaceWizard);
+        	}
+        }
 	}
 
 	/**
@@ -377,28 +345,30 @@ public class MainTabsView extends Fragment {
 	/**
 	 * Create all of the tabs and add them to the tabManager/tabHost
 	 */
-	private void CreateTabs() {
+	private FragmentTabHost CreateTabs() {
 		if(tabHost == null){
 	        // Set up the tabs
-		    tabHost = (TabHost)getView().findViewById(android.R.id.tabhost);  // The activity TabHost
-		    tabHost.setup();
-		    tabManager = new TabManagerContainer.TabManager(getActivity(), tabHost, R.id.realtabcontent);
+		    tabHost = new FragmentTabHost(getActivity());//(FragmentTabHost)getView().findViewById(android.R.id.tabhost);  // The activity TabHost
+		    tabHost.setup(getActivity(), getChildFragmentManager(), R.id.realtabcontent);
+		    //tabManager = new TabManagerContainer.TabManager(getActivity(), tabHost, R.id.realtabcontent);
 		    
 		    tabHost.getTabWidget().setDividerDrawable(R.drawable.tab_divider);
 		    
 		    // Race Info Tab
-		    tabManager.addTab(tabHost.newTabSpec(RaceInfoTab.class.getSimpleName()).setIndicator(createTabView(getActivity(),"Race Info")), RaceInfoTab.class, null);
+		    tabHost.addTab(tabHost.newTabSpec(RaceInfoTab.class.getSimpleName()).setIndicator(createTabView(getActivity(),"Race Info")), RaceInfoTab.class, null);
 		    // Check In Tab
-		    tabManager.addTab(tabHost.newTabSpec(CheckInTab.class.getSimpleName()).setIndicator(createTabView(getActivity(),"Check In")), CheckInTab.class, null);
+		    tabHost.addTab(tabHost.newTabSpec(CheckInTab.class.getSimpleName()).setIndicator(createTabView(getActivity(),"Check In")), CheckInTab.class, null);
 		    // Start Tab
-		    tabManager.addTab(tabHost.newTabSpec(StartTab.class.getSimpleName()).setIndicator(createTabView(getActivity(),"Start")), StartTab.class, null);
+		    tabHost.addTab(tabHost.newTabSpec(StartTab.class.getSimpleName()).setIndicator(createTabView(getActivity(),"Start")), StartTab.class, null);
 		    // Finish Tab
-		    tabManager.addTab(tabHost.newTabSpec(FinishTab.class.getSimpleName()).setIndicator(createTabView(getActivity(),"Finish")), FinishTab.class, null);
+		    tabHost.addTab(tabHost.newTabSpec(FinishTab.class.getSimpleName()).setIndicator(createTabView(getActivity(),"Finish")), FinishTab.class, null);
 		    // Results Tab
-		    tabManager.addTab(tabHost.newTabSpec(ResultsTab.class.getSimpleName()).setIndicator(createTabView(getActivity(),"Results")), ResultsTab.class, null);
+		    tabHost.addTab(tabHost.newTabSpec(ResultsTab.class.getSimpleName()).setIndicator(createTabView(getActivity(),"Results")), ResultsTab.class, null);
 		    // Other Tab
-		    tabManager.addTab(tabHost.newTabSpec(OtherTab.class.getSimpleName()).setIndicator(createTabView(getActivity(),"Other")), OtherTab.class, null);
+		    tabHost.addTab(tabHost.newTabSpec(OtherTab.class.getSimpleName()).setIndicator(createTabView(getActivity(),"Other")), OtherTab.class, null);		    
 		}
+		
+		return tabHost;
 	}
 	
 	private View createTabView(final Context context, final String text) {
@@ -447,28 +417,7 @@ public class MainTabsView extends Fragment {
 	 */
 	public void ShowTab(String tabName) {
     	tabHost.setCurrentTabByTag(tabName);  
-	}
-	
-	@Override
-	public void onStart(){
-		try{
-			super.onStart();
-			
-			CreateTabs();
-    	}catch(Exception ex){
-    		Log.e(LOG_TAG, "Unexpected error in onStart", ex);
-    	}     
-	}
-    
-    @Override
-    public void onStop()
-    {
-    	try{
-	    	super.onStop();
-    	}catch(Exception ex){
-    		Log.e(LOG_TAG, "Unexpected error in onStop", ex);
-    	}        
-    }	 
+	} 
 	
 	/**
 	 * Figure out if there are any previous races in the DB

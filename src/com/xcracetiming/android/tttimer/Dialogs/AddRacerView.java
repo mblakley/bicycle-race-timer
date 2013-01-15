@@ -9,7 +9,6 @@ import com.xcracetiming.android.tttimer.DataAccess.RaceCategory;
 import com.xcracetiming.android.tttimer.DataAccess.Racer;
 import com.xcracetiming.android.tttimer.DataAccess.RacerSeriesInfo;
 import com.xcracetiming.android.tttimer.DataAccess.RacerUSACInfo;
-import com.xcracetiming.android.tttimer.WizardPages.BaseWizardPage;
 
 import android.content.Context;
 import android.content.Intent;

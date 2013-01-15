@@ -4,11 +4,14 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.View;
 
 import com.xcracetiming.android.tttimer.R;
+import com.xcracetiming.android.tttimer.WizardPages.AddLocationView;
+import com.xcracetiming.android.tttimer.WizardPages.AddRaceCategoriesView;
 import com.xcracetiming.android.tttimer.WizardPages.AddRaceSeriesView;
+import com.xcracetiming.android.tttimer.WizardPages.AddRaceView;
+import com.xcracetiming.android.tttimer.WizardPages.BaseWizardPage;
 import com.xcracetiming.android.tttimer.WizardPages.PartOfSeries;
 
 public class AddRaceWizard extends BaseWizard implements View.OnClickListener {
@@ -33,6 +36,15 @@ public class AddRaceWizard extends BaseWizard implements View.OnClickListener {
 		
 		wizardPages.add(new PartOfSeries());
 		wizardPages.add(new AddRaceSeriesView());
+		wizardPages.add(new AddLocationView());
+		wizardPages.add(new AddRaceCategoriesView());
+		//wizardPages.add(new AddUSACInfoView());
+		wizardPages.add(new AddRaceView());
+	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
 		
 		currentWizardPage = wizardPages.get(currentWizardPageIndex);
 		
@@ -40,6 +52,8 @@ public class AddRaceWizard extends BaseWizard implements View.OnClickListener {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();	            
         fragmentTransaction.add(R.id.wizardFrame, (Fragment)currentWizardPage);
 		fragmentTransaction.commit();
+		
+    	getImageButton(R.id.btnBaseWizardPageBack).setEnabled(!(currentWizardPageIndex <= 0));
 	}
 
 	@Override
@@ -52,33 +66,30 @@ public class AddRaceWizard extends BaseWizard implements View.OnClickListener {
 		return LOG_TAG;
 	}
 
-	public void SaveAndContinue() {
-		
-		// Save the info from the displayed wizard page
-		Bundle args = currentWizardPage.Save();
-		
-		// Figure out the next wizard page to display
-		currentWizardPageIndex++;
-		currentWizardPage = wizardPages.get(currentWizardPageIndex);	
-        ((Fragment)currentWizardPage).setArguments(args);
-
-		// Show the next wizard page						
-		FragmentManager fragmentManager = getChildFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();		         
-        fragmentTransaction.replace(R.id.wizardFrame, (Fragment)currentWizardPage);
-		fragmentTransaction.commit();		
+	@Override
+	protected void SetNextWizardIndex(Bundle args) {
+		switch(currentWizardPageIndex){
+			case 0:				
+				if(args.getBoolean(PartOfSeries.LOG_TAG)){
+					currentWizardPageIndex++;
+				}else{
+					currentWizardPageIndex+=2;
+				}
+				break;
+		}
 	}
 	
 	@Override
-	public void onClick(View v) { 
-		try{
-			switch(v.getId()){			
-				default:
-					super.onClick(v);
-			}
-		}
-		catch(Exception ex){
-			Log.e(LOG_TAG, "onClick failed",ex);
+	protected void SetPreviousWizardIndex() {
+		Bundle args = ((BaseWizardPage)currentWizardPage).getArguments();
+		switch(currentWizardPageIndex){
+			case 0:				
+				if(args.getBoolean(PartOfSeries.LOG_TAG)){
+					currentWizardPageIndex--;
+				}else{
+					dismiss();
+				}
+				break;
 		}
 	}
 }

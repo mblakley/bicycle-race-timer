@@ -30,7 +30,7 @@
             style="@style/Medium" >
         </TextView>
     </LinearLayout>
-    
+        
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="fill_parent"

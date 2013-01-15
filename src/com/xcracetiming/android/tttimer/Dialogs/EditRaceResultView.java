@@ -9,7 +9,6 @@ import com.xcracetiming.android.tttimer.DataAccess.UnassignedTimes;
 import com.xcracetiming.android.tttimer.DataAccess.Views.SeriesRaceIndividualResultsView;
 import com.xcracetiming.android.tttimer.Tabs.FinishTab;
 import com.xcracetiming.android.tttimer.Utilities.Calculations;
-import com.xcracetiming.android.tttimer.WizardPages.BaseWizardPage;
 
 import android.content.ContentValues;
 import android.content.Intent;

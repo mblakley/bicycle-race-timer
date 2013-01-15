@@ -2,10 +2,6 @@ package com.xcracetiming.android.tttimer.Dialogs;
 
 import com.xcracetiming.android.tttimer.R;
 import com.xcracetiming.android.tttimer.TTTimerTabsActivity;
-import com.xcracetiming.android.tttimer.DataAccess.Race;
-import com.xcracetiming.android.tttimer.WizardPages.AddRaceView;
-import com.xcracetiming.android.tttimer.WizardPages.AdminMenuView;
-import com.xcracetiming.android.tttimer.WizardPages.BaseWizardPage;
 import com.xcracetiming.android.tttimer.Wizards.AddRaceWizard;
 
 import android.util.Log;

@@ -8,29 +8,75 @@
     style="@style/Padded" >
 
     <TextView
-        android:id="@+id/lblRaceSeriesName"
+        android:id="@+id/lblIsRacePartOfSeries"
         style="@style/Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10sp"
         android:text="Is this race part of a series?" />
 	
-	<RadioGroup 
+	<RadioGroup
+	    android:id="@+id/radioGroup" 
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
 	    android:orientation="vertical">
 
 	    <RadioButton
-	        android:id="@+id/radioYes"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:checked="true"
-	        android:text="Yes" />
-	
-	    <RadioButton
 	        android:id="@+id/radioNo"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
+   	        android:checked="true"
 	        android:text="No" />
+	    
+	    <RadioButton
+	        android:id="@+id/radioNewSeries"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="Create a new series" />
+
+	    <LinearLayout
+	        android:id="@+id/llRaceSeriesName"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content" 
+	        android:visibility="gone">
+
+	        <TextView
+	            android:id="@+id/lblRaceSeriesName"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="Series Name:" />
+
+	        <EditText
+	            android:id="@+id/txtRaceSeriesName"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content" 
+	            style="@style/Medium"/>
+
+	    </LinearLayout>
+	    
+	    <RadioButton
+	        android:id="@+id/radioExistingSeries"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="Choose an existing series" />
+
+	    <LinearLayout
+	        android:id="@+id/llExistingRaceSeries"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content" 
+	        android:visibility="gone">
+
+	        <TextView
+	            android:id="@+id/lblExistingRaceSeries"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="Race Series:" />
+
+	        <Spinner
+	            android:id="@+id/spinnerExistingRaceSeries"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content" />
+
+	    </LinearLayout>
 	</RadioGroup>
 </LinearLayout>

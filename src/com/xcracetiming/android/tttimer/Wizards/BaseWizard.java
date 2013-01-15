@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 
 import com.xcracetiming.android.tttimer.R;
-import com.xcracetiming.android.tttimer.DataAccess.AppSettings;
 import com.xcracetiming.android.tttimer.WizardPages.IWizardPage;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +21,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public abstract class BaseWizard extends Fragment implements View.OnClickListener, IWizard {
 	private Hashtable<Integer, View> viewList = new Hashtable<Integer, View>();
@@ -45,26 +46,16 @@ public abstract class BaseWizard extends Fragment implements View.OnClickListene
 	public void onResume() {
 		super.onResume();
 		
-		if(showNavButtons){
-			getImageButton(R.id.btnBaseWizardPageBack).setVisibility(View.VISIBLE);
-			getImageButton(R.id.btnBaseWizardPageForward).setVisibility(View.VISIBLE);
-		}else{
-			getImageButton(R.id.btnBaseWizardPageBack).setVisibility(View.GONE);
-			getImageButton(R.id.btnBaseWizardPageForward).setVisibility(View.GONE);
-		}
+		getImageButton(R.id.btnBaseWizardPageBack).setVisibility(showNavButtons ? View.VISIBLE : View.VISIBLE);
+		getImageButton(R.id.btnBaseWizardPageForward).setVisibility(showNavButtons ? View.VISIBLE : View.VISIBLE);
 		
 		getTextView(R.id.title).setText(GetTitleResourceID());
 	}
 	
 	protected void showNavButtons(boolean show) {
 		showNavButtons = show;
-		if(showNavButtons){
-			getImageButton(R.id.btnBaseWizardPageBack).setVisibility(View.VISIBLE);
-			getImageButton(R.id.btnBaseWizardPageForward).setVisibility(View.VISIBLE);
-		}else{
-			getImageButton(R.id.btnBaseWizardPageBack).setVisibility(View.GONE);
-			getImageButton(R.id.btnBaseWizardPageForward).setVisibility(View.GONE);
-		}
+		getImageButton(R.id.btnBaseWizardPageBack).setVisibility(showNavButtons ? View.VISIBLE : View.VISIBLE);
+		getImageButton(R.id.btnBaseWizardPageForward).setVisibility(showNavButtons ? View.VISIBLE : View.VISIBLE);
 	}
 	
 	@Override
@@ -147,59 +138,87 @@ public abstract class BaseWizard extends Fragment implements View.OnClickListene
     }
 
 	public void onClick(View v) {
-		FragmentManager fragmentManager = getChildFragmentManager();
-		switch(v.getId()){			
-			case R.id.btnBaseWizardPageBack:		
-				// Save the info from the displayed wizard page
-				Bundle backArgs = currentWizardPage.Save();
-				
-				// Figure out the next wizard page to display
-				currentWizardPageIndex--;
-				currentWizardPage = wizardPages.get(currentWizardPageIndex);	
-		        ((Fragment)currentWizardPage).setArguments(backArgs);
-
-				// Show the next wizard page						
-		        fragmentManager.beginTransaction().replace(R.id.wizardFrame, (Fragment)currentWizardPage).commit();	
-		        
-		        if(currentWizardPageIndex <= 0){
-		        	getImageButton(R.id.btnBaseWizardPageBack).setEnabled(false);
-		        }
-				break;
-			case R.id.btnBaseWizardPageForward:
-				// Save the info from the displayed wizard page
-				Bundle args = currentWizardPage.Save();
-				
-				// Figure out the next wizard page to display
-				currentWizardPageIndex++;
-				currentWizardPage = wizardPages.get(currentWizardPageIndex);	
-		        ((Fragment)currentWizardPage).setArguments(args);
-
-				// Show the next wizard page						
-		        fragmentManager.beginTransaction().replace(R.id.wizardFrame, (Fragment)currentWizardPage).commit();
-		        
-		        if(currentWizardPageIndex >= wizardPages.size() - 1){
-		        	getImageButton(R.id.btnBaseWizardPageForward).setEnabled(false);
-		        }
-//				Intent showAddRace = new Intent();
-//				showAddRace.setAction(TTTimerTabsActivity.CHANGE_MAIN_VIEW_ACTION);
-//				showAddRace.putExtra("ShowWizard", new MainTabsView().getClass().getCanonicalName());
-//				LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(showAddRace);
-				break;
-			case R.id.btnSave:
-				SaveAndContinue();
-				break;
-			case R.id.btnCancel:
-				dismiss();
-				break;
+		try{
+			FragmentManager fragmentManager = getChildFragmentManager();
+			switch(v.getId()){			
+				case R.id.btnBaseWizardPageBack:		
+					// Save the info from the displayed wizard page
+					Bundle backArgs = currentWizardPage.Save();				
+					
+					// Figure out the next wizard page to display
+					SetPreviousWizardIndex();
+					currentWizardPage = wizardPages.get(currentWizardPageIndex);	
+			        ((Fragment)currentWizardPage).setArguments(backArgs);
+	
+					// Show the next wizard page						
+			        fragmentManager.beginTransaction().replace(R.id.wizardFrame, (Fragment)currentWizardPage).commit();	
+			        
+			        SetupForwardAndBack();
+					break;
+				case R.id.btnBaseWizardPageForward:
+					// Save the info from the displayed wizard page
+					Bundle args = currentWizardPage.Save();
+					
+					// Figure out the next wizard page to display
+					currentWizardPageIndex++;
+					currentWizardPage = wizardPages.get(currentWizardPageIndex);	
+			        ((Fragment)currentWizardPage).setArguments(args);
+	
+					// Show the next wizard page						
+			        fragmentManager.beginTransaction().replace(R.id.wizardFrame, (Fragment)currentWizardPage).commit();
+			        
+			        SetupForwardAndBack();
+					break;
+				case R.id.btnSave:
+					SaveAndContinue();
+					break;
+				case R.id.btnCancel:
+					dismiss();
+					break;
+			}
+		} catch(Exception e){
+			Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
 		}
 	}
-	
+
+	protected abstract void SetPreviousWizardIndex();
+
+	protected abstract void SetNextWizardIndex(Bundle args);
+
+	public void SaveAndContinue() throws Exception {
+		
+		// Save the info from the displayed wizard page
+		Bundle args = currentWizardPage.Save();
+		
+		if(currentWizardPageIndex == wizardPages.size() - 1){
+			dismiss();
+			return;
+		}
+		// Figure out the next wizard page to display
+		SetNextWizardIndex(args);
+		currentWizardPage = wizardPages.get(currentWizardPageIndex);	
+        ((Fragment)currentWizardPage).setArguments(args);
+
+		// Show the next wizard page						
+		FragmentManager fragmentManager = getChildFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();		         
+        fragmentTransaction.replace(R.id.wizardFrame, (Fragment)currentWizardPage);
+		fragmentTransaction.commit();	
+		
+		SetupForwardAndBack();
+	}
+	 
 	public void dismiss() {
-		AppSettings.Instance().Update(getActivity(), AppSettings.AppSetting_ResumePreviousState_Name, "false", true);
-		getFragmentManager().popBackStackImmediate();
+		getActivity().getSupportFragmentManager().popBackStackImmediate();
 	}
 
 	public void setTitleText(int getTitleResourceID) {
 		getTextView(R.id.title).setText(getTitleResourceID);
+	}
+	
+	public void SetupForwardAndBack(){
+		// Setup the forward and back buttons for edge cases
+    	getImageButton(R.id.btnBaseWizardPageBack).setEnabled(!(currentWizardPageIndex <= 0));        
+    	getImageButton(R.id.btnBaseWizardPageForward).setEnabled(!(currentWizardPageIndex >= wizardPages.size() - 1));
 	}
 }

@@ -3,7 +3,6 @@ package com.xcracetiming.android.tttimer.Dialogs;
 import com.xcracetiming.android.tttimer.R;
 import com.xcracetiming.android.tttimer.AsyncTasks.ResetAllRacersStartTime;
 import com.xcracetiming.android.tttimer.DataAccess.AppSettings;
-import com.xcracetiming.android.tttimer.WizardPages.BaseWizardPage;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

@@ -7,7 +7,6 @@ import com.xcracetiming.android.tttimer.DataAccess.Racer;
 import com.xcracetiming.android.tttimer.DataAccess.RacerSeriesInfo;
 import com.xcracetiming.android.tttimer.DataAccess.Views.SeriesRaceTeamResultsView;
 import com.xcracetiming.android.tttimer.Utilities.RestartLoaderTextWatcher;
-import com.xcracetiming.android.tttimer.WizardPages.BaseWizardPage;
 
 import android.database.Cursor;
 import android.os.Bundle;
@@ -45,6 +44,17 @@ public class ChooseTeamRacer extends BaseDialog implements View.OnClickListener,
 	private ChooseRacerDialogListener caller;
 	
 	private int racerNum;
+	
+	public ChooseTeamRacer(){};
+	
+	@Override
+	public void setArguments(Bundle args) {
+		if(args != null){
+			racerNum = args.getInt("RacerNum");
+			
+			// TODO Figure out how to deal with caller
+		}
+	}
 	
 	public ChooseTeamRacer(int racerNum, ChooseRacerDialogListener caller){
 		this.racerNum = racerNum;

@@ -8,7 +8,6 @@ import com.xcracetiming.android.tttimer.DataAccess.Racer;
 import com.xcracetiming.android.tttimer.DataAccess.RacerSeriesInfo;
 import com.xcracetiming.android.tttimer.DataAccess.TeamInfo;
 import com.xcracetiming.android.tttimer.DataAccess.TeamMembers;
-import com.xcracetiming.android.tttimer.WizardPages.BaseWizardPage;
 
 import android.database.Cursor;
 import android.net.Uri;
