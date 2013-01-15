@@ -1,26 +1,36 @@
 package com.xcracetiming.android.tttimer.WizardPages;
 
 import com.xcracetiming.android.tttimer.R;
+import com.xcracetiming.android.tttimer.DataAccess.RaceSeries;
+import com.xcracetiming.android.tttimer.Utilities.Loaders;
 
+import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.support.v4.widget.CursorAdapter;
+import android.support.v4.widget.SimpleCursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 
-public class PartOfSeries extends BaseWizardPage implements OnCheckedChangeListener {
+public class PartOfSeries extends BaseWizardPage implements OnCheckedChangeListener, LoaderManager.LoaderCallbacks<Cursor>{
 	public static final String LOG_TAG = "PartOfSeries";	
+
+	private SimpleCursorAdapter raceSeriesCursorAdapter = null;
 	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		 return inflater.inflate(R.layout.wp_part_of_series, container, false);
 	}
-	
+
 	@Override
-	public void onStart() {
-		super.onStart();
-		getRadioGroup(R.id.radioGroup).setOnCheckedChangeListener(this);
+	protected void addListeners() {
+		getRadioGroup(R.id.radioGroup).setOnCheckedChangeListener(this);	
 	}
 	
 	@Override
@@ -89,6 +99,76 @@ public class PartOfSeries extends BaseWizardPage implements OnCheckedChangeListe
 				getLinearLayout(R.id.llRaceSeriesName).setVisibility(View.GONE);
 				getLinearLayout(R.id.llExistingRaceSeries).setVisibility(View.GONE);
 				break;
+		}
+	}
+	
+	@Override
+	protected void startAllLoaders() {
+		// Initialize the cursor loader for the races list
+		this.getLoaderManager().initLoader(Loaders.RACE_SERIES_LOADER, null, this);
+	}
+	
+	@Override
+	protected void destroyAllLoaders() {
+		// Destroy the cursor loaders
+		this.getLoaderManager().destroyLoader(Loaders.RACE_SERIES_LOADER);
+	}
+
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		Log.v(LOG_TAG, "onCreateLoader start: id=" + Integer.toString(id));
+		CursorLoader loader = null;
+		switch(id){
+			case Loaders.RACE_SERIES_LOADER:
+				loader = Loaders.GetAllRaceSeriesNames(getActivity());
+				break;
+		}
+		Log.v(LOG_TAG, "onCreateLoader complete: id=" + Integer.toString(id));
+		return loader;
+	}
+
+	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+		try{
+			Log.v(LOG_TAG, "onLoadFinished start: id=" + Integer.toString(loader.getId()));
+			String[] columns;
+            int[] to;
+			switch(loader.getId()){
+				case Loaders.RACE_SERIES_LOADER:
+					columns = new String[] { RaceSeries.SeriesName };
+		            to = new int[] {android.R.id.text1 };
+		            
+		            if(cursor.getCount() > 0){	
+		            	// Make sure the option is available
+		            	getRadioButton(R.id.radioExistingSeries).setVisibility(View.VISIBLE);	
+		            	
+						// Create the cursor adapter for the list of races
+			            raceSeriesCursorAdapter = new SimpleCursorAdapter(getActivity(), R.layout.control_simple_spinner, cursor, columns, to, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+			            raceSeriesCursorAdapter.setDropDownViewResource( R.layout.control_simple_spinner_dropdown );
+			        	getSpinner(R.id.spinnerExistingRaceSeries).setAdapter(raceSeriesCursorAdapter);
+						
+			        	raceSeriesCursorAdapter.swapCursor(cursor);
+		            }else{
+		            	// Don't show the option to choose existing
+		            	getRadioButton(R.id.radioExistingSeries).setVisibility(View.GONE);
+		            }
+					break;
+			}
+			Log.v(LOG_TAG, "onLoadFinished complete: id=" + Integer.toString(loader.getId()));
+		}catch(Exception ex){
+			Log.e(LOG_TAG, "onLoadFinished error", ex); 
+		}
+	}
+
+	public void onLoaderReset(Loader<Cursor> loader) {
+		try{
+			Log.v(LOG_TAG, "onLoadFinished start: id=" + Integer.toString(loader.getId()));			
+			switch(loader.getId()){
+				case Loaders.RACE_SERIES_LOADER:
+					raceSeriesCursorAdapter.swapCursor(null);
+					break;
+			}
+			Log.v(LOG_TAG, "onLoaderReset complete: id=" + Integer.toString(loader.getId()));
+		}catch(Exception ex){
+			Log.e(LOG_TAG, "onLoaderReset error", ex); 
 		}
 	}
 }

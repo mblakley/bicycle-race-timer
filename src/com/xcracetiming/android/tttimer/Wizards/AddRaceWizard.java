@@ -81,15 +81,15 @@ public class AddRaceWizard extends BaseWizard implements View.OnClickListener {
 	
 	@Override
 	protected void SetPreviousWizardIndex() {
-		Bundle args = ((BaseWizardPage)currentWizardPage).getArguments();
-		switch(currentWizardPageIndex){
-			case 0:				
-				if(args.getBoolean(PartOfSeries.LOG_TAG)){
+//		Bundle args = ((BaseWizardPage)currentWizardPage).getArguments();
+//		switch(currentWizardPageIndex){
+//			case 0:				
+//				if(args.getBoolean(PartOfSeries.LOG_TAG)){
 					currentWizardPageIndex--;
-				}else{
-					dismiss();
-				}
-				break;
-		}
+//				}else{
+//					dismiss();
+//				}
+//				break;
+//		}
 	}
 }

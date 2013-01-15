@@ -11,6 +11,10 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 
 import com.xcracetiming.android.tttimer.R;
 import com.xcracetiming.android.tttimer.Controls.Timer;
@@ -128,6 +132,14 @@ public class TTTimerTabsActivity extends FragmentActivity {
 						Log.e("TTTimerTabsActivity.onReceive", "Unable to create class of type " + className, e);
 					}
         		}
+
+    			boolean showTimer = true;
+        		if(intent.hasExtra("ShowTimer")){
+        			showTimer = intent.getBooleanExtra("ShowTimer", true);
+        		}
+    			timer.setVisibility(showTimer? View.VISIBLE : View.GONE);
+				LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT,0,(float) (showTimer? 0.85:1));
+				findViewById(R.id.fragment_container).setLayoutParams(lp);
         	}
         }
     };

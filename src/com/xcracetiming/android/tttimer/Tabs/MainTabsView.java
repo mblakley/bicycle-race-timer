@@ -224,6 +224,7 @@ public class MainTabsView extends Fragment {
         		Intent showAddRaceWizard = new Intent();
 				showAddRaceWizard.setAction(TTTimerTabsActivity.CHANGE_MAIN_VIEW_ACTION);
 				showAddRaceWizard.putExtra("ShowView", new AddRaceWizard().getClass().getCanonicalName());
+				showAddRaceWizard.putExtra("ShowTimer", false);
 				LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(showAddRaceWizard);
         	}
         }

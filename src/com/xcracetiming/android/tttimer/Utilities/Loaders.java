@@ -12,6 +12,7 @@ import com.xcracetiming.android.tttimer.DataAccess.Views.RaceInfoResultsView;
 import com.xcracetiming.android.tttimer.DataAccess.Views.RaceInfoView;
 import com.xcracetiming.android.tttimer.Utilities.QueryUtilities.SelectBuilder;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.CursorLoader;
@@ -43,12 +44,22 @@ public final class Loaders {
 	// AddRaceView
 	public static final int RACE_TYPES_LOADER = 1014;
 
+	public static final int RACE_SERIES_LOADER = 1015;
+
 	public static CursorLoader GetAllCourseNames(FragmentActivity activity) {
 		String[] projection = new String[]{RaceLocation._ID, RaceLocation.CourseName};
 		String selection = null;
 		String[] selectionArgs = null;
 		String sortOrder = RaceLocation.CourseName;
 		return new CursorLoader(activity, RaceLocation.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+	}
+	
+	public static CursorLoader GetAllRaceSeriesNames(Context context) {
+		String[] projection = new String[]{RaceSeries._ID, RaceSeries.SeriesName};
+		String selection = SelectBuilder.Where(RaceSeries.Instance().getColumnName(RaceSeries._ID)).NotEqualsParameter().toString();
+		String[] selectionArgs = new String[]{"1"};
+		String sortOrder = RaceSeries.SeriesName;
+		return new CursorLoader(context, RaceSeries.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 	}
 
 	public static CursorLoader GetAllRaceTypeDescriptions(FragmentActivity activity) {

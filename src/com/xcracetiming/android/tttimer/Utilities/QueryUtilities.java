@@ -32,6 +32,12 @@ public class QueryUtilities {
 			return this;
 		}
 		
+		public SelectBuilder NotEqualsParameter(){
+			fullQuery += "!=?";
+			
+			return this;
+		}
+		
 		public SelectBuilder And(String nextTable){
 			fullQuery += " and " + nextTable;
 			
