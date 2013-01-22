@@ -219,6 +219,9 @@ public class TTProvider extends ContentProvider {
     		db.execSQL(LocationImages.Instance().getCreate());
     		db.execSQL(RacerUSACInfo.Instance().getCreate());
     		db.execSQL(RaceCategory.Instance().getCreate());
+    		db.execSQL(RaceRaceCategories.Instance().getCreate());
+    		db.execSQL(RaceSeriesCategories.Instance().getCreate());
+    		
     		db.execSQL(RaceSeries.Instance().getCreate());
     		Calendar cal = Calendar.getInstance();
 			cal.setTimeInMillis(System.currentTimeMillis());

@@ -1,5 +1,8 @@
 package com.xcracetiming.android.tttimer.Wizards;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -27,6 +30,8 @@ public class AddRaceWizard extends BaseWizard implements View.OnClickListener {
 	// Save and continue calls the "WizardPage.Save" function on the currently selected page fragment, and moves the next one in the list into the frame layout
 	// Cancel just kills the containing wizard fragment
 	
+	ArrayList<String> pageList = new ArrayList<String>(Arrays.asList("AddRaceSeries"));
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -34,9 +39,13 @@ public class AddRaceWizard extends BaseWizard implements View.OnClickListener {
 			return;
 		}
 		
-		wizardPages.add(new PartOfSeries());
+		// Figure out if this race is part of a race series
+		wizardPages.add(new PartOfSeries()); // If part of a pre-existing series, select it and move on
+		// If it is part of a series, and the series hasn't been created yet, the create it
 		wizardPages.add(new AddRaceSeriesView());
+		// Check if there are any locations available, and if not, create one
 		wizardPages.add(new AddLocationView());
+		// Add race categories to the race (add to RaceCategtories, RaceRaceCategories, and maybe RaceSeriesCategories)
 		wizardPages.add(new AddRaceCategoriesView());
 		//wizardPages.add(new AddUSACInfoView());
 		wizardPages.add(new AddRaceView());
@@ -64,6 +73,11 @@ public class AddRaceWizard extends BaseWizard implements View.OnClickListener {
 	@Override
 	protected String LOG_TAG() {
 		return LOG_TAG;
+	}
+	
+	@Override
+	public void SaveAndContinue() throws Exception {
+		// Check if we are on the last page, and if so, do the final save to create all of the database records in order
 	}
 
 	@Override
