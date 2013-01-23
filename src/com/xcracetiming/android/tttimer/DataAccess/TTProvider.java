@@ -218,10 +218,7 @@ public class TTProvider extends ContentProvider {
     		db.execSQL("INSERT INTO " + LookupGroups.Instance().getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Category + "', 'B5');");
     		db.execSQL(LocationImages.Instance().getCreate());
     		db.execSQL(RacerUSACInfo.Instance().getCreate());
-    		db.execSQL(RaceCategory.Instance().getCreate());
-    		db.execSQL(RaceRaceCategories.Instance().getCreate());
-    		db.execSQL(RaceSeriesCategories.Instance().getCreate());
-    		
+    		db.execSQL(RaceCategory.Instance().getCreate());    		
     		db.execSQL(RaceSeries.Instance().getCreate());
     		Calendar cal = Calendar.getInstance();
 			cal.setTimeInMillis(System.currentTimeMillis());
