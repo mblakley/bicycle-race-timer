@@ -70,7 +70,7 @@ public class AddRaceCategoriesView extends BaseWizardPage implements View.OnClic
 	}
 	
 	@Override 
-	protected int GetTitleResourceID() {
+	public int GetTitleResourceID() {
 		return R.string.AddRaceCategory;
 	}
 	

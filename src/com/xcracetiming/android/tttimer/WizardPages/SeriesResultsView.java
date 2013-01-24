@@ -57,7 +57,7 @@ public class SeriesResultsView extends BaseWizardPage implements View.OnClickLis
 	}
 	
 	@Override 
-	protected int GetTitleResourceID() {
+	public int GetTitleResourceID() {
 		return R.string.SeriesResults;
 	}
 	

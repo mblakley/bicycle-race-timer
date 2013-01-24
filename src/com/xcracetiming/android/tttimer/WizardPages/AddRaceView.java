@@ -85,7 +85,7 @@ public class AddRaceView extends BaseWizardPage implements View.OnClickListener,
 	}
 
 	@Override 
-	protected int GetTitleResourceID() {
+	public int GetTitleResourceID() {
 		return R.string.AddRace;
 	}
 	

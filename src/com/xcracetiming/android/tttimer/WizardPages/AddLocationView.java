@@ -58,8 +58,19 @@ public class AddLocationView extends BaseWizardPage implements View.OnClickListe
 		return v;
 	}
 	
+	@Override
+	public void setArguments(Bundle args) {
+//		if(args.containsKey(LOG_TAG)){
+//			getRadioButton(R.id.radioNewSeries).setChecked(args.getBoolean(LOG_TAG));
+//			getRadioButton(R.id.radioNo).setChecked(!args.getBoolean(LOG_TAG));
+//		}
+//		if(args.containsKey("RaceSeriesName")){
+//			getTextView(R.id.txtRaceSeriesName).setText(args.getString("RaceSeriesName"));
+//		}
+	}
+	
 	@Override 
-	protected int GetTitleResourceID() {
+	public int GetTitleResourceID() {
 		return R.string.AddLocation;
 	}
 	

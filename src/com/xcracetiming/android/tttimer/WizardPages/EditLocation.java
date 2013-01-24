@@ -90,7 +90,7 @@ public class EditLocation extends BaseWizardPage implements View.OnClickListener
 	}
 	
 	@Override 
-	protected int GetTitleResourceID() {
+	public int GetTitleResourceID() {
 		return R.string.EditLocation;
 	}
 	

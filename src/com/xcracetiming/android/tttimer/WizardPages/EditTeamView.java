@@ -14,4 +14,9 @@ public class EditTeamView extends AddTeamView implements View.OnClickListener, L
 		// TODO Auto-generated constructor stub
 	}
 
+	@Override
+	public int GetTitleResourceID() {
+		// TODO Auto-generated method stub
+		return super.GetTitleResourceID();
+	}
 }

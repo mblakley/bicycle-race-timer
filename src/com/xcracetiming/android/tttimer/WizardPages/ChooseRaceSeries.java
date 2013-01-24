@@ -4,6 +4,7 @@ import com.xcracetiming.android.tttimer.R;
 import com.xcracetiming.android.tttimer.DataAccess.RaceSeries;
 import com.xcracetiming.android.tttimer.Utilities.Loaders;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 
@@ -45,7 +47,7 @@ public class ChooseRaceSeries extends BaseWizardPage implements OnCheckedChangeL
 	}
 	
 	@Override 
-	protected int GetTitleResourceID() {
+	public int GetTitleResourceID() {
 		return R.string.AddRace;
 	}	
 
@@ -83,18 +85,34 @@ public class ChooseRaceSeries extends BaseWizardPage implements OnCheckedChangeL
 	}
 
 	public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
+
+		InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 		switch(checkedId){
 			case R.id.radioNewSeries:
+				// Show the soft keyboard
+				getTextView(R.id.txtRaceSeriesName).setOnFocusChangeListener(new View.OnFocusChangeListener() {
+				    public void onFocusChange(View v, boolean hasFocus) {
+				        if (hasFocus) {
+				        	InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+				    		mgr.showSoftInput(v, InputMethodManager.SHOW_IMPLICIT);
+				        }
+				    }
+				});
+				getTextView(R.id.txtRaceSeriesName).requestFocus();
 				// Show the textbox for series name
 				getLinearLayout(R.id.llRaceSeriesName).setVisibility(View.VISIBLE);
 				getLinearLayout(R.id.llExistingRaceSeries).setVisibility(View.GONE);
 				break;
 			case R.id.radioExistingSeries:
+				// hide the soft keyboard
+				imm.hideSoftInputFromWindow(getTextView(R.id.txtRaceSeriesName).getWindowToken(), 0);
 				// Show the textbox for series name
 				getLinearLayout(R.id.llExistingRaceSeries).setVisibility(View.VISIBLE);
 				getLinearLayout(R.id.llRaceSeriesName).setVisibility(View.GONE);
 				break;
 			case R.id.radioNo:
+				// hide the soft keyboard
+				imm.hideSoftInputFromWindow(getTextView(R.id.txtRaceSeriesName).getWindowToken(), 0);
 				// Hide the textbox for series name
 				getLinearLayout(R.id.llRaceSeriesName).setVisibility(View.GONE);
 				getLinearLayout(R.id.llExistingRaceSeries).setVisibility(View.GONE);

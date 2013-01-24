@@ -3,10 +3,10 @@ package com.xcracetiming.android.tttimer.WizardPages;
 import java.util.Hashtable;
 
 import com.xcracetiming.android.tttimer.R;
-import com.xcracetiming.android.tttimer.DataAccess.AppSettings;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -26,7 +26,7 @@ public abstract class BaseWizardPage extends Fragment implements View.OnClickLis
 
 	private Hashtable<Integer, View> viewList = new Hashtable<Integer, View>();	
 	
-	protected abstract int GetTitleResourceID();
+	public abstract int GetTitleResourceID();
 	
 	protected abstract String LOG_TAG();
 
@@ -56,8 +56,18 @@ public abstract class BaseWizardPage extends Fragment implements View.OnClickLis
 	}
 	
 	@Override
+	public void setArguments(Bundle args) {
+	}
+	
+	@Override
 	public void onStart() {
 		super.onStart();	
+		
+		getView().setOnTouchListener(new View.OnTouchListener() {
+	        public boolean onTouch(View v, MotionEvent event) {
+	            return true;
+	        }
+	    });
 		
 		addListeners();
 	}

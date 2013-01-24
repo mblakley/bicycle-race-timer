@@ -12,7 +12,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 
@@ -119,9 +118,9 @@ public class TTTimerTabsActivity extends FragmentActivity {
 						
 			            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 			            
-			            Fragment mainView = (Fragment)Class.forName(className).newInstance();
-			            mainView.setArguments(intent.getBundleExtra("args"));
-			            fragmentTransaction.add(R.id.fragment_container, mainView);
+			            Fragment nextView = (Fragment)Class.forName(className).newInstance();
+			            nextView.setArguments(intent.getBundleExtra("args"));
+			            fragmentTransaction.add(R.id.fragment_container, nextView);
 			            fragmentTransaction.addToBackStack(className);
 			            fragmentTransaction.commit();
 					} catch (ClassNotFoundException e) {

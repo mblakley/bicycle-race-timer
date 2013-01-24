@@ -32,7 +32,6 @@ import com.xcracetiming.android.tttimer.Utilities.Loaders;
 import com.xcracetiming.android.tttimer.Utilities.TimeFormatter;
 import com.xcracetiming.android.tttimer.WizardPages.AdminMenuView;
 import com.xcracetiming.android.tttimer.WizardPages.MarshalLocations;
-import com.xcracetiming.android.tttimer.WizardPages.SeriesResultsView;
 import com.xcracetiming.android.tttimer.Wizards.AddRaceWizard;
 
 /**
@@ -253,6 +252,7 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 				Intent showSeriesResultsView = new Intent();
 				showSeriesResultsView.setAction(TTTimerTabsActivity.CHANGE_MAIN_VIEW_ACTION);
 				showSeriesResultsView.putExtra("ShowView", new AddRaceWizard().getClass().getCanonicalName());
+				showSeriesResultsView.putExtra("ShowTimer", false);
 				LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(showSeriesResultsView);
 				break;
 		}

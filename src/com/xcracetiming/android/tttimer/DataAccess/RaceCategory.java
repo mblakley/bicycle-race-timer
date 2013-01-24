@@ -29,10 +29,10 @@ public final class RaceCategory extends ContentProviderTable implements BaseColu
     	        + " (" + _ID + " integer primary key autoincrement, "
     	        + FullCategoryName + " text not null, " 
     	        + Category + " text null, "
-    	        + Gender + " text not null,"
-    	        + CategoryClass + " text not null,"
+    	        + Gender + " text null,"
+    	        + CategoryClass + " text null,"
     	        + Age + " text null,"
-    	        + RaceSeries_ID + " integer references " + RaceSeries.Instance().getTableName() + "(" + RaceSeries._ID + ") null"
+    	        + RaceSeries_ID + " integer references " + RaceSeries.Instance().getTableName() + "(" + RaceSeries._ID + ") not null"
     	        + ");";
     }
 

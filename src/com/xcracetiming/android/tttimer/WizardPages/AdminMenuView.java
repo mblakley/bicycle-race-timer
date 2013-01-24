@@ -66,7 +66,7 @@ public class AdminMenuView extends BaseWizardPage implements View.OnClickListene
 	}
 	
 	@Override 
-	protected int GetTitleResourceID() {
+	public int GetTitleResourceID() {
 		return R.string.AdminMenu;
 	}
 	

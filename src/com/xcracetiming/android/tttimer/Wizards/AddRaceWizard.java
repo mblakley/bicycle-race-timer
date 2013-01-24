@@ -13,13 +13,13 @@ import android.view.View;
 
 import com.xcracetiming.android.tttimer.R;
 import com.xcracetiming.android.tttimer.DataAccess.Race;
+import com.xcracetiming.android.tttimer.DataAccess.RaceCategory;
 import com.xcracetiming.android.tttimer.DataAccess.RaceLocation;
 import com.xcracetiming.android.tttimer.DataAccess.RaceSeries;
 import com.xcracetiming.android.tttimer.WizardPages.AddLocationView;
 import com.xcracetiming.android.tttimer.WizardPages.AddRaceCategoriesView;
 import com.xcracetiming.android.tttimer.WizardPages.AddRaceSeriesView;
 import com.xcracetiming.android.tttimer.WizardPages.AddRaceView;
-import com.xcracetiming.android.tttimer.WizardPages.BaseWizardPage;
 import com.xcracetiming.android.tttimer.WizardPages.ChooseRaceSeries;
 
 public class AddRaceWizard extends BaseWizard implements View.OnClickListener {
@@ -45,19 +45,18 @@ public class AddRaceWizard extends BaseWizard implements View.OnClickListener {
 		}
 		
 		// What info do you need to set up a race, at it's most basic form
+		// Race Date/Race Type (TT or Team TT for now)/Race Start Interval
+		// (optional) Race Laps (yes or no?, how many?)
 		// Race Series (Individual or custom)
 		// Race Location
-		// Race Date
 		// Race Categories (most likely more than 1)
-		// Race Type (TT or Team TT for now)
-		// (optional) Race Laps (yes or no?, how many?)
 		
 		// Figure out if this race is part of a race series
 		wizardPages.add(new ChooseRaceSeries()); // If part of a pre-existing series, select it and move on
 		// If it is part of a series, and the series hasn't been created yet, the create it
 		wizardPages.add(new AddRaceSeriesView());
 		// Choose a race location
-		wizardPages.add(new ChooseRaceLocation()); // If held at a pre-existing location, select it and move on
+		//wizardPages.add(new ChooseRaceLocation()); // If held at a pre-existing location, select it and move on
 		// Check if there are any locations available, and if not, create one
 		wizardPages.add(new AddLocationView());
 		// Add race categories to the race (add to RaceCategories, RaceRaceCategories, and maybe RaceSeriesCategories)
@@ -135,11 +134,15 @@ public class AddRaceWizard extends BaseWizard implements View.OnClickListener {
 			raceContent.put(Race.USACEventID, args.getLong(Race.USACEventID));
 			Race.Instance().Create(getActivity(), raceContent);
 			
-			// Create the race categories
+			// Create the new race categories
 			// This must be done after the race is created, otherwise we don't know what to link it to.
-			ContentValues categoryContent = new ContentValues();
-			
-			
+			ArrayList<String> newCategories = args.getStringArrayList(RaceCategory.FullCategoryName);
+			for(String categoryName: newCategories){
+				ContentValues categoryContent = new ContentValues();
+				categoryContent.put(RaceCategory.FullCategoryName, categoryName);
+				categoryContent.put(RaceCategory.RaceSeries_ID, raceSeries_ID);
+				RaceCategory.Instance().Create(getActivity(), categoryContent);
+			}			
 		}else {
 			super.SaveAndContinue();
 		}
@@ -154,6 +157,9 @@ public class AddRaceWizard extends BaseWizard implements View.OnClickListener {
 				}else{
 					currentWizardPageIndex+=2;
 				}
+				break;
+			default:
+				currentWizardPageIndex++;
 				break;
 		}
 	}

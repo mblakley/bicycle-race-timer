@@ -100,7 +100,7 @@ public class AddLocationImages extends BaseWizardPage implements View.OnClickLis
 	private static final int ALL_RACE_LOCATIONS_LOADER = 1112;
 	
 	@Override
-	protected int GetTitleResourceID() {
+	public int GetTitleResourceID() {
 		return R.string.GetLocationImagesFromDropbox;
 	}
 

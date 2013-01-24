@@ -63,7 +63,7 @@ public class AppSettingsView extends BaseWizardPage implements LoaderManager.Loa
 	}
 	
 	@Override 
-	protected int GetTitleResourceID() {
+	public int GetTitleResourceID() {
 		return R.string.AppSettings;
 	}
 	

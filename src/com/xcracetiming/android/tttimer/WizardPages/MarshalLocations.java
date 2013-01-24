@@ -63,7 +63,7 @@ public class MarshalLocations extends BaseWizardPage implements View.OnClickList
 	}
 	
 	@Override 
-	protected int GetTitleResourceID() {
+	public int GetTitleResourceID() {
 		return R.string.MarshalLocation;
 	}
 

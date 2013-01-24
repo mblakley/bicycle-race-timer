@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,16 +47,16 @@ public abstract class BaseWizard extends Fragment implements View.OnClickListene
 	public void onResume() {
 		super.onResume();
 		
-		getImageButton(R.id.btnBaseWizardPageBack).setVisibility(showNavButtons ? View.VISIBLE : View.VISIBLE);
-		getImageButton(R.id.btnBaseWizardPageForward).setVisibility(showNavButtons ? View.VISIBLE : View.VISIBLE);
+		//getImageButton(R.id.btnBaseWizardPageBack).setVisibility(showNavButtons ? View.VISIBLE : View.VISIBLE);
+		//getImageButton(R.id.btnBaseWizardPageForward).setVisibility(showNavButtons ? View.VISIBLE : View.VISIBLE);
 		
 		getTextView(R.id.title).setText(GetTitleResourceID());
 	}
 	
 	protected void showNavButtons(boolean show) {
 		showNavButtons = show;
-		getImageButton(R.id.btnBaseWizardPageBack).setVisibility(showNavButtons ? View.VISIBLE : View.VISIBLE);
-		getImageButton(R.id.btnBaseWizardPageForward).setVisibility(showNavButtons ? View.VISIBLE : View.VISIBLE);
+		//getImageButton(R.id.btnBaseWizardPageBack).setVisibility(showNavButtons ? View.VISIBLE : View.VISIBLE);
+		//getImageButton(R.id.btnBaseWizardPageForward).setVisibility(showNavButtons ? View.VISIBLE : View.VISIBLE);
 	}
 	
 	@Override
@@ -193,19 +194,20 @@ public abstract class BaseWizard extends Fragment implements View.OnClickListene
 		if(currentWizardPageIndex == wizardPages.size() - 1){
 			dismiss();
 			return;
-		}
+		}		         
+        
 		// Figure out the next wizard page to display
 		SetNextWizardIndex(args);
-		currentWizardPage = wizardPages.get(currentWizardPageIndex);	
-        ((Fragment)currentWizardPage).setArguments(args);
+		currentWizardPage = wizardPages.get(currentWizardPageIndex);
+        ((Fragment)currentWizardPage).setArguments(args);	
 
-		// Show the next wizard page						
+		// Show the next wizard page		
 		FragmentManager fragmentManager = getChildFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();		         
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();						         
         fragmentTransaction.replace(R.id.wizardFrame, (Fragment)currentWizardPage);
 		fragmentTransaction.commit();	
 		
-		SetupForwardAndBack();
+		SetupForwardAndBack();		
 	}
 	 
 	public void dismiss() {
@@ -218,7 +220,20 @@ public abstract class BaseWizard extends Fragment implements View.OnClickListene
 	
 	public void SetupForwardAndBack(){
 		// Setup the forward and back buttons for edge cases
-    	getImageButton(R.id.btnBaseWizardPageBack).setEnabled(!(currentWizardPageIndex <= 0));        
-    	getImageButton(R.id.btnBaseWizardPageForward).setEnabled(!(currentWizardPageIndex >= wizardPages.size() - 1));
+		String fullTrail = "";
+		if(currentWizardPageIndex >= 1){
+			fullTrail += "<i>" + getString(wizardPages.get(currentWizardPageIndex-1).GetTitleResourceID()) + "</i>";
+		}
+		
+		fullTrail += " >> <b>" + getString(currentWizardPage.GetTitleResourceID()) + "</b>";
+		
+		if(currentWizardPageIndex < wizardPages.size() - 1){
+			fullTrail += " >> <i>" + getString(wizardPages.get(currentWizardPageIndex+1).GetTitleResourceID()) + "</i>";
+		} else{
+			fullTrail += " >> <i>Done</i>";
+		}
+		getTextView(R.id.lblTrail).setText(Html.fromHtml(fullTrail));
+    	//getImageButton(R.id.btnBaseWizardPageBack).setEnabled(!(currentWizardPageIndex <= 0));        
+    	//getImageButton(R.id.btnBaseWizardPageForward).setEnabled(!(currentWizardPageIndex >= wizardPages.size() - 1));
 	}
 }

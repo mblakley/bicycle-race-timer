@@ -37,7 +37,7 @@ public class AddRaceSeriesView extends BaseWizardPage {
 	}
 	
 	@Override 
-	protected int GetTitleResourceID() {
+	public int GetTitleResourceID() {
 		return R.string.AddRaceSeries;
 	}
 	

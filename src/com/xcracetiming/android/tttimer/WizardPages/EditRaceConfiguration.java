@@ -43,7 +43,7 @@ public class EditRaceConfiguration extends AddRaceView implements View.OnClickLi
     }
     
     @Override
-    protected int GetTitleResourceID() {
+    public int GetTitleResourceID() {
     	return R.string.RaceConfiguration;
     }
     
