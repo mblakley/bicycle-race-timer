@@ -51,6 +51,8 @@ public abstract class BaseWizard extends Fragment implements View.OnClickListene
 		//getImageButton(R.id.btnBaseWizardPageForward).setVisibility(showNavButtons ? View.VISIBLE : View.VISIBLE);
 		
 		getTextView(R.id.title).setText(GetTitleResourceID());
+
+		SetupForwardAndBack();
 	}
 	
 	protected void showNavButtons(boolean show) {
@@ -68,7 +70,7 @@ public abstract class BaseWizard extends Fragment implements View.OnClickListene
 		getButton(R.id.btnCancel).setOnClickListener(this);
 		getButton(R.id.btnSave).setOnClickListener(this);
 		
-		addListeners();
+		addListeners();		
 	}
 	
 	protected void addListeners(){};

@@ -50,13 +50,11 @@ public class AddRaceView extends BaseWizardPage implements View.OnClickListener,
 
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {		
-		return inflater.inflate(R.layout.dialog_add_race, container, false);
+		return inflater.inflate(R.layout.wp_add_race, container, false);
 	}
 	
 	@Override
-	protected void addListeners() {
-		getButton(R.id.btnAddNewRace).setOnClickListener(this);	
-		
+	protected void addListeners() {	
 		getSpinner(R.id.spinnerRaceType).setOnItemSelectedListener(new OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
             	// Need to just check the "HasMultipleLaps" field to see if we should configure the number of laps
