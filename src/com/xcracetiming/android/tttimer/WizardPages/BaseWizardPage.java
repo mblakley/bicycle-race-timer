@@ -13,6 +13,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -121,6 +122,13 @@ public abstract class BaseWizardPage extends Fragment implements View.OnClickLis
 			viewList.put(id, (EditText) getView().findViewById(id));
 		}
 		return (EditText)viewList.get(id);
+	}
+	
+	protected ListView getListView(int id){
+		if(!viewList.containsKey(id)){
+			viewList.put(id, (ListView) getView().findViewById(id));
+		}
+		return (ListView)viewList.get(id);
 	}
 	
 	protected Spinner getSpinner(int id){

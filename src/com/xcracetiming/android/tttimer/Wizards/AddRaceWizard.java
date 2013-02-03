@@ -6,6 +6,7 @@ import java.util.Arrays;
 import android.content.ContentValues;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -16,11 +17,14 @@ import com.xcracetiming.android.tttimer.DataAccess.Race;
 import com.xcracetiming.android.tttimer.DataAccess.RaceCategory;
 import com.xcracetiming.android.tttimer.DataAccess.RaceLocation;
 import com.xcracetiming.android.tttimer.DataAccess.RaceSeries;
-import com.xcracetiming.android.tttimer.WizardPages.AddLocationView;
 import com.xcracetiming.android.tttimer.WizardPages.AddRaceCategoriesView;
+import com.xcracetiming.android.tttimer.WizardPages.AddRaceInfoView;
 import com.xcracetiming.android.tttimer.WizardPages.AddRaceSeriesView;
-import com.xcracetiming.android.tttimer.WizardPages.AddRaceView;
+import com.xcracetiming.android.tttimer.WizardPages.AddRaceSummary;
+import com.xcracetiming.android.tttimer.WizardPages.ChooseRaceLapsView;
+import com.xcracetiming.android.tttimer.WizardPages.ChooseRaceLocation;
 import com.xcracetiming.android.tttimer.WizardPages.ChooseRaceSeries;
+import com.xcracetiming.android.tttimer.WizardPages.IWizardPage;
 
 public class AddRaceWizard extends BaseWizard implements View.OnClickListener {
 	public static final String LOG_TAG = "AddRaceWizard";
@@ -36,10 +40,13 @@ public class AddRaceWizard extends BaseWizard implements View.OnClickListener {
 	// Cancel just kills the containing wizard fragment
 	
 	ArrayList<String> pageList = new ArrayList<String>(Arrays.asList("AddRaceSeries"));
+	Bundle args = new Bundle();
+	boolean restoring = false;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		if(savedInstanceState != null){
 			return;
 		}
@@ -50,19 +57,46 @@ public class AddRaceWizard extends BaseWizard implements View.OnClickListener {
 		// Race Series (Individual or custom)
 		// Race Location
 		// Race Categories (most likely more than 1)
-		
+
+		wizardPages.add(new AddRaceInfoView());  // Race Date/Race Type (TT or Team TT for now)/Race Start Interval
+		wizardPages.add(new ChooseRaceLapsView());  // (optional) Race Laps (yes or no?, how many?)
 		// Figure out if this race is part of a race series
 		wizardPages.add(new ChooseRaceSeries()); // If part of a pre-existing series, select it and move on
 		// If it is part of a series, and the series hasn't been created yet, the create it
 		wizardPages.add(new AddRaceSeriesView());
 		// Choose a race location
-		//wizardPages.add(new ChooseRaceLocation()); // If held at a pre-existing location, select it and move on
-		// Check if there are any locations available, and if not, create one
-		wizardPages.add(new AddLocationView());
+		wizardPages.add(new ChooseRaceLocation()); // If held at a pre-existing location, select it and move on
 		// Add race categories to the race (add to RaceCategories, RaceRaceCategories, and maybe RaceSeriesCategories)
 		wizardPages.add(new AddRaceCategoriesView());
+		// Add extra information for USAC races
 		//wizardPages.add(new AddUSACInfoView());
-		wizardPages.add(new AddRaceView());
+		wizardPages.add(new AddRaceSummary());		
+	}
+	
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putInt("CurrentWizardPageIndex", currentWizardPageIndex);
+		outState.putSerializable("WizardPages", wizardPages);
+//		if(outState == null){
+//			outState = new Bundle();
+//		}
+//		outState.clear();		
+//		outState.putAll(args);
+	}
+	
+	@Override public void onViewStateRestored(Bundle savedInstanceState) {
+		super.onViewStateRestored(savedInstanceState);
+		if(savedInstanceState != null){
+			if(savedInstanceState.containsKey("WizardPages")){
+				wizardPages = (ArrayList<IWizardPage>) savedInstanceState.getSerializable("WizardPages");
+			}
+			if(savedInstanceState.containsKey("CurrentWizardPageIndex")){
+				currentWizardPageIndex = savedInstanceState.getInt("CurrentWizardPageIndex");
+			}
+			restoring = true;
+		}
+//		args = savedInstanceState;
 	}
 	
 	@Override
@@ -71,11 +105,14 @@ public class AddRaceWizard extends BaseWizard implements View.OnClickListener {
 		
 		currentWizardPage = wizardPages.get(currentWizardPageIndex);
 		
-		FragmentManager fragmentManager = getChildFragmentManager();				
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();	            
-        fragmentTransaction.add(R.id.wizardFrame, (Fragment)currentWizardPage);
-		fragmentTransaction.commit();
-		
+		if(!restoring){
+			FragmentManager fragmentManager = getChildFragmentManager();				
+	        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();	            
+	        fragmentTransaction.add(R.id.wizardFrame, (Fragment)currentWizardPage);
+			fragmentTransaction.commit();
+		} else{
+			restoring = false;
+		}
     	getImageButton(R.id.btnBaseWizardPageBack).setEnabled(!(currentWizardPageIndex <= 0));
 	}
 
@@ -94,7 +131,7 @@ public class AddRaceWizard extends BaseWizard implements View.OnClickListener {
 		// Check if we are on the last page, and if so, do the final save to create all of the database records in order
 		if(currentWizardPageIndex >= wizardPages.size() - 1){
 			// This is the last page.  Do extra stuff.
-			Bundle args = currentWizardPage.Save();
+			args = currentWizardPage.Save();
 			Long raceSeries_ID;
 			if(args.getBoolean("createSeries")){
 				// Save the race series info into the database
@@ -152,7 +189,14 @@ public class AddRaceWizard extends BaseWizard implements View.OnClickListener {
 	protected void SetNextWizardIndex(Bundle args) {
 		switch(currentWizardPageIndex){
 			case 0:				
-				if(args.getBoolean(ChooseRaceSeries.LOG_TAG)){
+				if(args.getLong(Race.RaceType_ID) == 1){
+					currentWizardPageIndex+=2;
+				}else{
+					currentWizardPageIndex++;
+				}
+				break;
+			case 2:
+				if(args.getBoolean("IsPartOfExistingSeries")){
 					currentWizardPageIndex++;
 				}else{
 					currentWizardPageIndex+=2;

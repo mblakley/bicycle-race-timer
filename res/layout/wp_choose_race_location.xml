@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/wizardFrameContents"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" 
+    android:background="#FFFF"
+    style="@style/Padded" >
+
+    <TextView
+        android:id="@+id/lblChooseRaceLocation"
+        style="@style/Medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10sp"
+        android:text="Choose the race location:" />
+	
+	<RadioGroup
+	    android:id="@+id/radioGroup" 
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="vertical">
+	    
+	    <RadioButton
+	        android:id="@+id/radioNewLocation"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="Create a new location" 	       
+   	        android:checked="true"/>
+
+	    <LinearLayout
+	        android:id="@+id/llRaceLocationName"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content">
+
+	        <TextView
+	            android:id="@+id/lblCourseName"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="Course Name:" />
+
+	        <EditText
+	            android:id="@+id/txtCourseName"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content" 
+	            style="@style/Medium"
+        		android:inputType="textCapWords"/>
+
+	    </LinearLayout>
+	    
+	    <LinearLayout
+	        android:id="@+id/llRaceLocationDistance"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:weightSum="1">
+
+	        <TextView
+	            android:id="@+id/lblCourseDistance"
+	            android:layout_width="0dip"
+	            android:layout_height="wrap_content"
+	            android:text="Course Distance:"
+	            android:layout_weight="0.35" />
+
+	        <EditText
+	            android:id="@+id/txtCourseDistance"
+	            android:layout_width="0dip"
+	            android:layout_height="wrap_content" 
+	            style="@style/Medium"
+	            android:layout_weight="0.55"
+	        	android:inputType="numberDecimal" />
+	        
+	        <TextView
+	            android:id="@+id/lblDistanceUnit"
+	            android:layout_width="0dip"
+	            android:layout_height="wrap_content"
+	        	style="@style/Medium"
+	        	android:layout_weight="0.1" />
+
+	    </LinearLayout>
+	    
+	    <RadioButton
+	        android:id="@+id/radioExistingLocation"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="Choose an existing location" />
+
+	    <LinearLayout
+	        android:id="@+id/llExistingRaceLocation"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content" 
+	        android:visibility="gone">
+
+	        <TextView
+	            android:id="@+id/lblExistingRaceLocation"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="Race Location:" />
+
+	        <Spinner
+	            android:id="@+id/spinnerExistingRaceLocation"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            style="@style/Medium" />
+
+	    </LinearLayout>
+	</RadioGroup>
+</LinearLayout>

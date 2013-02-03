@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialogContainer"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical" 
+    android:background="#FFFF"
+    style="@style/Padded" >
 
     <LinearLayout
         android:id="@+id/llRaceSeriesName"
@@ -30,9 +33,36 @@
             style="@style/Medium" >
         </TextView>
     </LinearLayout>
+    
+    <LinearLayout
+        android:id="@+id/llRaceName"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:weightSum="1">
+
+        <TextView
+            android:id="@+id/lblRaceName"
+            android:layout_width="0dip"
+            android:layout_weight="0.5"
+            android:layout_height="wrap_content"
+            android:text="@string/lblRaceName"
+            style="@style/Medium"
+            android:paddingRight="10sp"
+            android:textStyle="bold" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/raceName"
+            android:layout_width="0dip"
+            android:layout_weight="0.5"
+            android:layout_height="wrap_content"
+            style="@style/Medium" >
+        </TextView>
+    </LinearLayout>
         
     <LinearLayout
-        android:id="@+id/linearLayout1"
+        android:id="@+id/llRaceDate"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
@@ -62,7 +92,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/linearLayout2"
+        android:id="@+id/llRaceLocation"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
@@ -92,7 +122,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/linearLayout4"
+        android:id="@+id/llRaceType"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
@@ -150,7 +180,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/linearLayout3"
+        android:id="@+id/llRaceDistance"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
@@ -179,7 +209,7 @@
     </LinearLayout>
         
     <LinearLayout
-        android:id="@+id/linearLayout6"
+        android:id="@+id/llCourseRecord"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
@@ -233,66 +263,29 @@
             style="@style/Medium.Padded" />
     </LinearLayout> 
     
-    <Button
-        android:id="@+id/btnMarshalLocations"
+    <LinearLayout
+        android:id="@+id/llRaceCategories"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        style="@style/Medium"
-        android:text="@string/MarshalLocations" /> 
+        android:gravity="center_vertical"
+        android:weightSum="1">
         
+        <TextView
+            android:id="@+id/lblRaceCategories"
+            style="@style/Medium"
+            android:layout_width="0dip"
+            android:layout_weight="0.5"
+            android:layout_height="wrap_content"
+            android:paddingRight="10sp"
+            android:text="@string/CourseName"
+            android:textStyle="bold" />
 
-    <LinearLayout
-        android:id="@+id/linearLayoutButtons"
-        android:layout_width="fill_parent"
-        android:layout_height="110sp"
-        android:layout_marginTop="40dp"
-        android:layout_gravity="bottom"
-        android:weightSum="3">
-
-       <Button
-            android:id="@+id/btnSeriesResults"
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:background="@drawable/main_button"
-            android:drawableTop="@drawable/series"
-            android:paddingBottom="16dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:paddingTop="8dp"
-            android:text="@string/btnSeriesResults" >
-        </Button>
-        
-       <Button
-            android:id="@+id/btnPreviousResults"
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_gravity="center"
-            android:layout_marginLeft="4dp"
-            android:layout_weight="1"
-            android:background="@drawable/main_button"
-            android:drawableTop="@drawable/history"
-            android:paddingBottom="16dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:paddingTop="8dp"
-            android:text="@string/btnPreviousRaces" >
-        </Button>
-        <Button
-            android:id="@+id/btnAdminMenu"
-            android:layout_width="0dp"
-            android:layout_height="fill_parent"
-            android:layout_gravity="center"
-            android:layout_marginLeft="4dp"
-            android:layout_weight="1"
-            android:background="@drawable/main_button"
-            android:drawableTop="@drawable/tools"
-            android:paddingBottom="16dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:paddingTop="8dp"
-            android:text="@string/AdminMenu" >
-        </Button>
- 	</LinearLayout>
+        <TextView
+            android:id="@+id/raceCategories"
+            android:layout_width="0dip"
+            android:layout_weight="0.5"
+            android:layout_height="wrap_content"
+            style="@style/Medium.Padded" />
+    </LinearLayout> 
+    
 </LinearLayout>

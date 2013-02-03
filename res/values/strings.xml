@@ -231,7 +231,7 @@
 	<string name="Retry">Retry</string>
 	<string name="DefaultNumLaps">1</string>
 	<string name="NoMarshalLocationImages">No marshal location images found for the current location!</string>
-	<string name="AddRaceCategory">Add Race Category</string>
+	<string name="AddRaceCategory">Add Race Categories</string>
 	<string name="RaceCategoryName">Race Category Name</string>
 	<string name="CurrentRaceCategories">Current Race Categories</string>
 	<string name="RaceSeriesName">Race Series Name:</string>
@@ -244,4 +244,8 @@
 	<string name="btnAddIndividualRace">Add Individual Race</string>
 	<string name="lblRaceName">Race Name:</string>
 	<string name="RaceSeries">Race Series:</string>
+	<string name="AddRaceInfo">Add Race Info</string>
+	<string name="ChooseRaceSeriesInfo">Race Series Info</string>
+	<string name="ChooseRaceLocation">Race Location</string>
+	<string name="RaceLaps">Race Laps</string>
 </resources>

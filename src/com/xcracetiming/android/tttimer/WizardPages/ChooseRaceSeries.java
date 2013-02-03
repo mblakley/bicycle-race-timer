@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 
@@ -48,7 +49,7 @@ public class ChooseRaceSeries extends BaseWizardPage implements OnCheckedChangeL
 	
 	@Override 
 	public int GetTitleResourceID() {
-		return R.string.AddRace;
+		return R.string.ChooseRaceSeriesInfo;
 	}	
 
 	@Override
@@ -59,7 +60,8 @@ public class ChooseRaceSeries extends BaseWizardPage implements OnCheckedChangeL
 	@Override
 	public Bundle Save() throws Exception {
 		Bundle b = super.Save();
-		boolean isNewSeries = getRadioButton(R.id.radioNewSeries).isChecked();
+		RadioButton rb = (RadioButton) getView().findViewById(R.id.radioNewSeries);
+		boolean isNewSeries = rb.isChecked();
 		// If the race is in a series, validate that a series name was entered
 		if(isNewSeries){
 			if(getTextView(R.id.txtRaceSeriesName).getText().length() > 0){
@@ -69,17 +71,10 @@ public class ChooseRaceSeries extends BaseWizardPage implements OnCheckedChangeL
 				throw new Exception("Please enter a race series name");
 			}
 		}
-		boolean isExistingSeries = getRadioButton(R.id.radioExistingSeries).isChecked();
-		// If the race is in a series, validate that a series name was entered
-		if(isExistingSeries){
-			if(getTextView(R.id.txtRaceSeriesName).getText().length() > 0){
-				b.putString("RaceSeriesName", getTextView(R.id.txtRaceSeriesName).getText().toString());
-			}else{
-				// Notify the user that they need to enter a race series name
-				throw new Exception("Please enter a race series name");
-			}
-		}
 		b.putBoolean(LOG_TAG, isNewSeries);
+		boolean isExistingSeries = getRadioButton(R.id.radioExistingSeries).isChecked();
+
+		b.putBoolean("IsPartOfExistingSeries", isExistingSeries);
 		
 		return b;
 	}
