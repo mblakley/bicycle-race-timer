@@ -58,6 +58,7 @@ public abstract class BaseWizardPage extends Fragment implements View.OnClickLis
 	
 	@Override
 	public void setArguments(Bundle args) {
+		super.setArguments(args);
 	}
 	
 	@Override

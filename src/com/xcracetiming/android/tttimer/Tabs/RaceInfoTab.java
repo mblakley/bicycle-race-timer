@@ -47,14 +47,14 @@ import com.xcracetiming.android.tttimer.Wizards.AddRaceWizard;
  * @author mab
  *
  */
-public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
+public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallbacks<Cursor> {
 	
 	private String distanceUnitSetting = "mi";
 	private String distanceUnit = "mi";
 	private float distance;
 	
 	/**
-	 * Inflates the view from xml and returns it.  Nothing else!
+	 * Inflates the view from xml, adds click listeners, and returns it
 	 * @param inflater
 	 * @param container
 	 * @param savedInstanceState
@@ -62,19 +62,19 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 	@Override	
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.tab_race_info, container, false);    
-    }	
-	
+		View view = inflater.inflate(R.layout.tab_race_info, container, false);
+		
+		addClickListener(view, R.id.btnSeriesResults);
+		addClickListener(view, R.id.btnPreviousResults);
+		addClickListener(view, R.id.btnAdminMenu);
+		addClickListener(view, R.id.btnMarshalLocations);
+		        
+        return view;    
+    }
+		
 	/**
 	 * Add the click listeners to any controls that will accept or deal with a click.  Called from base.onStart
 	 */
-	@Override
-	protected void addClickListeners(){
-        getButton(R.id.btnMarshalLocations).setOnClickListener(this);
-        getButton(R.id.btnSeriesResults).setOnClickListener(this);
-        getButton(R.id.btnPreviousResults).setOnClickListener(this);
-        getButton(R.id.btnAdminMenu).setOnClickListener(this);
-	}
 	
 	/**
 	 * Start the chain of loaders.  Called from base.onResume
@@ -169,11 +169,11 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 						// Set the race type
 						getTextView(R.id.raceType).setText(raceTypeName);
 						// Set the race start interval, only if there's a real start interval
-						if(startInterval > 0){
+						if(startInterval > 0) {
 							getTextView(R.id.raceStartInterval).setText(startIntervalText);
-							getTextView(R.id.llStartInterval).setVisibility(View.VISIBLE);
-						} else{
-							getTextView(R.id.llStartInterval).setVisibility(View.GONE);
+							getLinearLayout(R.id.llStartInterval).setVisibility(View.VISIBLE);
+						} else { 
+							getLinearLayout(R.id.llStartInterval).setVisibility(View.GONE);
 						}
 						// Set the text of the race series
 						getTextView(R.id.raceSeriesName).setText(raceSeries);	
@@ -227,6 +227,7 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 	 * 
 	 * @param v - The view that was clicked
 	 */
+	@Override
 	public void onClick(View v) {
         FragmentManager fm = getActivity().getSupportFragmentManager();
 		switch (v.getId())

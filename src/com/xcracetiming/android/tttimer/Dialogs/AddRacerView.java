@@ -6,9 +6,11 @@ import com.xcracetiming.android.tttimer.R;
 import com.xcracetiming.android.tttimer.AsyncTasks.CheckInHandler;
 import com.xcracetiming.android.tttimer.DataAccess.AppSettings;
 import com.xcracetiming.android.tttimer.DataAccess.RaceCategory;
+import com.xcracetiming.android.tttimer.DataAccess.RaceRaceCategory;
 import com.xcracetiming.android.tttimer.DataAccess.Racer;
 import com.xcracetiming.android.tttimer.DataAccess.RacerSeriesInfo;
 import com.xcracetiming.android.tttimer.DataAccess.RacerUSACInfo;
+import com.xcracetiming.android.tttimer.DataAccess.Views.RaceRaceCategoryView;
 
 import android.content.Context;
 import android.content.Intent;
@@ -28,11 +30,10 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 
-public class AddRacerView extends BaseDialog implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
+public class AddRacerView extends BaseDialog implements LoaderManager.LoaderCallbacks<Cursor> {
 	public static final String LOG_TAG = "AddRacerView";
 	
 	/**
@@ -45,32 +46,27 @@ public class AddRacerView extends BaseDialog implements View.OnClickListener, Lo
 	private static final int RACE_CATEGORY_LOADER = 1122;
 	
 	protected Button btnAddRacer;
-	
-	protected EditText txtFirstName;
-	protected EditText txtLastName;
-	protected EditText txtUSACNumber;
-	protected Spinner spinCategory;
-
+		
 	private SimpleCursorAdapter raceCategoryCA;
 	
 	private boolean checkin = false;
 	
-	public AddRacerView(boolean checkinAfterAdd){
-		checkin = checkinAfterAdd;
+	public AddRacerView(){}
+	
+	@Override
+	public void setArguments(Bundle args) {
+		super.setArguments(args);
+		
+		checkin = args.getBoolean("CheckInAfterAdd");
 	}
 	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.dialog_add_racer, container, false);
 
-		btnAddRacer = (Button) v.findViewById(R.id.btnAddNewRacer);
-		btnAddRacer.setOnClickListener(this);
+		((Button) v.findViewById(R.id.btnAddNewRacer)).setOnClickListener(this);
 		
-		txtFirstName = (EditText) v.findViewById(R.id.txtFirstName);
-		txtLastName = (EditText) v.findViewById(R.id.txtLastName);
-		txtUSACNumber = (EditText) v.findViewById(R.id.txtUSACNumber);
-		spinCategory = (Spinner) v.findViewById(R.id.spinnerCategory);
-		txtFirstName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+		((EditText) v.findViewById(R.id.txtFirstName)).setOnFocusChangeListener(new View.OnFocusChangeListener() {
 		    public void onFocusChange(View v, boolean hasFocus) {
 		        if (hasFocus) {
 		        	InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -85,11 +81,11 @@ public class AddRacerView extends BaseDialog implements View.OnClickListener, Lo
 	public void onResume() {
 		super.onResume();
 		String[] columns = new String[] { RaceCategory.FullCategoryName };
-		int[] to = new int[] {android.R.id.text1 };
+		int[] to = new int[] {android.R.id.text1 };		
         
 		raceCategoryCA = new SimpleCursorAdapter(getActivity(), R.layout.control_simple_spinner, null, columns, to, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 		raceCategoryCA.setDropDownViewResource( R.layout.control_simple_spinner_dropdown );
-    	spinCategory.setAdapter(raceCategoryCA);
+    	getSpinner(R.id.spinnerCategory).setAdapter(raceCategoryCA);
 
 		this.getLoaderManager().initLoader(RACE_CATEGORY_LOADER, null, this);
 	}
@@ -105,11 +101,11 @@ public class AddRacerView extends BaseDialog implements View.OnClickListener, Lo
  	private boolean AddNewRacer(String firstName, String lastName, String usacNumber, long categoryID) 
  	{
  		boolean success = false;
- 		long raceSeries_ID = AppSettings.Instance().ReadLongValue(getActivity(), AppSettings.AppSetting_RaceSeriesID_Name, null);
  		// If none of the fields are blank, we're ok to add the record
  		if(firstName.trim().length() != 0 && lastName.trim().length() != 0 && usacNumber.trim().length() != 0){
+ 	 		long raceSeries_ID = 1l;//TODO: Fix this!  AppSettings.Instance().ReadLongValue(getActivity(), AppSettings.AppSetting_RaceSeriesID_Name, null);
  			String selection = "UPPER(" + Racer.FirstName + ")=? AND UPPER(" + Racer.LastName + ")=?";
- 			String[] selectionArgs = new String[]{firstName.trim().toUpperCase(Locale.US), lastName.trim().toUpperCase()};
+ 			String[] selectionArgs = new String[]{firstName.trim().toUpperCase(Locale.US), lastName.trim().toUpperCase(Locale.US)};
  			long racer_ID = 0;
  			long racerUSACInfo_ID = 0;
  			Uri resultUri;
@@ -185,7 +181,7 @@ public class AddRacerView extends BaseDialog implements View.OnClickListener, Lo
  			success = true;
  		}else{
  			// Show a message that says that something isn't valid    
- 			Log.e(LOG_TAG, "AddNewRacer failed");
+ 			Toast.makeText(getActivity(), "Missing required information", Toast.LENGTH_SHORT).show();
  		}
 		return success;
 	}
@@ -209,47 +205,51 @@ public class AddRacerView extends BaseDialog implements View.OnClickListener, Lo
     	super.dismiss();
 		
 		// Set the textboxes in the dialog to an empty string
-		txtFirstName.setText("");
-		txtLastName.setText("");
-		txtUSACNumber.setText("");
+    	getEditText(R.id.txtFirstName).setText("");
+    	getEditText(R.id.txtLastName).setText("");
+    	getEditText(R.id.txtUSACNumber).setText("");
 	}
 	
+	@Override
 	public void onClick(View v) { 
 		try{
-			if (v == btnAddRacer)
+			switch(v.getId())
 			{
-				Log.v(LOG_TAG, "btnAddNewRacerClickHandler");
-				
-				// First name
-				String firstName = txtFirstName.getText().toString();
-				// Last name
-				String lastName = txtLastName.getText().toString();
-				// Category
-				long category = spinCategory.getSelectedItemId();	
-				// USACNumber
-				String usacNumber = txtUSACNumber.getText().toString();
-		
-				if(firstName.trim().equals("")){
-					Toast.makeText(getActivity(), "Please enter a first name", Toast.LENGTH_LONG).show();
-					return;
-				}
-				
-				if(lastName.trim().equals("")){
-					Toast.makeText(getActivity(), "Please enter a last name", Toast.LENGTH_LONG).show();
-					return;
-				}
-
-				if(usacNumber.trim().equals("")){
-					Toast.makeText(getActivity(), "Please enter a USAC license number", Toast.LENGTH_LONG).show();
-					return;
-				}
-				
-				if(AddNewRacer(firstName, lastName, usacNumber, category)){
-					// Hide the dialog
-			    	dismiss();
-				}
-			} else {
-				super.onClick(v);
+				case R.id.btnAddNewRacer:
+					Log.v(LOG_TAG, "btnAddNewRacerClickHandler");
+					
+					// First name
+					String firstName = getEditText(R.id.txtFirstName).getText().toString();
+					// Last name
+					String lastName = getEditText(R.id.txtLastName).getText().toString();
+					// Category
+					long category = getSpinner(R.id.spinnerCategory).getSelectedItemId();	
+					// USACNumber
+					String usacNumber = getEditText(R.id.txtUSACNumber).getText().toString();
+			
+					if(firstName.trim().equals("")){
+						Toast.makeText(getActivity(), "Please enter a first name", Toast.LENGTH_LONG).show();
+						return;
+					}
+					
+					if(lastName.trim().equals("")){
+						Toast.makeText(getActivity(), "Please enter a last name", Toast.LENGTH_LONG).show();
+						return;
+					}
+	
+					if(usacNumber.trim().equals("")){
+						Toast.makeText(getActivity(), "Please enter a USAC license number", Toast.LENGTH_LONG).show();
+						return;
+					}
+					
+					if(AddNewRacer(firstName, lastName, usacNumber, category)){
+						// Hide the dialog
+				    	dismiss();
+					}
+					break;
+				default:
+					super.onClick(v);
+					break;
 			}
 		}
 		catch(Exception ex){
@@ -272,10 +272,10 @@ public class AddRacerView extends BaseDialog implements View.OnClickListener, Lo
 		switch(id){
 			case RACE_CATEGORY_LOADER:
 				projection = new String[]{RaceCategory.Instance().getTableName() + "." + RaceCategory._ID + " as _id", RaceCategory.FullCategoryName};
-				selection = RaceCategory.Instance().getTableName() + "." + RaceCategory.RaceSeries_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceSeriesID_Name);
+				selection = RaceRaceCategory.Instance().getTableName() + "." + RaceRaceCategory.Race_ID + "=1";// + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name);
 				selectionArgs = null;
 				sortOrder = RaceCategory.Instance().getTableName() + "." + RaceCategory._ID;
-				loader = new CursorLoader(getActivity(), RaceCategory.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), RaceRaceCategoryView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 		}
 		Log.v(LOG_TAG(), "onCreateLoader complete: id=" + Integer.toString(id));

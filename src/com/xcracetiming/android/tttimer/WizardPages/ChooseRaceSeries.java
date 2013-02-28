@@ -1,6 +1,7 @@
 package com.xcracetiming.android.tttimer.WizardPages;
 
 import com.xcracetiming.android.tttimer.R;
+import com.xcracetiming.android.tttimer.DataAccess.Race;
 import com.xcracetiming.android.tttimer.DataAccess.RaceSeries;
 import com.xcracetiming.android.tttimer.Utilities.Loaders;
 
@@ -38,6 +39,7 @@ public class ChooseRaceSeries extends BaseWizardPage implements OnCheckedChangeL
 	
 	@Override
 	public void setArguments(Bundle args) {
+		super.setArguments(args);
 		if(args.containsKey(LOG_TAG)){
 			getRadioButton(R.id.radioNewSeries).setChecked(args.getBoolean(LOG_TAG));
 			getRadioButton(R.id.radioNo).setChecked(!args.getBoolean(LOG_TAG));
@@ -60,7 +62,7 @@ public class ChooseRaceSeries extends BaseWizardPage implements OnCheckedChangeL
 	@Override
 	public Bundle Save() throws Exception {
 		Bundle b = super.Save();
-		RadioButton rb = (RadioButton) getView().findViewById(R.id.radioNewSeries);
+		RadioButton rb = getRadioButton(R.id.radioNewSeries);
 		boolean isNewSeries = rb.isChecked();
 		// If the race is in a series, validate that a series name was entered
 		if(isNewSeries){
@@ -75,6 +77,12 @@ public class ChooseRaceSeries extends BaseWizardPage implements OnCheckedChangeL
 		boolean isExistingSeries = getRadioButton(R.id.radioExistingSeries).isChecked();
 
 		b.putBoolean("IsPartOfExistingSeries", isExistingSeries);
+		
+		rb = getRadioButton(R.id.radioNo);		
+		if(rb.isChecked()){
+			// Default to "Individual" series
+			b.putLong(Race.RaceSeries_ID, 1l);
+		}
 		
 		return b;
 	}

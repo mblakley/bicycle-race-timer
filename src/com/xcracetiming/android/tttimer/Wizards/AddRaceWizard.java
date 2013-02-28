@@ -4,18 +4,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 
 import com.xcracetiming.android.tttimer.R;
+import com.xcracetiming.android.tttimer.TTTimerTabsActivity;
 import com.xcracetiming.android.tttimer.DataAccess.Race;
 import com.xcracetiming.android.tttimer.DataAccess.RaceCategory;
 import com.xcracetiming.android.tttimer.DataAccess.RaceLocation;
+import com.xcracetiming.android.tttimer.DataAccess.RaceRaceCategory;
 import com.xcracetiming.android.tttimer.DataAccess.RaceSeries;
 import com.xcracetiming.android.tttimer.WizardPages.AddRaceCategoriesView;
 import com.xcracetiming.android.tttimer.WizardPages.AddRaceInfoView;
@@ -24,7 +27,6 @@ import com.xcracetiming.android.tttimer.WizardPages.AddRaceSummary;
 import com.xcracetiming.android.tttimer.WizardPages.ChooseRaceLapsView;
 import com.xcracetiming.android.tttimer.WizardPages.ChooseRaceLocation;
 import com.xcracetiming.android.tttimer.WizardPages.ChooseRaceSeries;
-import com.xcracetiming.android.tttimer.WizardPages.IWizardPage;
 
 public class AddRaceWizard extends BaseWizard implements View.OnClickListener {
 	public static final String LOG_TAG = "AddRaceWizard";
@@ -73,31 +75,25 @@ public class AddRaceWizard extends BaseWizard implements View.OnClickListener {
 		wizardPages.add(new AddRaceSummary());		
 	}
 	
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		outState.putInt("CurrentWizardPageIndex", currentWizardPageIndex);
-		outState.putSerializable("WizardPages", wizardPages);
-//		if(outState == null){
-//			outState = new Bundle();
+//	@Override
+//	public void onSaveInstanceState(Bundle outState) {
+//		super.onSaveInstanceState(outState);
+//		outState.putInt("CurrentWizardPageIndex", currentWizardPageIndex);
+//		outState.putSerializable("WizardPages", wizardPages);
+//	}
+//	
+//	@Override public void onViewStateRestored(Bundle savedInstanceState) {
+//		super.onViewStateRestored(savedInstanceState);
+//		if(savedInstanceState != null){
+//			if(savedInstanceState.containsKey("WizardPages")){
+//				wizardPages = (ArrayList<IWizardPage>) savedInstanceState.getSerializable("WizardPages");
+//			}
+//			if(savedInstanceState.containsKey("CurrentWizardPageIndex")){
+//				currentWizardPageIndex = savedInstanceState.getInt("CurrentWizardPageIndex");
+//			}
+//			restoring = true;
 //		}
-//		outState.clear();		
-//		outState.putAll(args);
-	}
-	
-	@Override public void onViewStateRestored(Bundle savedInstanceState) {
-		super.onViewStateRestored(savedInstanceState);
-		if(savedInstanceState != null){
-			if(savedInstanceState.containsKey("WizardPages")){
-				wizardPages = (ArrayList<IWizardPage>) savedInstanceState.getSerializable("WizardPages");
-			}
-			if(savedInstanceState.containsKey("CurrentWizardPageIndex")){
-				currentWizardPageIndex = savedInstanceState.getInt("CurrentWizardPageIndex");
-			}
-			restoring = true;
-		}
-//		args = savedInstanceState;
-	}
+//	}
 	
 	@Override
 	public void onStart() {
@@ -143,7 +139,11 @@ public class AddRaceWizard extends BaseWizard implements View.OnClickListener {
 				Uri createdSeriesUri = RaceSeries.Instance().Create(getActivity(), content);
 				raceSeries_ID = Long.parseLong(createdSeriesUri.getLastPathSegment());
 			} else{
-				raceSeries_ID = args.getLong(Race.RaceSeries_ID);
+				if(args.containsKey(Race.RaceSeries_ID)){
+					raceSeries_ID = args.getLong(Race.RaceSeries_ID);
+				} else{
+					raceSeries_ID = 1l;
+				}
 			}
 			
 			Long raceLocation_ID;
@@ -169,17 +169,38 @@ public class AddRaceWizard extends BaseWizard implements View.OnClickListener {
 			raceContent.put(Race.ScoringType, args.getLong(Race.ScoringType));
 			raceContent.put(Race.StartInterval, args.getLong(Race.StartInterval));
 			raceContent.put(Race.USACEventID, args.getLong(Race.USACEventID));
-			Race.Instance().Create(getActivity(), raceContent);
+			Uri createdRaceUri = Race.Instance().Create(getActivity(), raceContent);
+			long race_ID = Long.parseLong(createdRaceUri.getLastPathSegment());
 			
 			// Create the new race categories
 			// This must be done after the race is created, otherwise we don't know what to link it to.
-			ArrayList<String> newCategories = args.getStringArrayList(RaceCategory.FullCategoryName);
+			String[] newCategories = args.getStringArray("NewRaceCategories");
 			for(String categoryName: newCategories){
 				ContentValues categoryContent = new ContentValues();
 				categoryContent.put(RaceCategory.FullCategoryName, categoryName);
 				categoryContent.put(RaceCategory.RaceSeries_ID, raceSeries_ID);
-				RaceCategory.Instance().Create(getActivity(), categoryContent);
+				Uri createdRaceCategoryUri = RaceCategory.Instance().Create(getActivity(), categoryContent);
+				long raceCategory_ID = Long.parseLong(createdRaceCategoryUri.getLastPathSegment());
+				ContentValues rrcContent = new ContentValues();
+				rrcContent.put(RaceRaceCategory.Race_ID, race_ID);
+				rrcContent.put(RaceRaceCategory.RaceCategory_ID, raceCategory_ID);
+				RaceRaceCategory.Instance().Create(getActivity(), rrcContent);
+			}	
+			
+			// Associate all of the categories with the new race
+			long[] raceRaceCategories = args.getLongArray("SelectedRaceCategories");
+			for(Long category_ID: raceRaceCategories){
+				ContentValues categoryContent = new ContentValues();
+				categoryContent.put(RaceRaceCategory.Race_ID, race_ID);
+				categoryContent.put(RaceRaceCategory.RaceCategory_ID, category_ID);
+				RaceRaceCategory.Instance().Create(getActivity(), categoryContent);
 			}			
+			
+			// Send a notification that the race_ID has changed
+			Intent raceAdded = new Intent();
+			raceAdded.setAction(TTTimerTabsActivity.RACE_ID_CHANGED_ACTION);
+			raceAdded.putExtra(Race._ID, race_ID);
+			LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(raceAdded);
 		}else {
 			super.SaveAndContinue();
 		}

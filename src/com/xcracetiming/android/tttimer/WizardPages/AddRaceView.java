@@ -44,6 +44,7 @@ public class AddRaceView extends BaseWizardPage implements View.OnClickListener,
 	
 	@Override
 	public void setArguments(Bundle args) {
+		super.setArguments(args);
 		//this.raceSeries_ID = args.getLong(Race.RaceSeries_ID);
 		//AppSettings.Instance().UpdateLong(getActivity(), AppSettings.AppSetting_RaceSeriesID_Name, raceSeries_ID, true);
 	}	

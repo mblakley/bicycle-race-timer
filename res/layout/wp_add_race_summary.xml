@@ -207,35 +207,6 @@
         </TextView>        
         
     </LinearLayout>
-        
-    <LinearLayout
-        android:id="@+id/llCourseRecord"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:weightSum="1">
-		
-		<TextView
-            android:id="@+id/lblCourseRecord"
-            android:layout_width="0dip"
-            android:layout_weight="0.5"
-            android:layout_height="wrap_content"
-            android:text="@string/lblCourseRecord"
-            android:textAppearance="@style/Medium"
-            android:textColor="@color/normal_fg"
-            android:paddingRight="10sp"
-            android:textStyle="bold" >
-        </TextView>        
-        
-		<TextView
-            android:id="@+id/courseRecord"
-            android:layout_width="0dip"
-            android:layout_weight="0.5"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/Medium"
-            android:textColor="@color/normal_fg" >
-        </TextView>        
-    </LinearLayout>
     
     <LinearLayout
         android:id="@+id/llRaceLaps"
@@ -247,20 +218,22 @@
         
         <TextView
             android:id="@+id/lblLaps"
-            style="@style/Medium"
+            android:textAppearance="@style/Medium"
             android:layout_width="0dip"
             android:layout_weight="0.5"
             android:layout_height="wrap_content"
             android:paddingRight="10sp"
             android:text="@string/lblLaps"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="@color/normal_fg" />
 
         <TextView
             android:id="@+id/raceLaps"
             android:layout_width="0dip"
             android:layout_weight="0.5"
             android:layout_height="wrap_content"
-            style="@style/Medium.Padded" />
+            android:textAppearance="@style/Medium"
+            android:textColor="@color/normal_fg" />
     </LinearLayout> 
     
     <LinearLayout
@@ -272,12 +245,12 @@
         
         <TextView
             android:id="@+id/lblRaceCategories"
-            style="@style/Medium"
+            android:textAppearance="@style/Medium"
             android:layout_width="0dip"
             android:layout_weight="0.5"
             android:layout_height="wrap_content"
             android:paddingRight="10sp"
-            android:text="@string/CourseName"
+            android:text="@string/RaceCategories"
             android:textStyle="bold" />
 
         <TextView
@@ -285,7 +258,7 @@
             android:layout_width="0dip"
             android:layout_weight="0.5"
             android:layout_height="wrap_content"
-            style="@style/Medium.Padded" />
+            android:textAppearance="@style/Medium" />
     </LinearLayout> 
     
 </LinearLayout>

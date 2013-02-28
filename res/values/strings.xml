@@ -248,4 +248,5 @@
 	<string name="ChooseRaceSeriesInfo">Race Series Info</string>
 	<string name="ChooseRaceLocation">Race Location</string>
 	<string name="RaceLaps">Race Laps</string>
+	<string name="RaceCategories">Race Categories:</string>
 </resources>

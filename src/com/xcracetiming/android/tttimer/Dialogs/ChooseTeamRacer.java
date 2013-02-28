@@ -111,7 +111,7 @@ public class ChooseTeamRacer extends BaseDialog implements View.OnClickListener,
 	            caller.onFinishEditDialog(racerNum, -1l);
 	            this.dismiss();
 			} else if (v == btnAddRacer){
-	            AddRacerView addRacer = new AddRacerView(false);
+	            AddRacerView addRacer = new AddRacerView();
 				FragmentManager fm = getActivity().getSupportFragmentManager();
 				addRacer.show(fm, AddRacerView.LOG_TAG);
 			} else {

@@ -37,6 +37,7 @@ public class ChooseRaceLapsView extends BaseWizardPage implements OnCheckedChang
 	
 	@Override
 	public void setArguments(Bundle args) {
+		super.setArguments(args);
 		if(args.containsKey(LOG_TAG)){
 			getRadioButton(R.id.radioNewSeries).setChecked(args.getBoolean(LOG_TAG));
 			getRadioButton(R.id.radioNo).setChecked(!args.getBoolean(LOG_TAG));

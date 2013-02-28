@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:orientation="horizontal"
+	android:descendantFocusability="blocksDescendants"
+	android:weightSum="1.0" >
+	<TextView
+		android:id="@+id/lblText"
+		android:layout_width="0dip"
+		android:width="0dp"
+		android:layout_weight="0.85"
+		android:layout_height="wrap_content"
+		android:gravity="right"
+		android:singleLine="true"
+		style="@style/Medium.RightPadded" />
+
+	<CheckBox
+	    android:id="@+id/chkAddRemove"
+	    android:paddingLeft="0sp"
+		android:paddingRight="0sp"
+		android:layout_width="0dip"
+		android:layout_height="wrap_content"
+		android:layout_weight="0.15"
+		android:width="0dp"
+		style="@style/Medium"  />
+</LinearLayout>

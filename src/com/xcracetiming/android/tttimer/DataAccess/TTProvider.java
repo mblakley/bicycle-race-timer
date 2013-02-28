@@ -220,10 +220,12 @@ public class TTProvider extends ContentProvider {
     		db.execSQL(RacerUSACInfo.Instance().getCreate());
     		db.execSQL(RaceCategory.Instance().getCreate());    		
     		db.execSQL(RaceSeries.Instance().getCreate());
+    		db.execSQL(RaceRaceCategory.Instance().getCreate()); 
     		Calendar cal = Calendar.getInstance();
 			cal.setTimeInMillis(System.currentTimeMillis());
     		Date startOfSeries = new Date(cal.get(Calendar.YEAR), Calendar.JANUARY, 1, 0, 0);
 			Date endOfSeries = new Date(2025, Calendar.DECEMBER, 31, 23, 59);
+			// Create the default race series (used for individual races)
     		db.execSQL("INSERT INTO " + RaceSeries.Instance().getTableName() + "(" + RaceSeries.SeriesName + "," + RaceSeries.SeriesStartDate + "," + RaceSeries.SeriesEndDate + "," + RaceSeries.SeriesScoringType + ") VALUES ('Individual', " + startOfSeries.getTime() + "," + endOfSeries.getTime() + ",'Club');");
     		db.execSQL(RaceType.Instance().getCreate());
     		// Initial load of race types

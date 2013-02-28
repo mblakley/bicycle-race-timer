@@ -15,17 +15,15 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.view.WindowManager.LayoutParams;
 
 /**
  * @author Mark
  *
  */
-public abstract class BaseDialog extends DialogFragment implements View.OnClickListener {	
-	
-	private ImageButton btnBack;
+public abstract class BaseDialog extends DialogFragment implements View.OnClickListener {		
 
 	private Hashtable<Integer, View> viewList = new Hashtable<Integer, View>();
 	
@@ -146,7 +144,7 @@ public abstract class BaseDialog extends DialogFragment implements View.OnClickL
 	protected void destroyAllLoaders(){};
 
 	public void onClick(View v) {
-		if (v == btnBack){
+		if (v.getId() == R.id.btnBaseDialogClose1){
 			dismiss();
 		}
 	}

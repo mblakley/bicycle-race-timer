@@ -4,12 +4,12 @@ import java.util.Calendar;
 import java.util.Date;
 
 import com.xcracetiming.android.tttimer.R;
+import com.xcracetiming.android.tttimer.DataAccess.Race;
 import com.xcracetiming.android.tttimer.DataAccess.RaceSeries;
 
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +47,8 @@ public class AddRaceSeriesView extends BaseWizardPage {
 	}
 
 	public Bundle Save() {
+		Bundle b = getArguments();
+		
 		// Race Series name
 		String raceSeriesName = getEditText(R.id.txtRaceSeriesName).getText().toString();
 
@@ -60,7 +62,9 @@ public class AddRaceSeriesView extends BaseWizardPage {
 		Uri raceSeriesUri = RaceSeries.Instance().Create(getActivity(), raceSeriesName, startOfSeries, endOfSeries, "Club");
 		
 		long raceSeries_ID = Long.parseLong(raceSeriesUri.getLastPathSegment());
+				
+		b.putLong(Race.RaceSeries_ID, raceSeries_ID);
 		
-		return new Bundle();
+		return b;
 	}
 }

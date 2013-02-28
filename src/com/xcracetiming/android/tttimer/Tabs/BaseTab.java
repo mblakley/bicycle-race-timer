@@ -26,7 +26,7 @@ import android.widget.TextView;
  * @author Perry
  *
  */
-public abstract class BaseTab extends Fragment {
+public abstract class BaseTab extends Fragment implements View.OnClickListener {
 
 	private IntentFilter filter = new IntentFilter();
 	
@@ -52,10 +52,13 @@ public abstract class BaseTab extends Fragment {
 		super.onCreate(savedInstanceState);
 	}
 	
+	public void addClickListener(View view, int id){
+		((Button) view.findViewById(id)).setOnClickListener(this);
+	}
+	
 	@Override
 	public void onStart() {
 		super.onStart();
-		addClickListeners();
 	}
 	
 	public TextView getTextView(int id){
@@ -74,7 +77,7 @@ public abstract class BaseTab extends Fragment {
 	
 	public LinearLayout getLinearLayout(int id){
 		if(!viewList.containsKey(id)){
-			viewList.put(id, (TextView) getView().findViewById(id));
+			viewList.put(id, (LinearLayout) getView().findViewById(id));
 		}
 		return (LinearLayout)viewList.get(id);
 	}
@@ -95,9 +98,7 @@ public abstract class BaseTab extends Fragment {
 	
 	protected void startAllLoaders(){};
 	
-	protected void destroyAllLoaders(){};	
-	
-	protected void addClickListeners(){};
+	protected void destroyAllLoaders(){};		
 	
 	protected TTTimerTabsActivity getParentActivity(){
 		return (TTTimerTabsActivity)this.getActivity();
@@ -120,7 +121,7 @@ public abstract class BaseTab extends Fragment {
     public void onResume() {
     	super.onResume();
     	Log.v(LOG_TAG(), "onResume");
-    	
+
     	startAllLoaders();
     }
     
@@ -163,4 +164,8 @@ public abstract class BaseTab extends Fragment {
 	public String TabSpecName(){
     	return this.getClass().getSimpleName();
     }
+	
+	public void onClick(View v) {
+		return;
+	}
 }

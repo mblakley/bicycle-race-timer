@@ -80,16 +80,13 @@ public class CheckInTab extends BaseTab implements LoaderManager.LoaderCallbacks
         View view = inflater.inflate(R.layout.tab_checkin, container, false);
 		
         view.setKeepScreenOn(true);
+
+		addClickListener(view, R.id.btnAddNewRacer);
+		addClickListener(view, R.id.btnAddNewTeam);
+		addClickListener(view, R.id.btnAddGhostRacer);
         
         return view;
     }
-	
-	@Override
-	protected void addClickListeners() {
-		getButton(R.id.btnAddNewRacer).setOnClickListener(this);
-		getButton(R.id.btnAddNewTeam).setOnClickListener(this);
-		getButton(R.id.btnAddGhostRacer).setOnClickListener(this);
-	}
 	
 	@Override
 	protected void startAllLoaders() {
@@ -266,14 +263,14 @@ public class CheckInTab extends BaseTab implements LoaderManager.LoaderCallbacks
 
 							if(!isTeamRace){						        							
 								getButton(R.id.btnAddNewTeam).setVisibility(View.GONE);
-								getButton(R.id.btnAddRacer).setVisibility(View.VISIBLE);
+								getButton(R.id.btnAddNewRacer).setVisibility(View.VISIBLE);
 								llFilters.setVisibility(View.VISIBLE);
 
 								checkInLoader = getActivity().getSupportLoaderManager().restartLoader(Loaders.CHECKIN_LOADER_CHECKIN, null, this);
 								startOrderLoader = getActivity().getSupportLoaderManager().restartLoader(Loaders.START_ORDER_LOADER_CHECKIN, null, this);
 							}else {	
 								getButton(R.id.btnAddNewTeam).setVisibility(View.VISIBLE);
-								getButton(R.id.btnAddRacer).setVisibility(View.GONE);
+								getButton(R.id.btnAddNewRacer).setVisibility(View.GONE);
 								llFilters.setVisibility(View.GONE);
 
 								teamsCheckInLoader = getActivity().getSupportLoaderManager().restartLoader(Loaders.TEAM_CHECKIN_LOADER, null, this);
@@ -336,8 +333,11 @@ public class CheckInTab extends BaseTab implements LoaderManager.LoaderCallbacks
  			Log.v(LOG_TAG(), "onClick");
 			FragmentManager fm = getActivity().getSupportFragmentManager();
 			switch(v.getId()){
-				case R.id.btnAddRacer:
-		            AddRacerView addRacer = new AddRacerView(autoCheckIn);
+				case R.id.btnAddNewRacer:
+		            AddRacerView addRacer = new AddRacerView();
+		            Bundle b = new Bundle();
+		            b.putBoolean("CheckInAfterAdd", autoCheckIn);
+		            addRacer.setArguments(b);
 		            addRacer.show(fm, AddRacerView.LOG_TAG);
 		            break;
 				case R.id.btnAddNewTeam:					

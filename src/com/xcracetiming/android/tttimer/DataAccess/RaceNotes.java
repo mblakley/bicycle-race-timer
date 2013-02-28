@@ -66,7 +66,7 @@ public final class RaceNotes extends ContentProviderTable implements BaseColumns
         {
         	content.put(RaceNotes.OtherNotes, otherNotes);
         }
-        int numChanged =  context.getContentResolver().update(RaceNotes.Instance().CONTENT_URI, content, RaceNotes.Race_ID + "=?", new String[]{race_ID.toString()});
+        int numChanged =  RaceNotes.Instance().Update(context, content, RaceNotes.Race_ID + "=?", new String[]{race_ID.toString()});
 		if(addIfNotExist && numChanged < 1){
 			content.put(RaceNotes.Race_ID, race_ID);
 			RaceNotes.Instance().Create(context, content);

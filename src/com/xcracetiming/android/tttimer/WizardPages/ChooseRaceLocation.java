@@ -1,6 +1,7 @@
 package com.xcracetiming.android.tttimer.WizardPages;
 
 import com.xcracetiming.android.tttimer.R;
+import com.xcracetiming.android.tttimer.DataAccess.AppSettings;
 import com.xcracetiming.android.tttimer.DataAccess.RaceLocation;
 import com.xcracetiming.android.tttimer.Utilities.Loaders;
 
@@ -38,6 +39,7 @@ public class ChooseRaceLocation extends BaseWizardPage implements OnCheckedChang
 	
 	@Override
 	public void setArguments(Bundle args) {
+		super.setArguments(args);
 		if(args.containsKey("NewLocation")){
 			getRadioButton(R.id.radioNewLocation).setChecked(args.getBoolean("NewLocation"));
 			getRadioButton(R.id.radioExistingLocation).setChecked(!args.getBoolean("NewLocation"));
@@ -121,12 +123,14 @@ public class ChooseRaceLocation extends BaseWizardPage implements OnCheckedChang
 	protected void startAllLoaders() {
 		// Initialize the cursor loader for the races list
 		this.getLoaderManager().initLoader(Loaders.RACE_LOCATIONS_LOADER, null, this);
+		this.getLoaderManager().initLoader(Loaders.APP_SETTINGS_LOADER_RACEINFO, null, this);
 	}
 	
 	@Override
 	protected void destroyAllLoaders() {
 		// Destroy the cursor loaders
 		this.getLoaderManager().destroyLoader(Loaders.RACE_LOCATIONS_LOADER);
+		this.getLoaderManager().destroyLoader(Loaders.APP_SETTINGS_LOADER_RACEINFO);
 	}
 
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -135,6 +139,9 @@ public class ChooseRaceLocation extends BaseWizardPage implements OnCheckedChang
 		switch(id){
 			case Loaders.RACE_LOCATIONS_LOADER:
 				loader = Loaders.GetAllCourseNames(getActivity());
+				break;
+			case Loaders.APP_SETTINGS_LOADER_RACEINFO:				
+				loader = Loaders.GetDistanceUnits(getActivity());
 				break;
 		}
 		Log.v(LOG_TAG, "onCreateLoader complete: id=" + Integer.toString(id));
@@ -169,6 +176,14 @@ public class ChooseRaceLocation extends BaseWizardPage implements OnCheckedChang
 	        			getRadioButton(R.id.radioExistingLocation).setChecked(false);
 		            }
 					break;
+				case Loaders.APP_SETTINGS_LOADER_RACEINFO:	
+					String distanceUnit = "mi";
+					if(cursor.getCount() > 0){
+						cursor.moveToFirst();
+						distanceUnit = cursor.getString(cursor.getColumnIndex(AppSettings.AppSettingValue));					
+					}
+					getTextView(R.id.lblDistanceUnit).setText(distanceUnit);
+					break;	
 			}
 			Log.v(LOG_TAG, "onLoadFinished complete: id=" + Integer.toString(loader.getId()));
 		}catch(Exception ex){
@@ -182,6 +197,8 @@ public class ChooseRaceLocation extends BaseWizardPage implements OnCheckedChang
 			switch(loader.getId()){
 				case Loaders.RACE_LOCATIONS_LOADER:
 					raceLocationsCursorAdapter.swapCursor(null);
+					break;
+				case Loaders.APP_SETTINGS_LOADER_RACEINFO:
 					break;
 			}
 			Log.v(LOG_TAG, "onLoaderReset complete: id=" + Integer.toString(loader.getId()));

@@ -45,6 +45,11 @@ public class TTTimerTabsActivity extends FragmentActivity {
 	 * This is the name of the tag that contains the view to change the main frame layout
 	 */
 	public static final String CHANGE_MAIN_VIEW_ACTION = "com.xcracetiming.android.tttimer.CHANGE_MAIN_VIEW_ACTION";
+
+	/**
+	 * Set the visibility of the timer at the bottom
+	 */
+	public static final String SET_TIMER_VISIBILITY = "com.xcracetiming.android.tttimer.SET_TIMER_VISIBILITY";
 	
     /**
      * The intent filter is used to listen for events that getActivity() class can handle.  Subscribed events are set up in onCreate.
@@ -79,9 +84,8 @@ public class TTTimerTabsActivity extends FragmentActivity {
 		        }
 
 		        // Create an instance of MainTabsView
-		        MainTabsView firstFragment = new MainTabsView();
+		        MainTabsView firstFragment = new MainTabsView();			        
 
-		        //AddRaceWizard firstFragment = new AddRaceWizard();
 		        // In case this activity was started with special instructions from an Intent,
 		        // pass the Intent's extras to the fragment as arguments
 		        firstFragment.setArguments(getIntent().getExtras());
@@ -130,18 +134,29 @@ public class TTTimerTabsActivity extends FragmentActivity {
 					} catch (InstantiationException e) {
 						Log.e("TTTimerTabsActivity.onReceive", "Unable to create class of type " + className, e);
 					}
-        		}
-
-    			boolean showTimer = true;
-        		if(intent.hasExtra("ShowTimer")){
-        			showTimer = intent.getBooleanExtra("ShowTimer", true);
-        		}
-    			timer.setVisibility(showTimer? View.VISIBLE : View.GONE);
-				LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT,0,(float) (showTimer? 0.85:1));
-				findViewById(R.id.fragment_container).setLayoutParams(lp);
+        		}      
+    			
+        		showTimer(intent);    			
+        	}
+        	
+        	// Set the visibility of the timer
+        	// Used when setting up different race statuses
+        	if(intent.getAction().equals(TTTimerTabsActivity.SET_TIMER_VISIBILITY)){
+        		showTimer(intent);
         	}
         }
     };
+
+	private void showTimer(Intent intent) {
+		boolean showTimer = true;
+		if(intent.hasExtra("ShowTimer")){
+			showTimer = intent.getBooleanExtra("ShowTimer", true);
+		}
+		
+		timer.setVisibility(showTimer? View.VISIBLE : View.GONE);
+		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT,0,(float) (showTimer? 0.85:1));
+		findViewById(R.id.fragment_container).setLayoutParams(lp);	
+	}
     
     /**
      * Add an action that the broadcast receiver should be listening for
@@ -159,13 +174,11 @@ public class TTTimerTabsActivity extends FragmentActivity {
 		// Set up the timer view
 		timer = ((Timer)findViewById(R.id.TimerBottom));
 
-		AddActionFilter(TTTimerTabsActivity.RACE_ID_CHANGED_ACTION);
+		AddActionFilter(TTTimerTabsActivity.SET_TIMER_VISIBILITY);
 		AddActionFilter(TTTimerTabsActivity.CHANGE_MAIN_VIEW_ACTION);
 
         // Register for broadcasts when a tab is changed
-		LocalBroadcastManager.getInstance(this).registerReceiver(mActionReceiver, actionFilter);
-		
-		// Do all of the necessary stuff to figure out if there's a current race, or if we need to add one
+		LocalBroadcastManager.getInstance(this).registerReceiver(mActionReceiver, actionFilter);		
 		
 		timer.RegisterReceiver();
 	}

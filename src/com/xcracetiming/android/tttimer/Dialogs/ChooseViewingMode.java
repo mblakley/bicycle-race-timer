@@ -16,21 +16,15 @@ import android.support.v4.content.LocalBroadcastManager;
 
 
 public class ChooseViewingMode extends BaseDialog implements View.OnClickListener {
-	public static final String LOG_TAG = "ChooseViewingMode";
-	
-	private Button btnAddNewRace;
-	private Button btnPreviousRaces;
+	public static final String LOG_TAG = "ChooseViewingMode";	
 	 
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {		
 		View v = inflater.inflate(R.layout.dialog_viewing_mode, container, false);
 		  
-		btnAddNewRace = (Button) v.findViewById(R.id.btnAddNewRace);
-		btnAddNewRace.setOnClickListener(this);		
-
-		btnPreviousRaces = (Button) v.findViewById(R.id.btnPreviousRaces);
-		btnPreviousRaces.setOnClickListener(this);
+		((Button) v.findViewById(R.id.btnAddNewRace)).setOnClickListener(this);		
+		((Button) v.findViewById(R.id.btnPreviousRaces)).setOnClickListener(this);
 	
 		return v;
 	}
@@ -49,7 +43,7 @@ public class ChooseViewingMode extends BaseDialog implements View.OnClickListene
 	@Override
 	public void onClick(View v) { 
 		try{
-			if (v == btnAddNewRace){				
+			if (v.getId() == R.id.btnAddNewRace){				
 				Intent showAddRaceWizard = new Intent();
 				showAddRaceWizard.setAction(TTTimerTabsActivity.CHANGE_MAIN_VIEW_ACTION);
 				showAddRaceWizard.putExtra("ShowView", new AddRaceWizard().getClass().getCanonicalName());
@@ -57,7 +51,7 @@ public class ChooseViewingMode extends BaseDialog implements View.OnClickListene
 				
 				// Hide the dialog
 		    	dismiss();
-			} else if (v == btnPreviousRaces) {
+			} else if (v.getId() == R.id.btnPreviousRaces) {
 				OtherRaceResults previousRaceResultsView = new OtherRaceResults();
 				FragmentManager fm = getFragmentManager();
 				previousRaceResultsView.show(fm, OtherRaceResults.LOG_TAG);

@@ -25,9 +25,9 @@ public class EditRacerView extends AddRacerView implements View.OnClickListener,
 	private Long racerClubInfo_ID;
 	private Long racer_ID;
 	private long initCategory;
-	public EditRacerView(long racerClubInfo_ID) {
-		super(false);
-		
+	public EditRacerView(){};
+	
+	public EditRacerView(long racerClubInfo_ID) {		
 		this.racerClubInfo_ID = racerClubInfo_ID;
 	}
 	
@@ -59,13 +59,13 @@ public class EditRacerView extends AddRacerView implements View.OnClickListener,
 				Log.v(LOG_TAG, "btnEditRacerClickHandler");
 				
 				// First name
-				String firstName = txtFirstName.getText().toString();
+				String firstName = getEditText(R.id.txtFirstName).getText().toString();
 				// Last name
-				String lastName = txtLastName.getText().toString();
+				String lastName = getEditText(R.id.txtLastName).getText().toString();
 				// Category
-				long category = spinCategory.getSelectedItemId();	
+				long category = getSpinner(R.id.spinnerCategory).getSelectedItemId();	
 				// USACNumber
-				String usacNumber = txtUSACNumber.getText().toString();
+				String usacNumber = getEditText(R.id.txtUSACNumber).getText().toString();
 		
 				if(firstName.trim().equals("")){
 					Toast.makeText(getActivity(), "Please enter a first name", Toast.LENGTH_LONG).show();
@@ -87,9 +87,9 @@ public class EditRacerView extends AddRacerView implements View.OnClickListener,
 			    	dismiss();
 					
 					// Set the textboxes in the dialog to an empty string
-					txtFirstName.setText("");
-					txtLastName.setText("");
-					txtUSACNumber.setText("");
+			    	getEditText(R.id.txtFirstName).setText("");
+			    	getEditText(R.id.txtLastName).setText("");
+			    	getEditText(R.id.txtUSACNumber).setText("");
 				}
 			} else {
 				super.onClick(v);
@@ -140,8 +140,8 @@ public class EditRacerView extends AddRacerView implements View.OnClickListener,
 					cursor.moveToFirst();
 					racer_ID = cursor.getLong(cursor.getColumnIndex(RacerSeriesInfo.RacerUSACInfo_ID)); 
 					
-					txtFirstName.setText(cursor.getString(cursor.getColumnIndex(Racer.FirstName)));
-					txtLastName.setText(cursor.getString(cursor.getColumnIndex(Racer.LastName)));
+					getEditText(R.id.txtFirstName).setText(cursor.getString(cursor.getColumnIndex(Racer.FirstName)));
+					getEditText(R.id.txtLastName).setText(cursor.getString(cursor.getColumnIndex(Racer.LastName)));
 					SetCategorySelectionByValue(cursor.getLong(cursor.getColumnIndex(RacerSeriesInfo.CurrentRaceCategory_ID)));
 					break;
 			}
@@ -154,10 +154,10 @@ public class EditRacerView extends AddRacerView implements View.OnClickListener,
 	private void SetCategorySelectionByValue(long racerCategory) {
 		initCategory = racerCategory;
 		
-		for (int i = 0; i < spinCategory.getCount(); i++) {
-		    long catID = spinCategory.getItemIdAtPosition(i);
+		for (int i = 0; i < getSpinner(R.id.spinnerCategory).getCount(); i++) {
+		    long catID = getSpinner(R.id.spinnerCategory).getItemIdAtPosition(i);
 		    if (racerCategory == catID) {
-		    	spinCategory.setSelection(i);
+		    	getSpinner(R.id.spinnerCategory).setSelection(i);
 		    	break;
 		    }
 		}
