@@ -6,7 +6,6 @@ import java.util.Hashtable;
 import java.util.Locale;
 
 import com.xcracetiming.android.tttimer.R;
-import com.xcracetiming.android.tttimer.DataAccess.AppSettings;
 import com.xcracetiming.android.tttimer.DataAccess.Race;
 import com.xcracetiming.android.tttimer.DataAccess.RaceLocation;
 import com.xcracetiming.android.tttimer.DataAccess.RaceResults;
@@ -22,10 +21,14 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+/**
+ * Testing a different way to do the loaders instead of having the activities/fragments implement this interface
+ * @author mab
+ *
+ */
 public class TestLoader implements LoaderManager.LoaderCallbacks<Cursor> {
 
 	FragmentActivity fragActivity;

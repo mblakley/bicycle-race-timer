@@ -3,7 +3,6 @@ package com.xcracetiming.android.tttimer.DataAccess.Views;
 import java.util.ArrayList;
 
 import android.net.Uri;
-import android.provider.BaseColumns;
 
 import com.xcracetiming.android.tttimer.DataAccess.ContentProviderTable;
 import com.xcracetiming.android.tttimer.DataAccess.RaceLaps;
@@ -12,7 +11,7 @@ import com.xcracetiming.android.tttimer.DataAccess.TeamInfo;
 import com.xcracetiming.android.tttimer.DataAccess.TeamMembers;
 
 // BaseColumn contains _id.
-public final class TeamLapsView extends ContentProviderTable implements BaseColumns {
+public final class TeamLapsView extends ContentProviderView {
 
     private static final TeamLapsView instance = new TeamLapsView();
     
@@ -22,6 +21,7 @@ public final class TeamLapsView extends ContentProviderTable implements BaseColu
         return instance;
     }
     
+    @Override
     public String getTableName(){
     	return new TableJoin(TeamInfo.Instance().getTableName())
     				.LeftJoin(TeamInfo.Instance().getTableName(), SeriesRaceTeamResults.Instance().getTableName(), TeamInfo._ID, SeriesRaceTeamResults.TeamInfo_ID)
@@ -29,10 +29,7 @@ public final class TeamLapsView extends ContentProviderTable implements BaseColu
     				.toString();
     }
 
-	public String getCreate(){
-    	return "";
-    }
-    
+    @Override
     public ArrayList<Uri> getAllUrisToNotifyOnChange(){
     	ArrayList<Uri> urisToNotify = super.getAllUrisToNotifyOnChange();
     	urisToNotify.add(TeamCheckInViewExclusive.Instance().CONTENT_URI);

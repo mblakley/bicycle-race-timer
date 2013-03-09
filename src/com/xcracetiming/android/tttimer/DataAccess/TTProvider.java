@@ -229,13 +229,11 @@ public class TTProvider extends ContentProvider {
 
 	    private void SetDefaults(SQLiteDatabase db) {
 	    	// Initial load of lookup groups
+	    	// Humidity levels (Dry, Moderate, Humid, Raining)
 	        db.execSQL("INSERT INTO " + LookupGroups.Instance().getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Humidity + "', 'Dry');");
     		db.execSQL("INSERT INTO " + LookupGroups.Instance().getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Humidity + "', 'Moderate');");
     		db.execSQL("INSERT INTO " + LookupGroups.Instance().getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Humidity + "', 'Humid');");
     		db.execSQL("INSERT INTO " + LookupGroups.Instance().getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Humidity + "', 'Raining');");
-    		db.execSQL("INSERT INTO " + LookupGroups.Instance().getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Category + "', 'A');");
-    		db.execSQL("INSERT INTO " + LookupGroups.Instance().getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Category + "', 'B4');");
-    		db.execSQL("INSERT INTO " + LookupGroups.Instance().getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Category + "', 'B5');");
     		
 	    	Calendar cal = Calendar.getInstance();
 			cal.setTimeInMillis(System.currentTimeMillis());
@@ -245,9 +243,15 @@ public class TTProvider extends ContentProvider {
     		db.execSQL("INSERT INTO " + RaceSeries.Instance().getTableName() + "(" + RaceSeries.SeriesName + "," + RaceSeries.SeriesStartDate + "," + RaceSeries.SeriesEndDate + "," + RaceSeries.SeriesScoringType + ") VALUES ('Individual', " + startOfSeries.getTime() + "," + endOfSeries.getTime() + ",'Club');");
     		
 	    	// Initial load of race types
+    		// Time Trial and Team Time Trial
 	        db.execSQL("INSERT INTO " + RaceType.Instance().getTableName() + "(" + RaceType.RaceTypeDescription + "," + RaceType.LicenseType + "," + RaceType.IsTeamRace + "," + RaceType.HasMultipleLaps + "," + RaceType.RaceDiscipline + ") VALUES ('Time Trial', 'Road', 0, 0, 'Time Trial');");
 	        db.execSQL("INSERT INTO " + RaceType.Instance().getTableName() + "(" + RaceType.RaceTypeDescription + "," + RaceType.LicenseType + "," + RaceType.IsTeamRace + "," + RaceType.HasMultipleLaps + "," + RaceType.RaceDiscipline + ") VALUES ('Team Time Trial', 'Road', 1, 1, 'Time Trial');");
 	        
+	        // TODO: Create a ghost racer
+	        //	Insert Racer
+	        //  	   RacerUSACInfo
+	        //		   RacerSeriesInfo
+	        //		   RaceCategory
 		}
 
 		@Override

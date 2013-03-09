@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.provider.BaseColumns;
 
 import com.xcracetiming.android.tttimer.DataAccess.ContentProviderTable;
 import com.xcracetiming.android.tttimer.DataAccess.Racer;
@@ -15,7 +14,7 @@ import com.xcracetiming.android.tttimer.DataAccess.TeamInfo;
 import com.xcracetiming.android.tttimer.DataAccess.TeamMembers;
 
 // BaseColumn contains _id.
-public final class TeamCheckInViewInclusive extends ContentProviderTable implements BaseColumns {
+public final class TeamCheckInViewInclusive extends ContentProviderView {
 
 	private static final TeamCheckInViewInclusive instance = new TeamCheckInViewInclusive();
     
@@ -25,6 +24,7 @@ public final class TeamCheckInViewInclusive extends ContentProviderTable impleme
         return instance;
     } 
     
+    @Override
 	public String getTableName() {
 		return TeamInfo.Instance().getTableName() + " JOIN "
 				+ TeamMembers.Instance().getTableName() + " ON ("
@@ -45,10 +45,7 @@ public final class TeamCheckInViewInclusive extends ContentProviderTable impleme
 				+ "." + Racer._ID + ")";
 	}
 
-	public String getCreate() {
-		return "";
-	}
-
+    @Override
 	public ArrayList<Uri> getAllUrisToNotifyOnChange(){
     	ArrayList<Uri> urisToNotify = super.getAllUrisToNotifyOnChange();
     	urisToNotify.add(TeamCheckInViewInclusive.Instance().CONTENT_URI);

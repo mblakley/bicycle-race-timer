@@ -76,7 +76,7 @@ public class AssignTimeTask extends AsyncTask<Long, Void, AssignResult> {
 			RaceResults.Instance().Update(context, content, RaceResults._ID + "= ?", new String[]{Long.toString(raceResult_ID)});
 	    	
 			// Setup notification of assignment
-			Hashtable<String, Object> racerValues = RacerInfoView.getValues(context, raceResultToAssignTo.getLong(raceResultToAssignTo.getColumnIndex(RacerSeriesInfo.RacerUSACInfo_ID)));
+			Hashtable<String, Object> racerValues = RacerInfoView.Instance().getValues(context, raceResultToAssignTo.getLong(raceResultToAssignTo.getColumnIndex(RacerSeriesInfo.RacerUSACInfo_ID)));
 			String racerName = racerValues.get(Racer.FirstName).toString() + " " + racerValues.get(Racer.LastName).toString();
 			
 			result.message = "Assigned time " + TimeFormatter.Format(elapsedTime, true, true, true, true, true, false, false, false) + " -> " + racerName;

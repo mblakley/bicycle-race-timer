@@ -2,16 +2,13 @@ package com.xcracetiming.android.tttimer.DataAccess.Views;
 
 import java.util.ArrayList;
 import android.net.Uri;
-import android.provider.BaseColumns;
 
-import com.xcracetiming.android.tttimer.DataAccess.ContentProviderTable;
 import com.xcracetiming.android.tttimer.DataAccess.RaceCategory;
 import com.xcracetiming.android.tttimer.DataAccess.Racer;
 import com.xcracetiming.android.tttimer.DataAccess.RacerSeriesInfo;
 import com.xcracetiming.android.tttimer.DataAccess.RacerUSACInfo;
 
-// BaseColumn contains _id.
-public final class RacerSeriesInfoView extends ContentProviderTable implements BaseColumns {
+public final class RacerSeriesInfoView extends ContentProviderView {
 
 	private static final RacerSeriesInfoView instance = new RacerSeriesInfoView();
     
@@ -20,19 +17,20 @@ public final class RacerSeriesInfoView extends ContentProviderTable implements B
     public static RacerSeriesInfoView Instance() {
         return instance;
     } 
-    
+
+    @Override
     public String getTableName(){
-    	return new TableJoin(RacerSeriesInfo.Instance().getTableName())
-    				.LeftJoin(RacerSeriesInfo.Instance().getTableName(), RacerUSACInfo.Instance().getTableName(), RacerSeriesInfo.RacerUSACInfo_ID, RacerUSACInfo._ID)
-    				.LeftJoin(RacerUSACInfo.Instance().getTableName(), Racer.Instance().getTableName(), RacerUSACInfo.Racer_ID, Racer._ID)
-    				.LeftJoin(RacerSeriesInfo.Instance().getTableName(), RaceCategory.Instance().getTableName(), RacerSeriesInfo.CurrentRaceCategory_ID, RaceCategory._ID)
-    				.toString();
+    	if(tableJoin == ""){
+	    	tableJoin = new TableJoin(RacerSeriesInfo.Instance().getTableName())
+		    				.LeftJoin(RacerSeriesInfo.Instance().getTableName(), RacerUSACInfo.Instance().getTableName(), RacerSeriesInfo.RacerUSACInfo_ID, RacerUSACInfo._ID)
+		    				.LeftJoin(RacerUSACInfo.Instance().getTableName(), Racer.Instance().getTableName(), RacerUSACInfo.Racer_ID, Racer._ID)
+		    				.LeftJoin(RacerSeriesInfo.Instance().getTableName(), RaceCategory.Instance().getTableName(), RacerSeriesInfo.CurrentRaceCategory_ID, RaceCategory._ID)
+		    				.toString();
+    	}
+    	return tableJoin;
     }
-    
-    public static String getCreate(){
-    	return "";
-    }
-    
+ 
+    @Override
     public ArrayList<Uri> getAllUrisToNotifyOnChange(){
     	ArrayList<Uri> urisToNotify = super.getAllUrisToNotifyOnChange();
     	urisToNotify.add(Racer.Instance().CONTENT_URI);

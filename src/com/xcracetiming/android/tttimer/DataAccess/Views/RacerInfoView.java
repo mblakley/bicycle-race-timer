@@ -6,15 +6,12 @@ import java.util.Hashtable;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.provider.BaseColumns;
 
-import com.xcracetiming.android.tttimer.DataAccess.ContentProviderTable;
 import com.xcracetiming.android.tttimer.DataAccess.Racer;
 import com.xcracetiming.android.tttimer.DataAccess.RacerSeriesInfo;
 import com.xcracetiming.android.tttimer.DataAccess.RacerUSACInfo;
 
-// BaseColumn contains _id.
-public final class RacerInfoView extends ContentProviderTable implements BaseColumns {
+public final class RacerInfoView extends ContentProviderView {
 
 	private static final RacerInfoView instance = new RacerInfoView();
     
@@ -24,16 +21,18 @@ public final class RacerInfoView extends ContentProviderTable implements BaseCol
         return instance;
     } 
     
+    @Override
     public String getTableName(){
-    	return Racer.Instance().getTableName() + 
-    			" JOIN " + RacerUSACInfo.Instance().getTableName() + " ON (" + RacerUSACInfo.Instance().getTableName() + "." + RacerUSACInfo.Racer_ID + " = " + Racer.Instance().getTableName() + "._ID)" +
-    			" JOIN " + RacerSeriesInfo.Instance().getTableName() + " ON (" + RacerSeriesInfo.Instance().getTableName() + "." + RacerSeriesInfo.RacerUSACInfo_ID + " = " + RacerUSACInfo.Instance().getTableName() + "._ID)";
+    	if(tableJoin == ""){
+	    	tableJoin = new TableJoin(Racer.Instance().getTableName())
+	    					.LeftJoin(Racer.Instance().getTableName(), RacerUSACInfo.Instance().getTableName(), Racer._ID, RacerUSACInfo.Racer_ID)
+	    					.LeftJoin(RacerUSACInfo.Instance().getTableName(), RacerSeriesInfo.Instance().getTableName(), RacerUSACInfo._ID, RacerSeriesInfo.RacerUSACInfo_ID)
+	    					.toString();
+    	}
+    	return tableJoin;
     }
     
-    public static String getCreate(){
-    	return "";
-    }
-    
+    @Override
     public ArrayList<Uri> getAllUrisToNotifyOnChange(){
     	ArrayList<Uri> urisToNotify = super.getAllUrisToNotifyOnChange();
     	urisToNotify.add(Racer.Instance().CONTENT_URI);
@@ -42,7 +41,7 @@ public final class RacerInfoView extends ContentProviderTable implements BaseCol
     	return urisToNotify;
     }
     
-    public static Hashtable<String, Object> getValues(Context context, Long racerClubInfo_ID) {
+    public Hashtable<String, Object> getValues(Context context, Long racerClubInfo_ID) {
 		Hashtable<String, Object> racerValues = new Hashtable<String, Object>();
 		
 		Cursor racerCursor = RacerInfoView.Instance().Read(context, null, RacerSeriesInfo.Instance().getTableName() + "." + RacerSeriesInfo._ID + "=?", new String[]{Long.toString(racerClubInfo_ID)}, null);

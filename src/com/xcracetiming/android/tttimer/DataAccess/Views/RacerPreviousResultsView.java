@@ -3,9 +3,7 @@ package com.xcracetiming.android.tttimer.DataAccess.Views;
 import java.util.ArrayList;
 
 import android.net.Uri;
-import android.provider.BaseColumns;
 
-import com.xcracetiming.android.tttimer.DataAccess.ContentProviderTable;
 import com.xcracetiming.android.tttimer.DataAccess.Race;
 import com.xcracetiming.android.tttimer.DataAccess.RaceLocation;
 import com.xcracetiming.android.tttimer.DataAccess.RaceResults;
@@ -14,7 +12,7 @@ import com.xcracetiming.android.tttimer.DataAccess.RacerSeriesInfo;
 import com.xcracetiming.android.tttimer.DataAccess.RacerUSACInfo;
 
 // BaseColumn contains _id.
-public final class RacerPreviousResultsView extends ContentProviderTable implements BaseColumns {
+public final class RacerPreviousResultsView extends ContentProviderView {
 
 	private static final RacerPreviousResultsView instance = new RacerPreviousResultsView();
     
@@ -24,20 +22,19 @@ public final class RacerPreviousResultsView extends ContentProviderTable impleme
         return instance;
     } 
     
+    @Override
     public String getTableName(){
-    	return RacerUSACInfo.Instance().getTableName() + 
-    			" JOIN " + Racer.Instance().getTableName() +
-				" ON (" + RacerUSACInfo.Instance().getTableName() + "." + RacerUSACInfo.Racer_ID + " = " + Racer.Instance().getTableName() + "." + Racer._ID + ")" +
-    			" JOIN " + RacerSeriesInfo.Instance().getTableName() + 
-				" ON (" + RacerSeriesInfo.Instance().getTableName() + "." + RacerSeriesInfo.RacerUSACInfo_ID + " = " + RacerUSACInfo.Instance().getTableName() + "." + RacerUSACInfo._ID + ")" +
-				" JOIN " + RaceLocation.Instance().getTableName() + 
-				" ON (" + RaceLocation.Instance().getTableName() + "." + RaceLocation._ID + " = " + Race.Instance().getTableName() + "." + Race.RaceLocation_ID + ")";			
+    	if(tableJoin == ""){
+    	tableJoin = new TableJoin(RacerUSACInfo.Instance().getTableName())
+    					.LeftJoin(RacerUSACInfo.Instance().getTableName(), Racer.Instance().getTableName(), RacerUSACInfo.Racer_ID, Racer._ID)
+    					.LeftJoin(RacerUSACInfo.Instance().getTableName(), RacerSeriesInfo.Instance().getTableName(), RacerUSACInfo._ID, RacerSeriesInfo.RacerUSACInfo_ID)
+    					.LeftJoin(Race.Instance().getTableName(), RaceLocation.Instance().getTableName(), Race.RaceLocation_ID, RaceLocation._ID)
+    					.toString();
+    	}
+    	return tableJoin;
     }
     
-    public String getCreate(){
-    	return "";
-    }
-    
+    @Override
     public ArrayList<Uri> getAllUrisToNotifyOnChange(){
     	ArrayList<Uri> urisToNotify = super.getAllUrisToNotifyOnChange();
     	urisToNotify.add(RacerSeriesInfo.Instance().CONTENT_URI);

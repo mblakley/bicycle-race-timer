@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.provider.BaseColumns;
 
 import com.xcracetiming.android.tttimer.DataAccess.ContentProviderTable;
 import com.xcracetiming.android.tttimer.DataAccess.Racer;
@@ -14,9 +13,8 @@ import com.xcracetiming.android.tttimer.DataAccess.RacerUSACInfo;
 import com.xcracetiming.android.tttimer.DataAccess.TeamInfo;
 import com.xcracetiming.android.tttimer.DataAccess.TeamMembers;
 
-
 //BaseColumn contains _id.
-public final class TeamCheckInViewExclusive extends ContentProviderTable implements BaseColumns {
+public final class TeamCheckInViewExclusive extends ContentProviderView {
 
 	private static final TeamCheckInViewExclusive instance = new TeamCheckInViewExclusive();
  
@@ -26,6 +24,7 @@ public final class TeamCheckInViewExclusive extends ContentProviderTable impleme
 	    return instance;
 	} 
  
+	@Override
 	public String getTableName() {
 		String tableName = TeamInfo.Instance().getTableName() + 
 				" JOIN " + TeamMembers.Instance().getTableName() + 
@@ -39,21 +38,17 @@ public final class TeamCheckInViewExclusive extends ContentProviderTable impleme
 
 		return tableName;
 	}
-
-	public String getCreate() {
-		return "";
-	}
 	
-
+	@Override
 	public ArrayList<Uri> getAllUrisToNotifyOnChange(){
- 	ArrayList<Uri> urisToNotify = super.getAllUrisToNotifyOnChange();
- 	urisToNotify.add(TeamCheckInViewInclusive.Instance().CONTENT_URI);
- 	urisToNotify.add(TeamCheckInViewExclusive.Instance().CONTENT_URI);
- 	urisToNotify.add(TeamInfo.Instance().CONTENT_URI);
- 	urisToNotify.add(TeamMembers.Instance().CONTENT_URI);
- 	
- 	return urisToNotify;
- }
+	 	ArrayList<Uri> urisToNotify = super.getAllUrisToNotifyOnChange();
+	 	urisToNotify.add(TeamCheckInViewInclusive.Instance().CONTENT_URI);
+	 	urisToNotify.add(TeamCheckInViewExclusive.Instance().CONTENT_URI);
+	 	urisToNotify.add(TeamInfo.Instance().CONTENT_URI);
+	 	urisToNotify.add(TeamMembers.Instance().CONTENT_URI);
+	 	
+	 	return urisToNotify;
+	 }
 
 	public int ReadCount(Context context, String[] fieldsToRetrieve,
 			String selection, String[] selectionArgs, String sortOrder) {

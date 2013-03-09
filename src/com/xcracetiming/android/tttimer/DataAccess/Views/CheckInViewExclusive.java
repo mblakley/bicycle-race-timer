@@ -5,36 +5,41 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.provider.BaseColumns;
 
-import com.xcracetiming.android.tttimer.DataAccess.ContentProviderTable;
 import com.xcracetiming.android.tttimer.DataAccess.Racer;
 import com.xcracetiming.android.tttimer.DataAccess.RacerSeriesInfo;
 import com.xcracetiming.android.tttimer.DataAccess.RacerUSACInfo;
 
-//BaseColumn contains _id.
-public final class CheckInViewExclusive extends ContentProviderTable implements BaseColumns {
+/**
+ * CheckInViewExclusive - Used
+ * @author mab
+ *
+ */
+public final class CheckInViewExclusive extends ContentProviderView {
 
-	private static final CheckInViewExclusive instance = new CheckInViewExclusive();
- 
+	private static final CheckInViewExclusive instance = new CheckInViewExclusive(); 
+	
 	public CheckInViewExclusive() {}
 	
-	public static CheckInViewExclusive Instance() {
+	public static CheckInViewExclusive Instance() {		
 	     return instance;
 	} 
 	 
+	/**
+	 * Joins RacerSeriesInfo, RacerUSACInfo, Racer
+	 */
+	@Override
 	public String getTableName(){
-	 	return RacerSeriesInfo.Instance().getTableName() + 
-	 			" JOIN " + RacerUSACInfo.Instance().getTableName() + 
-				" ON (" + RacerSeriesInfo.Instance().getTableName() + "." + RacerSeriesInfo.RacerUSACInfo_ID + " = " + RacerUSACInfo.Instance().getTableName() + "." + RacerUSACInfo._ID + ")" +
-				" JOIN " + Racer.Instance().getTableName() + 
-				" ON (" + RacerUSACInfo.Instance().getTableName() + "." + RacerUSACInfo.Racer_ID + " = " + Racer.Instance().getTableName() + "." + Racer._ID + ")";
-	}
+		if(tableJoin == ""){
+			tableJoin = new TableJoin(RacerSeriesInfo.Instance().getTableName())
+							.LeftJoin(RacerSeriesInfo.Instance().getTableName(), RacerUSACInfo.Instance().getTableName(), RacerSeriesInfo.RacerUSACInfo_ID, RacerUSACInfo._ID)
+							.LeftJoin(RacerSeriesInfo.Instance().getTableName(), Racer.Instance().getTableName(), Racer._ID, RacerUSACInfo.Racer_ID)
+							.toString();
+		}
+		return tableJoin;
+	}	 
 	 
-	public static String getCreate(){
-	 	return "";
-	}
-	 
+	@Override
 	public ArrayList<Uri> getAllUrisToNotifyOnChange(){
 	 	ArrayList<Uri> urisToNotify = super.getAllUrisToNotifyOnChange();
 	 	urisToNotify.add(CheckInViewInclusive.Instance().CONTENT_URI);

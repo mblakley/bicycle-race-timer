@@ -147,8 +147,10 @@ public class CheckInTab extends BaseTab implements LoaderManager.LoaderCallbacks
 					}
 	    		});	
 				
+				// Get the names of every racer in the system, weeding out the "upgraded" racers (those are not the most recent record for that racer), and the "ghost" racer
+				// TODO: or in the case of a series race, just get the names of the racers in the series
 				projection = new String[]{RacerSeriesInfo.Instance().getTableName() + "." + RacerSeriesInfo._ID + " as _id", Racer.LastName, Racer.FirstName};
-				selection = RacerSeriesInfo.Instance().getTableName() + "." + RacerSeriesInfo.RaceSeries_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceSeriesID_Name) + " AND " + RacerSeriesInfo.Upgraded + "=? AND " + RaceCategory.FullCategoryName + "!=?";
+				selection = RacerSeriesInfo.Upgraded + "=? AND " + RaceCategory.Category + "!=?";
 				selectionArgs = new String[]{Long.toString(0l), "G"};
 				sortOrder = Racer.LastName;
 				String racerNameText = getEditText(R.id.txtRacerNameFilter).getText().toString();

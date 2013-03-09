@@ -3,7 +3,6 @@ package com.xcracetiming.android.tttimer.DataAccess.Views;
 import java.util.ArrayList;
 
 import android.net.Uri;
-import android.provider.BaseColumns;
 
 import com.xcracetiming.android.tttimer.DataAccess.ContentProviderTable;
 import com.xcracetiming.android.tttimer.DataAccess.Racer;
@@ -12,8 +11,7 @@ import com.xcracetiming.android.tttimer.DataAccess.RacerUSACInfo;
 import com.xcracetiming.android.tttimer.DataAccess.TeamInfo;
 import com.xcracetiming.android.tttimer.DataAccess.TeamMembers;
 
-// BaseColumn contains _id.
-public final class TeamInfoView extends ContentProviderTable implements BaseColumns {
+public final class TeamInfoView extends ContentProviderView {
 
 	private static final TeamInfoView instance = new TeamInfoView();
     
@@ -23,6 +21,7 @@ public final class TeamInfoView extends ContentProviderTable implements BaseColu
         return instance;
     } 
     
+    @Override
     public String getTableName(){
     	return new TableJoin(TeamInfo.Instance().getTableName())
     				.LeftJoin(TeamInfo.Instance().getTableName(), TeamMembers.Instance().getTableName(), TeamInfo._ID, TeamMembers.TeamInfo_ID)
@@ -30,12 +29,9 @@ public final class TeamInfoView extends ContentProviderTable implements BaseColu
     				.LeftJoin(RacerSeriesInfo.Instance().getTableName(), RacerUSACInfo.Instance().getTableName(), RacerSeriesInfo.RacerUSACInfo_ID, RacerUSACInfo._ID)
     				.LeftJoin(RacerUSACInfo.Instance().getTableName(), Racer.Instance().getTableName(), RacerUSACInfo.Racer_ID, Racer._ID)
     				.toString();
-    }
+    }    
     
-    public static String getCreate(){
-    	return "";
-    }
-    
+    @Override
     public ArrayList<Uri> getAllUrisToNotifyOnChange(){
     	ArrayList<Uri> urisToNotify = super.getAllUrisToNotifyOnChange();
     	urisToNotify.add(Racer.Instance().CONTENT_URI);
