@@ -45,6 +45,35 @@ public class TTProvider extends ContentProvider {
 		return false;
 	}
 	
+	/**
+	 * Creates and caches or retrieves a ContentProviderTable object from the lookup, based on the class name from the end of URI
+	 * @param uri
+	 * @return
+	 */
+	private ContentProviderTable getClassInstance(Uri uri){
+		ContentProviderTable cpt = null;
+		String className = uri.getLastPathSegment();
+		try {
+			// Look in the cache of DB table objects
+			if(cptList.containsKey(className)){
+				// We found it!
+				cpt = cptList.get(className);
+			} else{
+				// Didn't find it, so create a new one and put it in the cache
+				cpt = (ContentProviderTable)Class.forName(className).newInstance();
+				cptList.put(className, cpt);
+			}
+		} catch (ClassNotFoundException e) {
+			Log.e("TTProvider.query", "Unable to create class of type " + className, e);
+		} catch (IllegalAccessException e) {
+			Log.e("TTProvider.query", "Unable to create class of type " + className, e);
+		} catch (InstantiationException e) {
+			Log.e("TTProvider.query", "Unable to create class of type " + className, e);
+		}
+		
+		return cpt;
+	}
+	
 	@Override
 	public Uri insert(Uri uri, ContentValues content) {
 
@@ -94,6 +123,7 @@ public class TTProvider extends ContentProvider {
 			distinct = distinctParam != "false";
 		}
 		
+		// Get the ID parameter - This tells us if we should filter just by ID
 		String getId = uri.getQueryParameter(BaseColumns._ID);
 		if(getId != null){
 			selection = BaseColumns._ID + "=" + getId;
@@ -111,30 +141,6 @@ public class TTProvider extends ContentProvider {
 		cpCursor.setNotificationUri(getContext().getContentResolver(), uri);	
 		Log.v("TTProvider", "query complete: uri=" + uri.toString() + " selection=" + selection);
 		return cpCursor;	
-	}
-	
-	private ContentProviderTable getClassInstance(Uri uri){
-		ContentProviderTable cpt = null;
-		String className = uri.getLastPathSegment();
-		try {
-			// Look in the cache of DB table objects
-			if(cptList.containsKey(className)){
-				// We found it!
-				cpt = cptList.get(className);
-			} else{
-				// Didn't find it, so create a new one and put it in the cache
-				cpt = (ContentProviderTable)Class.forName(className).newInstance();
-				cptList.put(className, cpt);
-			}
-		} catch (ClassNotFoundException e) {
-			Log.e("TTProvider.query", "Unable to create class of type " + className, e);
-		} catch (IllegalAccessException e) {
-			Log.e("TTProvider.query", "Unable to create class of type " + className, e);
-		} catch (InstantiationException e) {
-			Log.e("TTProvider.query", "Unable to create class of type " + className, e);
-		}
-		
-		return cpt;
 	}
 	
 	@Override
@@ -208,7 +214,21 @@ public class TTProvider extends ContentProvider {
 	        db.execSQL(AppSettings.Instance().getCreate());
 	        db.execSQL(RaceLaps.Instance().getCreate());
 	        db.execSQL(LookupGroups.Instance().getCreate());
-	        // Initial load of lookup groups
+	        db.execSQL(LocationImages.Instance().getCreate());
+    		db.execSQL(RacerUSACInfo.Instance().getCreate());
+    		db.execSQL(RaceCategory.Instance().getCreate());    		
+    		db.execSQL(RaceSeries.Instance().getCreate());
+    		db.execSQL(RaceRaceCategory.Instance().getCreate()); 
+    		db.execSQL(RaceType.Instance().getCreate());
+    		db.execSQL(SeriesRaceIndividualResults.Instance().getCreate());
+	        db.execSQL(SeriesRaceTeamResults.Instance().getCreate());
+	        db.execSQL(RaceWave.Instance().getCreate());
+	        
+	        SetDefaults(db);
+	    }
+
+	    private void SetDefaults(SQLiteDatabase db) {
+	    	// Initial load of lookup groups
 	        db.execSQL("INSERT INTO " + LookupGroups.Instance().getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Humidity + "', 'Dry');");
     		db.execSQL("INSERT INTO " + LookupGroups.Instance().getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Humidity + "', 'Moderate');");
     		db.execSQL("INSERT INTO " + LookupGroups.Instance().getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Humidity + "', 'Humid');");
@@ -216,27 +236,21 @@ public class TTProvider extends ContentProvider {
     		db.execSQL("INSERT INTO " + LookupGroups.Instance().getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Category + "', 'A');");
     		db.execSQL("INSERT INTO " + LookupGroups.Instance().getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Category + "', 'B4');");
     		db.execSQL("INSERT INTO " + LookupGroups.Instance().getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Category + "', 'B5');");
-    		db.execSQL(LocationImages.Instance().getCreate());
-    		db.execSQL(RacerUSACInfo.Instance().getCreate());
-    		db.execSQL(RaceCategory.Instance().getCreate());    		
-    		db.execSQL(RaceSeries.Instance().getCreate());
-    		db.execSQL(RaceRaceCategory.Instance().getCreate()); 
-    		Calendar cal = Calendar.getInstance();
+    		
+	    	Calendar cal = Calendar.getInstance();
 			cal.setTimeInMillis(System.currentTimeMillis());
     		Date startOfSeries = new Date(cal.get(Calendar.YEAR), Calendar.JANUARY, 1, 0, 0);
 			Date endOfSeries = new Date(2025, Calendar.DECEMBER, 31, 23, 59);
 			// Create the default race series (used for individual races)
     		db.execSQL("INSERT INTO " + RaceSeries.Instance().getTableName() + "(" + RaceSeries.SeriesName + "," + RaceSeries.SeriesStartDate + "," + RaceSeries.SeriesEndDate + "," + RaceSeries.SeriesScoringType + ") VALUES ('Individual', " + startOfSeries.getTime() + "," + endOfSeries.getTime() + ",'Club');");
-    		db.execSQL(RaceType.Instance().getCreate());
-    		// Initial load of race types
+    		
+	    	// Initial load of race types
 	        db.execSQL("INSERT INTO " + RaceType.Instance().getTableName() + "(" + RaceType.RaceTypeDescription + "," + RaceType.LicenseType + "," + RaceType.IsTeamRace + "," + RaceType.HasMultipleLaps + "," + RaceType.RaceDiscipline + ") VALUES ('Time Trial', 'Road', 0, 0, 'Time Trial');");
 	        db.execSQL("INSERT INTO " + RaceType.Instance().getTableName() + "(" + RaceType.RaceTypeDescription + "," + RaceType.LicenseType + "," + RaceType.IsTeamRace + "," + RaceType.HasMultipleLaps + "," + RaceType.RaceDiscipline + ") VALUES ('Team Time Trial', 'Road', 1, 1, 'Time Trial');");
-	        db.execSQL(SeriesRaceIndividualResults.Instance().getCreate());
-	        db.execSQL(SeriesRaceTeamResults.Instance().getCreate());
-	        db.execSQL(RaceWave.Instance().getCreate());
-	    }
+	        
+		}
 
-	    @Override
+		@Override
 	    public void onUpgrade(SQLiteDatabase db, int oldVersion, 
 	    int newVersion) 
 	    {

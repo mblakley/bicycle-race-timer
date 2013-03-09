@@ -28,6 +28,8 @@ import com.xcracetiming.android.tttimer.DataAccess.RaceType;
 import com.xcracetiming.android.tttimer.DataAccess.RaceWave;
 import com.xcracetiming.android.tttimer.Dialogs.AdminAuthView;
 import com.xcracetiming.android.tttimer.Dialogs.OtherRaceResults;
+import com.xcracetiming.android.tttimer.Loaders.IRaceInfoTabLoaderFactory;
+import com.xcracetiming.android.tttimer.Loaders.BicycleRaceInfoLoaderFactory;
 import com.xcracetiming.android.tttimer.Utilities.Loaders;
 import com.xcracetiming.android.tttimer.Utilities.TimeFormatter;
 import com.xcracetiming.android.tttimer.WizardPages.AdminMenuView;
@@ -53,6 +55,10 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 	private String distanceUnit = "mi";
 	private float distance;
 	
+	//private TestLoader loader;
+	
+	private IRaceInfoTabLoaderFactory loaderFactory;
+	
 	/**
 	 * Inflates the view from xml, adds click listeners, and returns it
 	 * @param inflater
@@ -69,12 +75,11 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 		addClickListener(view, R.id.btnAdminMenu);
 		addClickListener(view, R.id.btnMarshalLocations);
 		        
+		//loader = new TestLoader(getActivity(), view);
+		loaderFactory = new BicycleRaceInfoLoaderFactory();
+		
         return view;    
     }
-		
-	/**
-	 * Add the click listeners to any controls that will accept or deal with a click.  Called from base.onStart
-	 */
 	
 	/**
 	 * Start the chain of loaders.  Called from base.onResume
@@ -96,132 +101,7 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 	    getActivity().getSupportLoaderManager().destroyLoader(Loaders.COURSE_RECORD_LOADER);
 	}
 	
-	/**
-	 * Create the loader with the given id.
-	 * @param id - The id of the loader to create.
-	 * @param args - A list that can be filled with parameters to be used in the loader's query
-	 */
-	public Loader<Cursor> onCreateLoader(int id, Bundle args) {	
-		Log.v(LOG_TAG(), "onCreateLoader start: id=" + Integer.toString(id));
-		CursorLoader loader = null;	
-		switch(id){
-			case Loaders.RACE_INFO_LOADER:					
-				loader = Loaders.GetRaceInfo(getActivity());
-				break;
-			case Loaders.APP_SETTINGS_LOADER_RACEINFO:				
-				loader = Loaders.GetDistanceUnits(getActivity());
-				break;
-			case Loaders.COURSE_RECORD_LOADER:
-				loader = Loaders.GetCourseRecord(getActivity(), args);
-				break;
-		}
-		Log.v(LOG_TAG(), "onCreateLoader complete: id=" + Integer.toString(id));
-		return loader;
-	}
-
-	/**
-	 * The cursor loader is finished, so get the results and do something with them.
-	 * @param loader - The loader that finished loading
-	 * @param cursor - The cursor that is filled the result of the loader's query
-	 */
-	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-		try{
-			Log.v(LOG_TAG(), "onLoadFinished start: id=" + Integer.toString(loader.getId()));
-			if(cursor != null && cursor.getCount() > 0){
-				cursor.moveToFirst();			
-				switch(loader.getId()){
-					case Loaders.RACE_INFO_LOADER:
-						// Get all of the values out of the cursors, and set the textboxes to their values
-						String raceSeries = cursor.getString(cursor.getColumnIndex(RaceSeries.SeriesName));						
-						Long raceDateMS = cursor.getLong(cursor.getColumnIndex(Race.RaceDate));
-						String courseName = cursor.getString(cursor.getColumnIndex(RaceLocation.CourseName));
-						long raceLocation_ID = cursor.getLong(cursor.getColumnIndex(Race.RaceLocation_ID));
-						String raceTypeName = cursor.getString(cursor.getColumnIndex(RaceType.RaceTypeDescription));
-						long startInterval = cursor.getLong(cursor.getColumnIndex(Race.StartInterval));
-						String startIntervalText = Long.toString(startInterval);
-						boolean hasMultipleLaps = cursor.getInt(cursor.getColumnIndex(RaceType.HasMultipleLaps)) > 0;
-						distanceUnit = cursor.getString(cursor.getColumnIndex(RaceLocation.DistanceUnit));	
-						
-						// Show the race laps if there's more than 1 total lap, or if the race can have multiple laps
-						long numRaceLaps = 1;
-						if(hasMultipleLaps){		
-							getLinearLayout(R.id.llRaceLaps).setVisibility(View.GONE);
-						}else{
-							numRaceLaps = cursor.getLong(cursor.getColumnIndex(RaceWave.NumLaps));
 	
-							// You can't do 0 laps, or there wouldn't be a race!  Default it to 1.
-							if(numRaceLaps <= 0){
-								numRaceLaps = 1;
-							}	
-							
-							getLinearLayout(R.id.llRaceLaps).setVisibility(View.VISIBLE);							
-						}			
-						
-						// Get the distance for a single lap of the course
-						distance = cursor.getFloat(cursor.getColumnIndex(RaceLocation.Distance)) * (float)numRaceLaps;	
-						
-						// Set the race date text in the format M/d/yy
-						Date raceDateTemp = new Date(raceDateMS);
-						SimpleDateFormat formatter = new SimpleDateFormat("M/d/yy", Locale.US);						
-						getTextView(R.id.raceDate).setText(formatter.format(raceDateTemp).toString());
-						// Set the course name
-						getTextView(R.id.raceCourseName).setText(courseName);
-						// Set the race type
-						getTextView(R.id.raceType).setText(raceTypeName);
-						// Set the race start interval, only if there's a real start interval
-						if(startInterval > 0) {
-							getTextView(R.id.raceStartInterval).setText(startIntervalText);
-							getLinearLayout(R.id.llStartInterval).setVisibility(View.VISIBLE);
-						} else { 
-							getLinearLayout(R.id.llStartInterval).setVisibility(View.GONE);
-						}
-						// Set the text of the race series
-						getTextView(R.id.raceSeriesName).setText(raceSeries);	
-						// Set the text of the number of race laps
-						getTextView(R.id.raceLaps).setText(Long.toString(numRaceLaps));
-					
-						getActivity().getSupportLoaderManager().restartLoader(Loaders.APP_SETTINGS_LOADER_RACEINFO, null, this); 
-						Bundle b = new Bundle();
-						b.putLong(Race.RaceLocation_ID, raceLocation_ID);
-					    getActivity().getSupportLoaderManager().restartLoader(Loaders.COURSE_RECORD_LOADER, b, this);
-						break;
-					case Loaders.APP_SETTINGS_LOADER_RACEINFO:					
-						distanceUnitSetting = cursor.getString(cursor.getColumnIndex(AppSettings.AppSettingValue));					
-						SetDistance(distance, distanceUnit, distanceUnitSetting);
-						break;	
-					case Loaders.COURSE_RECORD_LOADER:
-						long elapsedTime = cursor.getLong(cursor.getColumnIndex(RaceResults.ElapsedTime));
-			        	getTextView(R.id.courseRecord).setText(TimeFormatter.Format(elapsedTime, true, true, true, true, true, false, false, false));
-						break;
-				}
-			}
-			Log.v(LOG_TAG(), "onLoadFinished complete: id=" + Integer.toString(loader.getId()));
-		}catch(Exception ex){
-			Log.e(LOG_TAG(), "onLoadFinished error", ex); 
-		}
-	}
-
-	/**
-	 * The loader has been reset.  Really this should be used for cleaning up binding.
-	 * @param loader - The loader that was reset.
-	 */
-	public void onLoaderReset(Loader<Cursor> loader) {
-		try{
-			Log.v(LOG_TAG(), "onLoaderReset start: id=" + Integer.toString(loader.getId()));
-			switch(loader.getId()){
-				case Loaders.RACE_INFO_LOADER:
-					break;
-				case Loaders.APP_SETTINGS_LOADER_RACEINFO:
-					break;
-				case Loaders.COURSE_RECORD_LOADER:
-					break;
-			}
-			Log.v(LOG_TAG(), "onLoaderReset complete: id=" + Integer.toString(loader.getId()));
-		}catch(Exception ex){
-			Log.e(LOG_TAG(), "onLoaderReset error", ex); 
-		}
-	}
-
 	/**
 	 * Called when a control that is subscribed to this fragment as a click listener is clicked.
 	 * 
@@ -320,5 +200,132 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 		showMarshalLocationsView.setAction(TTTimerTabsActivity.CHANGE_MAIN_VIEW_ACTION);
 		showMarshalLocationsView.putExtra("ShowView", new MarshalLocations().getClass().getCanonicalName());
 		LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(showMarshalLocationsView);
+	}
+	
+
+	/**
+	 * Create the loader with the given id.
+	 * @param id - The id of the loader to create.
+	 * @param args - A list that can be filled with parameters to be used in the loader's query
+	 */
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {	
+		Log.v(LOG_TAG(), "onCreateLoader start: id=" + Integer.toString(id));
+		CursorLoader loader = null;	
+		switch(id){
+			case Loaders.RACE_INFO_LOADER:					
+				loader = loaderFactory.GetRaceInfo(getActivity());
+				break;
+			case Loaders.APP_SETTINGS_LOADER_RACEINFO:				
+				loader = Loaders.GetDistanceUnits(getActivity());
+				break;
+			case Loaders.COURSE_RECORD_LOADER:
+				loader = loaderFactory.GetCourseRecord(getActivity(), args);
+				break;
+		}
+		Log.v(LOG_TAG(), "onCreateLoader complete: id=" + Integer.toString(id));
+		return loader;
+	}
+
+	/**
+	 * The cursor loader is finished, so get the results and do something with them.
+	 * @param loader - The loader that finished loading
+	 * @param cursor - The cursor that is filled the result of the loader's query
+	 */
+	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+		try{
+			Log.v(LOG_TAG(), "onLoadFinished start: id=" + Integer.toString(loader.getId()));
+			if(cursor != null && cursor.getCount() > 0){
+				cursor.moveToFirst();			
+				switch(loader.getId()){
+					case Loaders.RACE_INFO_LOADER:
+						// Get all of the values out of the cursors, and set the textboxes to their values
+						String raceSeries = cursor.getString(cursor.getColumnIndex(RaceSeries.SeriesName));						
+						Long raceDateMS = cursor.getLong(cursor.getColumnIndex(Race.RaceDate));
+						String courseName = cursor.getString(cursor.getColumnIndex(RaceLocation.CourseName));
+						long raceLocation_ID = cursor.getLong(cursor.getColumnIndex(Race.RaceLocation_ID));
+						String raceTypeName = cursor.getString(cursor.getColumnIndex(RaceType.RaceTypeDescription));
+						long startInterval = cursor.getLong(cursor.getColumnIndex(Race.StartInterval));
+						String startIntervalText = Long.toString(startInterval);
+						boolean hasMultipleLaps = cursor.getInt(cursor.getColumnIndex(RaceType.HasMultipleLaps)) > 0;
+						//distanceUnit = cursor.getString(cursor.getColumnIndex(RaceLocation.DistanceUnit));	
+						
+						// Show the race laps if there's more than 1 total lap, or if the race can have multiple laps
+						long numRaceLaps = 1;
+						if(hasMultipleLaps){		
+							getLinearLayout(R.id.llRaceLaps).setVisibility(View.GONE);
+						}else{
+							numRaceLaps = cursor.getLong(cursor.getColumnIndex(RaceWave.NumLaps));
+	
+							// You can't do 0 laps, or there wouldn't be a race!  Default it to 1.
+							if(numRaceLaps <= 0){
+								numRaceLaps = 1;
+							}	
+							
+							getLinearLayout(R.id.llRaceLaps).setVisibility(View.VISIBLE);							
+						}			
+						
+						// Get the distance for a single lap of the course
+						distance = cursor.getFloat(cursor.getColumnIndex(RaceLocation.Distance)) * (float)numRaceLaps;	
+						
+						// Set the race date text in the format M/d/yy
+						Date raceDateTemp = new Date(raceDateMS);
+						SimpleDateFormat formatter = new SimpleDateFormat("M/d/yy", Locale.US);						
+						getTextView(R.id.raceDate).setText(formatter.format(raceDateTemp).toString());
+						// Set the course name
+						getTextView(R.id.raceCourseName).setText(courseName);
+						// Set the race type
+						getTextView(R.id.raceType).setText(raceTypeName);
+						// Set the race start interval, only if there's a real start interval
+						if(startInterval > 0) {
+							getTextView(R.id.raceStartInterval).setText(startIntervalText);
+							getLinearLayout(R.id.llStartInterval).setVisibility(View.VISIBLE);
+						} else { 
+							getLinearLayout(R.id.llStartInterval).setVisibility(View.GONE);
+						}
+						// Set the text of the race series
+						getTextView(R.id.raceSeriesName).setText(raceSeries);	
+						// Set the text of the number of race laps
+						getTextView(R.id.raceLaps).setText(Long.toString(numRaceLaps));
+					
+						getActivity().getSupportLoaderManager().restartLoader(Loaders.APP_SETTINGS_LOADER_RACEINFO, null, this); 
+						Bundle b = new Bundle();
+						b.putLong(Race.RaceLocation_ID, raceLocation_ID);
+					    getActivity().getSupportLoaderManager().restartLoader(Loaders.COURSE_RECORD_LOADER, b, this);
+						break;
+					case Loaders.APP_SETTINGS_LOADER_RACEINFO:					
+						distanceUnitSetting = cursor.getString(cursor.getColumnIndex(AppSettings.AppSettingValue));					
+						SetDistance(distance, distanceUnit, distanceUnitSetting);
+						break;	
+					case Loaders.COURSE_RECORD_LOADER:
+						long elapsedTime = cursor.getLong(cursor.getColumnIndex(RaceResults.ElapsedTime));
+			        	getTextView(R.id.courseRecord).setText(TimeFormatter.Format(elapsedTime, true, true, true, true, true, false, false, false));
+						break;
+				}
+			}
+			Log.v(LOG_TAG(), "onLoadFinished complete: id=" + Integer.toString(loader.getId()));
+		}catch(Exception ex){
+			Log.e(LOG_TAG(), "onLoadFinished error", ex); 
+		}
+	}
+
+	/**
+	 * The loader has been reset.  Really this should be used for cleaning up binding.
+	 * @param loader - The loader that was reset.
+	 */
+	public void onLoaderReset(Loader<Cursor> loader) {
+		try{
+			Log.v(LOG_TAG(), "onLoaderReset start: id=" + Integer.toString(loader.getId()));
+			switch(loader.getId()){
+				case Loaders.RACE_INFO_LOADER:
+					break;
+				case Loaders.APP_SETTINGS_LOADER_RACEINFO:
+					break;
+				case Loaders.COURSE_RECORD_LOADER:
+					break;
+			}
+			Log.v(LOG_TAG(), "onLoaderReset complete: id=" + Integer.toString(loader.getId()));
+		}catch(Exception ex){
+			Log.e(LOG_TAG(), "onLoaderReset error", ex); 
+		}
 	}
 }

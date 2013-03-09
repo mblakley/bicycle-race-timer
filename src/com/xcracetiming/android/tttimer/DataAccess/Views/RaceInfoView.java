@@ -12,11 +12,29 @@ import com.xcracetiming.android.tttimer.DataAccess.RaceSeries;
 import com.xcracetiming.android.tttimer.DataAccess.RaceType;
 import com.xcracetiming.android.tttimer.DataAccess.RaceWave;
 
-// BaseColumn contains _id.
+/**
+ * RaceInfoView - Useful for retrieving info about the race
+ * Joins Race, RaceSeries, RaceLocation, RaceType, and outer join on RaceWave (for laps)
+ * 
+ * Race->RaceSeries_ID - One RaceSeries per Race
+ * Race->RaceLocation_ID - One RaceLocation per Race
+ * Race->RaceType_ID - One RaceType per Race
+ * RaceWave->Race_ID (outer) - Multiple RaceWaves per Race, but waves are optional
+ * @author mab
+ *
+ */
 public final class RaceInfoView extends ContentProviderTable implements BaseColumns {
 
 	private static final RaceInfoView instance = new RaceInfoView();
     
+	/**
+	 * Joins Race, RaceSeries, RaceLocation, RaceType, and outer join on RaceWave (for laps)
+	 * 
+	 * Race->RaceSeries_ID
+	 * Race->RaceLocation_ID
+	 * Race->RaceType_ID
+	 * Race->RaceWave_ID (outer)
+	 */
     public RaceInfoView() {}
  
     public static RaceInfoView Instance() {
