@@ -19,7 +19,6 @@ public final class SeriesRaceIndividualResults extends ContentProviderTable impl
     // Table column
     public static final String Race_ID = "Race_ID";
     public static final String RacerSeriesInfo_ID = "RacerSeriesInfo_ID";
-    public static final String RaceCategory_ID = "RaceCategory_ID";
     public static final String RaceResult_ID = "RaceResult_ID";
     
     public String getCreate(){
@@ -27,7 +26,6 @@ public final class SeriesRaceIndividualResults extends ContentProviderTable impl
     	        + " (" + _ID + " integer primary key autoincrement, "
     	        + Race_ID + " integer references " + Race.Instance().getTableName() + "(" + Race._ID + ") not null, "         	        
     	        + RacerSeriesInfo_ID + " integer references " + RacerSeriesInfo.Instance().getTableName() + "(" + RacerSeriesInfo._ID + ") not null, "
-    	        + RaceCategory_ID + " integer references " + RaceCategory.Instance().getTableName() + "(" + RaceCategory._ID + ") not null, " 
     	        + RaceResult_ID + " integer references " + RaceResults.Instance().getTableName() + "(" + RaceResults._ID + ") not null"
     	        + ");";
     }
@@ -36,7 +34,6 @@ public final class SeriesRaceIndividualResults extends ContentProviderTable impl
 		ContentValues content = new ContentValues();
      	content.put(SeriesRaceIndividualResults.Race_ID, race_ID);
      	content.put(SeriesRaceIndividualResults.RacerSeriesInfo_ID, racerSeriesInfo_ID);
-     	content.put(SeriesRaceIndividualResults.RaceCategory_ID, raceCategory_ID);
      	content.put(SeriesRaceIndividualResults.RaceResult_ID, raceResult_ID);
 
      	return context.getContentResolver().insert(CONTENT_URI, content);

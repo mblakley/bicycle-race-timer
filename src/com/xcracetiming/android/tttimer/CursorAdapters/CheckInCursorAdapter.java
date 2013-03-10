@@ -2,11 +2,8 @@ package com.xcracetiming.android.tttimer.CursorAdapters;
 
 import com.xcracetiming.android.tttimer.R;
 import com.xcracetiming.android.tttimer.DataAccess.AppSettings;
-import com.xcracetiming.android.tttimer.DataAccess.RaceResults;
 import com.xcracetiming.android.tttimer.DataAccess.Racer;
-import com.xcracetiming.android.tttimer.DataAccess.RacerSeriesInfo;
 import com.xcracetiming.android.tttimer.DataAccess.SeriesRaceIndividualResults;
-import com.xcracetiming.android.tttimer.DataAccess.Views.SeriesRaceIndividualResultsView;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -47,8 +44,10 @@ public class CheckInCursorAdapter extends BaseCursorAdapter {
 	        String firstName = c.getString(firstNameCol);
 	        String lastName = c.getString(lastNameCol);
 	        Long racerSeriesInfo_ID = c.getLong(0);
+	        Long raceResult_ID;	// TODO: Pass this in as another field on the checkin cursor
 
-	        Cursor raceResult = SeriesRaceIndividualResultsView.Instance().Read(context, new String[]{RaceResults.Instance().getTableName() + "." + RaceResults._ID}, RacerSeriesInfo.Instance().getTableName() + "." + RacerSeriesInfo._ID + "=? AND " + SeriesRaceIndividualResults.Race_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name), new String[]{Long.toString(racerSeriesInfo_ID)}, null);
+	        // Get RaceResult record from RacerSeriesInfo_ID and Race_ID
+	        Cursor raceResult = SeriesRaceIndividualResults.Instance().Read(context, new String[]{SeriesRaceIndividualResults.RaceResult_ID}, SeriesRaceIndividualResults.RacerSeriesInfo_ID + "=? AND " + SeriesRaceIndividualResults.Race_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name), new String[]{Long.toString(racerSeriesInfo_ID)}, null);
 	        /**
 	         * Next set the name of the entry.
 	         */     
