@@ -20,6 +20,8 @@ import com.xcracetiming.android.tttimer.DataAccess.RaceCategory;
 import com.xcracetiming.android.tttimer.DataAccess.RaceLocation;
 import com.xcracetiming.android.tttimer.DataAccess.RaceRaceCategory;
 import com.xcracetiming.android.tttimer.DataAccess.RaceSeries;
+import com.xcracetiming.android.tttimer.DataAccess.RaceSeriesRaceCategories;
+import com.xcracetiming.android.tttimer.DataAccess.RaceSeriesRaces;
 import com.xcracetiming.android.tttimer.WizardPages.AddRaceCategoriesView;
 import com.xcracetiming.android.tttimer.WizardPages.AddRaceInfoView;
 import com.xcracetiming.android.tttimer.WizardPages.AddRaceSeriesView;
@@ -33,7 +35,7 @@ public class AddRaceWizard extends BaseWizard implements View.OnClickListener {
 	
 	// AddRaceSeries (Series? Yes/No, Yes - Series Name, Start Date, End Date.  Need another wizard for advanced configuration) 
 	// AddRaceLocation (choose from a list or new Course Name, Distance.  Need another wizard for advanced configuration)
-	// AddRaceCategories (Add Category on top with "add" button, with checked list below.  Need another wizard for advanced configuration)
+	// AddRaceCategories (Add Category on top with "add" button, with checked list below.  Need another wizard for advanced configuration. Start with all categories in the selected series and add all of them)
 	// AddUSACInfo (Event Name, USACEventID, if ScoringType='USAC')
 	// AddRace (RaceType, RaceDate, StartTime, StartInterval)
 	
@@ -139,12 +141,12 @@ public class AddRaceWizard extends BaseWizard implements View.OnClickListener {
 				Uri createdSeriesUri = RaceSeries.Instance().Create(getActivity(), content);
 				raceSeries_ID = Long.parseLong(createdSeriesUri.getLastPathSegment());
 			} else{
-				if(args.containsKey(Race.RaceSeries_ID)){
-					raceSeries_ID = args.getLong(Race.RaceSeries_ID);
+				if(args.containsKey(RaceSeries.Instance().getTableName()+RaceSeries._ID)){
+					raceSeries_ID = args.getLong(RaceSeries.Instance().getTableName()+RaceSeries._ID);
 				} else{
-					raceSeries_ID = 1l;
+					raceSeries_ID = -1l;
 				}
-			}
+			}			
 			
 			Long raceLocation_ID;
 			if(args.getBoolean("createLocation")){
@@ -160,7 +162,6 @@ public class AddRaceWizard extends BaseWizard implements View.OnClickListener {
 			
 			// Create the race
 			ContentValues raceContent = new ContentValues();
-			raceContent.put(Race.RaceSeries_ID, raceSeries_ID);
 			raceContent.put(Race.RaceLocation_ID, raceLocation_ID);
 			raceContent.put(Race.EventName, args.getString(Race.EventName));
 			raceContent.put(Race.RaceDate, args.getLong(Race.RaceDate));
@@ -172,19 +173,31 @@ public class AddRaceWizard extends BaseWizard implements View.OnClickListener {
 			Uri createdRaceUri = Race.Instance().Create(getActivity(), raceContent);
 			long race_ID = Long.parseLong(createdRaceUri.getLastPathSegment());
 			
+			if(raceSeries_ID > 0){
+				ContentValues raceSeriesRaceContent = new ContentValues();
+				raceSeriesRaceContent.put(RaceSeriesRaces.RaceSeries_ID, raceSeries_ID);
+				raceSeriesRaceContent.put(RaceSeriesRaces.Race_ID, race_ID);
+				RaceSeriesRaces.Instance().Create(getActivity(), raceSeriesRaceContent);
+			}
+			
 			// Create the new race categories
 			// This must be done after the race is created, otherwise we don't know what to link it to.
 			String[] newCategories = args.getStringArray("NewRaceCategories");
 			for(String categoryName: newCategories){
 				ContentValues categoryContent = new ContentValues();
 				categoryContent.put(RaceCategory.FullCategoryName, categoryName);
-				categoryContent.put(RaceCategory.RaceSeries_ID, raceSeries_ID);
 				Uri createdRaceCategoryUri = RaceCategory.Instance().Create(getActivity(), categoryContent);
 				long raceCategory_ID = Long.parseLong(createdRaceCategoryUri.getLastPathSegment());
 				ContentValues rrcContent = new ContentValues();
 				rrcContent.put(RaceRaceCategory.Race_ID, race_ID);
 				rrcContent.put(RaceRaceCategory.RaceCategory_ID, raceCategory_ID);
 				RaceRaceCategory.Instance().Create(getActivity(), rrcContent);
+				if(raceSeries_ID > 0){
+					ContentValues rscContent = new ContentValues();
+					rscContent.put(RaceSeriesRaceCategories.RaceSeries_ID, raceSeries_ID);
+					rscContent.put(RaceSeriesRaceCategories.RaceCategory_ID, raceCategory_ID);
+					RaceSeriesRaceCategories.Instance().Create(getActivity(), rscContent);
+				}
 			}	
 			
 			// Associate all of the categories with the new race
@@ -194,6 +207,13 @@ public class AddRaceWizard extends BaseWizard implements View.OnClickListener {
 				categoryContent.put(RaceRaceCategory.Race_ID, race_ID);
 				categoryContent.put(RaceRaceCategory.RaceCategory_ID, category_ID);
 				RaceRaceCategory.Instance().Create(getActivity(), categoryContent);
+				
+				if(raceSeries_ID > 0){
+					ContentValues rscContent = new ContentValues();
+					rscContent.put(RaceSeriesRaceCategories.RaceSeries_ID, raceSeries_ID);
+					rscContent.put(RaceSeriesRaceCategories.RaceCategory_ID, category_ID);
+					RaceSeriesRaceCategories.Instance().Create(getActivity(), rscContent);
+				}
 			}			
 			
 			// Send a notification that the race_ID has changed

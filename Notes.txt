@@ -1,0 +1,41 @@
+The default scenario that I'm programming for initially is:
+
+There is 1 RaceSeries - For TTs
+Race Type is TT
+The series has a list of races
+Each race is only a part of 1 series
+The series has 3 categories (A, B4, B5)
+The series has a list of racers that sign up
+For each race, a racer can only check in under 1 category (Racer can't race in the As and B4s in the same night)
+A racer can upgrade their category during the season (Different RacerSeriesInfo records used to track points for each category)
+All categories are racing at the same time (No waves)
+- RaceRegistrations will not be used in this case, since it's not just an individual race
+
+Check In Tab
+- Given a raceID, get the list of racers that are available to be checked in (RacerSeriesInfo_ID, Racer.FirstName, Racer.LastName, SeriesRaceIndividualResults.RaceResult_ID (may be null))
+RaceSeriesRaces join RacerSeriesInfo on RaceSeries_ID join RacerUSACInfo on RacerUSACInfo_ID join Racer on Racer_ID outer join SeriesRaceIndividualResults on Race_ID and RacerSeriesInfo_ID
+	- Adding a racer should add Racer, RacerUSAC, RacerSeriesInfo records (todo: for each race series that this race is a part of, but will cause join problems, since you get multiple records back for the same race ID in SeriesRaceIndividualResults.  Each SeriesRaceIndividualResults record would have same raceID, same RaceResult_ID, different RacerSeriesInfo - one for each series.  So multiple categories off of those records.  So if you have a race with more than 1 series, some changes need to be made to filter the UI to just one set of category results)
+	- Checking in a racer should add a RaceResults record connected to the SeriesRaceIndividualResults record where Race_ID=@RaceID and RacerSeriesInfo_ID=@RacerSeriesInfoID
+
+Start Tab
+- Start Order list (RaceResult_ID, Racer.FirstName, Racer.LastName, StartOrder, StartTimeOffset) should only grab racers that are checked in and ready to go
+SeriesRaceIndividualResults join RaceResults on RaceResult_ID join RacerSeriesInfo on RacerSeriesInfo_ID join RacerUSACInfo on RacerUSACInfo_ID join Racer on Racer_ID where SeriesRaceIndividualResults.Race_ID=@RaceID OrderBy StartOrder
+
+Finish Tab
+- Given a raceID, grab a list of all UnassignedTimes (UnassignedTime_ID, FinishTime)
+UnassignedTimes where Race_ID=@RaceID OrderBy FinishTime
+- Given a raceID, get all racers that have started the race, but have not finished yet (RaceResult_ID, Racer.LastName, Racer.FirstName, RaceResults.StartOrder)
+SeriesRaceIndividualResults join RaceResults on RaceResult_ID join RacerSeriesInfo on RacerSeriesInfo_ID join RaceCategory on SeriesRacerCategory_ID join RacerUSACInfo on RacerUSACInfo_ID join Racer on Racer_ID where Race_ID=@RaceID and RaceResults.StartTime IS NOT NULL AND RaceResults.EndTime IS NULL AND RaceCategory.FullCategoryName !="Ghost"
+
+Results Tab
+- Given a raceID, get all racers who have finished along with their time and points (RaceResult_ID, Racer.LastName, Racer.FirstName, RaceResults.ElapsedTime, RaceCategory.FullCategoryName, RaceResults.OverallPlacing, RaceResults.Points)
+SeriesRaceIndividualResults join RaceResults on RaceResult_ID join RacerSeriesInfo on RacerSeriesInfo_ID join RaceCategory on SeriesRacerCategory_ID join RacerUSACInfo on RacerUSACInfo_ID join Racer on Racer_ID where Race_ID=@RaceID and RaceResults.ElapsedTime IS NOT NULL and RaceCategory.FullCategoryName !="Ghost"
+
+Next phases (for non-series races and tricky series scenarios)
+If race is not part of a series, pull the checkin list from RaceRegistrations instead of from RacerSeriesInfo
+SeriesRaceIndividualResults is really the series equivalent of RaceRegistrations
+- Do we need to have a RaceCategory associated with each record?  We have one associated with RacerSeriesInfo
+	- A racer can sign up for more than 1 race category in a series race
+		- How do we handle check-in for this scenario?  Right now we are filtering on each race, but not filtering by category, so if you check in, you're checked in for all races for that day
+			
+			

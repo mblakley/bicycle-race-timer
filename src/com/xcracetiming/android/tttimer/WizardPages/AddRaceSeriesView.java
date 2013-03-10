@@ -4,7 +4,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 import com.xcracetiming.android.tttimer.R;
-import com.xcracetiming.android.tttimer.DataAccess.Race;
 import com.xcracetiming.android.tttimer.DataAccess.RaceSeries;
 
 import android.content.Context;
@@ -18,6 +17,8 @@ import android.widget.DatePicker;
 
 public class AddRaceSeriesView extends BaseWizardPage {
 	public static final String LOG_TAG = "AddRaceSeriesView";	
+	
+	// TODO: Change this to allow users to associate more than 1 series with a race
 	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -63,7 +64,7 @@ public class AddRaceSeriesView extends BaseWizardPage {
 		
 		long raceSeries_ID = Long.parseLong(raceSeriesUri.getLastPathSegment());
 				
-		b.putLong(Race.RaceSeries_ID, raceSeries_ID);
+		b.putLong(RaceSeries.Instance().ForeignKey, raceSeries_ID);
 		
 		return b;
 	}

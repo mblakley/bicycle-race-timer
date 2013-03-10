@@ -122,7 +122,7 @@ public class EditRacerView extends AddRacerView implements View.OnClickListener,
 		String sortOrder = null;
 		switch(id){
 			case RACER_INFO_LOADER:
-				projection = new String[]{RacerSeriesInfo.RacerUSACInfo_ID, Racer.LastName, Racer.FirstName, RacerSeriesInfo.CurrentRaceCategory_ID};
+				projection = new String[]{RacerSeriesInfo.RacerUSACInfo_ID, Racer.LastName, Racer.FirstName, RacerSeriesInfo.SeriesRacerCategory_ID};
 				selection = RacerSeriesInfo.Instance().getTableName() + "." + RacerSeriesInfo._ID + "=?";
 				selectionArgs = new String[]{Long.toString(racerClubInfo_ID)};
 				loader = new CursorLoader(getActivity(), SeriesRaceIndividualResultsView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
@@ -142,7 +142,7 @@ public class EditRacerView extends AddRacerView implements View.OnClickListener,
 					
 					getEditText(R.id.txtFirstName).setText(cursor.getString(cursor.getColumnIndex(Racer.FirstName)));
 					getEditText(R.id.txtLastName).setText(cursor.getString(cursor.getColumnIndex(Racer.LastName)));
-					SetCategorySelectionByValue(cursor.getLong(cursor.getColumnIndex(RacerSeriesInfo.CurrentRaceCategory_ID)));
+					SetCategorySelectionByValue(cursor.getLong(cursor.getColumnIndex(RacerSeriesInfo.SeriesRacerCategory_ID)));
 					break;
 			}
 			Log.v(LOG_TAG, "onLoadFinished complete: id=" + Integer.toString(loader.getId()));

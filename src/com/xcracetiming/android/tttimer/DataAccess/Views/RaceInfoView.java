@@ -43,7 +43,6 @@ public final class RaceInfoView extends ContentProviderView {
     public String getTableName(){
     	if(tableJoin == ""){    		
     		tableJoin = new TableJoin(Race.Instance().getTableName())
-							.LeftJoin(Race.Instance().getTableName(), RaceSeries.Instance().getTableName(), Race.RaceSeries_ID, RaceSeries._ID)
 							.LeftJoin(Race.Instance().getTableName(), RaceLocation.Instance().getTableName(), Race.RaceLocation_ID, RaceLocation._ID)
 							.LeftJoin(Race.Instance().getTableName(), RaceType.Instance().getTableName(), Race.RaceType_ID, RaceType._ID)
 							.LeftOuterJoin(Race.Instance().getTableName(), RaceWave.Instance().getTableName(), Race._ID, RaceWave.Race_ID)

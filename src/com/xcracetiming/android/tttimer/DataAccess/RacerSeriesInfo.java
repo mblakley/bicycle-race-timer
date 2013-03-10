@@ -26,7 +26,7 @@ public final class RacerSeriesInfo extends ContentProviderTable implements BaseC
     public static final String RacerUSACInfo_ID = "RacerUSACInfo_ID";
     public static final String SeriesBibNumber = "SeriesBibNumber";
     public static final String RaceSeries_ID = "RaceSeries_ID";
-    public static final String CurrentRaceCategory_ID = "CurrentRaceCategory_ID";
+    public static final String SeriesRacerCategory_ID = "SeriesRacerCategory_ID";
     public static final String TTPoints = "TTPoints";
     public static final String RRPoints = "RRPoints";
     public static final String PrimePoints = "PrimePoints";
@@ -40,7 +40,7 @@ public final class RacerSeriesInfo extends ContentProviderTable implements BaseC
     	        + RacerUSACInfo_ID + " integer references " + RacerUSACInfo.Instance().getTableName() + "(" + RacerUSACInfo._ID + ") not null, " 
     	        + SeriesBibNumber + " integer not null, " 
     	        + RaceSeries_ID + " integer references " + RaceSeries.Instance().getTableName() + "(" + RaceSeries._ID + ") not null, "
-    	        + CurrentRaceCategory_ID + " integer references " + RaceCategory.Instance().getTableName() + "(" + RaceCategory._ID + ") not null, " 
+    	        + SeriesRacerCategory_ID + " integer references " + RaceCategory.Instance().getTableName() + "(" + RaceCategory._ID + ") not null, " 
     	        + TTPoints + " integer not null," 
     	        + RRPoints + " integer not null,"
     	        + PrimePoints + " integer not null," 
@@ -58,12 +58,12 @@ public final class RacerSeriesInfo extends ContentProviderTable implements BaseC
     	return urisToNotify;
     }
 
-	public Uri Create(Context context, long racerUSACInfo_ID, String seriesBibNumber, long raceSeries_ID, long currentRaceCategory_ID, long ttPoints, long rrPoints, long primePoints, Long onlineRecordID) {
+	public Uri Create(Context context, long racerUSACInfo_ID, String seriesBibNumber, long raceSeries_ID, long seriesRacerCategory_ID, long ttPoints, long rrPoints, long primePoints, Long onlineRecordID) {
 		ContentValues content = new ContentValues();
 		content.put(RacerSeriesInfo.RacerUSACInfo_ID, racerUSACInfo_ID);
      	content.put(RacerSeriesInfo.SeriesBibNumber, seriesBibNumber);
      	content.put(RacerSeriesInfo.RaceSeries_ID, raceSeries_ID);
-     	content.put(RacerSeriesInfo.CurrentRaceCategory_ID, currentRaceCategory_ID);
+     	content.put(RacerSeriesInfo.SeriesRacerCategory_ID, seriesRacerCategory_ID);
      	content.put(RacerSeriesInfo.TTPoints, 0);
      	content.put(RacerSeriesInfo.RRPoints, 0);
      	content.put(RacerSeriesInfo.PrimePoints, 0);
@@ -77,7 +77,7 @@ public final class RacerSeriesInfo extends ContentProviderTable implements BaseC
 	}
 	
 	public int Update(Context context, long racerSeriesInfo_ID, Long racerUSACInfo_ID, String seriesBibNumber, Long raceSeries_ID, 
-			 Long currentRaceCategory_ID, Long ttPoints, Long rrPoints, Long primePoints, Boolean upgraded, String onlineRecordID) {
+			 Long seriesRacerCategory_ID, Long ttPoints, Long rrPoints, Long primePoints, Boolean upgraded, String onlineRecordID) {
 		ContentValues content = new ContentValues();
 		if(racerUSACInfo_ID != null)
 		{
@@ -91,9 +91,9 @@ public final class RacerSeriesInfo extends ContentProviderTable implements BaseC
 		{
 			content.put(RacerSeriesInfo.RaceSeries_ID, raceSeries_ID);
 		}
-		if(currentRaceCategory_ID != null)
+		if(seriesRacerCategory_ID != null)
 		{
-			content.put(RacerSeriesInfo.CurrentRaceCategory_ID, currentRaceCategory_ID);
+			content.put(RacerSeriesInfo.SeriesRacerCategory_ID, seriesRacerCategory_ID);
 		}
 		if(ttPoints != null)
 		{

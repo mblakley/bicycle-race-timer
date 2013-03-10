@@ -128,13 +128,13 @@ public class AddRacerView extends BaseDialog implements LoaderManager.LoaderCall
 	 	 			selectionArgs = new String[]{Long.toString(racerUSACInfo_ID)}; 
 	 				
 	 	 			// Get the current category of this racer
-	 				Cursor racerCategory = RacerSeriesInfo.Instance().Read(getActivity(), new String[]{RacerSeriesInfo._ID, RacerSeriesInfo.CurrentRaceCategory_ID}, selection, selectionArgs, null);
+	 				Cursor racerCategory = RacerSeriesInfo.Instance().Read(getActivity(), new String[]{RacerSeriesInfo._ID, RacerSeriesInfo.SeriesRacerCategory_ID}, selection, selectionArgs, null);
 					// Found a racer category
 	 				if(racerCategory != null && racerCategory.getCount() > 0){
 	 					racerCategory.moveToFirst();
 	 					
 		 				Long racerSeriesInfo_ID = racerCategory.getLong(racerCategory.getColumnIndex(RacerSeriesInfo._ID));
-		 				Long currentRacerCat = racerCategory.getLong(racerCategory.getColumnIndex(RacerSeriesInfo.CurrentRaceCategory_ID));
+		 				Long currentRacerCat = racerCategory.getLong(racerCategory.getColumnIndex(RacerSeriesInfo.SeriesRacerCategory_ID));
 		 				// If the new category doesn't equal the old category, do an upgrade
 		 				if(!currentRacerCat.equals(categoryID)){
 		 					Toast.makeText(getActivity(), R.string.IdenticalRacerUpgrade, Toast.LENGTH_LONG).show();

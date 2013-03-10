@@ -28,8 +28,8 @@ public class AddRaceSummary extends BaseWizardPage {
 		long raceSeries_ID = -1;
 		Bundle args = getArguments();
 		// Determine if we should show the series info
-		if(args.containsKey(Race.RaceSeries_ID)){
-			raceSeries_ID = args.getLong(Race.RaceSeries_ID);
+		if(args.containsKey(RaceSeries.Instance().ForeignKey)){
+			raceSeries_ID = args.getLong(RaceSeries.Instance().ForeignKey);
 		}
 		if(raceSeries_ID > 1){
 			getLinearLayout(R.id.llRaceSeriesName).setVisibility(View.VISIBLE);

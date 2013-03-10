@@ -80,8 +80,8 @@ public class ChooseRaceSeries extends BaseWizardPage implements OnCheckedChangeL
 		
 		rb = getRadioButton(R.id.radioNo);		
 		if(rb.isChecked()){
-			// Default to "Individual" series
-			b.putLong(Race.RaceSeries_ID, 1l);
+			// Default to "No" series
+			b.putLong(RaceSeries.Instance().ForeignKey, -1l);
 		}
 		
 		return b;

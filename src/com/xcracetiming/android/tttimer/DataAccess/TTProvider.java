@@ -1,8 +1,6 @@
 package com.xcracetiming.android.tttimer.DataAccess;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Hashtable;
 
 import android.content.ContentProvider;
@@ -234,14 +232,7 @@ public class TTProvider extends ContentProvider {
     		db.execSQL("INSERT INTO " + LookupGroups.Instance().getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Humidity + "', 'Moderate');");
     		db.execSQL("INSERT INTO " + LookupGroups.Instance().getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Humidity + "', 'Humid');");
     		db.execSQL("INSERT INTO " + LookupGroups.Instance().getTableName() + "(" + LookupGroups.LookupGroup + "," + LookupGroups.LookupValue + ") VALUES ('" + LookupGroups.Lookup_Group_Humidity + "', 'Raining');");
-    		
-	    	Calendar cal = Calendar.getInstance();
-			cal.setTimeInMillis(System.currentTimeMillis());
-    		Date startOfSeries = new Date(cal.get(Calendar.YEAR), Calendar.JANUARY, 1, 0, 0);
-			Date endOfSeries = new Date(2025, Calendar.DECEMBER, 31, 23, 59);
-			// Create the default race series (used for individual races)
-    		db.execSQL("INSERT INTO " + RaceSeries.Instance().getTableName() + "(" + RaceSeries.SeriesName + "," + RaceSeries.SeriesStartDate + "," + RaceSeries.SeriesEndDate + "," + RaceSeries.SeriesScoringType + ") VALUES ('Individual', " + startOfSeries.getTime() + "," + endOfSeries.getTime() + ",'Club');");
-    		
+    			    	
 	    	// Initial load of race types
     		// Time Trial and Team Time Trial
 	        db.execSQL("INSERT INTO " + RaceType.Instance().getTableName() + "(" + RaceType.RaceTypeDescription + "," + RaceType.LicenseType + "," + RaceType.IsTeamRace + "," + RaceType.HasMultipleLaps + "," + RaceType.RaceDiscipline + ") VALUES ('Time Trial', 'Road', 0, 0, 'Time Trial');");

@@ -63,9 +63,8 @@ public class EditRaceConfiguration extends AddRaceView implements View.OnClickLi
 				String eventName = "";
 				Long eventID = 0l;
 				String discipline = "";
-				Long series = 0l;
 				String scoring = "Both";
-				Race.Instance().Update(getActivity(), Race._ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name), null, null, GetRaceLocationID(), GetRaceDate(), GetRaceTypeID(), startInterval, numLaps, eventName, eventID, discipline, series, scoring);	 			
+				Race.Instance().Update(getActivity(), Race._ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name), null, null, GetRaceLocationID(), GetRaceDate(), GetRaceTypeID(), startInterval, numLaps, eventName, eventID, discipline, scoring);	 			
 				AppSettings.Instance().Update(getActivity(), AppSettings.AppSetting_StartInterval_Name, Long.toString(startInterval), true);
 				
 				// Figure out if checkin has already started.  If checkin has started, and start interval has changed, update the start intervals of everyone.

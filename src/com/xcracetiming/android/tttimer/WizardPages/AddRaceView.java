@@ -210,13 +210,8 @@ public class AddRaceView extends BaseWizardPage implements View.OnClickListener,
 				
 				// TODO: What's the difference between club scoring and USAC scoring? - Club scoring gives points based on the club's preferences.  USAC gives upgrade points based on the race type and number of racers starting.
 				String scoring = "Club";
-				// Don't like the special handling for invalid raceSeries_ID - Should not be necessary
-				if(raceSeries_ID == null){
-					Uri seriesCreated = RaceSeries.Instance().Create(getActivity(), getEditText(R.id.txtRaceName).getText().toString(), GetRaceDate(), GetRaceDate(), scoring);
-					raceSeries_ID = Long.parseLong(seriesCreated.getLastPathSegment());
-				}
 				
-				Uri resultUri = Race.Instance().Create(getActivity(), GetRaceLocationID(), GetRaceDate(), null, GetRaceTypeID(), GetRaceStartInterval(), eventName, eventID, raceSeries_ID, scoring);
+				Uri resultUri = Race.Instance().Create(getActivity(), GetRaceLocationID(), GetRaceDate(), null, GetRaceTypeID(), GetRaceStartInterval(), eventName, eventID, scoring);
 	 			long race_ID = Long.parseLong(resultUri.getLastPathSegment());
 	 			
 	 			// Broadcast that a race was added

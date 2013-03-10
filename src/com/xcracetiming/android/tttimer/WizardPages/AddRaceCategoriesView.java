@@ -9,8 +9,10 @@ import java.util.Map;
 import com.xcracetiming.android.tttimer.R;
 import com.xcracetiming.android.tttimer.CursorAdapters.CheckedItemArrayAdapter;
 import com.xcracetiming.android.tttimer.DataAccess.CheckedItem;
-import com.xcracetiming.android.tttimer.DataAccess.Race;
 import com.xcracetiming.android.tttimer.DataAccess.RaceCategory;
+import com.xcracetiming.android.tttimer.DataAccess.RaceSeries;
+import com.xcracetiming.android.tttimer.DataAccess.RaceSeriesRaceCategories;
+import com.xcracetiming.android.tttimer.DataAccess.Views.SeriesRaceCategoriesView;
 import com.xcracetiming.android.tttimer.Utilities.QueryUtilities.SelectBuilder;
 
 import android.database.Cursor;
@@ -38,6 +40,8 @@ public class AddRaceCategoriesView extends BaseWizardPage implements View.OnClic
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.dialog_add_race_categories, container, false);		
 	}
+	
+	// TODO: WARNING - This page should display all categories for each of the race series' for the given race_ID.  You can have multiple series associated with a race.
 	
 	@Override
 	public void setArguments(Bundle args) {
@@ -68,7 +72,11 @@ public class AddRaceCategoriesView extends BaseWizardPage implements View.OnClic
         raceCategoriesAdapter = new CheckedItemArrayAdapter(getActivity(), R.id.text, items);//(CheckedItem[])raceCategories.keySet().toArray());        
     	getListView(R.id.lvRaceCategories).setAdapter(raceCategoriesAdapter);
 
-		//this.getLoaderManager().initLoader(ALL_RACE_CATEGORIES_LOADER, null, this);
+    	Bundle args = getArguments();
+    	if(!getArguments().containsKey(RaceSeries.Instance().getTableName()+RaceSeries._ID)){
+    		args.putLong(RaceSeries.Instance().getTableName()+RaceSeries._ID, -1l);
+    	}
+		//this.getLoaderManager().initLoader(ALL_RACE_CATEGORIES_LOADER, args, this);
 	}
 	
 	@Override 
@@ -133,10 +141,10 @@ public class AddRaceCategoriesView extends BaseWizardPage implements View.OnClic
 		switch(id){
 			case ALL_RACE_CATEGORIES_LOADER:
 				projection = new String[]{RaceCategory._ID, RaceCategory.FullCategoryName};
-				selection = SelectBuilder.Where(RaceCategory.Instance().getColumnName(RaceCategory.RaceSeries_ID)).EqualsParameter().toString();
-				selectionArgs = new String[]{Long.toString(this.getArguments().getLong(Race.RaceSeries_ID))};
+				selection = SelectBuilder.Where(RaceCategory.Instance().getColumnName(RaceSeriesRaceCategories.RaceSeries_ID)).EqualsParameter().toString();
+				selectionArgs = new String[]{Long.toString(this.getArguments().getLong(RaceSeries.Instance().getTableName()+RaceSeries._ID))};
 				sortOrder = RaceCategory.FullCategoryName;
-				loader = new CursorLoader(getActivity(), RaceCategory.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), SeriesRaceCategoriesView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 		}
 		Log.v(LOG_TAG, "onCreateLoader complete: id=" + Integer.toString(id));

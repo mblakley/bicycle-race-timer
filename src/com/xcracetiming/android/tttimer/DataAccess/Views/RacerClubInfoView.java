@@ -24,7 +24,7 @@ public final class RacerClubInfoView extends ContentProviderView {
     	if(tableJoin == ""){    	
 	    	tableJoin = new TableJoin(RacerSeriesInfo.Instance().getTableName())
 	    					.LeftJoin(RacerSeriesInfo.Instance().getTableName(), RacerUSACInfo.Instance().getTableName(), RacerSeriesInfo.RacerUSACInfo_ID, RacerUSACInfo._ID)
-	    					.LeftJoin(RacerSeriesInfo.Instance().getTableName(), RaceCategory.Instance().getTableName(), RacerSeriesInfo.CurrentRaceCategory_ID, RaceCategory._ID)
+	    					.LeftJoin(RacerSeriesInfo.Instance().getTableName(), RaceCategory.Instance().getTableName(), RacerSeriesInfo.SeriesRacerCategory_ID, RaceCategory._ID)
 	    					.LeftJoin(RacerUSACInfo.Instance().getTableName(), Racer.Instance().getTableName(), RacerUSACInfo.Racer_ID, Racer._ID)
 	    					.toString();	    			
     	}

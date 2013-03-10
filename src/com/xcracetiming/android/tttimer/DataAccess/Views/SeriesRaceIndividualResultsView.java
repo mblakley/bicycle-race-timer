@@ -25,15 +25,19 @@ public final class SeriesRaceIndividualResultsView extends ContentProviderView {
         return instance;
     } 
     
+    /**
+     * Joins SeriesRaceIndividualResults, Race, RacerSeriesInfo, RacerUSACInfo, Racer, RaceResults, RaceCategory tables
+     */
     @Override
     public String getTableName(){
     	if(tableJoin == ""){
-    		tableJoin = new TableJoin(SeriesRaceIndividualResults.Instance().getTableName()).LeftJoin(SeriesRaceIndividualResults.Instance().getTableName(), Race.Instance().getTableName(), SeriesRaceIndividualResults.Race_ID, Race._ID)
+    		tableJoin = new TableJoin(SeriesRaceIndividualResults.Instance().getTableName())
+    						.LeftJoin(SeriesRaceIndividualResults.Instance().getTableName(), Race.Instance().getTableName(), SeriesRaceIndividualResults.Race_ID, Race._ID)
 			    			.LeftJoin(SeriesRaceIndividualResults.Instance().getTableName(), RacerSeriesInfo.Instance().getTableName(), SeriesRaceIndividualResults.RacerSeriesInfo_ID, RacerSeriesInfo._ID)
 			    			.LeftJoin(RacerSeriesInfo.Instance().getTableName(), RacerUSACInfo.Instance().getTableName(), RacerSeriesInfo.RacerUSACInfo_ID, RacerUSACInfo._ID)
 			    			.LeftJoin(RacerUSACInfo.Instance().getTableName(), Racer.Instance().getTableName(), RacerUSACInfo.Racer_ID, Racer._ID)
 			    			.LeftJoin(SeriesRaceIndividualResults.Instance().getTableName(), RaceResults.Instance().getTableName(), SeriesRaceIndividualResults.RaceResult_ID, RaceResults._ID)
-			    			.LeftJoin(SeriesRaceIndividualResults.Instance().getTableName(), RaceCategory.Instance().getTableName(), SeriesRaceIndividualResults.RaceCategory_ID, RaceCategory._ID)
+			    			.LeftJoin(RacerSeriesInfo.Instance().getTableName(), RaceCategory.Instance().getTableName(), RacerSeriesInfo.SeriesRacerCategory_ID, RaceCategory._ID)
 			    			.toString();
     	}
     	return tableJoin;

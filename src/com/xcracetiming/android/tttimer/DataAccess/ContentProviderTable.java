@@ -16,6 +16,8 @@ public abstract class ContentProviderTable {
 	
 	public final Uri CONTENT_URI = Uri.withAppendedPath(TTProvider.CONTENT_URI, getClassName());
 	
+	public final String ForeignKey = getTableName()+"_ID";
+						
 	public String getTableName(){
     	return this.getClass().getSimpleName(); 
     }

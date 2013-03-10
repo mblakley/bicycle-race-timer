@@ -50,7 +50,7 @@ public final class RacerInfoView extends ContentProviderView {
 			racerValues.put(RacerSeriesInfo._ID, racerClubInfo_ID);
 			racerValues.put(RacerSeriesInfo.SeriesBibNumber, racerCursor.getString(racerCursor.getColumnIndex(RacerSeriesInfo.SeriesBibNumber)));
 			racerValues.put(RacerSeriesInfo.RaceSeries_ID, racerCursor.getLong(racerCursor.getColumnIndex(RacerSeriesInfo.RaceSeries_ID)));
-			racerValues.put(RacerSeriesInfo.CurrentRaceCategory_ID, racerCursor.getString(racerCursor.getColumnIndex(RacerSeriesInfo.CurrentRaceCategory_ID)));
+			racerValues.put(RacerSeriesInfo.SeriesRacerCategory_ID, racerCursor.getString(racerCursor.getColumnIndex(RacerSeriesInfo.SeriesRacerCategory_ID)));
 			racerValues.put(RacerSeriesInfo.TTPoints, racerCursor.getLong(racerCursor.getColumnIndex(RacerSeriesInfo.TTPoints)));
 			racerValues.put(RacerSeriesInfo.RRPoints, racerCursor.getLong(racerCursor.getColumnIndex(RacerSeriesInfo.RRPoints)));
 			racerValues.put(RacerSeriesInfo.PrimePoints, racerCursor.getLong(racerCursor.getColumnIndex(RacerSeriesInfo.PrimePoints)));
