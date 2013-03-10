@@ -1,13 +1,11 @@
 package com.xcracetiming.android.tttimer.Tabs;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.CursorAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,7 +19,6 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.TextView;
 
 import com.xcracetiming.android.tttimer.R;
-import com.xcracetiming.android.tttimer.TTTimerTabsActivity;
 import com.xcracetiming.android.tttimer.CursorAdapters.ResultsCursorAdapter;
 import com.xcracetiming.android.tttimer.CursorAdapters.TeamResultsCursorAdapter;
 import com.xcracetiming.android.tttimer.DataAccess.AppSettings;
@@ -35,13 +32,13 @@ import com.xcracetiming.android.tttimer.DataAccess.Racer;
 import com.xcracetiming.android.tttimer.DataAccess.SeriesRaceIndividualResults;
 import com.xcracetiming.android.tttimer.DataAccess.SeriesRaceTeamResults;
 import com.xcracetiming.android.tttimer.DataAccess.TeamInfo;
+import com.xcracetiming.android.tttimer.DataAccess.Views.CheckedInRacersView;
 import com.xcracetiming.android.tttimer.DataAccess.Views.RaceWaveInfoView;
 import com.xcracetiming.android.tttimer.DataAccess.Views.SeriesRaceIndividualResultsView;
 import com.xcracetiming.android.tttimer.DataAccess.Views.SeriesRaceTeamResultsView;
 import com.xcracetiming.android.tttimer.Dialogs.AdminAuthView;
 import com.xcracetiming.android.tttimer.Dialogs.EditRaceResultView;
 import com.xcracetiming.android.tttimer.Dialogs.RacerPreviousResults;
-import com.xcracetiming.android.tttimer.WizardPages.AdminMenuView;
 
 public class ResultsTab extends BaseTab implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -177,7 +174,7 @@ public class ResultsTab extends BaseTab implements LoaderManager.LoaderCallbacks
 				selection = SeriesRaceIndividualResults.Race_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.ElapsedTime + " IS NOT NULL AND " + RaceCategory.FullCategoryName + "!=?";
 				selectionArgs = new String[]{"G"};
 				sortOrder = RaceResults.ElapsedTime + "," + Racer.LastName;
-				loader = new CursorLoader(getActivity(), SeriesRaceIndividualResultsView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), CheckedInRacersView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case TEAM_OVERALL_RESULTS_LOADER:
 				// Create the cursor adapter for the list of unassigned times
@@ -223,7 +220,7 @@ public class ResultsTab extends BaseTab implements LoaderManager.LoaderCallbacks
 				selection = SeriesRaceIndividualResults.Race_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.ElapsedTime + " IS NOT NULL AND " + RaceCategory.FullCategoryName + "!=?";
 				selectionArgs = new String[]{"G"};
 				sortOrder = RaceCategory.FullCategoryName + "," + RaceResults.ElapsedTime + "," + Racer.LastName;
-				loader = new CursorLoader(getActivity(), SeriesRaceIndividualResults.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), CheckedInRacersView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case RACE_INFO_LOADER_RESULTS:
 				projection = new String[]{Race.Instance().getTableName() + "." + Race._ID + " as _id", Race.RaceType_ID, RaceType.IsTeamRace, RaceWave.NumLaps};

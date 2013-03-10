@@ -36,7 +36,7 @@ public final class RacerClubInfoView extends ContentProviderView {
     public ArrayList<Uri> getAllUrisToNotifyOnChange(){
     	ArrayList<Uri> urisToNotify = super.getAllUrisToNotifyOnChange();
     	urisToNotify.add(CheckInViewInclusive.Instance().CONTENT_URI);
-    	urisToNotify.add(CheckInViewExclusive.Instance().CONTENT_URI);
+    	urisToNotify.add(CheckedInRacersView.Instance().CONTENT_URI);
     	
     	return urisToNotify;
     }

@@ -2,7 +2,7 @@ package com.xcracetiming.android.tttimer.DataAccess;
 
 import java.util.ArrayList;
 
-import com.xcracetiming.android.tttimer.DataAccess.Views.CheckInViewExclusive;
+import com.xcracetiming.android.tttimer.DataAccess.Views.CheckedInRacersView;
 import com.xcracetiming.android.tttimer.DataAccess.Views.CheckInViewInclusive;
 
 import android.content.ContentValues;
@@ -52,7 +52,7 @@ public final class AppSettings extends ContentProviderTable implements BaseColum
     public ArrayList<Uri> getAllUrisToNotifyOnChange(){
     	ArrayList<Uri> uriList = super.getAllUrisToNotifyOnChange();
     	uriList.add(CheckInViewInclusive.Instance().CONTENT_URI);
-    	uriList.add(CheckInViewExclusive.Instance().CONTENT_URI);
+    	uriList.add(CheckedInRacersView.Instance().CONTENT_URI);
     	
     	return uriList;
     }

@@ -8,6 +8,7 @@ import com.xcracetiming.android.tttimer.DataAccess.RaceResults;
 import com.xcracetiming.android.tttimer.DataAccess.RaceSeries;
 import com.xcracetiming.android.tttimer.DataAccess.RaceType;
 import com.xcracetiming.android.tttimer.DataAccess.RaceWave;
+import com.xcracetiming.android.tttimer.DataAccess.Racer;
 import com.xcracetiming.android.tttimer.DataAccess.Views.RaceInfoResultsView;
 import com.xcracetiming.android.tttimer.DataAccess.Views.RaceInfoView;
 import com.xcracetiming.android.tttimer.Utilities.QueryUtilities.SelectBuilder;
@@ -27,7 +28,7 @@ public class BicycleRaceInfoLoaderFactory implements IRaceInfoTabLoaderFactory {
 	 * @return Race._ID, RaceSeries.SeriesName, Race.RaceDate, Race.RaceLocation_ID, RaceLocation.CourseName, RaceType.HasMultipleLaps, Race.StartInterval, RaceLocation.Distance, RaceLocation.DistanceUnit, RaceWave.NumLaps, RaceType.RaceTypeDescription
 	 */
 	public CursorLoader GetRaceInfo(FragmentActivity activity) {
-		String[] projection = new String[]{Race.Instance().getColumnName(Race._ID), RaceSeries.SeriesName, Race.RaceDate, Race.RaceLocation_ID, RaceLocation.CourseName, RaceType.HasMultipleLaps, Race.StartInterval, RaceLocation.Distance, RaceLocation.DistanceUnit, RaceWave.NumLaps, RaceType.RaceTypeDescription};
+		String[] projection = new String[]{Race.Instance().getColumnName(Race._ID), Race.RaceDate, Race.RaceLocation_ID, RaceLocation.CourseName, RaceType.HasMultipleLaps, Race.StartInterval, RaceLocation.Distance, RaceLocation.DistanceUnit, RaceWave.NumLaps, RaceType.RaceTypeDescription, RaceSeries.SeriesName};
 		String selection = SelectBuilder.Where(Race.Instance().getColumnName(Race._ID)).Equals(AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name)).toString();
 		String[] selectionArgs = null;
 		String sortOrder = Race.Instance().getColumnName(Race._ID);
@@ -42,8 +43,8 @@ public class BicycleRaceInfoLoaderFactory implements IRaceInfoTabLoaderFactory {
 	 * @return RaceResults.ElapsedTime
 	 */
 	public CursorLoader GetCourseRecord(FragmentActivity activity, Bundle args) {
-		String[] projection = new String[]{RaceResults.ElapsedTime};
-		String selection = SelectBuilder.Where(Race.Instance().getColumnName(Race.RaceLocation_ID)).EqualsParameter().And(RaceResults.ElapsedTime).EqualsParameter().And(RaceResults.ElapsedTime).GTE(0).toString();
+		String[] projection = new String[]{RaceResults.ElapsedTime, Race.RaceDate, Racer.FirstName, Racer.LastName};
+		String selection = SelectBuilder.Where(Race.Instance().getColumnName(Race.RaceLocation_ID)).EqualsParameter().And(RaceResults.ElapsedTime).GTE(0).toString();
 		String[] selectionArgs = new String[]{Long.toString(args.getLong(Race.RaceLocation_ID))};
 		String sortOrder = RaceResults.ElapsedTime;
 		return new CursorLoader(activity, RaceInfoResultsView.Instance().CONTENT_URI.buildUpon().appendQueryParameter(ContentProviderTable.Limit, "1").build(), projection, selection, selectionArgs, sortOrder);

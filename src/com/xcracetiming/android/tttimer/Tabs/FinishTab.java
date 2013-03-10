@@ -40,8 +40,8 @@ import com.xcracetiming.android.tttimer.DataAccess.SeriesRaceIndividualResults;
 import com.xcracetiming.android.tttimer.DataAccess.SeriesRaceTeamResults;
 import com.xcracetiming.android.tttimer.DataAccess.TeamInfo;
 import com.xcracetiming.android.tttimer.DataAccess.UnassignedTimes;
+import com.xcracetiming.android.tttimer.DataAccess.Views.CheckedInRacersView;
 import com.xcracetiming.android.tttimer.DataAccess.Views.RaceWaveInfoView;
-import com.xcracetiming.android.tttimer.DataAccess.Views.SeriesRaceIndividualResultsView;
 import com.xcracetiming.android.tttimer.DataAccess.Views.TeamLapsView;
 import com.xcracetiming.android.tttimer.Dialogs.RemoveUnassignedTime;
 
@@ -205,7 +205,7 @@ public class FinishTab extends BaseTab implements View.OnClickListener,	LoaderMa
 				selection = SeriesRaceIndividualResults.Race_ID	+ "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.StartTime + " IS NOT NULL" + " AND " + RaceResults.EndTime + " IS NULL AND " + RaceCategory.FullCategoryName + "!=?";
 				selectionArgs = new String[]{"G"};
 				sortOrder = RaceResults.StartOrder;
-				loader = new CursorLoader(getActivity(), SeriesRaceIndividualResultsView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), CheckedInRacersView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case TEAM_FINISH_ORDER_LOADER:
 				finishersCA = new TeamsToFinishCursorAdapter(getActivity(), null);

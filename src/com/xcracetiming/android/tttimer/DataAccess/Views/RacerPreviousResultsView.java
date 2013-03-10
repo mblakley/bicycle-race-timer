@@ -43,7 +43,7 @@ public final class RacerPreviousResultsView extends ContentProviderView {
     	urisToNotify.add(Race.Instance().CONTENT_URI);
     	urisToNotify.add(RaceLocation.Instance().CONTENT_URI);
     	urisToNotify.add(CheckInViewInclusive.Instance().CONTENT_URI);
-    	urisToNotify.add(CheckInViewExclusive.Instance().CONTENT_URI);
+    	urisToNotify.add(CheckedInRacersView.Instance().CONTENT_URI);
     	
     	return urisToNotify;
     }

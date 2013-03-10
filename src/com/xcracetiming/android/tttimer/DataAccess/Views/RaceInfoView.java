@@ -7,6 +7,7 @@ import android.net.Uri;
 import com.xcracetiming.android.tttimer.DataAccess.Race;
 import com.xcracetiming.android.tttimer.DataAccess.RaceLocation;
 import com.xcracetiming.android.tttimer.DataAccess.RaceSeries;
+import com.xcracetiming.android.tttimer.DataAccess.RaceSeriesRaces;
 import com.xcracetiming.android.tttimer.DataAccess.RaceType;
 import com.xcracetiming.android.tttimer.DataAccess.RaceWave;
 
@@ -28,7 +29,7 @@ public final class RaceInfoView extends ContentProviderView {
 	/**
 	 * Joins Race, RaceSeries, RaceLocation, RaceType, and outer join on RaceWave (for laps)
 	 * 
-	 * Race->RaceSeries_ID
+	 * Race->RaceSeries_ID (outer)
 	 * Race->RaceLocation_ID
 	 * Race->RaceType_ID
 	 * Race->RaceWave_ID (outer)
@@ -46,6 +47,8 @@ public final class RaceInfoView extends ContentProviderView {
 							.LeftJoin(Race.Instance().getTableName(), RaceLocation.Instance().getTableName(), Race.RaceLocation_ID, RaceLocation._ID)
 							.LeftJoin(Race.Instance().getTableName(), RaceType.Instance().getTableName(), Race.RaceType_ID, RaceType._ID)
 							.LeftOuterJoin(Race.Instance().getTableName(), RaceWave.Instance().getTableName(), Race._ID, RaceWave.Race_ID)
+							.LeftOuterJoin(Race.Instance().getTableName(), RaceSeriesRaces.Instance().getTableName(), Race._ID, RaceSeriesRaces.Race_ID)
+							.LeftOuterJoin(RaceSeriesRaces.Instance().getTableName(), RaceSeries.Instance().getTableName(), RaceSeriesRaces.RaceSeries_ID, RaceSeries._ID)
 							.toString();
     	}
     	return tableJoin;

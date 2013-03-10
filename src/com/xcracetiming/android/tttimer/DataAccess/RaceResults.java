@@ -7,7 +7,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-import com.xcracetiming.android.tttimer.DataAccess.Views.CheckInViewExclusive;
+import com.xcracetiming.android.tttimer.DataAccess.Views.CheckedInRacersView;
 import com.xcracetiming.android.tttimer.DataAccess.Views.CheckInViewInclusive;
 import com.xcracetiming.android.tttimer.DataAccess.Views.TeamCheckInViewExclusive;
 import com.xcracetiming.android.tttimer.DataAccess.Views.TeamCheckInViewInclusive;
@@ -60,7 +60,7 @@ public final class RaceResults extends ContentProviderTable implements BaseColum
     public ArrayList<Uri> getAllUrisToNotifyOnChange(){
     	ArrayList<Uri> urisToNotify = super.getAllUrisToNotifyOnChange();
     	urisToNotify.add(CheckInViewInclusive.Instance().CONTENT_URI);
-    	urisToNotify.add(CheckInViewExclusive.Instance().CONTENT_URI);
+    	urisToNotify.add(CheckedInRacersView.Instance().CONTENT_URI);
     	urisToNotify.add(TeamCheckInViewInclusive.Instance().CONTENT_URI);
     	urisToNotify.add(TeamCheckInViewExclusive.Instance().CONTENT_URI);
     	

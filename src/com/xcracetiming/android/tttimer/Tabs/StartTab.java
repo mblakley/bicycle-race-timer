@@ -37,8 +37,8 @@ import com.xcracetiming.android.tttimer.DataAccess.Racer;
 import com.xcracetiming.android.tttimer.DataAccess.SeriesRaceIndividualResults;
 import com.xcracetiming.android.tttimer.DataAccess.SeriesRaceTeamResults;
 import com.xcracetiming.android.tttimer.DataAccess.TeamInfo;
+import com.xcracetiming.android.tttimer.DataAccess.Views.CheckedInRacersView;
 import com.xcracetiming.android.tttimer.DataAccess.Views.RaceWaveInfoView;
-import com.xcracetiming.android.tttimer.DataAccess.Views.SeriesRaceIndividualResultsView;
 import com.xcracetiming.android.tttimer.DataAccess.Views.SeriesRaceTeamResultsView;
 import com.xcracetiming.android.tttimer.Dialogs.ResetStartedRacersConfirmation;
 import com.xcracetiming.android.tttimer.Dialogs.ResetTimerConfirmation;
@@ -271,7 +271,7 @@ public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 				selection = SeriesRaceIndividualResults.Race_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.StartTime + " IS NULL";
 				selectionArgs = null;
 				sortOrder = RaceResults.StartOrder;
-				fullUri = SeriesRaceIndividualResultsView.Instance().CONTENT_URI.buildUpon().appendQueryParameter(ContentProviderTable.Limit, "1").build();
+				fullUri = CheckedInRacersView.Instance().CONTENT_URI.buildUpon().appendQueryParameter(ContentProviderTable.Limit, "1").build();
 				loader = new CursorLoader(getActivity(), fullUri, projection, selection, selectionArgs, sortOrder);
 				break;
 			case START_ORDER_LOADER_START:
@@ -279,7 +279,7 @@ public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 				selection = SeriesRaceTeamResults.Race_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name);
 				selectionArgs = null;
 				sortOrder = RaceResults.StartOrder;
-				loader = new CursorLoader(getActivity(), SeriesRaceTeamResultsView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), CheckedInRacersView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case TEAM_ON_DECK_LOADER:
 				projection = new String[]{SeriesRaceIndividualResults.RaceResult_ID + " as _id", TeamInfo.TeamName, RaceResults.StartOrder, RaceResults.StartTimeOffset};

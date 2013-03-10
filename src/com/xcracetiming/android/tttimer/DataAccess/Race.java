@@ -10,7 +10,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-import com.xcracetiming.android.tttimer.DataAccess.Views.CheckInViewExclusive;
+import com.xcracetiming.android.tttimer.DataAccess.Views.CheckedInRacersView;
 import com.xcracetiming.android.tttimer.DataAccess.Views.CheckInViewInclusive;
 import com.xcracetiming.android.tttimer.DataAccess.Views.RaceInfoView;
 
@@ -51,7 +51,7 @@ public final class Race extends ContentProviderTable implements BaseColumns {
     public ArrayList<Uri> getAllUrisToNotifyOnChange(){
     	ArrayList<Uri> urisToNotify = super.getAllUrisToNotifyOnChange();
     	urisToNotify.add(CheckInViewInclusive.Instance().CONTENT_URI);
-    	urisToNotify.add(CheckInViewExclusive.Instance().CONTENT_URI);
+    	urisToNotify.add(CheckedInRacersView.Instance().CONTENT_URI);
     	urisToNotify.add(RaceInfoView.Instance().CONTENT_URI);
     	urisToNotify.add(RaceLocation.Instance().CONTENT_URI);
     	

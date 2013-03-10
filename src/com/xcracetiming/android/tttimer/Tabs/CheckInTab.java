@@ -23,9 +23,9 @@ import com.xcracetiming.android.tttimer.DataAccess.RacerSeriesInfo;
 import com.xcracetiming.android.tttimer.DataAccess.SeriesRaceIndividualResults;
 import com.xcracetiming.android.tttimer.DataAccess.SeriesRaceTeamResults;
 import com.xcracetiming.android.tttimer.DataAccess.TeamInfo;
+import com.xcracetiming.android.tttimer.DataAccess.Views.AvailableRacersView;
+import com.xcracetiming.android.tttimer.DataAccess.Views.CheckedInRacersView;
 import com.xcracetiming.android.tttimer.DataAccess.Views.RaceWaveInfoView;
-import com.xcracetiming.android.tttimer.DataAccess.Views.RacerSeriesInfoView;
-import com.xcracetiming.android.tttimer.DataAccess.Views.SeriesRaceIndividualResultsView;
 import com.xcracetiming.android.tttimer.DataAccess.Views.SeriesRaceTeamResultsView;
 import com.xcracetiming.android.tttimer.DataAccess.Views.TeamInfoView;
 import com.xcracetiming.android.tttimer.Dialogs.AddGhostRacerView;
@@ -150,15 +150,15 @@ public class CheckInTab extends BaseTab implements LoaderManager.LoaderCallbacks
 				// Get the names of every racer in the system, weeding out the "upgraded" racers (those are not the most recent record for that racer), and the "ghost" racer
 				// TODO: or in the case of a series race, just get the names of the racers in the series
 				projection = new String[]{RacerSeriesInfo.Instance().getTableName() + "." + RacerSeriesInfo._ID + " as _id", Racer.LastName, Racer.FirstName};
-				selection = RacerSeriesInfo.Upgraded + "=? AND " + RaceCategory.Category + "!=?";
-				selectionArgs = new String[]{Long.toString(0l), "G"};
+				selection = SeriesRaceIndividualResults.Race_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RacerSeriesInfo.Upgraded + "=? AND " + RaceCategory.FullCategoryName + "!=?";
+				selectionArgs = new String[]{Long.toString(0l), "Ghost"};
 				sortOrder = Racer.LastName;
 				String racerNameText = getEditText(R.id.txtRacerNameFilter).getText().toString();
 				if(!racerNameText.equals("")){
 					selection += " AND UPPER(" + Racer.LastName + ") GLOB ?";
 					selectionArgs = new String[]{ Long.toString(0l), RaceCategory.CategoryName_Ghost, getEditText(R.id.txtRacerNameFilter).getText().toString().toUpperCase(Locale.US) + "*"};
 				}
-				loader = new CursorLoader(getActivity(), RacerSeriesInfoView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), AvailableRacersView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case Loaders.TEAM_CHECKIN_LOADER:
 				// Create the cursor adapter for the list of team checkins
@@ -198,7 +198,7 @@ public class CheckInTab extends BaseTab implements LoaderManager.LoaderCallbacks
 				selection = SeriesRaceIndividualResults.Race_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name);
 				selectionArgs = null;
 				sortOrder = RaceResults.StartOrder;
-				loader = new CursorLoader(getActivity(), SeriesRaceIndividualResultsView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), CheckedInRacersView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case Loaders.TEAM_START_ORDER_LOADER:
 				// Create the cursor adapter for the start order list

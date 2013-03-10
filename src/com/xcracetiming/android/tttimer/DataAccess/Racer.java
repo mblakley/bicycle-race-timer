@@ -3,7 +3,7 @@ package com.xcracetiming.android.tttimer.DataAccess;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
-import com.xcracetiming.android.tttimer.DataAccess.Views.CheckInViewExclusive;
+import com.xcracetiming.android.tttimer.DataAccess.Views.CheckedInRacersView;
 import com.xcracetiming.android.tttimer.DataAccess.Views.CheckInViewInclusive;
 
 import android.content.ContentValues;
@@ -46,7 +46,7 @@ public final class Racer extends ContentProviderTable implements BaseColumns {
     public ArrayList<Uri> getAllUrisToNotifyOnChange(){
     	ArrayList<Uri> urisToNotify = super.getAllUrisToNotifyOnChange();
     	urisToNotify.add(CheckInViewInclusive.Instance().CONTENT_URI);
-    	urisToNotify.add(CheckInViewExclusive.Instance().CONTENT_URI);
+    	urisToNotify.add(CheckedInRacersView.Instance().CONTENT_URI);
     	
     	return urisToNotify;
     }

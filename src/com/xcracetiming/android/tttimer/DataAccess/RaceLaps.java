@@ -9,7 +9,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-import com.xcracetiming.android.tttimer.DataAccess.Views.CheckInViewExclusive;
+import com.xcracetiming.android.tttimer.DataAccess.Views.CheckedInRacersView;
 import com.xcracetiming.android.tttimer.DataAccess.Views.CheckInViewInclusive;
 import com.xcracetiming.android.tttimer.DataAccess.Views.RaceInfoView;
 import com.xcracetiming.android.tttimer.DataAccess.Views.RaceLapsInfoView;
@@ -49,7 +49,7 @@ public final class RaceLaps extends ContentProviderTable implements BaseColumns 
     	ArrayList<Uri> urisToNotify = super.getAllUrisToNotifyOnChange();
     	urisToNotify.add(RaceLapsInfoView.Instance().CONTENT_URI);
     	urisToNotify.add(CheckInViewInclusive.Instance().CONTENT_URI);
-    	urisToNotify.add(CheckInViewExclusive.Instance().CONTENT_URI);
+    	urisToNotify.add(CheckedInRacersView.Instance().CONTENT_URI);
     	urisToNotify.add(RaceInfoView.Instance().CONTENT_URI);
     	urisToNotify.add(RaceLocation.Instance().CONTENT_URI);
     	urisToNotify.add(TeamLapsView.Instance().CONTENT_URI);
