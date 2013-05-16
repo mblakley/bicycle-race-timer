@@ -1,5 +1,6 @@
 package com.gvccracing.android.tttimer.DataAccess;
 
+import java.util.Calendar;
 import java.util.Hashtable;
 
 import com.gvccracing.android.tttimer.DataAccess.TeamCheckInViewCP.TeamCheckInViewExclusive;
@@ -43,6 +44,7 @@ public class TeamInfoCP {
 			ContentValues content = new ContentValues();
 	     	content.put(TeamInfo.TeamName, teamName);
 	     	content.put(TeamInfo.TeamCategory, teamCategory);
+	     	content.put(TeamInfo.Year, Integer.toString(Calendar.getInstance().get(Calendar.YEAR)));
 
 	     	return context.getContentResolver().insert(TeamInfo.CONTENT_URI, content);
 		}
