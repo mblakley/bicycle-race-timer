@@ -66,3 +66,4 @@ BuildConfig.java
 
 lint.xml
 *.orig
+.idea/*
