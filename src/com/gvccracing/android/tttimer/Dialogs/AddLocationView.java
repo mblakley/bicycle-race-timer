@@ -1,8 +1,8 @@
 package com.gvccracing.android.tttimer.Dialogs;
 
+import com.gvccracing.android.tttimer.DataAccess.RaceLocation;
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
-import com.gvccracing.android.tttimer.DataAccess.RaceLocationCP.RaceLocation;
+import com.gvccracing.android.tttimer.DataAccess.AppSettings;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -28,7 +28,7 @@ public class AddLocationView extends BaseDialog implements View.OnClickListener 
 		
 		TextView lblDistanceUnit = (TextView) v.findViewById(R.id.lblDistanceUnit);
 		
-		Integer distanceUnitID = Integer.parseInt(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_DistanceUnits_Name, "1"));
+		Integer distanceUnitID = Integer.parseInt(AppSettings.Instance().ReadValue(getActivity(), AppSettings.AppSetting_DistanceUnits_Name, "1"));
 		String distanceUnitText = "mi";
 		switch(distanceUnitID){
 			case 1:
@@ -61,7 +61,7 @@ public class AddLocationView extends BaseDialog implements View.OnClickListener 
 				EditText mDistance = (EditText) getView().findViewById(R.id.txtDistance);
 				String distance = mDistance.getText().toString();
 		
-				RaceLocation.Create(getActivity(), courseName, distance);
+				RaceLocation.Instance().Create(getActivity(), courseName, distance);
 					    			
 				// Hide the dialog
 				dismiss();

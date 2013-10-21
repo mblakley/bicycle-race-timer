@@ -1,6 +1,6 @@
 package com.gvccracing.android.tttimer;
 
-import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
+import com.gvccracing.android.tttimer.DataAccess.AppSettings;
 
 import android.content.BroadcastReceiver;  
 import android.content.Context;  
@@ -10,7 +10,7 @@ public class BootReceiver extends BroadcastReceiver {
   
     @Override  
     public void onReceive(Context context, Intent intent) {
-    	String val = AppSettings.ReadValue(context, AppSettings.AppSettings_AutoStartApp_Name, "false");
+    	String val = AppSettings.Instance().ReadValue(context, AppSettings.AppSettings_AutoStartApp_Name, "false");
     	if(Boolean.parseBoolean(val)){
 	        Intent i = new Intent(context, TTTimerTabsActivity.class);
 	        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

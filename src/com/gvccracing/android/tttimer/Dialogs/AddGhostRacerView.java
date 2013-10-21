@@ -1,13 +1,14 @@
 package com.gvccracing.android.tttimer.Dialogs;
 
 import java.util.Calendar;
+
+import com.gvccracing.android.tttimer.DataAccess.Racer;
+import com.gvccracing.android.tttimer.DataAccess.TeamMembers;
 import com.gvccracing.android.tttimer.R;
 import com.gvccracing.android.tttimer.AsyncTasks.GhostCheckInHandler;
 import com.gvccracing.android.tttimer.Controls.NumberPicker;
-import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
-import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
-import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
-import com.gvccracing.android.tttimer.DataAccess.TeamMembersCP.TeamMembers;
+import com.gvccracing.android.tttimer.DataAccess.RacerClubInfo;
+import com.gvccracing.android.tttimer.DataAccess.TeamInfo;
 
 import android.database.Cursor;
 import android.net.Uri;
@@ -54,13 +55,13 @@ public class AddGhostRacerView extends BaseDialog implements View.OnClickListene
 		String[] selectionArgs = new String[]{"GHOST", "RACER"};
 		long racer_ID = 0;
 		Uri resultUri;
-		Cursor previousGhostRacer = Racer.Read(getActivity(), new String[]{Racer._ID}, selection, selectionArgs, null);
+		Cursor previousGhostRacer = Racer.Instance().Read(getActivity(), new String[]{Racer._ID}, selection, selectionArgs, null);
 		if(previousGhostRacer != null && previousGhostRacer.getCount() > 0){
 			previousGhostRacer.moveToFirst();
 			// Found at least one other racer with the same name.
 			racer_ID = previousGhostRacer.getLong(previousGhostRacer.getColumnIndex(Racer._ID));
 		}else{
- 			resultUri = Racer.Create(getActivity(), "GHOST", "RACER", Integer.MIN_VALUE, 0, 0, "None", 0);
+ 			resultUri = Racer.Instance().Create(getActivity(), "GHOST", "RACER", Integer.MIN_VALUE, 0, 0, "None", 0);
  			racer_ID = Long.parseLong(resultUri.getLastPathSegment());
 		}
 		if(previousGhostRacer != null){
@@ -74,14 +75,14 @@ public class AddGhostRacerView extends BaseDialog implements View.OnClickListene
 		long racerClubInfo_ID = 0;		
 		selection = RacerClubInfo.Racer_ID + "=? and " + RacerClubInfo.Year + "=?";
 		selectionArgs = new String[]{Long.toString(racer_ID), Integer.toString(year)};
-		Cursor previousGhostRacerClubInfo = RacerClubInfo.Read(getActivity(), new String[]{RacerClubInfo._ID}, selection, selectionArgs, null);
+		Cursor previousGhostRacerClubInfo = RacerClubInfo.Instance().Read(getActivity(), new String[]{RacerClubInfo._ID}, selection, selectionArgs, null);
 		if(previousGhostRacerClubInfo != null && previousGhostRacerClubInfo.getCount() > 0){
 			previousGhostRacerClubInfo.moveToFirst();
 			// Found at least one other racerClubInfo with the same racer_ID.
 			racerClubInfo_ID = previousGhostRacerClubInfo.getLong(previousGhostRacerClubInfo.getColumnIndex(RacerClubInfo._ID));
 		}else{
 			// Create the RacerClubInfo record
-	     	resultUri = RacerClubInfo.Create(getActivity(), racer_ID, "0", year, "G", 0, 0, 0, 0, null, false);
+	     	resultUri = RacerClubInfo.Instance().Create(getActivity(), racer_ID, "0", year, "G", 0, 0, 0, 0, null, false);
 	     	racerClubInfo_ID = Long.parseLong(resultUri.getLastPathSegment());
 		}	
 		if(previousGhostRacerClubInfo != null){
@@ -92,7 +93,7 @@ public class AddGhostRacerView extends BaseDialog implements View.OnClickListene
 		long teamInfo_ID = 0;		
 		selection = TeamInfo.TeamCategory + "=? and " + TeamInfo.Year + "=?";
 		selectionArgs = new String[]{"G", Integer.toString(year)};
-		Cursor previousGhostTeamInfo = TeamInfo.Read(getActivity(), new String[]{TeamInfo._ID}, selection, selectionArgs, null);
+		Cursor previousGhostTeamInfo = TeamInfo.Instance().Read(getActivity(), new String[]{TeamInfo._ID}, selection, selectionArgs, null);
 		if(previousGhostTeamInfo != null && previousGhostTeamInfo.getCount() > 0){
 			previousGhostTeamInfo.moveToFirst();
 			// Found at least one other teamInfo with the same category (G).
@@ -102,7 +103,7 @@ public class AddGhostRacerView extends BaseDialog implements View.OnClickListene
 	     	resultUri = TeamInfo.Create(getActivity(), "Ghost Team", "G");
 	     	teamInfo_ID = Long.parseLong(resultUri.getLastPathSegment());
 
-			TeamMembers.Update(getActivity(), teamInfo_ID, racerClubInfo_ID, 0, true);
+			TeamMembers.Instance().Update(getActivity(), teamInfo_ID, racerClubInfo_ID, 0, true);
 		}
 		if(previousGhostTeamInfo != null){
 			previousGhostTeamInfo.close();

@@ -18,13 +18,13 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.gvccracing.android.tttimer.DataAccess.RaceLocation;
+import com.gvccracing.android.tttimer.DataAccess.Views.RaceInfoView;
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
-import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
-import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.RaceInfoResultsView;
-import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.RaceInfoView;
-import com.gvccracing.android.tttimer.DataAccess.RaceLocationCP.RaceLocation;
-import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.AppSettings;
+import com.gvccracing.android.tttimer.DataAccess.Race;
+import com.gvccracing.android.tttimer.DataAccess.Views.RaceInfoResultsView;
+import com.gvccracing.android.tttimer.DataAccess.RaceResults;
 import com.gvccracing.android.tttimer.Dialogs.AdminAuthView;
 import com.gvccracing.android.tttimer.Dialogs.AdminMenuView;
 import com.gvccracing.android.tttimer.Dialogs.MarshalLocations;
@@ -107,27 +107,27 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 		String sortOrder;
 		switch(id){
 			case RACE_INFO_LOADER:
-				projection = new String[]{Race.getTableName() + "." + Race._ID + " as _id", Race.RaceDate, RaceLocation.CourseName, Race.RaceType, Race.StartInterval, RaceLocation.Distance, Race.NumLaps};
-				selection = Race.getTableName() + "." + Race._ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
+				projection = new String[]{Race.Instance().getTableName() + "." + Race._ID + " as _id", Race.RaceDate, RaceLocation.CourseName, Race.RaceType, Race.StartInterval, RaceLocation.Distance, Race.NumLaps};
+				selection = Race.Instance().getTableName() + "." + Race._ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name);
 				selectionArgs = null;
-				sortOrder = Race.getTableName() + "." + Race._ID;
-				loader = new CursorLoader(getActivity(), RaceInfoView.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				sortOrder = Race.Instance().getTableName() + "." + Race._ID;
+				loader = new CursorLoader(getActivity(), RaceInfoView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case APP_SETTINGS_LOADER_RACEINFO:
 				projection = new String[]{AppSettings.AppSettingName, AppSettings.AppSettingValue};
 				selection = null;
 				sortOrder = null;
 				selectionArgs = null;
-				loader = new CursorLoader(getActivity(), AppSettings.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), AppSettings.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case COURSE_RECORD_LOADER:
-				projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID + " as _id", RaceResults.ElapsedTime};
-				selection = Race.getTableName() + "." + Race.RaceLocation_ID + " in (" + 
-							SQLiteQueryBuilder.buildQueryString(true, RaceInfoView.getTableName(), new String[]{Race.RaceLocation_ID}, 
-																Race.getTableName() + "." + Race._ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name), null, null, Race.getTableName() + "." + Race._ID, "1") + ")";
+				projection = new String[]{RaceResults.Instance().getTableName() + "." + RaceResults._ID + " as _id", RaceResults.ElapsedTime};
+				selection = Race.Instance().getTableName() + "." + Race.RaceLocation_ID + " in (" +
+							SQLiteQueryBuilder.buildQueryString(true, RaceInfoView.Instance().getTableName(), new String[]{Race.RaceLocation_ID},
+																Race.Instance().getTableName() + "." + Race._ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name), null, null, Race.Instance().getTableName() + "." + Race._ID, "1") + ")";
 				selectionArgs = null;
-				sortOrder = RaceResults.getTableName() + "." + RaceResults.ElapsedTime;
-				loader = new CursorLoader(getActivity(), RaceInfoResultsView.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				sortOrder = RaceResults.Instance().getTableName() + "." + RaceResults.ElapsedTime;
+				loader = new CursorLoader(getActivity(), RaceInfoResultsView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 		}
 		Log.i(LOG_TAG(), "onCreateLoader complete: id=" + Integer.toString(id));
@@ -172,7 +172,7 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 				case APP_SETTINGS_LOADER_RACEINFO:	
 					getActivity().getSupportLoaderManager().restartLoader(COURSE_RECORD_LOADER, null, this);
 					
-					Integer distanceUnitID = Integer.parseInt(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_DistanceUnits_Name, "0"));
+					Integer distanceUnitID = Integer.parseInt(AppSettings.Instance().ReadValue(getActivity(), AppSettings.AppSetting_DistanceUnits_Name, "0"));
 					distanceUnit = "mi";
 					switch(distanceUnitID){
 						case 0:
@@ -244,7 +244,7 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 				showChoosePreviousRace();
 				break;
 			case R.id.btnAdminMenu:
-				if(Boolean.parseBoolean(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_AdminMode_Name, "false"))){
+				if(Boolean.parseBoolean(AppSettings.Instance().ReadValue(getActivity(), AppSettings.AppSetting_AdminMode_Name, "false"))){
 					AdminMenuView adminMenuDialog = new AdminMenuView();
 					adminMenuDialog.show(fm, AdminMenuView.LOG_TAG);
 				}else{

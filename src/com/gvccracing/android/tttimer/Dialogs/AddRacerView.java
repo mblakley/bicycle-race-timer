@@ -1,10 +1,11 @@
 package com.gvccracing.android.tttimer.Dialogs;
 
 import java.util.Calendar;
+
+import com.gvccracing.android.tttimer.DataAccess.Racer;
 import com.gvccracing.android.tttimer.R;
 import com.gvccracing.android.tttimer.AsyncTasks.CheckInHandler;
-import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
-import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
+import com.gvccracing.android.tttimer.DataAccess.RacerClubInfo;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -88,7 +89,7 @@ public class AddRacerView extends BaseDialog implements View.OnClickListener {
  			String[] selectionArgs = new String[]{firstName.trim().toUpperCase(), lastName.trim().toUpperCase()};
  			long racer_ID = 0;
  			Uri resultUri;
- 			Cursor previousRacers = Racer.Read(getActivity(), new String[]{Racer._ID}, selection, selectionArgs, null);
+ 			Cursor previousRacers = Racer.Instance().Read(getActivity(), new String[]{Racer._ID}, selection, selectionArgs, null);
  			if(previousRacers != null && previousRacers.getCount() > 0){
  				previousRacers.moveToFirst();
  				// Found at least one other racer with the same name.
@@ -98,7 +99,7 @@ public class AddRacerView extends BaseDialog implements View.OnClickListener {
  	 			selectionArgs = new String[]{Long.toString(racer_ID), Long.toString(0l)}; 
  				
  	 			// Get the current category of this racer
- 				Cursor racerCategory = RacerClubInfo.Read(getActivity(), new String[]{RacerClubInfo._ID, RacerClubInfo.Category}, selection, selectionArgs, null);
+ 				Cursor racerCategory = RacerClubInfo.Instance().Read(getActivity(), new String[]{RacerClubInfo._ID, RacerClubInfo.Category}, selection, selectionArgs, null);
 				// Found a racer category
  				if(racerCategory != null && racerCategory.getCount() > 0){
  					racerCategory.moveToFirst();
@@ -109,7 +110,7 @@ public class AddRacerView extends BaseDialog implements View.OnClickListener {
 	 				// If the new category doesn't equal the old category, do an upgrade
 	 				if(!racerCat.equals(category)){
 	 					Toast.makeText(getActivity(), R.string.IdenticalRacerUpgrade, 4000);
-	 					RacerClubInfo.Update(getActivity(), racerClubInfo_ID, null, null, null, null, null, null, null, null, null, true);
+	 					RacerClubInfo.Instance().Update(getActivity(), racerClubInfo_ID, null, null, null, null, null, null, null, null, null, true);
 	 				}
  				}
  				
@@ -118,7 +119,7 @@ public class AddRacerView extends BaseDialog implements View.OnClickListener {
  					racerCategory = null;
  	 			}
  			}else{
-	 			resultUri = Racer.Create(getActivity(), firstName, lastName, Integer.parseInt(usacNumber), 0, 0, "None", 0);
+	 			resultUri = Racer.Instance().Create(getActivity(), firstName, lastName, Integer.parseInt(usacNumber), 0, 0, "None", 0);
 	 			racer_ID = Long.parseLong(resultUri.getLastPathSegment());
  			}
  			if(previousRacers != null){
@@ -132,7 +133,7 @@ public class AddRacerView extends BaseDialog implements View.OnClickListener {
  			// Create the RacerClubInfo record
  			int age = 0;
  			Long gvccID = null;
-	     	resultUri = RacerClubInfo.Create(getActivity(), racer_ID, "0", year, category, 0, 0, 0, age, gvccID, false);
+	     	resultUri = RacerClubInfo.Instance().Create(getActivity(), racer_ID, "0", year, category, 0, 0, 0, age, gvccID, false);
 	     	racerInfo_ID = Long.parseLong(resultUri.getLastPathSegment());
  			Log.i(LOG_TAG, "AddNewRacer racerInfo_ID: " + Long.toString(racerInfo_ID));
  			if(checkin){

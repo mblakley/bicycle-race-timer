@@ -3,8 +3,8 @@ package com.gvccracing.android.tttimer.Dialogs;
 import com.gvccracing.android.tttimer.R;
 import com.gvccracing.android.tttimer.TTTimerTabsActivity;
 import com.gvccracing.android.tttimer.Controls.TimePicker;
-import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
-import com.gvccracing.android.tttimer.DataAccess.UnassignedTimesCP.UnassignedTimes;
+import com.gvccracing.android.tttimer.DataAccess.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.UnassignedTimes;
 import com.gvccracing.android.tttimer.Tabs.FinishTab;
 import com.gvccracing.android.tttimer.Utilities.Calculations;
 
@@ -92,7 +92,7 @@ public class EditRaceResultView extends BaseDialog implements View.OnClickListen
 					}
 				
 					// Update the race results elapsed time
-					RaceResults.Update(getActivity(), content, RaceResults._ID + "= ?", new String[]{Long.toString(raceResultID)});
+					RaceResults.Instance().Update(getActivity(), content, RaceResults._ID + "= ?", new String[]{Long.toString(raceResultID)});
 
 					// Recalculate placings and points
 			    	Calculations.CalculateCategoryPlacings(getActivity(), raceID);
@@ -104,7 +104,7 @@ public class EditRaceResultView extends BaseDialog implements View.OnClickListen
 					content.put(RaceResults.Points, txtPoints.getText().toString());
 					
 			    	// Update the points - we changed this for a reason!
-					RaceResults.Update(getActivity(), content, RaceResults._ID + "= ?", new String[]{Long.toString(raceResultID)});
+					RaceResults.Instance().Update(getActivity(), content, RaceResults._ID + "= ?", new String[]{Long.toString(raceResultID)});
 		    	}
 				
 	 			// Hide the dialog
@@ -121,13 +121,13 @@ public class EditRaceResultView extends BaseDialog implements View.OnClickListen
 				content.putNull(UnassignedTimes.RaceResult_ID);
 				
 				// Update the unassigned time's raceResult_ID to null, which will place that unassigned time into the list again
-				UnassignedTimes.Update(getActivity(), content, UnassignedTimes.Race_ID + "=? AND " + UnassignedTimes.RaceResult_ID + "=?", new String[]{Long.toString(raceID), Long.toString(raceResultID)});
+				UnassignedTimes.Instance().Update(getActivity(), content, UnassignedTimes.Race_ID + "=? AND " + UnassignedTimes.RaceResult_ID + "=?", new String[]{Long.toString(raceID), Long.toString(raceResultID)});
 
 				ContentValues result = new ContentValues();
 				result.putNull(RaceResults.EndTime);
 				result.putNull(RaceResults.ElapsedTime);
 				
-				RaceResults.Update(getActivity(), result, RaceResults._ID + "=?", new String[]{Long.toString(raceResultID)});
+				RaceResults.Instance().Update(getActivity(), result, RaceResults._ID + "=?", new String[]{Long.toString(raceResultID)});
 				
 				dismiss();
 				
@@ -180,7 +180,7 @@ public class EditRaceResultView extends BaseDialog implements View.OnClickListen
 				selection = RaceResults._ID + "=?";
 				selectionArgs = new String[]{Long.toString(raceResultID)};
 				sortOrder = RaceResults._ID;
-				loader = new CursorLoader(getActivity(), RaceResults.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), RaceResults.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 		}
 		Log.i(LOG_TAG, "onCreateLoader complete: id=" + Integer.toString(id));

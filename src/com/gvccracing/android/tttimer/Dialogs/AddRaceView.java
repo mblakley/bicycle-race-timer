@@ -2,10 +2,10 @@ package com.gvccracing.android.tttimer.Dialogs;
 
 import java.util.Date;
 
+import com.gvccracing.android.tttimer.DataAccess.RaceLocation;
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
-import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
-import com.gvccracing.android.tttimer.DataAccess.RaceLocationCP.RaceLocation;
+import com.gvccracing.android.tttimer.DataAccess.AppSettings;
+import com.gvccracing.android.tttimer.DataAccess.Race;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -57,7 +57,7 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 		String selection = null;
 		String[] selectionArgs = null;
 		String sortOrder = RaceLocation.CourseName;
-		Cursor locations = RaceLocation.Read(getActivity(), fieldsToRetrieve, selection, selectionArgs, sortOrder);
+		Cursor locations = RaceLocation.Instance().Read(getActivity(), fieldsToRetrieve, selection, selectionArgs, sortOrder);
 		if(locations != null && locations.getCount() <= 0)
         {
         	// No locations...show another dialog to add a location
@@ -154,7 +154,7 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 		try{
 			if (v == btnAddNewRace){
 				EditText txtLaps = (EditText) getView().findViewById(R.id.txtNumLaps);
-				Uri resultUri = Race.Create(getActivity(), GetRaceLocationID(), GetRaceDate(), null, GetRaceTypeID(), GetRaceStartInterval(), Long.parseLong(txtLaps.getText().toString()));
+				Uri resultUri = Race.Instance().Create(getActivity(), GetRaceLocationID(), GetRaceDate(), null, GetRaceTypeID(), GetRaceStartInterval(), Long.parseLong(txtLaps.getText().toString()));
 	 			long race_ID = Long.parseLong(resultUri.getLastPathSegment());
 	 			
 	 			// Broadcast that a race was added
@@ -188,7 +188,7 @@ public class AddRaceView extends BaseDialog implements View.OnClickListener, Loa
 				selection = null;
 				selectionArgs = null;
 				sortOrder = RaceLocation.CourseName;
-				loader = new CursorLoader(getActivity(), RaceLocation.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), RaceLocation.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 		}
 		Log.i(LOG_TAG, "onCreateLoader complete: id=" + Integer.toString(id));

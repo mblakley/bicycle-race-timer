@@ -2,10 +2,10 @@ package com.gvccracing.android.tttimer.CursorAdapters;
 
 import java.util.HashMap;
 
+import com.gvccracing.android.tttimer.DataAccess.Racer;
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
-import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
-import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
+import com.gvccracing.android.tttimer.DataAccess.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.RacerClubInfo;
 
 import android.content.Context;
 import android.database.Cursor;

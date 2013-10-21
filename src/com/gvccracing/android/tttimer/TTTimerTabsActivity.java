@@ -19,10 +19,10 @@ import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.gvccracing.android.tttimer.Controls.Timer;
-import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
-import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
-import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.RaceInfoResultsView;
-import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.AppSettings;
+import com.gvccracing.android.tttimer.DataAccess.Race;
+import com.gvccracing.android.tttimer.DataAccess.Views.RaceInfoResultsView;
+import com.gvccracing.android.tttimer.DataAccess.RaceResults;
 import com.gvccracing.android.tttimer.Dialogs.AddRaceView;
 import com.gvccracing.android.tttimer.Dialogs.ChooseViewingMode;
 import com.gvccracing.android.tttimer.Dialogs.OtherRaceResults;
@@ -101,7 +101,7 @@ public class TTTimerTabsActivity extends FragmentActivity {
 	protected void onResume() {
 		super.onResume();
 		
-		AppSettings.Update(this, AppSettings.AppSetting_AdminMode_Name, Boolean.toString(false), true);
+		AppSettings.Instance().Update(this, AppSettings.AppSetting_AdminMode_Name, Boolean.toString(false), true);
 		
 		AddActionFilter(AddRaceView.RACE_ADDED_ACTION);
 		AddActionFilter(Timer.RACE_IS_FINISHED_ACTION);
@@ -112,11 +112,11 @@ public class TTTimerTabsActivity extends FragmentActivity {
         this.registerReceiver(mActionReceiver, actionFilter);
 		timer.RegisterReceiver();
 		
-		if(!Boolean.parseBoolean(AppSettings.ReadValue(this, AppSettings.AppSetting_ResumePreviousState_Name, "false"))){
-			UpdateRaceState();
-		}else{
-			AppSettings.Update(this, AppSettings.AppSetting_ResumePreviousState_Name, "false", true);
-		}
+//		if(!Boolean.parseBoolean(AppSettings.Instance().ReadValue(this, AppSettings.AppSetting_ResumePreviousState_Name, "false"))){
+//			UpdateRaceState();
+//		}else{
+//			AppSettings.Instance().Update(this, AppSettings.AppSetting_ResumePreviousState_Name, "false", true);
+//		}
 	}
 	
 	@Override 
@@ -144,13 +144,13 @@ public class TTTimerTabsActivity extends FragmentActivity {
         	// If no races are configured for the current date, check if any raceID is in the DB, and display that underneath the upcoming dialog
         	// Figure out if there's a race_ID in the database (not -1)
         	// if so, set up the tabs for that race, since it's being displayed anyway
-        	long race_ID = Long.parseLong(AppSettings.ReadValue(this, AppSettings.AppSetting_RaceID_Name, Long.toString(-1l)));
+        	long race_ID = Long.parseLong(AppSettings.Instance().ReadValue(this, AppSettings.AppSetting_RaceID_Name, Long.toString(-1l)));
         	if(race_ID > 0){
-            	String[] projection = new String[]{Race.getTableName() + "." + Race._ID + " as _id", Race.RaceDate, Race.RaceStartTime, RaceResults.EndTime, Race.StartInterval};
-        		String selection = Race.getTableName() + "." + Race._ID + "=?";
+            	String[] projection = new String[]{Race.Instance().getTableName() + "." + Race._ID + " as _id", Race.RaceDate, Race.RaceStartTime, RaceResults.EndTime, Race.StartInterval};
+        		String selection = Race.Instance().getTableName() + "." + Race._ID + "=?";
         		String[] selectionArgs = new String[]{Long.toString(race_ID)}; 
-        		String sortOrder = Race.getTableName() + "." + Race._ID;
-        		Cursor theRace =  getContentResolver().query(RaceInfoResultsView.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+        		String sortOrder = Race.Instance().getTableName() + "." + Race._ID;
+        		Cursor theRace =  getContentResolver().query(RaceInfoResultsView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
         		if(theRace != null){
         			theRace.moveToFirst();
         		}
@@ -170,7 +170,7 @@ public class TTTimerTabsActivity extends FragmentActivity {
         			theRace = null;
         		}
         	}else{
-        		AppSettings.Update(this, AppSettings.AppSetting_RaceID_Name, Long.toString(-1l), true);
+        		AppSettings.Instance().Update(this, AppSettings.AppSetting_RaceID_Name, Long.toString(-1l), true);
         	}
         	tabHost.setCurrentTabByTag(RaceInfoTab.RaceInfoTabSpecName);
         	// Couldn't find a race in progress, or an unstarted race, or a finished race, so need to add a race, or select a previous one
@@ -201,18 +201,18 @@ public class TTTimerTabsActivity extends FragmentActivity {
     	// Show "results" panel - This is really what people care about when looking at a finished race
     	tabHost.setCurrentTabByTag(RaceInfoTab.RaceInfoTabSpecName);
     	
-    	String[] projection = new String[]{Race.getTableName() + "." + Race._ID + " as _id", Race.RaceDate, Race.RaceStartTime, RaceResults.EndTime, Race.StartInterval};
-		String selection = Race.getTableName() + "." + Race._ID + "=?";
+    	String[] projection = new String[]{Race.Instance().getTableName() + "." + Race._ID + " as _id", Race.RaceDate, Race.RaceStartTime, RaceResults.EndTime, Race.StartInterval};
+		String selection = Race.Instance().getTableName() + "." + Race._ID + "=?";
 		String[] selectionArgs = new String[]{Long.toString(raceID)}; 
-		String sortOrder = Race.getTableName() + "." + Race._ID;
+		String sortOrder = Race.Instance().getTableName() + "." + Race._ID;
 		
-		Cursor theRace = getContentResolver().query(RaceInfoResultsView.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+		Cursor theRace = getContentResolver().query(RaceInfoResultsView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 		
 		if(theRace != null && theRace.getCount() > 0){
 			theRace.moveToFirst();
 			
 			Long startInterval = theRace.getLong(theRace.getColumnIndex(Race.StartInterval));
-			AppSettings.Update(this, AppSettings.AppSetting_StartInterval_Name, Long.toString(startInterval), true);
+			AppSettings.Instance().Update(this, AppSettings.AppSetting_StartInterval_Name, Long.toString(startInterval), true);
 			
 		    // Figure out if a race is currently going on.  
 	        if(IsRaceInProgress(theRace)) {
@@ -231,14 +231,14 @@ public class TTTimerTabsActivity extends FragmentActivity {
 		        theRace.close();
 		        theRace = null;
 			}
-			projection = new String[]{Race.getTableName() + "." + Race._ID + " as _id", Race.RaceDate, Race.RaceStartTime, Race.StartInterval};
-			theRace = getContentResolver().query(Race.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+			projection = new String[]{Race.Instance().getTableName() + "." + Race._ID + " as _id", Race.RaceDate, Race.RaceStartTime, Race.StartInterval};
+			theRace = getContentResolver().query(Race.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 
 			if(theRace != null && theRace.getCount() > 0){
 				theRace.moveToFirst();
 
 				Long startInterval = theRace.getLong(theRace.getColumnIndex(Race.StartInterval));
-				AppSettings.Update(this, AppSettings.AppSetting_StartInterval_Name, Long.toString(startInterval), true);
+				AppSettings.Instance().Update(this, AppSettings.AppSetting_StartInterval_Name, Long.toString(startInterval), true);
 				
 				if (IsRaceAvailable(theRace)){ 
 		        	SetupAvailableRace();
@@ -269,7 +269,7 @@ public class TTTimerTabsActivity extends FragmentActivity {
 						content.put(RaceResults.ElapsedTime, System.currentTimeMillis() - theRace.getLong(theRace.getColumnIndex(Race.RaceStartTime)));
 				
 						// Update the race results
-						RaceResults.Update(this, content, RaceResults.Race_ID + "= ? and " + RaceResults.EndTime + " IS NULL", new String[]{Long.toString(raceID)});
+						RaceResults.Instance().Update(this, content, RaceResults.Race_ID + "= ? and " + RaceResults.EndTime + " IS NULL", new String[]{Long.toString(raceID)});
 					}while(theRace.moveToNext());
 				}
 			}
@@ -401,8 +401,8 @@ public class TTTimerTabsActivity extends FragmentActivity {
         public void onReceive(Context context, Intent intent) {
         	Log.v(LOG_TAG, "onReceive");
         	if(intent.getAction().equals(AddRaceView.RACE_ADDED_ACTION)){	// Set the raceID to the currently added race
-        		AppSettings.Update(context, AppSettings.AppSetting_RaceID_Name, Long.toString(intent.getLongExtra(AppSettings.AppSetting_RaceID_Name, -1l)), true);
-        		AppSettings.Update(context, AppSettings.AppSetting_StartInterval_Name, Long.toString(intent.getLongExtra(AppSettings.AppSetting_StartInterval_Name, 60l)), true);
+        		AppSettings.Instance().Update(context, AppSettings.AppSetting_RaceID_Name, Long.toString(intent.getLongExtra(AppSettings.AppSetting_RaceID_Name, -1l)), true);
+        		AppSettings.Instance().Update(context, AppSettings.AppSetting_StartInterval_Name, Long.toString(intent.getLongExtra(AppSettings.AppSetting_StartInterval_Name, 60l)), true);
         		SetupAvailableRace();
         	} else if(intent.getAction().equals(TTTimerTabsActivity.CHANGE_VISIBLE_TAB)){
         		String visibleTabTag = intent.getStringExtra(TTTimerTabsActivity.VISIBLE_TAB_TAG);
@@ -445,7 +445,7 @@ public class TTTimerTabsActivity extends FragmentActivity {
 			String[] selectionArgs = null; 
 			String sortOrder = Race._ID;
 			
-			Cursor currentRace = getContentResolver().query(Race.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+			Cursor currentRace = getContentResolver().query(Race.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 			
 			if(currentRace.getCount() > 0){	
 				foundRace = true;
@@ -465,12 +465,12 @@ public class TTTimerTabsActivity extends FragmentActivity {
 	private boolean FindRaceInProgress() {
 		boolean foundRaceInProgress = false;
 		try{
-			String[] projection = new String[]{Race.getTableName() + "." + Race._ID + " as _id", Race.RaceStartTime, Race.StartInterval};
+			String[] projection = new String[]{Race.Instance().getTableName() + "." + Race._ID + " as _id", Race.RaceStartTime, Race.StartInterval};
 			String selection = Race.RaceStartTime + " > 0 and " + RaceResults.EndTime + " IS NULL";
 			String[] selectionArgs = null; 
-			String sortOrder = Race.getTableName() + "." + Race._ID;
+			String sortOrder = Race.Instance().getTableName() + "." + Race._ID;
 			
-			Cursor currentRace = getContentResolver().query(RaceInfoResultsView.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+			Cursor currentRace = getContentResolver().query(RaceInfoResultsView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 			
 			if(currentRace.getCount() > 0){	
 				currentRace.moveToFirst();
@@ -481,8 +481,8 @@ public class TTTimerTabsActivity extends FragmentActivity {
 					foundRaceInProgress = true;
 					
 					Long startInterval = currentRace.getLong(currentRace.getColumnIndex(Race.StartInterval));
-					AppSettings.Update(this, AppSettings.AppSetting_RaceID_Name, Long.toString(raceID), true);
-					AppSettings.Update(this, AppSettings.AppSetting_StartInterval_Name, Long.toString(startInterval), true);
+					AppSettings.Instance().Update(this, AppSettings.AppSetting_RaceID_Name, Long.toString(raceID), true);
+					AppSettings.Instance().Update(this, AppSettings.AppSetting_StartInterval_Name, Long.toString(startInterval), true);
 				}else {
 					// The race was started over 24 hours ago.  This probably isn't correct.  Just stop the race now.
 					do{
@@ -491,7 +491,7 @@ public class TTTimerTabsActivity extends FragmentActivity {
 						content.put(RaceResults.ElapsedTime, System.currentTimeMillis() - currentRace.getLong(currentRace.getColumnIndex(Race.RaceStartTime)));
 				
 						// Update the race results
-						RaceResults.Update(this, content, RaceResults.Race_ID + "= ? and " + RaceResults.EndTime + " IS NULL", new String[]{Long.toString(raceID)});
+						RaceResults.Instance().Update(this, content, RaceResults.Race_ID + "= ? and " + RaceResults.EndTime + " IS NULL", new String[]{Long.toString(raceID)});
 					}while(currentRace.moveToNext());
 				}
 			}
@@ -520,7 +520,7 @@ public class TTTimerTabsActivity extends FragmentActivity {
 			String[] selectionArgs = new String[]{Long.toString(startOfDay), Long.toString(endOfDay)}; 
 			String sortOrder = Race._ID + " DESC";
 			
-			Cursor currentRace = getContentResolver().query(Race.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+			Cursor currentRace = getContentResolver().query(Race.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 			
 			if(currentRace != null && currentRace.getCount() > 0){
 				foundAvailableRace = true;
@@ -529,10 +529,10 @@ public class TTTimerTabsActivity extends FragmentActivity {
 				if(raceCount == 1){
 					int raceIDCol = currentRace.getColumnIndex(Race._ID);
 					long raceID = currentRace.getLong(raceIDCol);
-					AppSettings.Update(this, AppSettings.AppSetting_RaceID_Name, Long.toString(raceID), true);
+					AppSettings.Instance().Update(this, AppSettings.AppSetting_RaceID_Name, Long.toString(raceID), true);
 
 					Long startInterval = currentRace.getLong(currentRace.getColumnIndex(Race.StartInterval));
-					AppSettings.Update(this, AppSettings.AppSetting_StartInterval_Name, Long.toString(startInterval), true);
+					AppSettings.Instance().Update(this, AppSettings.AppSetting_StartInterval_Name, Long.toString(startInterval), true);
 				}else{
 					OtherRaceResults previousRaces = new OtherRaceResults();
 					FragmentManager fm = getSupportFragmentManager();
@@ -559,12 +559,12 @@ public class TTTimerTabsActivity extends FragmentActivity {
 			Long startOfDay = new Date(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), 0, 0).getTime();
 			Long endOfDay = startOfDay + 86400000;
 			
-			String[] projection = new String[]{Race.getTableName() + "." + Race._ID};
+			String[] projection = new String[]{Race.Instance().getTableName() + "." + Race._ID};
 			String selection = Race.RaceDate + ">=? AND " + Race.RaceDate + "<? AND " + Race.RaceStartTime + ">0 AND " + RaceResults.EndTime + ">0";
 			String[] selectionArgs = new String[]{Long.toString(startOfDay), Long.toString(endOfDay)}; 
-			String sortOrder = Race.getTableName() + "." + Race._ID;
+			String sortOrder = Race.Instance().getTableName() + "." + Race._ID;
 			
-			Cursor finishedRaceResults = getContentResolver().query(RaceInfoResultsView.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+			Cursor finishedRaceResults = getContentResolver().query(RaceInfoResultsView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 			
 			if(finishedRaceResults.getCount() > 0){	
 				foundFinishedRace = true;
@@ -582,18 +582,18 @@ public class TTTimerTabsActivity extends FragmentActivity {
 	 */
 	private void UpdateFromRaceInProgress() {
 		try{
-			String[] projection = new String[]{Race.getTableName() + "." + Race._ID + " as " + Race._ID, Race.RaceStartTime};
+			String[] projection = new String[]{Race.Instance().getTableName() + "." + Race._ID + " as " + Race._ID, Race.RaceStartTime};
 			String selection = Race.RaceStartTime + " > 0 and " + RaceResults.EndTime + " IS NULL";
 			String[] selectionArgs = null; 
-			String sortOrder = Race.getTableName() + "." + Race._ID;
+			String sortOrder = Race.Instance().getTableName() + "." + Race._ID;
 			
-			Cursor currentRace = getContentResolver().query(RaceInfoResultsView.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+			Cursor currentRace = getContentResolver().query(RaceInfoResultsView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 			
 			currentRace.moveToFirst();
 			
 			int race_IDCol = currentRace.getColumnIndex(Race._ID);
 			long race_ID = currentRace.getLong(race_IDCol);
-			AppSettings.Update(this, AppSettings.AppSetting_RaceID_Name, Long.toString(race_ID), true);
+			AppSettings.Instance().Update(this, AppSettings.AppSetting_RaceID_Name, Long.toString(race_ID), true);
 			
 			UpdateFromRaceInProgress(currentRace);
 			
@@ -614,7 +614,7 @@ public class TTTimerTabsActivity extends FragmentActivity {
 			
 			int race_IDCol = theRace.getColumnIndex(Race._ID);
 			long race_ID = theRace.getLong(race_IDCol);
-			AppSettings.Update(this, AppSettings.AppSetting_RaceID_Name, Long.toString(race_ID), true);
+			AppSettings.Instance().Update(this, AppSettings.AppSetting_RaceID_Name, Long.toString(race_ID), true);
 				
 			long startTime = theRace.getLong(theRace.getColumnIndex(Race.RaceStartTime));
 			
@@ -629,10 +629,10 @@ public class TTTimerTabsActivity extends FragmentActivity {
 		 	String selection = RaceResults.Race_ID + " = " + race_ID;
 			String[] selectionArgs = null; 
 			String sortOrder = RaceResults._ID;
-			Cursor totalRacers = getContentResolver().query(RaceResults.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+			Cursor totalRacers = getContentResolver().query(RaceResults.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 			
-			selection = RaceResults.Race_ID + " = " + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name)+ " and " + RaceResults.StartTime + " IS NOT NULL";
-			Cursor startedRacers = getContentResolver().query(RaceResults.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+			selection = RaceResults.Race_ID + " = " + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name)+ " and " + RaceResults.StartTime + " IS NOT NULL";
+			Cursor startedRacers = getContentResolver().query(RaceResults.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 			
 			if(startedRacers.getCount() < totalRacers.getCount()) {
 				// Navigate to the start tab if not all racers have been started
@@ -658,7 +658,7 @@ public class TTTimerTabsActivity extends FragmentActivity {
 //				String[] selectionArgs = new String[]{Long.toString(race_ID)}; 
 //				String sortOrder = Race.RaceStartTime;
 //				
-//				Cursor currentRace = getContentResolver().query(Race.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+//				Cursor currentRace = getContentResolver().query(Race.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 //				
 //				currentRace.moveToFirst();
 //				
@@ -680,7 +680,7 @@ public class TTTimerTabsActivity extends FragmentActivity {
 //			String[] selectionArgs = new String[]{Long.toString(race_ID)};
 //			String sortOrder = RaceResults.StartTimeOffset + " DESC";
 //			
-//		 	Cursor lastRaceResult = getContentResolver().query(RaceResults.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+//		 	Cursor lastRaceResult = getContentResolver().query(RaceResults.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 //		 	lastRaceResult.moveToFirst();
 //		 	long lastStartTimeOffset = lastRaceResult.getLong(lastRaceResult.getColumnIndex(RaceResults.StartTimeOffset));
 //		 	if(System.currentTimeMillis() < raceStartTime + lastStartTimeOffset){
@@ -718,12 +718,12 @@ public class TTTimerTabsActivity extends FragmentActivity {
 //				Long startOfDay = new Date(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), 0, 0).getTime();
 //				Long endOfDay = startOfDay + 86400000;
 //				
-//				String[] projection = new String[]{Race.getTableName() + "." + Race._ID};
-//				String selection = Race.RaceDate + ">=? AND " + Race.RaceDate + "<? AND " + Race.RaceStartTime + " >0 AND " + RaceResults.EndTime + " IS NULL AND " + Race.getTableName() + "." + Race._ID + "=?";
+//				String[] projection = new String[]{Race.Instance().getTableName() + "." + Race._ID};
+//				String selection = Race.RaceDate + ">=? AND " + Race.RaceDate + "<? AND " + Race.RaceStartTime + " >0 AND " + RaceResults.EndTime + " IS NULL AND " + Race.Instance().getTableName() + "." + Race._ID + "=?";
 //				String[] selectionArgs = new String[]{Long.toString(startOfDay), Long.toString(endOfDay), Long.toString(race_ID)}; 
-//				String sortOrder = Race.getTableName() + "." + Race._ID;
+//				String sortOrder = Race.Instance().getTableName() + "." + Race._ID;
 //				
-//				Cursor finishedRaceResults = getContentResolver().query(RaceInfoResultsView.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+//				Cursor finishedRaceResults = getContentResolver().query(RaceInfoResultsView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 //				
 //				if(finishedRaceResults.getCount() <= 0){	
 //					foundFinishedRace = true;
@@ -745,12 +745,12 @@ public class TTTimerTabsActivity extends FragmentActivity {
 //			Long startOfDay = new Date(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), 0, 0).getTime();
 //			Long endOfDay = startOfDay + 86400000;
 //			
-//			String[] projection = new String[]{Race.getTableName() + "." + Race._ID};
-//			String selection = Race.RaceDate + ">=? AND " + Race.RaceDate + "<? AND " + Race.RaceStartTime + " IS NULL AND " + Race.getTableName() + "." + Race._ID + "=?";
+//			String[] projection = new String[]{Race.Instance().getTableName() + "." + Race._ID};
+//			String selection = Race.RaceDate + ">=? AND " + Race.RaceDate + "<? AND " + Race.RaceStartTime + " IS NULL AND " + Race.Instance().getTableName() + "." + Race._ID + "=?";
 //			String[] selectionArgs = new String[]{Long.toString(startOfDay), Long.toString(endOfDay), Long.toString(race_ID)}; 
-//			String sortOrder = Race.getTableName() + "." + Race._ID;
+//			String sortOrder = Race.Instance().getTableName() + "." + Race._ID;
 //			
-//			Cursor currentRace = getContentResolver().query(Race.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+//			Cursor currentRace = getContentResolver().query(Race.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 //			
 //			if(currentRace.getCount() > 0){	
 //				foundAvailableRace = true;

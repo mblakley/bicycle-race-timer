@@ -1,10 +1,10 @@
 package com.gvccracing.android.tttimer.Dialogs;
 
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
-import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
-import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.RaceInfoResultsView;
-import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.AppSettings;
+import com.gvccracing.android.tttimer.DataAccess.Race;
+import com.gvccracing.android.tttimer.DataAccess.Views.RaceInfoResultsView;
+import com.gvccracing.android.tttimer.DataAccess.RaceResults;
 import com.gvccracing.android.tttimer.Tabs.StartTab;
 
 import android.database.Cursor;
@@ -52,20 +52,20 @@ public class ResetTimerConfirmation extends BaseDialog implements View.OnClickLi
 	            context.onFinishResetTimerDialog(true);
 	            this.dismiss();
 				
-				String[] projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID};
-				String selection = RaceResults.Race_ID + " = " + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + Race.RaceStartTime + ">0 AND " + RaceResults.EndTime + ">0";
+				String[] projection = new String[]{RaceResults.Instance().getTableName() + "." + RaceResults._ID};
+				String selection = RaceResults.Race_ID + " = " + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + Race.RaceStartTime + ">0 AND " + RaceResults.EndTime + ">0";
 				String[] selectionArgs = null; 
-				String sortOrder = Race.getTableName() + "." + Race._ID;
+				String sortOrder = Race.Instance().getTableName() + "." + Race._ID;
 				
-				Cursor finishedRaceResults = getActivity().getContentResolver().query(RaceInfoResultsView.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				Cursor finishedRaceResults = getActivity().getContentResolver().query(RaceInfoResultsView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 	            boolean anyRacerFinished = finishedRaceResults != null && finishedRaceResults.getCount() > 0;
 	            if(!anyRacerFinished){
-	            	projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID};
-					selection = RaceResults.Race_ID + " = " + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.StartTime + "<=" + System.currentTimeMillis();
+	            	projection = new String[]{RaceResults.Instance().getTableName() + "." + RaceResults._ID};
+					selection = RaceResults.Race_ID + " = " + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.StartTime + "<=" + System.currentTimeMillis();
 					selectionArgs = null; 
-					sortOrder = Race.getTableName() + "." + Race._ID;
+					sortOrder = Race.Instance().getTableName() + "." + Race._ID;
 					
-					Cursor startedRaceResults = getActivity().getContentResolver().query(RaceInfoResultsView.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+					Cursor startedRaceResults = getActivity().getContentResolver().query(RaceInfoResultsView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 					boolean anyRacerStarted = startedRaceResults != null && startedRaceResults.getCount() > 0;
 		            if(anyRacerStarted){		            
 			            ResetStartedRacersConfirmation resetStartedRacers = new ResetStartedRacersConfirmation();

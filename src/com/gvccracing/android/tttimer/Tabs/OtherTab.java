@@ -13,11 +13,11 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import com.gvccracing.android.tttimer.DataAccess.LookupGroups;
+import com.gvccracing.android.tttimer.DataAccess.RaceNotes;
 import com.gvccracing.android.tttimer.R;
 import com.gvccracing.android.tttimer.CursorAdapters.StableSimpleCursorAdapter;
-import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
-import com.gvccracing.android.tttimer.DataAccess.LookupGroupsCP.LookupGroups;
-import com.gvccracing.android.tttimer.DataAccess.RaceNotesCP.RaceNotes;
+import com.gvccracing.android.tttimer.DataAccess.AppSettings;
 
 public class OtherTab extends BaseTab implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -82,7 +82,7 @@ public class OtherTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 		try{
 			Log.v(LOG_TAG(), "SaveNotes");
 
-			Long race_ID = Long.parseLong(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_RaceID_Name, "-1"));
+			Long race_ID = Long.parseLong(AppSettings.Instance().ReadValue(getActivity(), AppSettings.AppSetting_RaceID_Name, "-1"));
 	     	// Save weather and notes info	 			
  			EditText txtWeatherNotes = (EditText) getView().findViewById(R.id.txtWeatherNotes);
     		String weatherNotes = txtWeatherNotes.getText().toString();
@@ -109,7 +109,7 @@ public class OtherTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
     		Long humidity = spinHumidity.getSelectedItemId();
     		
     		// If raceNotes already exists, do an update
-    		RaceNotes.Update(getActivity(), race_ID, weatherNotes, temperature, windSpeed, windDirection, humidity, otherNotes, true);
+    		RaceNotes.Instance().Update(getActivity(), race_ID, weatherNotes, temperature, windSpeed, windDirection, humidity, otherNotes, true);
 		} catch(Exception ex){Log.e(LOG_TAG(), "SaveNotes failed", ex);}
 	}
 
@@ -126,21 +126,21 @@ public class OtherTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 				selection = LookupGroups.LookupGroup + "='" + LookupGroups.Lookup_Group_Humidity + "'";
 				selectionArgs = null;
 				sortOrder = LookupGroups.LookupValue;
-				loader = new CursorLoader(getActivity(), LookupGroups.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), LookupGroups.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case RACE_NOTES_LOADER:
 				projection = new String[]{RaceNotes.WeatherNotes, RaceNotes.Temperature, RaceNotes.WindSpeed, RaceNotes.WindDirection, RaceNotes.Humidity, RaceNotes.OtherNotes};
-				selection = RaceNotes.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
+				selection = RaceNotes.Race_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name);
 				selectionArgs = null;
 				sortOrder = RaceNotes.Race_ID;
-				loader = new CursorLoader(getActivity(), RaceNotes.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), RaceNotes.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case APP_SETTINGS_LOADER_OTHER:
 				projection = new String[]{AppSettings.AppSettingName, AppSettings.AppSettingValue};
 				selection = null;
 				sortOrder = null;
 				selectionArgs = null;
-				loader = new CursorLoader(getActivity(), AppSettings.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), AppSettings.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 		}
 		Log.i(LOG_TAG(), "onCreateLoader complete: id=" + Integer.toString(id));

@@ -1,8 +1,8 @@
 package com.gvccracing.android.tttimer.CursorAdapters;
 
+import com.gvccracing.android.tttimer.DataAccess.Racer;
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
-import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
+import com.gvccracing.android.tttimer.DataAccess.RaceResults;
 import com.gvccracing.android.tttimer.Utilities.TimeFormatter;
 
 import android.content.Context;

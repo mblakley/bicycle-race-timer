@@ -5,21 +5,21 @@ package com.gvccracing.android.tttimer.Tabs;
 
 import java.util.Calendar;
 
+import com.gvccracing.android.tttimer.DataAccess.Racer;
+import com.gvccracing.android.tttimer.DataAccess.Views.CheckInViewInclusive;
+import com.gvccracing.android.tttimer.DataAccess.Views.TeamCheckInViewExclusive;
+import com.gvccracing.android.tttimer.DataAccess.Views.TeamCheckInViewInclusive;
 import com.gvccracing.android.tttimer.R;
 import com.gvccracing.android.tttimer.CursorAdapters.CheckInCursorAdapter;
 import com.gvccracing.android.tttimer.CursorAdapters.StartOrderCursorAdapter;
 import com.gvccracing.android.tttimer.CursorAdapters.TeamCheckInCursorAdapter;
 import com.gvccracing.android.tttimer.CursorAdapters.TeamStartOrderCursorAdapter;
-import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
-import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewExclusive;
-import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewInclusive;
-import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
-import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
-import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
-import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
-import com.gvccracing.android.tttimer.DataAccess.TeamCheckInViewCP.TeamCheckInViewExclusive;
-import com.gvccracing.android.tttimer.DataAccess.TeamCheckInViewCP.TeamCheckInViewInclusive;
-import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
+import com.gvccracing.android.tttimer.DataAccess.AppSettings;
+import com.gvccracing.android.tttimer.DataAccess.Views.CheckInViewExclusive;
+import com.gvccracing.android.tttimer.DataAccess.Race;
+import com.gvccracing.android.tttimer.DataAccess.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.RacerClubInfo;
+import com.gvccracing.android.tttimer.DataAccess.TeamInfo;
 import com.gvccracing.android.tttimer.Dialogs.AddGhostRacerView;
 import com.gvccracing.android.tttimer.Dialogs.AddRacerView;
 import com.gvccracing.android.tttimer.Dialogs.AddTeamView;
@@ -185,7 +185,7 @@ public class CheckInTab extends BaseTab implements LoaderManager.LoaderCallbacks
 					}
 	    		});	
 				
-				projection = new String[]{RacerClubInfo.getTableName() + "." + RacerClubInfo._ID + " as _id", Racer.LastName, Racer.FirstName};
+				projection = new String[]{RacerClubInfo.Instance().getTableName() + "." + RacerClubInfo._ID + " as _id", Racer.LastName, Racer.FirstName};
 				selection = RacerClubInfo.Year + "=? AND " + RacerClubInfo.Upgraded + "=? AND " + RacerClubInfo.Category + "!=?";
 				selectionArgs = new String[]{ Integer.toString(Calendar.getInstance().get(Calendar.YEAR)), Long.toString(0l), "G"};
 				sortOrder = Racer.LastName;
@@ -194,7 +194,7 @@ public class CheckInTab extends BaseTab implements LoaderManager.LoaderCallbacks
 					selection += " AND UPPER(" + Racer.LastName + ") GLOB ?";
 					selectionArgs = new String[]{ Integer.toString(Calendar.getInstance().get(Calendar.YEAR)), Long.toString(0l), "G", racerNameSearchText.getText().toString().toUpperCase() + "*"};
 				}
-				loader = new CursorLoader(getActivity(), CheckInViewInclusive.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), CheckInViewInclusive.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case TEAM_CHECKIN_LOADER:
 				// Create the cursor adapter for the list of team checkins
@@ -209,11 +209,11 @@ public class CheckInTab extends BaseTab implements LoaderManager.LoaderCallbacks
 					}
 	    		});
 				
-				projection = new String[]{TeamInfo.getTableName() + "." + TeamInfo._ID + " as _id", TeamInfo.TeamName, "group_concat(" + Racer.FirstName + "||' '||" + Racer.LastName + ", ',\n') as RacerNames"};
-				selection = TeamInfo.getTableName() + "." + TeamInfo.Year + "=? AND " + RacerClubInfo.Upgraded + "=? AND " + TeamInfo.TeamCategory + "!=?";
+				projection = new String[]{TeamInfo.Instance().getTableName() + "." + TeamInfo._ID + " as _id", TeamInfo.TeamName, "group_concat(" + Racer.FirstName + "||' '||" + Racer.LastName + ", ',\n') as RacerNames"};
+				selection = TeamInfo.Instance().getTableName() + "." + TeamInfo.Year + "=? AND " + RacerClubInfo.Upgraded + "=? AND " + TeamInfo.TeamCategory + "!=?";
 				selectionArgs = new String[]{ Integer.toString(Calendar.getInstance().get(Calendar.YEAR)), Long.toString(0l), "G"};
-				sortOrder = TeamInfo.getTableName() + "." + TeamInfo.TeamName;
-				loader = new CursorLoader(getActivity(), Uri.withAppendedPath(TeamCheckInViewInclusive.CONTENT_URI, "group by " + TeamInfo.getTableName() + "." + TeamInfo._ID + "," + TeamInfo.TeamName), projection, selection, selectionArgs, sortOrder);
+				sortOrder = TeamInfo.Instance().getTableName() + "." + TeamInfo.TeamName;
+				loader = new CursorLoader(getActivity(), Uri.withAppendedPath(TeamCheckInViewInclusive.Instance().CONTENT_URI, "group by " + TeamInfo.Instance().getTableName() + "." + TeamInfo._ID + "," + TeamInfo.TeamName), projection, selection, selectionArgs, sortOrder);
 				break;
 			case START_ORDER_LOADER_CHECKIN:
 				// Create the cursor adapter for the start order list
@@ -228,11 +228,11 @@ public class CheckInTab extends BaseTab implements LoaderManager.LoaderCallbacks
 						return false;
 					}
 	    		});
-				projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID + " as _id", Racer.LastName, Racer.FirstName, RaceResults.StartOrder, RaceResults.StartTimeOffset};
-				selection = RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
+				projection = new String[]{RaceResults.Instance().getTableName() + "." + RaceResults._ID + " as _id", Racer.LastName, Racer.FirstName, RaceResults.StartOrder, RaceResults.StartTimeOffset};
+				selection = RaceResults.Race_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name);
 				selectionArgs = null;
 				sortOrder = RaceResults.StartOrder;
-				loader = new CursorLoader(getActivity(), CheckInViewExclusive.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), CheckInViewExclusive.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case TEAM_START_ORDER_LOADER:
 				// Create the cursor adapter for the start order list
@@ -248,25 +248,25 @@ public class CheckInTab extends BaseTab implements LoaderManager.LoaderCallbacks
 					}
 	    		});
 				
-				projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID + " as _id", TeamInfo.TeamName, RaceResults.StartOrder, RaceResults.StartTimeOffset, "group_concat(" + Racer.FirstName + "||' '||" + Racer.LastName + ", ',\n') as RacerNames"};
-				selection = RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
+				projection = new String[]{RaceResults.Instance().getTableName() + "." + RaceResults._ID + " as _id", TeamInfo.TeamName, RaceResults.StartOrder, RaceResults.StartTimeOffset, "group_concat(" + Racer.FirstName + "||' '||" + Racer.LastName + ", ',\n') as RacerNames"};
+				selection = RaceResults.Race_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name);
 				selectionArgs = null;
 				sortOrder = RaceResults.StartOrder;
-				loader = new CursorLoader(getActivity(), Uri.withAppendedPath(TeamCheckInViewExclusive.CONTENT_URI, "group by " + TeamInfo.getTableName() + "." + TeamInfo._ID + "," + TeamInfo.TeamName + "," + RaceResults.StartOrder + "," + RaceResults.StartTimeOffset), projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), Uri.withAppendedPath(TeamCheckInViewExclusive.Instance().CONTENT_URI, "group by " + TeamInfo.Instance().getTableName() + "." + TeamInfo._ID + "," + TeamInfo.TeamName + "," + RaceResults.StartOrder + "," + RaceResults.StartTimeOffset), projection, selection, selectionArgs, sortOrder);
 				break;
 			case RACE_INFO_LOADER_CHECKIN:
-				projection = new String[]{Race.getTableName() + "." + Race._ID + " as _id", Race.RaceType, Race.NumLaps};
-				selection = Race.getTableName() + "." + Race._ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
+				projection = new String[]{Race.Instance().getTableName() + "." + Race._ID + " as _id", Race.RaceType, Race.NumLaps};
+				selection = Race.Instance().getTableName() + "." + Race._ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name);
 				selectionArgs = null;
-				sortOrder = Race.getTableName() + "." + Race._ID;
-				loader = new CursorLoader(getActivity(), Race.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				sortOrder = Race.Instance().getTableName() + "." + Race._ID;
+				loader = new CursorLoader(getActivity(), Race.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case APP_SETTINGS_LOADER_CHECKIN:
 				projection = new String[]{AppSettings.AppSettingName, AppSettings.AppSettingValue};
 				selection = null;
 				sortOrder = null;
 				selectionArgs = null;
-				loader = new CursorLoader(getActivity(), AppSettings.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), AppSettings.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 		}
 		Log.i(LOG_TAG(), "onCreateLoader complete: id=" + Integer.toString(id));
@@ -333,7 +333,7 @@ public class CheckInTab extends BaseTab implements LoaderManager.LoaderCallbacks
 					if( teamStartOrderLoader != null){
 						getActivity().getSupportLoaderManager().restartLoader(TEAM_START_ORDER_LOADER, null, this);
 					}
-					autoCheckIn = Boolean.parseBoolean(AppSettings.ReadValue(getActivity(), AppSettings.AppSettings_AutoCheckIn_Name, "true"));
+					autoCheckIn = Boolean.parseBoolean(AppSettings.Instance().ReadValue(getActivity(), AppSettings.AppSettings_AutoCheckIn_Name, "true"));
 					break;
 			}
 			Log.i(LOG_TAG(), "onLoadFinished complete: id=" + Integer.toString(loader.getId()));

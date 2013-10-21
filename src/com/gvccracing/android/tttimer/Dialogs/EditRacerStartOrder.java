@@ -1,13 +1,13 @@
 package com.gvccracing.android.tttimer.Dialogs;
 
+import com.gvccracing.android.tttimer.DataAccess.Racer;
+import com.gvccracing.android.tttimer.DataAccess.Views.TeamCheckInViewExclusive;
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
-import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewExclusive;
-import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
-import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
-import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
-import com.gvccracing.android.tttimer.DataAccess.TeamCheckInViewCP.TeamCheckInViewExclusive;
-import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
+import com.gvccracing.android.tttimer.DataAccess.AppSettings;
+import com.gvccracing.android.tttimer.DataAccess.Views.CheckInViewExclusive;
+import com.gvccracing.android.tttimer.DataAccess.Race;
+import com.gvccracing.android.tttimer.DataAccess.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.TeamInfo;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -89,7 +89,7 @@ public class EditRacerStartOrder extends BaseDialog implements View.OnClickListe
 				long newStartOrder = Long.parseLong(txtNewOrder.getText().toString());
 				// The order has changed, so we need to actually do some updates
 				if(origStartOrder != newStartOrder){	
-					Cursor allStartOrders = RaceResults.Read(getActivity(), new String[]{RaceResults._ID, RaceResults.StartOrder, RaceResults.StartTimeOffset, RaceResults.StartTime}, RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name), null, RaceResults.StartOrder);
+					Cursor allStartOrders = RaceResults.Instance().Read(getActivity(), new String[]{RaceResults._ID, RaceResults.StartOrder, RaceResults.StartTimeOffset, RaceResults.StartTime}, RaceResults.Race_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name), null, RaceResults.StartOrder);
 					if(origStartOrder > newStartOrder){
 						// Notify the user that you can't move a racer up in the order
 						Toast.makeText(getActivity(), "Can't move a racer up in the order!", 3000).show();
@@ -99,7 +99,7 @@ public class EditRacerStartOrder extends BaseDialog implements View.OnClickListe
 					} else {
 						// Update all race results that have higher start order than the racer to delete.  Change the start order and start time offset
 						if(allStartOrders.getCount() > 0){
-							Long startInterval = Long.parseLong(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_StartInterval_Name, "60"));
+							Long startInterval = Long.parseLong(AppSettings.Instance().ReadValue(getActivity(), AppSettings.AppSetting_StartInterval_Name, "60"));
 							long startOrder = 1;
 							allStartOrders.moveToFirst();
 							while(!allStartOrders.isAfterLast()){
@@ -112,7 +112,7 @@ public class EditRacerStartOrder extends BaseDialog implements View.OnClickListe
 								ContentValues content = new ContentValues();
 								content.put(RaceResults.StartOrder, updatedStartOrder);
 								content.put(RaceResults.StartTimeOffset, startTimeOffset);
-								RaceResults.Update(getActivity(), content, RaceResults._ID + "=?", new String[]{Long.toString(allStartOrders.getLong(allStartOrders.getColumnIndex(RaceResults._ID)))});
+								RaceResults.Instance().Update(getActivity(), content, RaceResults._ID + "=?", new String[]{Long.toString(allStartOrders.getLong(allStartOrders.getColumnIndex(RaceResults._ID)))});
 								startOrder++;
 								allStartOrders.moveToNext();
 							}
@@ -121,7 +121,7 @@ public class EditRacerStartOrder extends BaseDialog implements View.OnClickListe
 							content.put(RaceResults.StartOrder, newStartOrder);
 							content.put(RaceResults.StartTimeOffset, startTimeOffset);
 							
-							RaceResults.Update(getActivity(), content, RaceResults._ID + "=?", new String[]{Long.toString(raceResultIDToEdit)});
+							RaceResults.Instance().Update(getActivity(), content, RaceResults._ID + "=?", new String[]{Long.toString(raceResultIDToEdit)});
 						}
 
 						// Hide the dialog
@@ -149,32 +149,32 @@ public class EditRacerStartOrder extends BaseDialog implements View.OnClickListe
 		
 		switch(id){
 			case RACER_START_ORDER_LOADER:
-				projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID + " as _id", Racer.LastName, Racer.FirstName, RaceResults.StartOrder, RaceResults.StartTimeOffset};
-				selection = RaceResults.getTableName() + "." + RaceResults._ID + "=?";
+				projection = new String[]{RaceResults.Instance().getTableName() + "." + RaceResults._ID + " as _id", Racer.LastName, Racer.FirstName, RaceResults.StartOrder, RaceResults.StartTimeOffset};
+				selection = RaceResults.Instance().getTableName() + "." + RaceResults._ID + "=?";
 				selectionArgs = new String[]{Long.toString(raceResultIDToEdit)};
 				sortOrder = RaceResults.StartOrder;
-				loader = new CursorLoader(getActivity(), CheckInViewExclusive.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), CheckInViewExclusive.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case TEAM_START_ORDER_LOADER:
-				projection = new String[]{TeamInfo.getTableName() + "." + TeamInfo._ID + " as _id", TeamInfo.TeamName, RaceResults.StartOrder, RaceResults.StartTimeOffset};
-				selection = RaceResults.getTableName() + "." + RaceResults._ID + "=?";
+				projection = new String[]{TeamInfo.Instance().getTableName() + "." + TeamInfo._ID + " as _id", TeamInfo.TeamName, RaceResults.StartOrder, RaceResults.StartTimeOffset};
+				selection = RaceResults.Instance().getTableName() + "." + RaceResults._ID + "=?";
 				selectionArgs = new String[]{Long.toString(raceResultIDToEdit)};
 				sortOrder = RaceResults.StartOrder;
-				loader = new CursorLoader(getActivity(), TeamCheckInViewExclusive.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), TeamCheckInViewExclusive.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case RACE_INFO_LOADER:
-				projection = new String[]{Race.getTableName() + "." + Race._ID + " as _id", Race.RaceType, Race.NumLaps};
-				selection = Race.getTableName() + "." + Race._ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
+				projection = new String[]{Race.Instance().getTableName() + "." + Race._ID + " as _id", Race.RaceType, Race.NumLaps};
+				selection = Race.Instance().getTableName() + "." + Race._ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name);
 				selectionArgs = null;
-				sortOrder = Race.getTableName() + "." + Race._ID;
-				loader = new CursorLoader(getActivity(), Race.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				sortOrder = Race.Instance().getTableName() + "." + Race._ID;
+				loader = new CursorLoader(getActivity(), Race.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case APP_SETTINGS_LOADER:
 				projection = new String[]{AppSettings.AppSettingName, AppSettings.AppSettingValue};
 				selection = null;
 				sortOrder = null;
 				selectionArgs = null;
-				loader = new CursorLoader(getActivity(), AppSettings.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), AppSettings.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 		}
 		

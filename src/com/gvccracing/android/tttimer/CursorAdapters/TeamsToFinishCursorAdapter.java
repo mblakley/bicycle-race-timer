@@ -1,11 +1,11 @@
 package com.gvccracing.android.tttimer.CursorAdapters;
 
+import com.gvccracing.android.tttimer.DataAccess.Racer;
+import com.gvccracing.android.tttimer.DataAccess.Views.TeamCheckInViewExclusive;
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.DataAccess.TeamCheckInViewCP.TeamCheckInViewExclusive;
-import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
-import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
-import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
-import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
+import com.gvccracing.android.tttimer.DataAccess.TeamInfo;
+import com.gvccracing.android.tttimer.DataAccess.AppSettings;
+import com.gvccracing.android.tttimer.DataAccess.RaceResults;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -66,12 +66,12 @@ public class TeamsToFinishCursorAdapter extends BaseCursorAdapter {
         
         TextView lblRacerNames = (TextView) v.findViewById(R.id.lblRacerNames);
         if (lblRacerNames != null) {
-            String[] projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID + " as _id", "group_concat(" + Racer.FirstName + "||' '||" + Racer.LastName + ", ',\n') as RacerNames"};
-    		String selection = RaceResults.Race_ID	+ "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.getTableName() + "." + RaceResults._ID + "=?";
+            String[] projection = new String[]{RaceResults.Instance().getTableName() + "." + RaceResults._ID + " as _id", "group_concat(" + Racer.FirstName + "||' '||" + Racer.LastName + ", ',\n') as RacerNames"};
+    		String selection = RaceResults.Race_ID	+ "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.Instance().getTableName() + "." + RaceResults._ID + "=?";
     		String[] selectionArgs = new String[]{Long.toString(c.getLong(0))};
     		String sortOrder = null;
     		
-            Cursor teamRacerNames = getParentActivity().getContentResolver().query(Uri.withAppendedPath(TeamCheckInViewExclusive.CONTENT_URI, "group by " + RaceResults.getTableName() + "." + RaceResults._ID), projection, selection, selectionArgs, sortOrder);
+            Cursor teamRacerNames = getParentActivity().getContentResolver().query(Uri.withAppendedPath(TeamCheckInViewExclusive.Instance().CONTENT_URI, "group by " + RaceResults.Instance().getTableName() + "." + RaceResults._ID), projection, selection, selectionArgs, sortOrder);
             teamRacerNames.moveToFirst();
             
         	int racerNamesCol = teamRacerNames.getColumnIndex("RacerNames");

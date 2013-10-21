@@ -2,10 +2,10 @@ package com.gvccracing.android.tttimer.Dialogs;
 
 import java.util.Calendar;
 
+import com.gvccracing.android.tttimer.DataAccess.Racer;
+import com.gvccracing.android.tttimer.DataAccess.Views.CheckInViewInclusive;
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewInclusive;
-import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
-import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
+import com.gvccracing.android.tttimer.DataAccess.RacerClubInfo;
 import com.gvccracing.android.tttimer.Utilities.RestartLoaderTextWatcher;
 
 import android.database.Cursor;
@@ -121,7 +121,7 @@ public class ChooseTeamRacer extends BaseDialog implements View.OnClickListener,
 		String sortOrder;
 		switch(id){
 			case TEAM_MEMBER_LOADER:
-				projection = new String[]{RacerClubInfo.getTableName() + "." + RacerClubInfo._ID + " as _id", Racer.FirstName + "||' '||" + Racer.LastName + " as RacerName"};
+				projection = new String[]{RacerClubInfo.Instance().getTableName() + "." + RacerClubInfo._ID + " as _id", Racer.FirstName + "||' '||" + Racer.LastName + " as RacerName"};
 				selection = RacerClubInfo.Year + "=? AND " + RacerClubInfo.Upgraded + "=?";
 				selectionArgs = new String[]{Integer.toString(Calendar.getInstance().get(Calendar.YEAR)), Long.toString(0l)};
 				sortOrder = Racer.LastName;
@@ -130,7 +130,7 @@ public class ChooseTeamRacer extends BaseDialog implements View.OnClickListener,
 					selection += " AND UPPER(" + Racer.LastName + ") GLOB ?";
 					selectionArgs = new String[]{ Integer.toString(Calendar.getInstance().get(Calendar.YEAR)), Long.toString(0l), racerNameSearchText.getText().toString().toUpperCase() + "*"};
 				}
-				loader = new CursorLoader(getActivity(), CheckInViewInclusive.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), CheckInViewInclusive.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			//case APP_SETTINGS_LOADER:
 				//break;

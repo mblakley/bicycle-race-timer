@@ -1,9 +1,9 @@
 package com.gvccracing.android.tttimer.Dialogs;
 
+import com.gvccracing.android.tttimer.DataAccess.Racer;
+import com.gvccracing.android.tttimer.DataAccess.Views.CheckInViewInclusive;
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewInclusive;
-import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
-import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
+import com.gvccracing.android.tttimer.DataAccess.RacerClubInfo;
 
 import android.database.Cursor;
 import android.os.Bundle;
@@ -100,7 +100,7 @@ public class EditRacerView extends AddRacerView implements View.OnClickListener,
 
 	private boolean UpdateRacer(String firstName, String lastName, String usacNumber, final String category) {
 		
-		Racer.Update(getActivity(), racer_ID, firstName, lastName, Integer.parseInt(usacNumber), null, null, null, null);
+		Racer.Instance().Update(getActivity(), racer_ID, firstName, lastName, Integer.parseInt(usacNumber), null, null, null, null);
 		
 		// The category has changed.  Figure out if the racer upgraded, or if the initial value was incorrect
 		if(category != initCategory){
@@ -122,9 +122,9 @@ public class EditRacerView extends AddRacerView implements View.OnClickListener,
 		switch(id){
 			case RACER_INFO_LOADER:
 				projection = new String[]{RacerClubInfo.Racer_ID, Racer.LastName, Racer.FirstName, Racer.USACNumber, RacerClubInfo.Category};
-				selection = RacerClubInfo.getTableName() + "." + RacerClubInfo._ID + "=? AND " + RacerClubInfo.Upgraded + "=?";;
+				selection = RacerClubInfo.Instance().getTableName() + "." + RacerClubInfo._ID + "=? AND " + RacerClubInfo.Upgraded + "=?";;
 				selectionArgs = new String[]{Long.toString(racerClubInfo_ID), Long.toString(0l)};
-				loader = new CursorLoader(getActivity(), CheckInViewInclusive.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), CheckInViewInclusive.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 		}
 		Log.i(LOG_TAG, "onCreateLoader complete: id=" + Integer.toString(id));

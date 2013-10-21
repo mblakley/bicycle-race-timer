@@ -1,8 +1,8 @@
 package com.gvccracing.android.tttimer.CursorAdapters;
 
+import com.gvccracing.android.tttimer.DataAccess.Racer;
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
-import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
+import com.gvccracing.android.tttimer.DataAccess.RacerClubInfo;
 
 import android.content.Context;
 import android.database.Cursor;

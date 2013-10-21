@@ -10,13 +10,13 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.gvccracing.android.tttimer.Controls.Timer;
-import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
-import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
-import com.gvccracing.android.tttimer.DataAccess.RaceResultsTeamOrRacerViewCP.RaceResultsTeamOrRacerView;
-import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
-import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
-import com.gvccracing.android.tttimer.DataAccess.RacerInfoViewCP.RacerInfoView;
-import com.gvccracing.android.tttimer.DataAccess.UnassignedTimesCP.UnassignedTimes;
+import com.gvccracing.android.tttimer.DataAccess.AppSettings;
+import com.gvccracing.android.tttimer.DataAccess.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.Racer;
+import com.gvccracing.android.tttimer.DataAccess.Views.RaceResultsTeamOrRacerView;
+import com.gvccracing.android.tttimer.DataAccess.RacerClubInfo;
+import com.gvccracing.android.tttimer.DataAccess.UnassignedTimes;
+import com.gvccracing.android.tttimer.DataAccess.Views.RacerInfoView;
 import com.gvccracing.android.tttimer.Utilities.AssignResult;
 import com.gvccracing.android.tttimer.Utilities.Calculations;
 import com.gvccracing.android.tttimer.Utilities.TimeFormatter;
@@ -41,8 +41,8 @@ public class AssignTimeTask extends AsyncTask<Long, Void, AssignResult> {
 			Long unassignedTime_ID = params[0];
 			Long raceResult_ID = params[1];
 
-    		Long race_ID = Long.parseLong(AppSettings.ReadValue(context, AppSettings.AppSetting_RaceID_Name, "-1"));
-	    	Cursor unassignedTime = UnassignedTimes.Read(context, new String[]{UnassignedTimes.FinishTime}, UnassignedTimes._ID + " = ?", 
+    		Long race_ID = Long.parseLong(AppSettings.Instance().ReadValue(context, AppSettings.AppSetting_RaceID_Name, "-1"));
+	    	Cursor unassignedTime = UnassignedTimes.Instance().Read(context, new String[]{UnassignedTimes.FinishTime}, UnassignedTimes._ID + " = ?",
 				  													new String[]{Long.toString(unassignedTime_ID)}, null);
 	    	unassignedTime.moveToFirst();
 	    	
@@ -52,10 +52,10 @@ public class AssignTimeTask extends AsyncTask<Long, Void, AssignResult> {
 	    	unassignedTime.close();
 	    	unassignedTime = null;
 	    	
-			UnassignedTimes.Update(context, unassignedTime_ID, null, null, raceResult_ID);
+			UnassignedTimes.Instance().Update(context, unassignedTime_ID, null, null, raceResult_ID);
 	    	
 	    	// Get the race result record based on the racerInfo_ID and the race_ID
-	    	Cursor raceResultToAssignTo = RaceResults.Read(context, new String[]{RaceResults._ID, RaceResults.StartTime, RaceResults.RacerClubInfo_ID}, RaceResults._ID + " = ?", 
+	    	Cursor raceResultToAssignTo = RaceResults.Instance().Read(context, new String[]{RaceResults._ID, RaceResults.StartTime, RaceResults.RacerClubInfo_ID}, RaceResults._ID + " = ?",
 	    																  new String[]{raceResult_ID.toString()}, null);
 	    	raceResultToAssignTo.moveToFirst();
 	    	
@@ -70,10 +70,10 @@ public class AssignTimeTask extends AsyncTask<Long, Void, AssignResult> {
 			content.put(RaceResults.ElapsedTime, elapsedTime);
 	
 			// Update the race result
-			RaceResults.Update(context, content, RaceResults._ID + "= ?", new String[]{Long.toString(raceResult_ID)});
+			RaceResults.Instance().Update(context, content, RaceResults._ID + "= ?", new String[]{Long.toString(raceResult_ID)});
 	    	
 			// Setup notification of assignment
-			Hashtable<String, Object> racerValues = RacerInfoView.getValues(context, raceResultToAssignTo.getLong(raceResultToAssignTo.getColumnIndex(RaceResults.RacerClubInfo_ID)));
+			Hashtable<String, Object> racerValues = RacerInfoView.Instance().getValues(context, raceResultToAssignTo.getLong(raceResultToAssignTo.getColumnIndex(RaceResults.RacerClubInfo_ID)));
 			String racerName = racerValues.get(Racer.FirstName).toString() + " " + racerValues.get(Racer.LastName).toString();
 			
 			result.message = "Assigned time " + TimeFormatter.Format(elapsedTime, true, true, true, true, true, false, false, false) + " -> " + racerName;
@@ -84,16 +84,16 @@ public class AssignTimeTask extends AsyncTask<Long, Void, AssignResult> {
 			context.sendBroadcast(messageToShow);
 			
 	    	// Delete the unassignedTimes row from the database
-			// context.getContentResolver().delete(UnassignedTimes.CONTENT_URI, UnassignedTimes._ID + "=?", new String[]{Long.toString(unassignedTime_ID)});	    	
+			// context.getContentResolver().delete(UnassignedTimes.Instance().CONTENT_URI, UnassignedTimes._ID + "=?", new String[]{Long.toString(unassignedTime_ID)});
 
 	    	raceResultToAssignTo.close();
 	    	raceResultToAssignTo = null;
 	    	
 			// Figure out if the race has been started yet
-			Cursor numStarted = RaceResults.Read(context, new String[]{RaceResults._ID}, RaceResults.Race_ID + "=? AND " + RaceResults.StartTime + " IS NOT NULL", new String[]{Long.toString(race_ID)}, null);
+			Cursor numStarted = RaceResults.Instance().Read(context, new String[]{RaceResults._ID}, RaceResults.Race_ID + "=? AND " + RaceResults.StartTime + " IS NOT NULL", new String[]{Long.toString(race_ID)}, null);
 			if(numStarted.getCount() > 0){
 				// Figure out if he's the last finisher, and if so, stop the timer, hide it, and transition to the results screen
-				Cursor numUnfinished = RaceResultsTeamOrRacerView.Read(context, new String[]{RaceResults.getTableName() + "." + RaceResults._ID}, RaceResults.Race_ID + "=? AND " + RaceResults.ElapsedTime + " IS NULL AND " + RacerClubInfo.Category + "!=?", new String[]{Long.toString(race_ID), "G"}, null);
+				Cursor numUnfinished = RaceResultsTeamOrRacerView.Instance().Read(context, new String[]{RaceResults.Instance().getTableName() + "." + RaceResults._ID}, RaceResults.Race_ID + "=? AND " + RaceResults.ElapsedTime + " IS NULL AND " + RacerClubInfo.Category + "!=?", new String[]{Long.toString(race_ID), "G"}, null);
 				result.numUnfinishedRacers = numUnfinished.getCount();
 				numUnfinished.close();
 				numUnfinished = null;
@@ -102,7 +102,7 @@ public class AssignTimeTask extends AsyncTask<Long, Void, AssignResult> {
 					endUpdate.put(RaceResults.EndTime, endTime);
 					endUpdate.put(RaceResults.ElapsedTime, 0);
 					
-					RaceResults.Update(context, endUpdate, RaceResults.Race_ID + "=? AND " + RaceResults.ElapsedTime + " IS NULL", new String[]{Long.toString(race_ID)});
+					RaceResults.Instance().Update(context, endUpdate, RaceResults.Race_ID + "=? AND " + RaceResults.ElapsedTime + " IS NULL", new String[]{Long.toString(race_ID)});
 					
 					// Stop and hide the timer
 					Intent stopAndHideTimer = new Intent();

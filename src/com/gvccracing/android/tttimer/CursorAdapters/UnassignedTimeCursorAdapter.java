@@ -1,7 +1,7 @@
 package com.gvccracing.android.tttimer.CursorAdapters;
 
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.DataAccess.UnassignedTimesCP.UnassignedTimes;
+import com.gvccracing.android.tttimer.DataAccess.UnassignedTimes;
 import com.gvccracing.android.tttimer.Utilities.TimeFormatter;
 
 import android.content.Context;
@@ -107,11 +107,11 @@ public class UnassignedTimeCursorAdapter extends BaseCursorAdapter {
 	        	lblFinishTime.setText(TimeFormatter.Format(finishTime - raceStartTime, true, true, true, true, true, false, false, false));
 	        }
 	        
-//	        String[] projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID + " as _id", RaceResults.StartOrder, Racer.FirstName, Racer.LastName};
-//			String selection = RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.StartTime + " IS NOT NULL" + " AND " + RaceResults.EndTime + " IS NULL";
+//	        String[] projection = new String[]{RaceResults.Instance().getTableName() + "." + RaceResults._ID + " as _id", RaceResults.StartOrder, Racer.FirstName, Racer.LastName};
+//			String selection = RaceResults.Race_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.StartTime + " IS NOT NULL" + " AND " + RaceResults.EndTime + " IS NULL";
 //			String[] selectionArgs = null;
 //			String sortOrder = RaceResults.StartOrder;
-//			Cursor unfinished = context.getContentResolver().query(CheckInViewExclusive.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+//			Cursor unfinished = context.getContentResolver().query(CheckInViewExclusive.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 //			getParentActivity().startManagingCursor(unfinished);  // OK, this is ugly and deprecated, but I'm being tricky here!
 //			
 //			Spinner spinAssignNumber = (Spinner) v.findViewById(R.id.spinnerAssignNumber);

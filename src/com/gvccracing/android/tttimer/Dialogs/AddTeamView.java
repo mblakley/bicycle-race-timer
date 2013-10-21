@@ -2,13 +2,13 @@ package com.gvccracing.android.tttimer.Dialogs;
 
 import java.util.ArrayList;
 
+import com.gvccracing.android.tttimer.DataAccess.Racer;
+import com.gvccracing.android.tttimer.DataAccess.TeamMembers;
+import com.gvccracing.android.tttimer.DataAccess.Views.CheckInViewInclusive;
 import com.gvccracing.android.tttimer.R;
 import com.gvccracing.android.tttimer.AsyncTasks.TeamCheckInHandler;
-import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewInclusive;
-import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
-import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
-import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
-import com.gvccracing.android.tttimer.DataAccess.TeamMembersCP.TeamMembers;
+import com.gvccracing.android.tttimer.DataAccess.RacerClubInfo;
+import com.gvccracing.android.tttimer.DataAccess.TeamInfo;
 import com.gvccracing.android.tttimer.Dialogs.ChooseTeamRacer.ChooseRacerDialogListener;
 
 import android.database.Cursor;
@@ -109,10 +109,10 @@ public class AddTeamView extends BaseDialog implements View.OnClickListener, Cho
 	    			// Add all of the team members to the newly created team
 	    			for(int teamMemberCount = 0; teamMemberCount < teamRacerIDs.size(); teamMemberCount++){
 	    				if(teamRacerIDs.get(teamMemberCount) >= 0){
-	    					TeamMembers.Update(getActivity(), teamInfo_ID, teamRacerIDs.get(teamMemberCount), teamMemberCount, true);
+	    					TeamMembers.Instance().Update(getActivity(), teamInfo_ID, teamRacerIDs.get(teamMemberCount), teamMemberCount, true);
 	    				}else{
 	    					// If the ID is negative, delete this team member
-	    					TeamMembers.Delete(getActivity(), teamInfo_ID, teamMemberCount);
+	    					TeamMembers.Instance().Delete(getActivity(), teamInfo_ID, teamMemberCount);
 	    				}
 	    			}	    			
 
@@ -163,10 +163,10 @@ public class AddTeamView extends BaseDialog implements View.OnClickListener, Cho
 		String sortOrder;
 		switch(id){
 			case TEAM_MEMBERS_LOADER:
-				projection = new String[]{RacerClubInfo.getTableName() + "." + RacerClubInfo._ID + " as _id", Racer.LastName, Racer.FirstName};
-				selection = RacerClubInfo.getTableName() + "." + RacerClubInfo._ID + " in " + getTeamRacerList();
+				projection = new String[]{RacerClubInfo.Instance().getTableName() + "." + RacerClubInfo._ID + " as _id", Racer.LastName, Racer.FirstName};
+				selection = RacerClubInfo.Instance().getTableName() + "." + RacerClubInfo._ID + " in " + getTeamRacerList();
 				sortOrder = null;
-				loader = new CursorLoader(getActivity(), CheckInViewInclusive.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), CheckInViewInclusive.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 		}
 		Log.i(LOG_TAG, "onCreateLoader complete: id=" + Integer.toString(id));

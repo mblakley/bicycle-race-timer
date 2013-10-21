@@ -1,8 +1,8 @@
 package com.gvccracing.android.tttimer.CursorAdapters;
 
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
-import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.AppSettings;
+import com.gvccracing.android.tttimer.DataAccess.RaceResults;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -45,7 +45,7 @@ public class CheckInCursorAdapter extends BaseCursorAdapter {
 	        Long racerInfo_ID = c.getLong(0);
 	        v.setTag(racerInfo_ID);
 
-	        Cursor raceResult = RaceResults.Read(context, new String[]{RaceResults._ID}, RaceResults.RacerClubInfo_ID + "=? AND " + RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name), new String[]{Long.toString(racerInfo_ID)}, null);
+	        Cursor raceResult = RaceResults.Instance().Read(context, new String[]{RaceResults._ID}, RaceResults.RacerClubInfo_ID + "=? AND " + RaceResults.Race_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name), new String[]{Long.toString(racerInfo_ID)}, null);
 	        /**
 	         * Next set the name of the entry.
 	         */     

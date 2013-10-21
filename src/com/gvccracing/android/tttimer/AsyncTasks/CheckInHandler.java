@@ -6,11 +6,11 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 
-import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
-import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewExclusive;
-import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
-import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
-import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
+import com.gvccracing.android.tttimer.DataAccess.AppSettings;
+import com.gvccracing.android.tttimer.DataAccess.Racer;
+import com.gvccracing.android.tttimer.DataAccess.Views.CheckInViewExclusive;
+import com.gvccracing.android.tttimer.DataAccess.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.RacerClubInfo;
 
 public class CheckInHandler extends AsyncTask<Long, Void, String> {
 	
@@ -24,16 +24,16 @@ public class CheckInHandler extends AsyncTask<Long, Void, String> {
 	protected String doInBackground(Long... params) {			
 		long racerClubInfo_ID = params[0];
 
-		String[] projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID, Racer.LastName, Racer.FirstName, RaceResults.StartOrder, RaceResults.StartTimeOffset};
-		String selection = RacerClubInfo.Year + "= ? AND " + RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
+		String[] projection = new String[]{RaceResults.Instance().getTableName() + "." + RaceResults._ID, Racer.LastName, Racer.FirstName, RaceResults.StartOrder, RaceResults.StartTimeOffset};
+		String selection = RacerClubInfo.Year + "= ? AND " + RaceResults.Race_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name);
 		String[] selectionArgs = new String[]{ Integer.toString(Calendar.getInstance().get(Calendar.YEAR))};
 		String sortOrder = RaceResults.StartOrder;
 		
      	// StartOrder (count of current check-ins + 1)
-     	int startOrder = CheckInViewExclusive.ReadCount(context, projection, selection, selectionArgs, sortOrder) + 1;
+     	int startOrder = CheckInViewExclusive.Instance().ReadCount(context, projection, selection, selectionArgs, sortOrder) + 1;
 
-     	long race_ID = Long.parseLong(AppSettings.ReadValue(context, AppSettings.AppSetting_RaceID_Name, "-1"));
-     	long startInterval = Long.parseLong(AppSettings.ReadValue(context, AppSettings.AppSetting_StartInterval_Name, "60"));
+     	long race_ID = Long.parseLong(AppSettings.Instance().ReadValue(context, AppSettings.AppSetting_RaceID_Name, "-1"));
+     	long startInterval = Long.parseLong(AppSettings.Instance().ReadValue(context, AppSettings.AppSetting_StartInterval_Name, "60"));
      	// Do the check in
      	Uri result = CheckInRacer(racerClubInfo_ID, null, startOrder, startInterval, race_ID); 
      			
@@ -58,7 +58,7 @@ public class CheckInHandler extends AsyncTask<Long, Void, String> {
      	// PrimePoints (default 0)
      	Integer primePoints = 0;
      	
-     	return RaceResults.Create(context, racerClubInfo_ID, race_ID, startOrder, startTimeOffset, startTime, endTime, elapsedTime, overallPlacing, categoryPlacing, points, primePoints, teamInfo_ID);
+     	return RaceResults.Instance().Create(context, racerClubInfo_ID, race_ID, startOrder, startTimeOffset, startTime, endTime, elapsedTime, overallPlacing, categoryPlacing, points, primePoints, teamInfo_ID);
 	}
 
 	@Override

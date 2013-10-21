@@ -3,9 +3,9 @@ package com.gvccracing.android.tttimer.CursorAdapters;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 
+import com.gvccracing.android.tttimer.DataAccess.RaceLocation;
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
-import com.gvccracing.android.tttimer.DataAccess.RaceLocationCP.RaceLocation;
+import com.gvccracing.android.tttimer.DataAccess.Race;
 
 import android.content.Context;
 import android.database.Cursor;

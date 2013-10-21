@@ -10,7 +10,7 @@ import com.dropbox.client2.exception.DropboxException;
 import com.dropbox.client2.session.AccessTokenPair;
 import com.dropbox.client2.session.AppKeyPair;
 import com.dropbox.client2.session.Session.AccessType;
-import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
+import com.gvccracing.android.tttimer.DataAccess.AppSettings;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -43,7 +43,7 @@ public class ImageFormatter {
 			AppKeyPair appKeys = new AppKeyPair(APP_KEY, APP_SECRET);
 			AndroidAuthSession session = new AndroidAuthSession(appKeys, ACCESS_TYPE);
 			mDBApi = new DropboxAPI<AndroidAuthSession>(session);
-			AccessTokenPair access = new AccessTokenPair(AppSettings.ReadValue(context, AppSettings.AppSetting_DropBox_Key_Name, null), AppSettings.ReadValue(context, AppSettings.AppSetting_DropBox_Secret_Name, null));
+			AccessTokenPair access = new AccessTokenPair(AppSettings.Instance().ReadValue(context, AppSettings.AppSetting_DropBox_Key_Name, null), AppSettings.Instance().ReadValue(context, AppSettings.AppSetting_DropBox_Secret_Name, null));
 			mDBApi.getSession().setAccessTokenPair(access);
 			
 		    mDBApi.getFile(imageLocation, null, outputStream, listener);

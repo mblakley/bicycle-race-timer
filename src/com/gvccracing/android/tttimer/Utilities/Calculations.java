@@ -8,13 +8,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
 
-import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewExclusive;
-import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
-import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
-import com.gvccracing.android.tttimer.DataAccess.RaceResultsTeamOrRacerViewCP.RaceResultsTeamOrRacerView;
-import com.gvccracing.android.tttimer.DataAccess.RacerClubInfoCP.RacerClubInfo;
+import com.gvccracing.android.tttimer.DataAccess.Views.CheckInViewExclusive;
+import com.gvccracing.android.tttimer.DataAccess.Race;
+import com.gvccracing.android.tttimer.DataAccess.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.Views.RaceResultsTeamOrRacerView;
+import com.gvccracing.android.tttimer.DataAccess.RacerClubInfo;
 import com.gvccracing.android.tttimer.DataAccess.TTProvider;
-import com.gvccracing.android.tttimer.DataAccess.TeamInfoCP.TeamInfo;
+import com.gvccracing.android.tttimer.DataAccess.TeamInfo;
 
 public class Calculations {
 	public static String LOG_TAG(){
@@ -31,7 +31,7 @@ public class Calculations {
 			// Create the list of operations to perform in the batch
 			ArrayList<ContentProviderOperation> operations = new ArrayList<ContentProviderOperation>();
 
-			Cursor overallResults = context.getContentResolver().query(RaceResultsTeamOrRacerView.CONTENT_URI, new String[] {RaceResults.getTableName() + "." + RaceResults._ID}, 
+			Cursor overallResults = context.getContentResolver().query(RaceResultsTeamOrRacerView.Instance().CONTENT_URI, new String[] {RaceResults.Instance().getTableName() + "." + RaceResults._ID},
 																	RaceResults.Race_ID + "=?" + 
 																	" AND " + RaceResults.EndTime + " IS NOT NULL" + 
 																	" AND (" + RacerClubInfo.Category + "!=?" +
@@ -49,7 +49,7 @@ public class Calculations {
 					Long raceResult_ID = overallResults.getLong(0);
 					
 					// Update the placing and points for this raceResult					
-					operations.add(ContentProviderOperation.newUpdate(RaceResults.CONTENT_URI)
+					operations.add(ContentProviderOperation.newUpdate(RaceResults.Instance().CONTENT_URI)
 						    .withValue(RaceResults.OverallPlacing, overallPlacing)
 						    .withSelection(RaceResults._ID + "=?", new String[]{Long.toString(raceResult_ID)})
 						    .build());
@@ -76,20 +76,20 @@ public class Calculations {
 			// Create the list of operations to perform in the batch
 			ArrayList<ContentProviderOperation> operations = new ArrayList<ContentProviderOperation>();
 			// Get the categories that are checked in for this race
-			Cursor categories = context.getContentResolver().query(CheckInViewExclusive.CONTENT_URI, new String[] {RacerClubInfo.Category}, RaceResults.Race_ID + "=?", 
+			Cursor categories = context.getContentResolver().query(CheckInViewExclusive.Instance().CONTENT_URI, new String[] {RacerClubInfo.Category}, RaceResults.Race_ID + "=?",
 																	new String[]{Long.toString(race_ID)}, RacerClubInfo.Category);
 			if(categories.getCount() > 0)
 			{
 				categories.moveToFirst();
 
-	    		Long raceType_ID = Race.getValues(context, race_ID).get(Race.RaceType);
+	    		Long raceType_ID = Race.Instance().getValues(context, race_ID).get(Race.RaceType);
 				do{
 					// Set the initial placing
 					Integer categoryPlacing = 1;
 					// Get the category that we'll calculate the results for
 					String raceCategory = categories.getString(0);
 					// Get the race results for this race and this category
-					Cursor categoryResults = context.getContentResolver().query(CheckInViewExclusive.CONTENT_URI, new String[]{RaceResults.getTableName() + "." + RaceResults._ID + " as _id", RaceResults.ElapsedTime}, 
+					Cursor categoryResults = context.getContentResolver().query(CheckInViewExclusive.Instance().CONTENT_URI, new String[]{RaceResults.Instance().getTableName() + "." + RaceResults._ID + " as _id", RaceResults.ElapsedTime},
 																		     RaceResults.Race_ID + "=? AND " + RaceResults.ElapsedTime + " IS NOT NULL AND " + RacerClubInfo.Category + "=?", 
 																			 new String[]{Long.toString(race_ID), raceCategory}, RaceResults.ElapsedTime);
 					// Get the total number of racers in this category
@@ -105,7 +105,7 @@ public class Calculations {
 							Integer points = GetPoints(categoryPlacing, totalCategoryRacers, raceType_ID, elapsedTime);							
 
 							// Update the placing and points for this raceResult					
-							operations.add(ContentProviderOperation.newUpdate(RaceResults.CONTENT_URI)
+							operations.add(ContentProviderOperation.newUpdate(RaceResults.Instance().CONTENT_URI)
 								    .withValue(RaceResults.CategoryPlacing, categoryPlacing)
 								    .withValue(RaceResults.Points, points)
 								    .withSelection(RaceResults._ID + "=?", new String[]{Long.toString(raceResult_ID)})

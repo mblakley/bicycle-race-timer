@@ -16,12 +16,12 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import com.gvccracing.android.tttimer.DataAccess.RaceLocation;
+import com.gvccracing.android.tttimer.DataAccess.Views.RaceInfoView;
 import com.gvccracing.android.tttimer.R;
-import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
-import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
-import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.RaceInfoView;
-import com.gvccracing.android.tttimer.DataAccess.RaceLocationCP.RaceLocation;
-import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.AppSettings;
+import com.gvccracing.android.tttimer.DataAccess.Race;
+import com.gvccracing.android.tttimer.DataAccess.RaceResults;
 import com.gvccracing.android.tttimer.Utilities.Enums.RaceType;
 import com.gvccracing.android.tttimer.Utilities.Enums.StartInterval;
 
@@ -57,11 +57,11 @@ public class EditRaceConfiguration extends AddRaceView implements View.OnClickLi
 			if (v == btnAddNewRace){
 				long startInterval = GetRaceStartInterval();
 				long numLaps = Long.parseLong(((EditText)getView().findViewById(R.id.txtNumLaps)).getText().toString());
-				Race.Update(getActivity(), Race._ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name), null, null, GetRaceLocationID(), GetRaceDate(), null, GetRaceTypeID(), startInterval, numLaps);	 			
-				AppSettings.Update(getActivity(), AppSettings.AppSetting_StartInterval_Name, Long.toString(startInterval), true);
+				Race.Instance().Update(getActivity(), Race._ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name), null, null, GetRaceLocationID(), GetRaceDate(), null, GetRaceTypeID(), startInterval, numLaps);
+				AppSettings.Instance().Update(getActivity(), AppSettings.AppSetting_StartInterval_Name, Long.toString(startInterval), true);
 				
 				// Figure out if checkin has already started.  If checkin has started, and start interval has changed, update the start intervals of everyone.
-				Cursor checkins = RaceResults.Read(getActivity(), new String[]{RaceResults._ID, RaceResults.StartOrder}, RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name), null, RaceResults.StartOrder);
+				Cursor checkins = RaceResults.Instance().Read(getActivity(), new String[]{RaceResults._ID, RaceResults.StartOrder}, RaceResults.Race_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name), null, RaceResults.StartOrder);
 				if(checkins.getCount() > 0){
 					checkins.moveToFirst();
 					// Checkin was already started, so update all startIntervals
@@ -71,7 +71,7 @@ public class EditRaceConfiguration extends AddRaceView implements View.OnClickLi
 						Long startTimeOffset = (startInterval * startOrder) * 1000l;
 						ContentValues content = new ContentValues();
 						content.put(RaceResults.StartTimeOffset, startTimeOffset);
-						RaceResults.Update(getActivity(), content,  RaceResults._ID + "=?", new String[]{Long.toString(raceResultID)});
+						RaceResults.Instance().Update(getActivity(), content,  RaceResults._ID + "=?", new String[]{Long.toString(raceResultID)});
 					} while(checkins.moveToNext());
 				}
 				if(checkins != null){
@@ -100,11 +100,11 @@ public class EditRaceConfiguration extends AddRaceView implements View.OnClickLi
 		String sortOrder;
 		switch(id){
 			case RACE_INFO_LOADER:
-				projection = new String[]{Race.getTableName() + "." + Race._ID, Race.RaceDate, Race.RaceType, Race.RaceLocation_ID, RaceLocation.CourseName, Race.StartInterval, Race.NumLaps};
-				selection = Race.getTableName() + "." + Race._ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
+				projection = new String[]{Race.Instance().getTableName() + "." + Race._ID, Race.RaceDate, Race.RaceType, Race.RaceLocation_ID, RaceLocation.CourseName, Race.StartInterval, Race.NumLaps};
+				selection = Race.Instance().getTableName() + "." + Race._ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name);
 				selectionArgs = null;
 				sortOrder = null;
-				loader = new CursorLoader(getActivity(), RaceInfoView.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), RaceInfoView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			default:
 		    	loader = (CursorLoader) super.onCreateLoader(id, args);

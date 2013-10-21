@@ -17,14 +17,14 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.gvccracing.android.tttimer.DataAccess.RaceLocation;
+import com.gvccracing.android.tttimer.DataAccess.Views.RaceInfoView;
 import com.gvccracing.android.tttimer.R;
 import com.gvccracing.android.tttimer.TTTimerTabsActivity;
 import com.gvccracing.android.tttimer.CursorAdapters.OtherRacesCursorAdapter;
-import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
-import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
-import com.gvccracing.android.tttimer.DataAccess.RaceInfoViewCP.RaceInfoView;
-import com.gvccracing.android.tttimer.DataAccess.RaceLocationCP.RaceLocation;
-import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.AppSettings;
+import com.gvccracing.android.tttimer.DataAccess.Race;
+import com.gvccracing.android.tttimer.DataAccess.RaceResults;
 
 public class OtherRaceResults extends BaseDialog implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
 	public static final String LOG_TAG = "PreviousRaceResults";
@@ -41,7 +41,7 @@ public class OtherRaceResults extends BaseDialog implements LoaderManager.Loader
             Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.dialog_other_race_results, container, false);
 		
-		selectedRaceID = Long.parseLong(AppSettings.ReadValue(getActivity(), AppSettings.AppSetting_RaceID_Name, "0"));
+		selectedRaceID = Long.parseLong(AppSettings.Instance().ReadValue(getActivity(), AppSettings.AppSetting_RaceID_Name, "0"));
 
 		spinnerRaceToView = ((Spinner) v.findViewById(R.id.spinnerRaceToView));
 		
@@ -77,7 +77,7 @@ public class OtherRaceResults extends BaseDialog implements LoaderManager.Loader
 			if (v.getId() == R.id.btnSaveSelection){
 				String selected = Long.toString(spinnerRaceToView.getSelectedItemId());
 				
-				AppSettings.Update(getActivity(), AppSettings.AppSetting_RaceID_Name, selected, true);
+				AppSettings.Instance().Update(getActivity(), AppSettings.AppSetting_RaceID_Name, selected, true);
 				
 				Intent raceHasChanged = new Intent();
 				raceHasChanged.setAction(TTTimerTabsActivity.RACE_ID_CHANGED_ACTION);
@@ -103,25 +103,25 @@ public class OtherRaceResults extends BaseDialog implements LoaderManager.Loader
 		String sortOrder;
 		switch(id){
 			case ALL_RACES_LOADER:
-				projection = new String[]{Race.getTableName() + "." + Race._ID + " as _id", Race.RaceDate, RaceLocation.CourseName};
+				projection = new String[]{Race.Instance().getTableName() + "." + Race._ID + " as _id", Race.RaceDate, RaceLocation.CourseName};
 				selection = null;
 				selectionArgs = null;
 				sortOrder = Race.RaceDate;
-				loader = new CursorLoader(getActivity(), RaceInfoView.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), RaceInfoView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case RACE_INFO_LOADER:
-				projection = new String[]{Race.getTableName() + "." + Race._ID + " as _id", Race.RaceDate, RaceLocation.CourseName, Race.RaceType, Race.StartInterval, RaceLocation.Distance, Race.NumLaps};
-				selection = Race.getTableName() + "." + Race._ID + "=?";
+				projection = new String[]{Race.Instance().getTableName() + "." + Race._ID + " as _id", Race.RaceDate, RaceLocation.CourseName, Race.RaceType, Race.StartInterval, RaceLocation.Distance, Race.NumLaps};
+				selection = Race.Instance().getTableName() + "." + Race._ID + "=?";
 				selectionArgs = new String[]{Long.toString(selectedRaceID)};
 				sortOrder = Race.RaceDate;
-				loader = new CursorLoader(getActivity(), RaceInfoView.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), RaceInfoView.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 			case SELECTED_RACE_INFO_LOADER:
-				projection = new String[]{RaceResults.getTableName() + "." + RaceResults._ID + " as _id"};
-				selection = RaceResults.getTableName() + "." + RaceResults.Race_ID + "=?";
+				projection = new String[]{RaceResults.Instance().getTableName() + "." + RaceResults._ID + " as _id"};
+				selection = RaceResults.Instance().getTableName() + "." + RaceResults.Race_ID + "=?";
 				selectionArgs = new String[]{Long.toString(selectedRaceID)};
-				sortOrder = RaceResults.getTableName() + "." + RaceResults.Race_ID;
-				loader = new CursorLoader(getActivity(), RaceResults.CONTENT_URI, projection, selection, selectionArgs, sortOrder);
+				sortOrder = RaceResults.Instance().getTableName() + "." + RaceResults.Race_ID;
+				loader = new CursorLoader(getActivity(), RaceResults.Instance().CONTENT_URI, projection, selection, selectionArgs, sortOrder);
 				break;
 		}
 		Log.i(LOG_TAG, "onCreateLoader complete: id=" + Integer.toString(id));

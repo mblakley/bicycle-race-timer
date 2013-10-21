@@ -24,12 +24,12 @@ import com.dropbox.client2.exception.DropboxUnlinkedException;
 import com.dropbox.client2.session.AccessTokenPair;
 import com.dropbox.client2.session.AppKeyPair;
 import com.dropbox.client2.session.Session.AccessType;
-import com.gvccracing.android.tttimer.DataAccess.AppSettingsCP.AppSettings;
-import com.gvccracing.android.tttimer.DataAccess.CheckInViewCP.CheckInViewExclusive;
-import com.gvccracing.android.tttimer.DataAccess.RaceCP.Race;
-import com.gvccracing.android.tttimer.DataAccess.RaceResultsCP.RaceResults;
-import com.gvccracing.android.tttimer.DataAccess.RacerCP.Racer;
-import com.gvccracing.android.tttimer.DataAccess.TeamCheckInViewCP.TeamCheckInViewExclusive;
+import com.gvccracing.android.tttimer.DataAccess.AppSettings;
+import com.gvccracing.android.tttimer.DataAccess.Racer;
+import com.gvccracing.android.tttimer.DataAccess.Views.CheckInViewExclusive;
+import com.gvccracing.android.tttimer.DataAccess.Race;
+import com.gvccracing.android.tttimer.DataAccess.RaceResults;
+import com.gvccracing.android.tttimer.DataAccess.Views.TeamCheckInViewExclusive;
 
 public class UploadUSACNumbersToDropboxTask extends AsyncTask<Void, Void, Void> {
 	private Context context;
@@ -61,7 +61,7 @@ public class UploadUSACNumbersToDropboxTask extends AsyncTask<Void, Void, Void> 
 	
 	@Override
 	protected Void doInBackground(Void... params) {					
-		raceTypeID = Race.getValues(context, Long.parseLong(AppSettings.ReadValue(context, AppSettings.AppSetting_RaceID_Name, "-1"))).get(Race.RaceType);
+		raceTypeID = Race.Instance().getValues(context, Long.parseLong(AppSettings.Instance().ReadValue(context, AppSettings.AppSetting_RaceID_Name, "-1"))).get(Race.RaceType);
 		
         try {
         	String[] projection;
@@ -69,14 +69,14 @@ public class UploadUSACNumbersToDropboxTask extends AsyncTask<Void, Void, Void> 
     		String[] selectionArgs = null;
     		String sortOrder;
         	projection = new String[]{Racer.USACNumber};
-			selection = RaceResults.Race_ID + "=" + AppSettings.getParameterSql(AppSettings.AppSetting_RaceID_Name);
+			selection = RaceResults.Race_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name);
 			selectionArgs = null;
 			sortOrder = Racer.USACNumber;
 			Cursor usacNumbersCursor;
 			if(raceTypeID == 1){
-				usacNumbersCursor = TeamCheckInViewExclusive.Read(context, projection, selection, selectionArgs, sortOrder);
+				usacNumbersCursor = TeamCheckInViewExclusive.Instance().Read(context, projection, selection, selectionArgs, sortOrder);
 			}else{
-				usacNumbersCursor = CheckInViewExclusive.Read(context, projection, selection, selectionArgs, sortOrder);
+				usacNumbersCursor = CheckInViewExclusive.Instance().Read(context, projection, selection, selectionArgs, sortOrder);
 			}
 			if(usacNumbersCursor != null && usacNumbersCursor.getCount() > 0){
 				String filename = WriteRosterToFile(usacNumbersCursor);
@@ -101,7 +101,7 @@ public class UploadUSACNumbersToDropboxTask extends AsyncTask<Void, Void, Void> 
 	
 	private void UploadFileToDropBox(String filename) {
 		Log.i(LOG_TAG, "UploadFileToDropBox start: filename=" + filename);
-		AccessTokenPair access = new AccessTokenPair(AppSettings.ReadValue(context, AppSettings.AppSetting_DropBox_Key_Name, null), AppSettings.ReadValue(context, AppSettings.AppSetting_DropBox_Secret_Name, null));
+		AccessTokenPair access = new AccessTokenPair(AppSettings.Instance().ReadValue(context, AppSettings.AppSetting_DropBox_Key_Name, null), AppSettings.Instance().ReadValue(context, AppSettings.AppSetting_DropBox_Secret_Name, null));
 		mDBApi.getSession().setAccessTokenPair(access);
 		
 		// Uploading content.
@@ -160,7 +160,7 @@ public class UploadUSACNumbersToDropboxTask extends AsyncTask<Void, Void, Void> 
         }
         
         if( mExternalStorageAvailable && mExternalStorageWriteable){
-        	Long raceDateMS = Race.getValues(context, Long.parseLong(AppSettings.ReadValue(context, AppSettings.AppSetting_RaceID_Name, "-1"))).get(Race.RaceDate);
+        	Long raceDateMS = Race.Instance().getValues(context, Long.parseLong(AppSettings.Instance().ReadValue(context, AppSettings.AppSetting_RaceID_Name, "-1"))).get(Race.RaceDate);
     		Date raceDateTemp = new Date(raceDateMS);
     		SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yy");
     		filename = dateFormat.format(raceDateTemp) + "_GTourRoster.csv";

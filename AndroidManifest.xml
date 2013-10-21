@@ -20,7 +20,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-		<activity android:name=".Utilities.UploadToDropBox" android:label="Upload to DropBox" />
 		<activity
 			android:name="com.dropbox.client2.android.AuthActivity"
 			android:launchMode="singleTask"
