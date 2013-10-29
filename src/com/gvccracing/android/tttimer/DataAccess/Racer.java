@@ -26,6 +26,7 @@ public final class Racer extends ContentProviderTable implements BaseColumns {
     // Table column
     public static final String FirstName = "FirstName";
     public static final String LastName = "LastName";
+    public static final String Gender = "Gender";
     public static final String USACNumber = "USACNumber";
     public static final String BirthDate = "BirthDate";
     public static final String PhoneNumber = "PhoneNumber";
@@ -37,6 +38,7 @@ public final class Racer extends ContentProviderTable implements BaseColumns {
         + " (" + _ID + " integer primary key autoincrement, "
         + FirstName + " text not null, "
         + LastName + " text not null,"
+        + Gender + " text null,"
         + USACNumber + " integer not null,"
         + BirthDate + " integer null,"
         + PhoneNumber + " integer null,"
@@ -56,10 +58,11 @@ public final class Racer extends ContentProviderTable implements BaseColumns {
     }
 
     public Uri Create(Context context, String firstName, String lastName, int usacNumber,
-                            long birthDate, int phoneNumber, String emergencyContactName, int emergencyContactPhoneNumber) {
+                            long birthDate, long phoneNumber, String emergencyContactName, long emergencyContactPhoneNumber, String gender) {
         ContentValues content = new ContentValues();
         content.put(Racer.FirstName, firstName);
         content.put(Racer.LastName, lastName);
+        content.put(Racer.Gender, gender);
         content.put(Racer.USACNumber, usacNumber);
         content.put(Racer.BirthDate, birthDate);
         content.put(Racer.PhoneNumber, phoneNumber);
@@ -77,6 +80,7 @@ public final class Racer extends ContentProviderTable implements BaseColumns {
             racerValues.put(Racer._ID, racer_ID);
             racerValues.put(Racer.FirstName, racerCursor.getString(racerCursor.getColumnIndex(Racer.FirstName)));
             racerValues.put(Racer.LastName, racerCursor.getString(racerCursor.getColumnIndex(Racer.LastName)));
+            racerValues.put(Racer.Gender, racerCursor.getString(racerCursor.getColumnIndex(Racer.Gender)));
             racerValues.put(Racer.USACNumber, racerCursor.getLong(racerCursor.getColumnIndex(Racer.USACNumber)));
             racerValues.put(Racer.BirthDate, racerCursor.getLong(racerCursor.getColumnIndex(Racer.BirthDate)));
             racerValues.put(Racer.PhoneNumber, racerCursor.getLong(racerCursor.getColumnIndex(Racer.PhoneNumber)));
@@ -92,7 +96,7 @@ public final class Racer extends ContentProviderTable implements BaseColumns {
     }
 
     public int Update(Context context, long racer_ID, String firstName, String lastName, Integer usacNumber, Long birthDate,
-                             String phoneNumber, String emergencyContactName, String emergencyContactPhoneNumber) {
+                             Long phoneNumber, String emergencyContactName, Long emergencyContactPhoneNumber, String gender) {
         ContentValues content = new ContentValues();
         if(firstName != null)
         {
@@ -101,6 +105,10 @@ public final class Racer extends ContentProviderTable implements BaseColumns {
         if(lastName != null)
         {
             content.put(Racer.LastName, lastName);
+        }
+        if(gender != null)
+        {
+            content.put(Racer.Gender, gender);
         }
         if(usacNumber != null)
         {

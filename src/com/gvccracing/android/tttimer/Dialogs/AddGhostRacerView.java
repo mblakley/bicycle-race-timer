@@ -61,7 +61,7 @@ public class AddGhostRacerView extends BaseDialog implements View.OnClickListene
 			// Found at least one other racer with the same name.
 			racer_ID = previousGhostRacer.getLong(previousGhostRacer.getColumnIndex(Racer._ID));
 		}else{
- 			resultUri = Racer.Instance().Create(getActivity(), "GHOST", "RACER", Integer.MIN_VALUE, 0, 0, "None", 0);
+ 			resultUri = Racer.Instance().Create(getActivity(), "GHOST", "RACER", Integer.MIN_VALUE, 0, 0, "None", 0, null);
  			racer_ID = Long.parseLong(resultUri.getLastPathSegment());
 		}
 		if(previousGhostRacer != null){

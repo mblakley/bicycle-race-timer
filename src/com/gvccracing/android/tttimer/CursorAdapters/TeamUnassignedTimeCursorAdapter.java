@@ -3,6 +3,7 @@ package com.gvccracing.android.tttimer.CursorAdapters;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 
+import com.gvccracing.android.tttimer.DataAccess.ContentProviderTable;
 import com.gvccracing.android.tttimer.DataAccess.Views.TeamLapResultsView;
 import com.gvccracing.android.tttimer.R;
 import com.gvccracing.android.tttimer.DataAccess.AppSettings;
@@ -70,7 +71,7 @@ public class TeamUnassignedTimeCursorAdapter extends UnassignedTimeCursorAdapter
 			String selection = RaceResults.Race_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.Instance().getTableName() + "." + RaceResults.StartTime + " IS NOT NULL" + " AND " + RaceResults.EndTime + " IS NULL";
 			String[] selectionArgs = null;
 			String sortOrder = "LapsCompleted, " + RaceResults.StartOrder;
-			Cursor unfinished = context.getContentResolver().query(Uri.withAppendedPath(TeamLapResultsView.Instance().CONTENT_URI, "group by " + RaceResults.Instance().getTableName() + "." + RaceResults._ID + "," + RaceResults.StartOrder + "," + TeamInfo.TeamName), projection, selection, selectionArgs, sortOrder);
+			Cursor unfinished = context.getContentResolver().query(TeamLapResultsView.Instance().CONTENT_URI.buildUpon().appendQueryParameter(ContentProviderTable.GroupBy, RaceResults.Instance().getTableName() + "." + RaceResults._ID + "," + RaceResults.StartOrder + "," + TeamInfo.TeamName).build(), projection, selection, selectionArgs, sortOrder);
 			getParentActivity().startManagingCursor(unfinished);  // OK, this is ugly and deprecated, but I'm being tricky here!
 			
 			Spinner spinAssignNumber = (Spinner) v.findViewById(R.id.spinnerAssignNumber);

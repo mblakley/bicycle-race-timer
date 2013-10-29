@@ -119,7 +119,7 @@ public class AddRacerView extends BaseDialog implements View.OnClickListener {
  					racerCategory = null;
  	 			}
  			}else{
-	 			resultUri = Racer.Instance().Create(getActivity(), firstName, lastName, Integer.parseInt(usacNumber), 0, 0, "None", 0);
+	 			resultUri = Racer.Instance().Create(getActivity(), firstName, lastName, Integer.parseInt(usacNumber), 0, 0, "None", 0, "Male");
 	 			racer_ID = Long.parseLong(resultUri.getLastPathSegment());
  			}
  			if(previousRacers != null){

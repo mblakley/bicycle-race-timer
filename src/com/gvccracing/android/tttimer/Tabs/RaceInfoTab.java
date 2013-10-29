@@ -1,10 +1,16 @@
 package com.gvccracing.android.tttimer.Tabs;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteQueryBuilder;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
@@ -19,7 +25,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.gvccracing.android.tttimer.DataAccess.RaceLocation;
+import com.gvccracing.android.tttimer.DataAccess.Racer;
+import com.gvccracing.android.tttimer.DataAccess.RacerClubInfo;
 import com.gvccracing.android.tttimer.DataAccess.Views.RaceInfoView;
+import com.gvccracing.android.tttimer.DataAccess.Views.RacerInfoView;
 import com.gvccracing.android.tttimer.R;
 import com.gvccracing.android.tttimer.DataAccess.AppSettings;
 import com.gvccracing.android.tttimer.DataAccess.Race;
@@ -32,6 +41,18 @@ import com.gvccracing.android.tttimer.Dialogs.OtherRaceResults;
 import com.gvccracing.android.tttimer.Dialogs.SeriesResultsView;
 import com.gvccracing.android.tttimer.Utilities.TimeFormatter;
 import com.gvccracing.android.tttimer.Utilities.Enums.RaceType;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.ByteArrayBuffer;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
 
@@ -64,6 +85,7 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
         ((Button) view.findViewById(R.id.btnSeriesResults)).setOnClickListener(this);
         ((Button) view.findViewById(R.id.btnPreviousResults)).setOnClickListener(this);
         ((Button) view.findViewById(R.id.btnAdminMenu)).setOnClickListener(this);
+        ((Button) view.findViewById(R.id.btnDownloadRacers)).setOnClickListener(this);
         
         raceDate = ((TextView) view.findViewById(R.id.raceDate));
         raceCourseName = ((TextView) view.findViewById(R.id.raceCourseName));
@@ -233,10 +255,139 @@ public class RaceInfoTab extends BaseTab implements LoaderManager.LoaderCallback
 		}
 	}
 
+    public void postData(){
+        // Create a new HttpClient and Post Header
+        HttpClient httpclient = new DefaultHttpClient();
+        HttpPost httppost = new HttpPost("http://www.gvccracing.com/?page_id=2525&pass=com.gvccracing.android.tttimer");
+
+        try {
+            // Execute HTTP Post Request
+            HttpResponse response = httpclient.execute(httppost);
+
+            InputStream is = response.getEntity().getContent();
+            BufferedInputStream bis = new BufferedInputStream(is);
+            ByteArrayBuffer baf = new ByteArrayBuffer(20);
+
+            int current = 0;
+
+            while((current = bis.read()) != -1){
+                baf.append((byte)current);
+            }
+
+            /* Convert the Bytes read to a String. */
+            String text = new String(baf.toByteArray());
+
+            JSONObject mainJson = new JSONObject(text);
+            JSONArray jsonArray = mainJson.getJSONArray("members");
+
+            for(int i = 0; i < jsonArray.length(); i++){
+                JSONObject json = jsonArray.getJSONObject(i);
+
+                String firstName = json.getString("fname");
+                String lastName = json.getString("lname");
+                String licenseStr = json.getString("license");
+                Integer license = 0;
+                try{
+                    license = Integer.parseInt(licenseStr);
+                } catch(Exception ex){
+                    Log.e(LOG_TAG(), "Unable to parse license string");
+                }
+                long age = json.getLong("age");
+                String categoryStr = json.getString("category");
+                Integer category = 5;
+                try{
+                    category = Integer.parseInt(categoryStr);
+                } catch(Exception ex){
+                    Log.e(LOG_TAG(), "Unable to parse category string");
+                }
+                String phone = json.getString("phone");
+                long phoneNumber = 0;
+                try{
+                    phoneNumber = Long.parseLong(phone.replace("-", "").replace("(", "").replace(")", "").replace(" ", "").replace(".", "").replace("*", ""));
+                }catch(Exception e){
+                    Log.e(LOG_TAG(), "Unable to parse phone number");
+                }
+                String gender = json.getString("gender");
+                String econtact = json.getString("econtact");
+                String econtactPhone = json.getString("econtact_phone");
+                long eContactPhoneNumber = 0;
+                try{
+                    eContactPhoneNumber = Long.parseLong(econtactPhone.replace("-", "").replace("(", "").replace(")", "").replace(" ", "").replace(".", "").replace("*", ""));
+                }catch(Exception e){
+                    Log.e(LOG_TAG(), "Unable to parse econtact phone number");
+                }
+                Long member_id = json.getLong("member_id");
+
+                String gvccCategory;
+                switch(category){
+                    case 1:
+                    case 2:
+                    case 3:
+                        gvccCategory = "A";
+                        break;
+                    case 4:
+                        gvccCategory = "B4";
+                        break;
+                    case 5:
+                        gvccCategory = "B5";
+                        break;
+                    default:
+                        gvccCategory = "B5";
+                        break;
+                }
+
+                Log.w(LOG_TAG(), lastName);
+                Cursor racerInfo = Racer.Instance().Read(getActivity(), new String[]{Racer._ID, Racer.FirstName, Racer.LastName, Racer.USACNumber, Racer.PhoneNumber, Racer.EmergencyContactName, Racer.EmergencyContactPhoneNumber}, Racer.USACNumber + "=?", new String[]{license.toString()}, null);
+                if(racerInfo.getCount() > 0){
+                    racerInfo.moveToFirst();
+                    Long racerID = racerInfo.getLong(racerInfo.getColumnIndex(Racer._ID));
+                    Racer.Instance().Update(getActivity(), racerID, firstName, lastName, license, 0l, phoneNumber, econtact, eContactPhoneNumber, gender);
+                    Cursor racerClubInfo = RacerClubInfo.Instance().Read(getActivity(), new String[]{RacerClubInfo._ID, RacerClubInfo.GVCCID, RacerClubInfo.RacerAge, RacerClubInfo.Category}, RacerClubInfo.Racer_ID + "=? AND " + RacerClubInfo.Year + "=? AND " + RacerClubInfo.Upgraded + "=?", new String[]{racerID.toString(), "2013", "0"}, null);
+                    if(racerClubInfo.getCount() > 0){
+                        racerClubInfo.moveToFirst();
+                        long racerClubInfoID = racerClubInfo.getLong(racerClubInfo.getColumnIndex(RacerClubInfo._ID));
+                        String rciCategory = racerClubInfo.getString(racerClubInfo.getColumnIndex(RacerClubInfo.Category));
+
+                        boolean upgraded = gvccCategory != rciCategory;
+                        if(upgraded){
+                            RacerClubInfo.Instance().Update(getActivity(), racerClubInfoID, null, null, null, null, null, null, null, null, null, upgraded);
+                            RacerClubInfo.Instance().Create(getActivity(), racerID, null, 2013, gvccCategory, 0, 0, 0, age, member_id, false);
+                        } else{
+                            RacerClubInfo.Instance().Update(getActivity(), racerClubInfoID, null, null, null, null, null, null, null, age, member_id, upgraded);
+                        }
+
+                    }else{
+                        RacerClubInfo.Instance().Create(getActivity(), racerID, null, 2013, gvccCategory, 0, 0, 0, age, member_id, false);
+                    }
+                    if(racerClubInfo != null){
+                        racerClubInfo.close();
+                    }
+                }else{
+                    // TODO: Better birth date
+                    Uri resultUri = Racer.Instance().Create(getActivity(), firstName, lastName, license, 0l, phoneNumber, econtact, eContactPhoneNumber, gender);
+                    long racerID = Long.parseLong(resultUri.getLastPathSegment());
+                    RacerClubInfo.Instance().Create(getActivity(), racerID, null, 2013, gvccCategory, 0, 0, 0, age, member_id, false);
+                }
+                if(racerInfo != null){
+                    racerInfo.close();
+                }
+            }
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            Log.e(LOG_TAG(), e.getMessage());
+        }
+    }
+
 	public void onClick(View v) {
         FragmentManager fm = getActivity().getSupportFragmentManager();
 		switch (v.getId())
 		{
+            case R.id.btnDownloadRacers:
+                postData();
+                break;
 			case R.id.btnMarshalLocations:
 				showMarshalLocations(v);
 				break;

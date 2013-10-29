@@ -100,7 +100,7 @@ public class EditRacerView extends AddRacerView implements View.OnClickListener,
 
 	private boolean UpdateRacer(String firstName, String lastName, String usacNumber, final String category) {
 		
-		Racer.Instance().Update(getActivity(), racer_ID, firstName, lastName, Integer.parseInt(usacNumber), null, null, null, null);
+		Racer.Instance().Update(getActivity(), racer_ID, firstName, lastName, Integer.parseInt(usacNumber), null, null, null, null, null);
 		
 		// The category has changed.  Figure out if the racer upgraded, or if the initial value was incorrect
 		if(category != initCategory){

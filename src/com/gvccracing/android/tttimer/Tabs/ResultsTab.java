@@ -19,6 +19,7 @@ import android.widget.ListView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.TextView;
 
+import com.gvccracing.android.tttimer.DataAccess.ContentProviderTable;
 import com.gvccracing.android.tttimer.DataAccess.Racer;
 import com.gvccracing.android.tttimer.DataAccess.Views.TeamCheckInViewExclusive;
 import com.gvccracing.android.tttimer.R;
@@ -207,7 +208,7 @@ public class ResultsTab extends BaseTab implements LoaderManager.LoaderCallbacks
 				selection = RaceResults.Race_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.Instance().getTableName() + "." + RaceResults.ElapsedTime + " IS NOT NULL AND " + TeamInfo.TeamCategory + "!=?";
 				selectionArgs = new String[]{"G"};
 				sortOrder = RaceResults.ElapsedTime + "," + TeamInfo.TeamName;
-				loader = new CursorLoader(getActivity(), Uri.withAppendedPath(TeamCheckInViewExclusive.Instance().CONTENT_URI, "group by " + RaceResults.Instance().getTableName() + "." + RaceResults._ID + "," + TeamInfo.TeamName + "," + RaceResults.Instance().getTableName() + "." + RaceResults.ElapsedTime + "," + RaceResults.OverallPlacing), projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), TeamCheckInViewExclusive.Instance().CONTENT_URI.buildUpon().appendQueryParameter(ContentProviderTable.GroupBy, RaceResults.Instance().getTableName() + "." + RaceResults._ID + "," + TeamInfo.TeamName + "," + RaceResults.Instance().getTableName() + "." + RaceResults.ElapsedTime + "," + RaceResults.OverallPlacing).build(), projection, selection, selectionArgs, sortOrder);
 				break;
 			case CATEGORY_RESULTS_LOADER_RESULTS:
 				projection = new String[]{RaceResults.Instance().getTableName() + "." + RaceResults._ID + " as _id", Racer.LastName, Racer.FirstName, RaceResults.ElapsedTime, RacerClubInfo.Category, RaceResults.CategoryPlacing, RaceResults.Points};

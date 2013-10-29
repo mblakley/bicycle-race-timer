@@ -22,6 +22,7 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
 import android.widget.ListView;
 
+import com.gvccracing.android.tttimer.DataAccess.ContentProviderTable;
 import com.gvccracing.android.tttimer.DataAccess.Racer;
 import com.gvccracing.android.tttimer.DataAccess.Views.TeamLaps;
 import com.gvccracing.android.tttimer.R;
@@ -226,7 +227,7 @@ public class FinishTab extends BaseTab implements View.OnClickListener,	LoaderMa
 				selection = RaceResults.Race_ID	+ "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.Instance().getTableName() + "." + RaceResults.StartTime + " IS NOT NULL" + " AND " + RaceResults.EndTime + " IS NULL AND " + TeamInfo.TeamCategory + "!=?";
 				selectionArgs = new String[]{"G"};
 				sortOrder = "NumLaps ASC," + RaceResults.StartOrder + " ASC";
-				loader = new CursorLoader(getActivity(), Uri.withAppendedPath(TeamLaps.Instance().CONTENT_URI, "group by " + RaceResults.Instance().getTableName() + "." + RaceResults._ID + "," + TeamInfo.TeamName + "," + RaceResults.StartOrder + "&having count(" + RaceLaps.Instance().getTableName() + "." + RaceLaps._ID + ") < " + Long.toString(numRaceLaps)), projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), TeamLaps.Instance().CONTENT_URI.buildUpon().appendQueryParameter(ContentProviderTable.GroupBy, RaceResults.Instance().getTableName() + "." + RaceResults._ID + "," + TeamInfo.TeamName + "," + RaceResults.StartOrder).appendQueryParameter(ContentProviderTable.Having, "count(" + RaceLaps.Instance().getTableName() + "." + RaceLaps._ID + ") < " + Long.toString(numRaceLaps)).build(), projection, selection, selectionArgs, sortOrder);
 				break;
 			case RACE_INFO_LOADER_FINISH:
 				projection = new String[]{Race.Instance().getTableName() + "." + Race._ID + " as _id", Race.RaceType, Race.NumLaps};

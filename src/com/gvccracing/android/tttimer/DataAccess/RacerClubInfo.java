@@ -39,7 +39,7 @@ public final class RacerClubInfo extends ContentProviderTable implements BaseCol
         return "create table " + getTableName()
                 + " (" + _ID + " integer primary key autoincrement, "
                 + Racer_ID + " integer references " + Racer.Instance().getTableName() + "(" + Racer._ID + ") not null, "
-                + CheckInID + " text not null, "
+                + CheckInID + " text null, "
                 + Year + " integer not null,"
                 + Category + " text not null,"
                 + TTPoints + " integer not null,"
@@ -81,7 +81,7 @@ public final class RacerClubInfo extends ContentProviderTable implements BaseCol
     }
 
     public int Update(Context context, long racerClubInfo_ID, Long racer_ID, String checkInID, Long year,
-             String category, Long ttPoints, Long rrPoints, Long primePoints, Long racerAge, String gvccID, Boolean upgraded) {
+             String category, Long ttPoints, Long rrPoints, Long primePoints, Long racerAge, Long gvccID, Boolean upgraded) {
         ContentValues content = new ContentValues();
         if(racer_ID != null)
         {

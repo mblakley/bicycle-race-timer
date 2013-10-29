@@ -3,7 +3,8 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
-
+
+
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="fill_parent"
@@ -151,7 +152,8 @@
             android:textColor="@color/normal_fg" >
         </TextView>        
         
-    </LinearLayout>
+    </LinearLayout>
+
     
     <LinearLayout
         android:id="@+id/linearLayout6"
@@ -212,8 +214,16 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         style="@style/Medium"
-        android:text="@string/MarshalLocations" /> 
-        
+        android:text="@string/MarshalLocations" />
+
+
+    <Button
+        style="@style/Medium"
+        android:id="@+id/btnDownloadRacers"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Download Racers"
+        android:layout_gravity="center_horizontal" />
 
     <LinearLayout
         android:id="@+id/linearLayoutButtons"

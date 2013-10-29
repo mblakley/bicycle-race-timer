@@ -5,6 +5,7 @@ package com.gvccracing.android.tttimer.Tabs;
 
 import java.util.Calendar;
 
+import com.gvccracing.android.tttimer.DataAccess.ContentProviderTable;
 import com.gvccracing.android.tttimer.DataAccess.Racer;
 import com.gvccracing.android.tttimer.DataAccess.Views.CheckInViewInclusive;
 import com.gvccracing.android.tttimer.DataAccess.Views.TeamCheckInViewExclusive;
@@ -213,7 +214,7 @@ public class CheckInTab extends BaseTab implements LoaderManager.LoaderCallbacks
 				selection = TeamInfo.Instance().getTableName() + "." + TeamInfo.Year + "=? AND " + RacerClubInfo.Upgraded + "=? AND " + TeamInfo.TeamCategory + "!=?";
 				selectionArgs = new String[]{ Integer.toString(Calendar.getInstance().get(Calendar.YEAR)), Long.toString(0l), "G"};
 				sortOrder = TeamInfo.Instance().getTableName() + "." + TeamInfo.TeamName;
-				loader = new CursorLoader(getActivity(), Uri.withAppendedPath(TeamCheckInViewInclusive.Instance().CONTENT_URI, "group by " + TeamInfo.Instance().getTableName() + "." + TeamInfo._ID + "," + TeamInfo.TeamName), projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), TeamCheckInViewInclusive.Instance().CONTENT_URI.buildUpon().appendQueryParameter(ContentProviderTable.GroupBy, TeamInfo.Instance().getTableName() + "." + TeamInfo._ID + "," + TeamInfo.TeamName).build(), projection, selection, selectionArgs, sortOrder);
 				break;
 			case START_ORDER_LOADER_CHECKIN:
 				// Create the cursor adapter for the start order list
@@ -252,7 +253,7 @@ public class CheckInTab extends BaseTab implements LoaderManager.LoaderCallbacks
 				selection = RaceResults.Race_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name);
 				selectionArgs = null;
 				sortOrder = RaceResults.StartOrder;
-				loader = new CursorLoader(getActivity(), Uri.withAppendedPath(TeamCheckInViewExclusive.Instance().CONTENT_URI, "group by " + TeamInfo.Instance().getTableName() + "." + TeamInfo._ID + "," + TeamInfo.TeamName + "," + RaceResults.StartOrder + "," + RaceResults.StartTimeOffset), projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), TeamCheckInViewExclusive.Instance().CONTENT_URI.buildUpon().appendQueryParameter(ContentProviderTable.GroupBy, TeamInfo.Instance().getTableName() + "." + TeamInfo._ID + "," + TeamInfo.TeamName + "," + RaceResults.StartOrder + "," + RaceResults.StartTimeOffset).build(), projection, selection, selectionArgs, sortOrder);
 				break;
 			case RACE_INFO_LOADER_CHECKIN:
 				projection = new String[]{Race.Instance().getTableName() + "." + Race._ID + " as _id", Race.RaceType, Race.NumLaps};

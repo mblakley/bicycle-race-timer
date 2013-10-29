@@ -1,5 +1,6 @@
 package com.gvccracing.android.tttimer.CursorAdapters;
 
+import com.gvccracing.android.tttimer.DataAccess.ContentProviderTable;
 import com.gvccracing.android.tttimer.DataAccess.Racer;
 import com.gvccracing.android.tttimer.DataAccess.Views.TeamCheckInViewExclusive;
 import com.gvccracing.android.tttimer.R;
@@ -71,7 +72,7 @@ public class TeamsToFinishCursorAdapter extends BaseCursorAdapter {
     		String[] selectionArgs = new String[]{Long.toString(c.getLong(0))};
     		String sortOrder = null;
     		
-            Cursor teamRacerNames = getParentActivity().getContentResolver().query(Uri.withAppendedPath(TeamCheckInViewExclusive.Instance().CONTENT_URI, "group by " + RaceResults.Instance().getTableName() + "." + RaceResults._ID), projection, selection, selectionArgs, sortOrder);
+            Cursor teamRacerNames = getParentActivity().getContentResolver().query(TeamCheckInViewExclusive.Instance().CONTENT_URI.buildUpon().appendQueryParameter(ContentProviderTable.GroupBy, RaceResults.Instance().getTableName() + "." + RaceResults._ID).build(), projection, selection, selectionArgs, sortOrder);
             teamRacerNames.moveToFirst();
             
         	int racerNamesCol = teamRacerNames.getColumnIndex("RacerNames");

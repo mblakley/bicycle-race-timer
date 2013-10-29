@@ -21,6 +21,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.gvccracing.android.tttimer.DataAccess.ContentProviderTable;
 import com.gvccracing.android.tttimer.DataAccess.Racer;
 import com.gvccracing.android.tttimer.DataAccess.Views.TeamCheckInViewExclusive;
 import com.gvccracing.android.tttimer.R;
@@ -171,8 +172,7 @@ public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 	 	long startTime = -1l;
 			
 		// Get the race and figure out if it's already started
-		Uri raceUri = Uri.withAppendedPath(Race.Instance().CONTENT_URI, Long.toString(race_ID));
-		Cursor race = getActivity().getContentResolver().query(raceUri, new String[]{Race.RaceStartTime}, null, null, null);
+		Cursor race = Race.Instance().Read(getActivity(), new String[]{Race.RaceStartTime}, Race._ID + "=?", new String[]{Long.toString(race_ID)}, null);
 		if(race.getCount() > 0)
 		{
 			race.moveToFirst();
@@ -190,7 +190,7 @@ public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 				content.put(Race._ID, race_ID);
 				content.put(Race.RaceStartTime, startTime);
 				Uri fullUri = Uri.withAppendedPath(Race.Instance().CONTENT_URI, Long.toString(race_ID));
-				getActivity().getContentResolver().update(fullUri, content, null, null);
+                Race.Instance().Update(getActivity(), content, Race._ID + "=?", new String[]{Long.toString(race_ID)});
 			} 				
 		}
 		else{
@@ -268,8 +268,7 @@ public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 				selection = RaceResults.Race_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.Instance().getTableName() + "." + RaceResults.StartTime + " IS NULL";
 				selectionArgs = null;
 				sortOrder = RaceResults.StartOrder;
-				fullUri = Uri.withAppendedPath(CheckInViewExclusive.Instance().CONTENT_URI, "OnDeck");
-				fullUri = Uri.withAppendedPath(fullUri, "1");
+				fullUri = CheckInViewExclusive.Instance().CONTENT_URI.buildUpon().appendQueryParameter(ContentProviderTable.Limit, "1").build();
 				loader = new CursorLoader(getActivity(), fullUri, projection, selection, selectionArgs, sortOrder);
 				break;
 			case START_ORDER_LOADER_START:
@@ -284,8 +283,7 @@ public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 				selection = RaceResults.Race_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name) + " AND " + RaceResults.Instance().getTableName() + "." + RaceResults.StartTime + " IS NULL";
 				selectionArgs = null;
 				sortOrder = RaceResults.StartOrder;
-				fullUri = Uri.withAppendedPath(TeamCheckInViewExclusive.Instance().CONTENT_URI, "OnDeck");
-				fullUri = Uri.withAppendedPath(fullUri, "1");
+				fullUri = TeamCheckInViewExclusive.Instance().CONTENT_URI.buildUpon().appendQueryParameter(ContentProviderTable.Limit, "1").build();
 				loader = new CursorLoader(getActivity(), fullUri, projection, selection, selectionArgs, sortOrder);
 				break;
 			case TEAM_START_ORDER_LOADER:
@@ -293,7 +291,7 @@ public class StartTab extends BaseTab implements LoaderManager.LoaderCallbacks<C
 				selection = RaceResults.Race_ID + "=" + AppSettings.Instance().getParameterSql(AppSettings.AppSetting_RaceID_Name);
 				selectionArgs = null;
 				sortOrder = RaceResults.StartOrder;
-				loader = new CursorLoader(getActivity(), Uri.withAppendedPath(TeamCheckInViewExclusive.Instance().CONTENT_URI, "group by " + TeamInfo.Instance().getTableName() + "." + TeamInfo._ID + "," + TeamInfo.TeamName + "," + RaceResults.StartOrder + "," + RaceResults.StartTimeOffset), projection, selection, selectionArgs, sortOrder);
+				loader = new CursorLoader(getActivity(), TeamCheckInViewExclusive.Instance().CONTENT_URI.buildUpon().appendQueryParameter(ContentProviderTable.GroupBy, TeamInfo.Instance().getTableName() + "." + TeamInfo._ID + "," + TeamInfo.TeamName + "," + RaceResults.StartOrder + "," + RaceResults.StartTimeOffset).build(), projection, selection, selectionArgs, sortOrder);
 				break;
 			case RACE_INFO_LOADER_START:
 				projection = new String[]{Race.Instance().getTableName() + "." + Race._ID + " as _id", Race.RaceType, Race.NumLaps};

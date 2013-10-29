@@ -37,6 +37,7 @@ public final class RaceResults extends ContentProviderTable implements BaseColum
     public static final String CategoryPlacing = "CategoryPlacing";
     public static final String Points = "Points";
     public static final String PrimePoints = "PrimePoints";
+    public static final String IsSynced = "IsSynced";
 
     public String getCreate(){
         return "create table " + getTableName()
@@ -52,7 +53,8 @@ public final class RaceResults extends ContentProviderTable implements BaseColum
                 + OverallPlacing + " integer null,"
                 + CategoryPlacing + " integer null,"
                 + Points + " integer not null,"
-                + PrimePoints + " integer not null"
+                + PrimePoints + " integer not null,"
+                + IsSynced + " integer not null"
                 + ");";
     }
 
@@ -86,6 +88,7 @@ public final class RaceResults extends ContentProviderTable implements BaseColum
         content.put(RaceResults.Points, points);
         content.put(RaceResults.PrimePoints, primePoints);
         content.put(RaceResults.TeamInfo_ID, teamInfo_ID);
+        content.put(RaceResults.IsSynced, 0);
         return context.getContentResolver().insert(RaceResults.Instance().CONTENT_URI, content);
     }
 }
